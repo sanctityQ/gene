@@ -1,0 +1,146 @@
+CREATE DATABASE IF NOT EXISTS gene DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+
+
+GRANT ALL PRIVILEGES ON gene.* TO 'geneuser'@'%' IDENTIFIED BY 'XTY00pVZKmYTSb' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+CREATE TABLE `company` (
+  `id`             INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `com_code`       VARCHAR(15)      NOT NULL COMMENT '机构代码',
+  `com_name`       VARCHAR(127)     NOT NULL COMMENT '机构名称',
+  `upper_com_code` VARCHAR(15)      NOT NULL COMMENT '上机机构代码',
+  `com_type`       VARCHAR(15)      NOT NULL COMMENT '机构类型',
+  `com_level`      TINYINT(4)       NOT NULL COMMENT '机构级别',
+  `phone_number`   VARCHAR(35) COMMENT '电话号码',
+  `fax_number`     VARCHAR(20) COMMENT '传真号码',
+  `post_code`      CHAR(6) COMMENT '邮编',
+  `address`        VARCHAR(255) COMMENT '地址',
+  `desc`          VARCHAR(511) COMMENT '描述',
+  `validate`       TINYINT(1)  NOT NULL COMMENT '是否有效,0-无效，1-有效',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_com_code` (`com_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='机构表';
+
+CREATE TABLE `customer` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `code` VARCHAR(31) NOT NULL COMMENT '客户代码',
+  `name` VARCHAR(127) NOT NULL COMMENT '客户姓名',
+  `leader_name` VARCHAR(127) COMMENT '负责人姓名',
+  `com_id` VARCHAR(120) COMMENT '机构代码',
+  `com_name` VARCHAR(120) COMMENT '机构名称',
+  `invoice_title` VARCHAR(120) COMMENT '发票抬头',
+  `pay_ways` VARCHAR(15) COMMENT '结账方式',
+  `address` VARCHAR(255) COMMENT '客户地址',
+  `phone_no` VARCHAR(15) COMMENT '联系电话',
+  `email` VARCHAR(63) COMMENT '邮箱',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户信息表';
+
+CREATE TABLE `user` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `code`    VARCHAR(15) NOT NULL COMMENT '用户代码',
+  `name`    VARCHAR(31) NOT NULL DEFAULT '' COMMENT '用户名称',
+  `password`    VARCHAR(64) NOT NULL COMMENT '用户密码',
+  `com_code`    VARCHAR(10) NOT NULL DEFAULT '' COMMENT '机构代码',
+  `mobile`      CHAR(11) NOT NULL DEFAULT '' COMMENT '手机号',
+  `email`       VARCHAR(63) NOT NULL DEFAULT '' COMMENT '邮箱',
+  `staff_flag`    TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否本公司用户标识,0-不是，1-是',
+  `validate` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否有效,0-不是，1-是',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户信息表';
+
+
+CREATE TABLE `order` (
+  `id`                INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `order_no`          CHAR(12)     NOT NULL COMMENT '订单号',
+  `out_order_no`      VARCHAR(63) NOT NULL COMMENT '外部订单号',
+  `customer_code`     VARCHAR(31)  NOT NULL COMMENT '客户代码',
+  `customer_name`     VARCHAR(127) COMMENT '客户姓名',
+  `com_code`          VARCHAR(15) COMMENT '归属机构代码',
+  `status`            TINYINT(2)  COMMENT '订单状态',
+  `type`              CHAR(2) NOT NULL DEFAULT 0 COMMENT '订单类型: 00-合成',
+  `file_name`         VARCHAR(127) COMMENT '上传文件名称',
+  `create_time`       DATETIME NOT NULL COMMENT '创建时间',
+  `modify_time`       DATETIME NOT NULL COMMENT '修改时间',
+  `validate` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否有效,0-不是，1-是',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_order_no` (`order_no`),
+  KEY `idx_create_time` (`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单表';
+
+CREATE TABLE `primer_product` (
+  `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `product_no`          CHAR(12) NOT NULL COMMENT '生产编号',
+  `order_no`            CHAR(12)  NOT NULL COMMENT '订单号',
+  `out_product_no`      VARCHAR(63) NOT NULL COMMENT '外部生产编号',
+  `from_product_no`   CHAR(12) NOT NULL COMMENT '来源编号ID',
+  `prime_name`          VARCHAR(255) NOT NULL COMMENT '引物名称',
+  `gene_order`          VARCHAR(255) NOT NULL COMMENT '引物序列',
+  `purify_type`      VARCHAR(7) NOT NULL COMMENT '纯化方式',
+  `modi_five_type`      VARCHAR(63) COMMENT '5修饰类型',
+  `modi_three_type`     VARCHAR(63) COMMENT '3修饰',
+  `modi_five_val`      VARCHAR(63) COMMENT '5修饰',
+  `modi_mid_type`    VARCHAR(63) COMMENT '中间修饰',
+  `modi_spe_type`    VARCHAR(63) COMMENT '特殊单体',
+  `modi_price`   DECIMAL(10,2) COMMENT '修饰价格',
+  `remark`              VARCHAR(255) COMMENT '描述',
+  `operation_type`     VARCHAR(31) NOT NULL COMMENT '状态',
+  `board_no`            VARCHAR(127) COMMENT '板号',
+  `com_code`            VARCHAR(20) NOT NULL COMMENT '归属机构代码',
+  `back_times`          TINYINT(2) DEFAULT '0' COMMENT '循环重回次数',
+  `review_file_name`    VARCHAR(127) COMMENT '检测',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_order_no` (`order_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='引物生产数据表';
+
+CREATE TABLE `board` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `board_no`            VARCHAR(127) COMMENT '板号',
+  `board_type`          TINYINT(1) COMMENT '板类型:0-横排 1-竖排',
+  `type`              VARCHAR(31) COMMENT '类型',
+  `create_time`       DATETIME NOT NULL COMMENT '创建时间',
+  `create_user`       INT(11) NOT NULL COMMENT '创建user',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_board_no` (`board_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='合成板表';
+
+CREATE TABLE `board_hole` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `board_no`          VARCHAR(127) COMMENT '板号',
+  `hole_no`           CHAR(2) COMMENT '孔号',
+  `product_id`        BIGINT(20) COMMENT '生产数据ID',
+  `create_time`       DATETIME NOT NULL COMMENT '创建时间',
+  `create_user`       INT(11) NOT NULL COMMENT '创建user',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_board_no` (`board_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='合成板表';
+
+
+CREATE TABLE `primer_product_operation` (
+  `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `primer_product_id` INT(11) NOT NULL COMMENT '引物生产数据ID',
+  `type`   VARCHAR(31) NOT NULL DEFAULT '' COMMENT '类型',
+  `type_desc`   VARCHAR(63) NOT NULL DEFAULT '' COMMENT '类型描述',
+  `back_times`  TINYINT(2) DEFAULT '0' COMMENT '工艺循环次数',
+  `user_code`   VARCHAR(15) NOT NULL COMMENT '用户代码',
+  `user_name`   VARCHAR(31) NOT NULL COMMENT '用户名称',
+  `create_time`   DATETIME NOT NULL COMMENT '操作时间',
+  `fail_reason` VARCHAR(511) NOT NULL DEFAULT '' comment '失败原因',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_ppid_tc_bt` (`primer_product_id`,`type`,`back_times`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='引物生产数据操作记录表';
+
+
+CREATE TABLE `primer_product_value` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `primer_product_id` INT(11) NOT NULL COMMENT '引物生产数据ID',
+  `type`  VARCHAR(31) NOT NULL COMMENT '值类型',
+  `type_desc` VARCHAR(63) NOT NULL COMMENT '类型描述',
+  `value`  DECIMAL(10,2) NOT NULL COMMENT '数值',
+  `create_time`  DATETIME NOT NULL COMMENT '操作时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_ppid` (`primer_product_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='引物数据数值表';
+
