@@ -4,7 +4,9 @@ package org.one.gene.repository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import org.one.gene.domain.entity.PrimerProductOperation;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface PrimerProductOperationRepository extends PagingAndSortingRepository<PrimerProductOperation, Long> {
 }
 

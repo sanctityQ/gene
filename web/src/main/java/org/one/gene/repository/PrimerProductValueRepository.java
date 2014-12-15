@@ -4,7 +4,9 @@ package org.one.gene.repository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import org.one.gene.domain.entity.PrimerProductValue;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface PrimerProductValueRepository extends PagingAndSortingRepository<PrimerProductValue, Integer> {
 }
 

@@ -3,8 +3,9 @@ package org.one.gene.repository;
 
 import org.one.gene.domain.entity.BoardHole;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
-
+@Repository
 public interface BoardHoleRepository extends PagingAndSortingRepository<BoardHole, Integer> {
 }
 

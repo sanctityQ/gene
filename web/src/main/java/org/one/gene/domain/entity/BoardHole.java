@@ -19,13 +19,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 * 
  */
 @Entity
-@Table(name="board_hole", uniqueConstraints = @UniqueConstraint(columnNames="board_no"))
-public class BoardHole  implements java.io.Serializable {
+@Table(name = "`board_hole`", uniqueConstraints = @UniqueConstraint(columnNames = {"`board_no`", "`hole_no`"}))
+public class BoardHole extends IdEntity implements java.io.Serializable {
 
-    /**
-    * 唯一标识id.
-    */
-    private Integer id;
     /**
     * 板号.
     */
@@ -55,19 +51,8 @@ public class BoardHole  implements java.io.Serializable {
         this.createTime = createTime;
         this.createUser = createUser;
     }
-   
-    @Id @GeneratedValue(strategy=IDENTITY)
-    
-    @Column(name="id", unique=true)
-    public Integer getId() {
-    return this.id;
-    }
 
-    public void setId(Integer id) {
-    this.id = id;
-    }
-    
-    @Column(name="board_no", unique=true, length=127)
+    @Column(name="`board_no`", length=127)
     public String getBoardNo() {
     return this.boardNo;
     }
@@ -76,7 +61,7 @@ public class BoardHole  implements java.io.Serializable {
     this.boardNo = boardNo;
     }
     
-    @Column(name="hole_no", length=2)
+    @Column(name="`hole_no`", length=2)
     public String getHoleNo() {
     return this.holeNo;
     }
@@ -85,7 +70,7 @@ public class BoardHole  implements java.io.Serializable {
     this.holeNo = holeNo;
     }
     
-    @Column(name="product_id")
+    @Column(name="`product_id`")
     public Long getProductId() {
     return this.productId;
     }
@@ -93,8 +78,9 @@ public class BoardHole  implements java.io.Serializable {
     public void setProductId(Long productId) {
     this.productId = productId;
     }
+
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="create_time", length=19)
+    @Column(name="`create_time`", length=19)
     public Date getCreateTime() {
     return this.createTime;
     }
@@ -103,7 +89,7 @@ public class BoardHole  implements java.io.Serializable {
     this.createTime = createTime;
     }
     
-    @Column(name="create_user")
+    @Column(name="`create_user`")
     public Integer getCreateUser() {
     return this.createUser;
     }

@@ -114,7 +114,7 @@ CREATE TABLE `board_hole` (
   `create_time`       DATETIME NOT NULL COMMENT '创建时间',
   `create_user`       INT(11) NOT NULL COMMENT '创建user',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_board_no` (`board_no`)
+  UNIQUE KEY `uk_board_no` (`board_no`,`hole_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='合成板表';
 
 

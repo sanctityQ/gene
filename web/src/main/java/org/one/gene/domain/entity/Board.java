@@ -5,9 +5,6 @@ package org.one.gene.domain.entity;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -18,7 +15,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * Board
  */
 @Entity
-@Table(name="board", uniqueConstraints = @UniqueConstraint(columnNames="board_no"))
+@Table(name="`board`", uniqueConstraints = @UniqueConstraint(columnNames="`board_no`"))
 public class Board extends IdEntity implements java.io.Serializable {
 
     /**
@@ -51,7 +48,7 @@ public class Board extends IdEntity implements java.io.Serializable {
         this.createUser = createUser;
     }
 
-    @Column(name="board_no", unique=true, length=127)
+    @Column(name="`board_no`", unique=true, length=127)
     public String getBoardNo() {
     return this.boardNo;
     }
@@ -60,7 +57,7 @@ public class Board extends IdEntity implements java.io.Serializable {
     this.boardNo = boardNo;
     }
     
-    @Column(name="board_type")
+    @Column(name="`board_type`")
     public Boolean getBoardType() {
     return this.boardType;
     }
@@ -69,7 +66,7 @@ public class Board extends IdEntity implements java.io.Serializable {
     this.boardType = boardType;
     }
     
-    @Column(name="type", length=31)
+    @Column(name="`type`", length=31)
     public String getType() {
     return this.type;
     }
@@ -79,7 +76,7 @@ public class Board extends IdEntity implements java.io.Serializable {
     }
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="create_time", length=19)
+    @Column(name="`create_time`", length=19)
     public Date getCreateTime() {
     return this.createTime;
     }
@@ -88,7 +85,7 @@ public class Board extends IdEntity implements java.io.Serializable {
     this.createTime = createTime;
     }
     
-    @Column(name="create_user")
+    @Column(name="`create_user`")
     public Integer getCreateUser() {
     return this.createUser;
     }

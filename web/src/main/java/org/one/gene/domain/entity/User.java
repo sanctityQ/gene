@@ -4,152 +4,130 @@ package org.one.gene.domain.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * User.
-* 
+ * User
  */
 @Entity
-@Table(name="user"
-    , uniqueConstraints = @UniqueConstraint(columnNames="code") 
-)
-public class User  implements java.io.Serializable {
+@Table(name = "`user`", uniqueConstraints = @UniqueConstraint(columnNames = "`code`"))
+public class User extends IdEntity implements java.io.Serializable {
 
     /**
-    * 唯一标识id.
-    */
-    private Integer id;
-    /**
-    * 用户代码.
-    */
+     * 用户代码.
+     */
     private String code;
     /**
-    * 用户名称.
-    */
+     * 用户名称.
+     */
     private String name;
     /**
-    * 用户密码.
-    */
+     * 用户密码.
+     */
     private String password;
     /**
-    * 机构代码.
-    */
+     * 机构代码.
+     */
     private String comCode;
     /**
-    * 手机号.
-    */
+     * 手机号.
+     */
     private String mobile;
     /**
-    * 邮箱.
-    */
+     * 邮箱.
+     */
     private String email;
     /**
-    * 是否本公司用户标识,0-不是，1-是.
-    */
+     * 是否本公司用户标识,0-不是，1-是.
+     */
     private boolean staffFlag;
     /**
-    * 是否有效,0-不是，1-是.
-    */
+     * 是否有效,0-不是，1-是.
+     */
     private boolean validate;
 
     public User() {
     }
 
-   
-    @Id @GeneratedValue(strategy=IDENTITY)
-    
-    @Column(name="id", unique=true)
-    public Integer getId() {
-    return this.id;
-    }
-
-    public void setId(Integer id) {
-    this.id = id;
-    }
-    
-    @Column(name="code", unique=true, length=15)
+    @Column(name = "`code`", unique = true, length = 15)
     public String getCode() {
-    return this.code;
+        return this.code;
     }
 
     public void setCode(String code) {
-    this.code = code;
+        this.code = code;
     }
-    
-    @Column(name="name", length=31)
+
+    @Column(name = "`name`", length = 31)
     public String getName() {
-    return this.name;
+        return this.name;
     }
 
     public void setName(String name) {
-    this.name = name;
+        this.name = name;
     }
-    
-    @Column(name="password", length=64)
+
+    @Column(name = "`password`", length = 64)
     public String getPassword() {
-    return this.password;
+        return this.password;
     }
 
     public void setPassword(String password) {
-    this.password = password;
+        this.password = password;
     }
-    
-    @Column(name="com_code", length=10)
+
+    @Column(name = "`com_code`", length = 10)
     public String getComCode() {
-    return this.comCode;
+        return this.comCode;
     }
 
     public void setComCode(String comCode) {
-    this.comCode = comCode;
+        this.comCode = comCode;
     }
-    
-    @Column(name="mobile", length=11)
+
+    @Column(name = "`mobile`", length = 11)
     public String getMobile() {
-    return this.mobile;
+        return this.mobile;
     }
 
     public void setMobile(String mobile) {
-    this.mobile = mobile;
+        this.mobile = mobile;
     }
-    
-    @Column(name="email", length=63)
+
+    @Column(name = "`email`", length = 63)
     public String getEmail() {
-    return this.email;
+        return this.email;
     }
 
     public void setEmail(String email) {
-    this.email = email;
+        this.email = email;
     }
-    
-    @Column(name="staff_flag")
+
+    @Column(name = "`staff_flag`")
     public boolean isStaffFlag() {
-    return this.staffFlag;
+        return this.staffFlag;
     }
 
     public void setStaffFlag(boolean staffFlag) {
-    this.staffFlag = staffFlag;
+        this.staffFlag = staffFlag;
     }
-    
-    @Column(name="validate")
+
+    @Column(name = "`validate`")
     public boolean isValidate() {
-    return this.validate;
+        return this.validate;
     }
 
     public void setValidate(boolean validate) {
-    this.validate = validate;
+        this.validate = validate;
     }
 
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 
 }
 
