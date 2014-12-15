@@ -39,7 +39,7 @@
 	</bean>
 
 	<!-- Spring Data Jpa配置 -->
-    <onejpa:repositories base-package="com.sinosoft.one.monitor"
+    <onejpa:repositories base-package="org.one.gene"
                          transaction-manager-ref="transactionManager"
                          entity-manager-factory-ref="entityManagerFactory"
                          sql-queries-location="classpath:META-INF/sqlquery/*"

@@ -19,8 +19,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 * 
  */
 @Entity
-@Table(name="order"
-    , uniqueConstraints = @UniqueConstraint(columnNames="order_no") 
+@Table(name="`order`", uniqueConstraints = @UniqueConstraint(name="`uk_order_no`",columnNames="`order_no`")
 )
 public class Order  implements java.io.Serializable {
 
@@ -89,7 +88,7 @@ public class Order  implements java.io.Serializable {
    
     @Id @GeneratedValue(strategy=IDENTITY)
     
-    @Column(name="id", unique=true)
+    @Column(name="`id`", unique=true)
     public Integer getId() {
     return this.id;
     }
@@ -98,7 +97,7 @@ public class Order  implements java.io.Serializable {
     this.id = id;
     }
     
-    @Column(name="order_no", unique=true, length=12)
+    @Column(name="`order_no`", unique=true, length=12)
     public String getOrderNo() {
     return this.orderNo;
     }
@@ -107,7 +106,7 @@ public class Order  implements java.io.Serializable {
     this.orderNo = orderNo;
     }
     
-    @Column(name="out_order_no", length=63)
+    @Column(name="`out_order_no`", length=63)
     public String getOutOrderNo() {
     return this.outOrderNo;
     }
@@ -116,7 +115,7 @@ public class Order  implements java.io.Serializable {
     this.outOrderNo = outOrderNo;
     }
     
-    @Column(name="customer_code", length=31)
+    @Column(name="`customer_code`", length=31)
     public String getCustomerCode() {
     return this.customerCode;
     }
@@ -125,7 +124,7 @@ public class Order  implements java.io.Serializable {
     this.customerCode = customerCode;
     }
     
-    @Column(name="customer_name", length=127)
+    @Column(name="`customer_name`", length=127)
     public String getCustomerName() {
     return this.customerName;
     }
@@ -134,7 +133,7 @@ public class Order  implements java.io.Serializable {
     this.customerName = customerName;
     }
     
-    @Column(name="com_code", length=15)
+    @Column(name="`com_code`", length=15)
     public String getComCode() {
     return this.comCode;
     }
@@ -143,7 +142,7 @@ public class Order  implements java.io.Serializable {
     this.comCode = comCode;
     }
     
-    @Column(name="status")
+    @Column(name="`status`")
     public Byte getStatus() {
     return this.status;
     }
@@ -152,7 +151,7 @@ public class Order  implements java.io.Serializable {
     this.status = status;
     }
     
-    @Column(name="type", length=2)
+    @Column(name="`type`", length=2)
     public String getType() {
     return this.type;
     }
@@ -161,7 +160,7 @@ public class Order  implements java.io.Serializable {
     this.type = type;
     }
     
-    @Column(name="file_name", length=127)
+    @Column(name="`file_name`", length=127)
     public String getFileName() {
     return this.fileName;
     }
@@ -170,7 +169,7 @@ public class Order  implements java.io.Serializable {
     this.fileName = fileName;
     }
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="create_time", length=19)
+    @Column(name="`create_time`", length=19)
     public Date getCreateTime() {
     return this.createTime;
     }
@@ -179,7 +178,7 @@ public class Order  implements java.io.Serializable {
     this.createTime = createTime;
     }
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="modify_time", length=19)
+    @Column(name="`modify_time`", length=19)
     public Date getModifyTime() {
     return this.modifyTime;
     }
@@ -188,7 +187,7 @@ public class Order  implements java.io.Serializable {
     this.modifyTime = modifyTime;
     }
     
-    @Column(name="validate")
+    @Column(name="`validate`")
     public boolean isValidate() {
     return this.validate;
     }

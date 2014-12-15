@@ -6,107 +6,107 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * PrimerProduct.
-* 
  */
 @Entity
-@Table(name="primer_product"
-    , uniqueConstraints = @UniqueConstraint(columnNames="order_no") 
-)
-public class PrimerProduct  implements java.io.Serializable {
+@Table(name = "`primer_product`", uniqueConstraints = @UniqueConstraint(name = "`uk_product_no`", columnNames = "`product_no`"))
+public class PrimerProduct implements java.io.Serializable {
 
     /**
-    * 唯一标识id.
-    */
+     * 唯一标识id.
+     */
     private Long id;
     /**
-    * 生产编号.
-    */
+     * 生产编号.
+     */
     private String productNo;
     /**
-    * 订单号.
-    */
+     * 订单号.
+     */
     private String orderNo;
     /**
-    * 外部生产编号.
-    */
+     * 外部生产编号.
+     */
     private String outProductNo;
     /**
-    * 来源编号ID.
-    */
+     * 来源编号ID.
+     */
     private String fromProductNo;
     /**
-    * 引物名称.
-    */
+     * 引物名称.
+     */
     private String primeName;
     /**
-    * 引物序列.
-    */
+     * 引物序列.
+     */
     private String geneOrder;
     /**
-    * 纯化方式.
-    */
+     * 纯化方式.
+     */
     private String purifyType;
     /**
-    * 5修饰类型.
-    */
+     * 5修饰类型.
+     */
     private String modiFiveType;
     /**
-    * 3修饰.
-    */
+     * 3修饰.
+     */
     private String modiThreeType;
     /**
-    * 5修饰.
-    */
+     * 5修饰.
+     */
     private String modiFiveVal;
     /**
-    * 中间修饰.
-    */
+     * 中间修饰.
+     */
     private String modiMidType;
     /**
-    * 特殊单体.
-    */
+     * 特殊单体.
+     */
     private String modiSpeType;
     /**
-    * 修饰价格.
-    */
+     * 修饰价格.
+     */
     private BigDecimal modiPrice;
     /**
-    * 描述.
-    */
+     * 描述.
+     */
     private String remark;
     /**
-    * 状态.
-    */
+     * 状态.
+     */
     private String operationType;
     /**
-    * 板号.
-    */
+     * 板号.
+     */
     private String boardNo;
     /**
-    * 归属机构代码.
-    */
+     * 归属机构代码.
+     */
     private String comCode;
     /**
-    * 循环重回次数.
-    */
+     * 循环重回次数.
+     */
     private Byte backTimes;
     /**
-    * 检测.
-    */
+     * 检测.
+     */
     private String reviewFileName;
 
     public PrimerProduct() {
     }
 
-	
+
     public PrimerProduct(String productNo, String orderNo, String outProductNo, String fromProductNo, String primeName, String geneOrder, String purifyType, String operationType, String comCode) {
         this.productNo = productNo;
         this.orderNo = orderNo;
@@ -118,194 +118,194 @@ public class PrimerProduct  implements java.io.Serializable {
         this.operationType = operationType;
         this.comCode = comCode;
     }
-   
-    @Id @GeneratedValue(strategy=IDENTITY)
-    
-    @Column(name="id", unique=true)
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "`id`", unique = true)
     public Long getId() {
-    return this.id;
+        return this.id;
     }
 
     public void setId(Long id) {
-    this.id = id;
+        this.id = id;
     }
-    
-    @Column(name="product_no", length=12)
+
+    @Column(name = "`product_no`", unique = true, length = 12)
     public String getProductNo() {
-    return this.productNo;
+        return this.productNo;
     }
 
     public void setProductNo(String productNo) {
-    this.productNo = productNo;
+        this.productNo = productNo;
     }
-    
-    @Column(name="order_no", unique=true, length=12)
+
+    @Column(name = "`order_no`", length = 12)
     public String getOrderNo() {
-    return this.orderNo;
+        return this.orderNo;
     }
 
     public void setOrderNo(String orderNo) {
-    this.orderNo = orderNo;
+        this.orderNo = orderNo;
     }
-    
-    @Column(name="out_product_no", length=63)
+
+    @Column(name = "`out_product_no`", length = 63)
     public String getOutProductNo() {
-    return this.outProductNo;
+        return this.outProductNo;
     }
 
     public void setOutProductNo(String outProductNo) {
-    this.outProductNo = outProductNo;
+        this.outProductNo = outProductNo;
     }
-    
-    @Column(name="from_product_no", length=12)
+
+    @Column(name = "`from_product_no`", length = 12)
     public String getFromProductNo() {
-    return this.fromProductNo;
+        return this.fromProductNo;
     }
 
     public void setFromProductNo(String fromProductNo) {
-    this.fromProductNo = fromProductNo;
+        this.fromProductNo = fromProductNo;
     }
-    
-    @Column(name="prime_name")
+
+    @Column(name = "`prime_name`")
     public String getPrimeName() {
-    return this.primeName;
+        return this.primeName;
     }
 
     public void setPrimeName(String primeName) {
-    this.primeName = primeName;
+        this.primeName = primeName;
     }
-    
-    @Column(name="gene_order")
+
+    @Column(name = "`gene_order`")
     public String getGeneOrder() {
-    return this.geneOrder;
+        return this.geneOrder;
     }
 
     public void setGeneOrder(String geneOrder) {
-    this.geneOrder = geneOrder;
+        this.geneOrder = geneOrder;
     }
-    
-    @Column(name="purify_type", length=7)
+
+    @Column(name = "`purify_type`", length = 7)
     public String getPurifyType() {
-    return this.purifyType;
+        return this.purifyType;
     }
 
     public void setPurifyType(String purifyType) {
-    this.purifyType = purifyType;
+        this.purifyType = purifyType;
     }
-    
-    @Column(name="modi_five_type", length=63)
+
+    @Column(name = "`modi_five_type`", length = 63)
     public String getModiFiveType() {
-    return this.modiFiveType;
+        return this.modiFiveType;
     }
 
     public void setModiFiveType(String modiFiveType) {
-    this.modiFiveType = modiFiveType;
+        this.modiFiveType = modiFiveType;
     }
-    
-    @Column(name="modi_three_type", length=63)
+
+    @Column(name = "`modi_three_type`", length = 63)
     public String getModiThreeType() {
-    return this.modiThreeType;
+        return this.modiThreeType;
     }
 
     public void setModiThreeType(String modiThreeType) {
-    this.modiThreeType = modiThreeType;
+        this.modiThreeType = modiThreeType;
     }
-    
-    @Column(name="modi_five_val", length=63)
+
+    @Column(name = "`modi_five_val`", length = 63)
     public String getModiFiveVal() {
-    return this.modiFiveVal;
+        return this.modiFiveVal;
     }
 
     public void setModiFiveVal(String modiFiveVal) {
-    this.modiFiveVal = modiFiveVal;
+        this.modiFiveVal = modiFiveVal;
     }
-    
-    @Column(name="modi_mid_type", length=63)
+
+    @Column(name = "`modi_mid_type`", length = 63)
     public String getModiMidType() {
-    return this.modiMidType;
+        return this.modiMidType;
     }
 
     public void setModiMidType(String modiMidType) {
-    this.modiMidType = modiMidType;
+        this.modiMidType = modiMidType;
     }
-    
-    @Column(name="modi_spe_type", length=63)
+
+    @Column(name = "`modi_spe_type`", length = 63)
     public String getModiSpeType() {
-    return this.modiSpeType;
+        return this.modiSpeType;
     }
 
     public void setModiSpeType(String modiSpeType) {
-    this.modiSpeType = modiSpeType;
+        this.modiSpeType = modiSpeType;
     }
-    
-    @Column(name="modi_price", precision=10)
+
+    @Column(name = "`modi_price`", precision = 10)
     public BigDecimal getModiPrice() {
-    return this.modiPrice;
+        return this.modiPrice;
     }
 
     public void setModiPrice(BigDecimal modiPrice) {
-    this.modiPrice = modiPrice;
+        this.modiPrice = modiPrice;
     }
-    
-    @Column(name="remark")
+
+    @Column(name = "`remark`")
     public String getRemark() {
-    return this.remark;
+        return this.remark;
     }
 
     public void setRemark(String remark) {
-    this.remark = remark;
+        this.remark = remark;
     }
-    
-    @Column(name="operation_type", length=31)
+
+    @Column(name = "`operation_type`", length = 31)
     public String getOperationType() {
-    return this.operationType;
+        return this.operationType;
     }
 
     public void setOperationType(String operationType) {
-    this.operationType = operationType;
+        this.operationType = operationType;
     }
-    
-    @Column(name="board_no", length=127)
+
+    @Column(name = "`board_no`", length = 127)
     public String getBoardNo() {
-    return this.boardNo;
+        return this.boardNo;
     }
 
     public void setBoardNo(String boardNo) {
-    this.boardNo = boardNo;
+        this.boardNo = boardNo;
     }
-    
-    @Column(name="com_code", length=20)
+
+    @Column(name = "`com_code`", length = 20)
     public String getComCode() {
-    return this.comCode;
+        return this.comCode;
     }
 
     public void setComCode(String comCode) {
-    this.comCode = comCode;
+        this.comCode = comCode;
     }
-    
-    @Column(name="back_times")
+
+    @Column(name = "`back_times`")
     public Byte getBackTimes() {
-    return this.backTimes;
+        return this.backTimes;
     }
 
     public void setBackTimes(Byte backTimes) {
-    this.backTimes = backTimes;
+        this.backTimes = backTimes;
     }
-    
-    @Column(name="review_file_name", length=127)
+
+    @Column(name = "`review_file_name`", length = 127)
     public String getReviewFileName() {
-    return this.reviewFileName;
+        return this.reviewFileName;
     }
 
     public void setReviewFileName(String reviewFileName) {
-    this.reviewFileName = reviewFileName;
+        this.reviewFileName = reviewFileName;
     }
 
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 
 }
 

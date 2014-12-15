@@ -20,9 +20,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 * 
  */
 @Entity
-@Table(name="primer_product_value"
-    , uniqueConstraints = @UniqueConstraint(columnNames="primer_product_id") 
-)
+@Table(name = "primer_product_value", uniqueConstraints = @UniqueConstraint(columnNames = "primer_product_id"))
 public class PrimerProductValue  implements java.io.Serializable {
 
     /**
