@@ -65,7 +65,7 @@
         <dependency>
             <groupId>com.sinosoft.one</groupId>
             <artifactId>mvc</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.3-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.servlet</groupId>
