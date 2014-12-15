@@ -20,8 +20,8 @@
 	</context:component-scan>
 
 	<!-- Jpa Entity Manager 配置 -->
-	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"> 
-		<property name="dataSource" ref="dataSourceProxy"/>
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
 		<property name="jpaVendorAdapter" ref="hibernateJpaVendorAdapter"/>
 		<property name="packagesToScan" value="org.one.gene"/>
 		<property name="jpaProperties">
@@ -31,7 +31,7 @@
 			</props>
 		</property>
 	</bean>
-	
+
 	<bean id="hibernateJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="database">
             <value>MYSQL</value>
@@ -44,7 +44,7 @@
                          entity-manager-factory-ref="entityManagerFactory"
                          sql-queries-location="classpath:META-INF/sqlquery/*"
                          named-queries-location="classpath:META-INF/jpa-named-queries.properties" />
-   
+
 	<!-- Jpa 事务配置 -->
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory"/>
@@ -54,7 +54,7 @@
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
 
 	<!-- JSR303 Validator定义 -->
-    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+    <!--<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>-->
 
 
     <context:property-placeholder ignore-unresolvable="true" location="classpath*:/application.properties"/>
@@ -74,9 +74,7 @@
         <property name="defaultAutoCommit" value="false"/>
     </bean>
 
-    <bean id="dataSourceProxy" class="com.sinosoft.one.log4jdbc.Log4jdbcProxyDataSource">
-        <constructor-arg ref="dataSource" />
-    </bean>
+
 
     <!-- 数据源配置,使用应用服务器的数据库连接池 -->
     <!--<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/ExampleDB" />-->
