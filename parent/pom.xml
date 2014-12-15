@@ -82,37 +82,6 @@
     <!-- 预定义依赖项的version,scope与exclusions,子项目中只需定义groupId 与  artifactId 即可 -->
     <dependencyManagement>
         <dependencies>
-            <!-- SPRINGSIDE MODULES begin -->
-            <dependency>
-                <groupId>org.springside</groupId>
-                <artifactId>springside-utils</artifactId>
-                <version>${springside.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springside</groupId>
-                <artifactId>springside-core</artifactId>
-                <version>${springside.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springside</groupId>
-                <artifactId>springside-extension</artifactId>
-                <version>${springside.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springside</groupId>
-                <artifactId>springside-metrics</artifactId>
-                <version>${springside.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springside</groupId>
-                <artifactId>springside-redis</artifactId>
-                <version>${springside.version}</version>
-            </dependency>
-            <!-- SPRINGSIDE MODULES end -->
-
             <!-- spring-->
             <!-- 纯粹为了exclude commons-loging -->
             <dependency>
@@ -681,21 +650,6 @@
                 </exclusions>
             </dependency>
 
-            <!-- springside -->
-            <dependency>
-                <groupId>org.springside</groupId>
-                <artifactId>springside-core</artifactId>
-                <version>${springside.version}</version>
-                <classifier>tests</classifier>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springside</groupId>
-                <artifactId>springside-extension</artifactId>
-                <version>${springside.version}</version>
-                <classifier>tests</classifier>
-                <scope>test</scope>
-            </dependency>
 
             <!-- spring -->
             <dependency>
