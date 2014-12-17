@@ -7,6 +7,6 @@ import org.one.gene.domain.entity.Customer;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomerRepository extends PagingAndSortingRepository<Customer, Integer> {
+public interface CustomerRepository extends PagingAndSortingRepository<Customer, Long> {
 }
 

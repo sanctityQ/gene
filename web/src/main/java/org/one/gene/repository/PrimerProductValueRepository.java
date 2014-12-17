@@ -7,6 +7,6 @@ import org.one.gene.domain.entity.PrimerProductValue;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PrimerProductValueRepository extends PagingAndSortingRepository<PrimerProductValue, Integer> {
+public interface PrimerProductValueRepository extends PagingAndSortingRepository<PrimerProductValue, Long> {
 }
 

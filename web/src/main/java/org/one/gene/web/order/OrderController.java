@@ -7,6 +7,7 @@ import com.sinosoft.one.mvc.web.annotation.rest.Post;
 import com.sinosoft.one.mvc.web.instruction.reply.Reply;
 import com.sinosoft.one.mvc.web.instruction.reply.Replys;
 import com.sinosoft.one.mvc.web.instruction.reply.transport.Text;
+import org.one.gene.domain.entity.Order;
 import org.one.gene.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,8 +27,8 @@ public class OrderController {
     }
 
     public Reply test(){
-        orderRepository.findOne(1);
-        return Replys.with("111").as(Text.class);
+        Order order = orderRepository.findOne(1l);
+        return Replys.with(order.toString()).as(Text.class);
     }
 
 }

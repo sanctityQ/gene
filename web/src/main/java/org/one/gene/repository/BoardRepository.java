@@ -7,6 +7,6 @@ import org.one.gene.domain.entity.Board;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BoardRepository extends PagingAndSortingRepository<Board, Integer> {
+public interface BoardRepository extends PagingAndSortingRepository<Board, Long> {
 }
 
