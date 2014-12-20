@@ -3,18 +3,12 @@ package org.one.gene.domain.entity;
 
 
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
+import java.util.List;
+import javax.persistence.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
-
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -68,6 +62,8 @@ public class Order extends IdEntity implements java.io.Serializable {
      * 是否有效,0-不是，1-是.
      */
     private boolean validate;
+
+    List<PrimerProduct> primerProducts = Lists.newArrayList();
 
     public Order() {
     }
@@ -181,6 +177,19 @@ public class Order extends IdEntity implements java.io.Serializable {
 
     public void setValidate(boolean validate) {
         this.validate = validate;
+    }
+
+    /**
+     * 获取引物生产数据
+     * @return
+     */
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
+    public List<PrimerProduct> getPrimerProducts() {
+        return primerProducts;
+    }
+
+    public void setPrimerProducts(List<PrimerProduct> primerProducts) {
+        this.primerProducts = primerProducts;
     }
 
     @Override

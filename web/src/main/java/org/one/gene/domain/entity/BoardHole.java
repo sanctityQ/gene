@@ -27,7 +27,9 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
     /**
     * 生产数据ID.
     */
-    private Long productId;
+    //private Long productId;
+    private PrimerProduct primerProduct;
+
     /**
     * 创建时间.
     */
@@ -64,13 +66,23 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
     this.holeNo = holeNo;
     }
     
-    @Column(name="`product_id`")
-    public Long getProductId() {
-    return this.productId;
+//    @Column(name="`product_id`")
+//    public Long getProductId() {
+//    return this.productId;
+//    }
+//
+//    public void setProductId(Long productId) {
+//    this.productId = productId;
+//    }
+
+    @OneToOne
+    @JoinColumn(name = "`product_id`", nullable = false)
+    public PrimerProduct getPrimerProduct() {
+        return primerProduct;
     }
 
-    public void setProductId(Long productId) {
-    this.productId = productId;
+    public void setPrimerProduct(PrimerProduct primerProduct) {
+        this.primerProduct = primerProduct;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
