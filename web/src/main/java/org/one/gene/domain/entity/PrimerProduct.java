@@ -63,10 +63,6 @@ public class PrimerProduct implements java.io.Serializable {
      */
     private String modiThreeType;
     /**
-     * 5修饰.
-     */
-    private String modiFiveVal;
-    /**
      * 中间修饰.
      */
     private String modiMidType;
@@ -78,6 +74,19 @@ public class PrimerProduct implements java.io.Serializable {
      * 修饰价格.
      */
     private BigDecimal modiPrice;
+
+    /**
+     * 碱基单价.
+     */
+    private BigDecimal baseVal;
+    /**
+     * 纯化价格.
+     */
+    private BigDecimal purifyVal;
+    /**
+     * 总价格:修饰单价+碱基单价*碱基数+纯化价格.
+     */
+    private BigDecimal totalVal;
     /**
      * 描述.
      */
@@ -211,13 +220,13 @@ public class PrimerProduct implements java.io.Serializable {
         this.modiThreeType = modiThreeType;
     }
 
-    @Column(name = "`modi_five_val`", length = 63)
-    public String getModiFiveVal() {
-        return this.modiFiveVal;
+    @Column(name = "`base_val`", precision = 10)
+    public BigDecimal getBaseVal() {
+        return this.baseVal;
     }
 
-    public void setModiFiveVal(String modiFiveVal) {
-        this.modiFiveVal = modiFiveVal;
+    public void setBaseVal(BigDecimal baseVal) {
+        this.baseVal = baseVal;
     }
 
     @Column(name = "`modi_mid_type`", length = 63)
@@ -241,6 +250,24 @@ public class PrimerProduct implements java.io.Serializable {
     @Column(name = "`modi_price`", precision = 10)
     public BigDecimal getModiPrice() {
         return this.modiPrice;
+    }
+
+    @Column(name="`purify_val`", precision=10)
+    public BigDecimal getPurifyVal() {
+        return this.purifyVal;
+    }
+
+    public void setPurifyVal(BigDecimal purifyVal) {
+        this.purifyVal = purifyVal;
+    }
+
+    @Column(name="`total_val`", precision=10)
+    public BigDecimal getTotalVal() {
+        return this.totalVal;
+    }
+
+    public void setTotalVal(BigDecimal totalVal) {
+        this.totalVal = totalVal;
     }
 
     public void setModiPrice(BigDecimal modiPrice) {

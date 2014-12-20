@@ -3,12 +3,10 @@ package org.one.gene.domain.entity;
 
 
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import java.util.List;
+import javax.persistence.*;
+
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -38,6 +36,8 @@ public class Board extends IdEntity implements java.io.Serializable {
     * 创建user.
     */
     private Integer createUser;
+
+    private List<BoardHole> boardHoles = Lists.newArrayList();
 
     public Board() {
     }
@@ -92,6 +92,15 @@ public class Board extends IdEntity implements java.io.Serializable {
 
     public void setCreateUser(Integer createUser) {
     this.createUser = createUser;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "board")
+    public List<BoardHole> getBoardHoles() {
+        return this.boardHoles;
+    }
+
+    public void setBoardHoles(List<BoardHole> boardHoles) {
+        this.boardHoles = boardHoles;
     }
 
 	@Override

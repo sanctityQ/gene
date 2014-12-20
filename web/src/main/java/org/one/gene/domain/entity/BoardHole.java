@@ -3,15 +3,7 @@ package org.one.gene.domain.entity;
 
 
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -22,10 +14,12 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @Table(name = "`board_hole`", uniqueConstraints = @UniqueConstraint(columnNames = {"`board_no`", "`hole_no`"}))
 public class BoardHole extends IdEntity implements java.io.Serializable {
 
+
+    private Board board;
     /**
     * 板号.
     */
-    private String boardNo;
+    //private String boardNo;
     /**
     * 孔号.
     */
@@ -41,25 +35,25 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
     /**
     * 创建user.
     */
-    private Integer createUser;
+    private Long createUser;
 
     public BoardHole() {
     }
 
 	
-    public BoardHole(Date createTime, Integer createUser) {
+    public BoardHole(Date createTime, Long createUser) {
         this.createTime = createTime;
         this.createUser = createUser;
     }
 
-    @Column(name="`board_no`", length=127)
-    public String getBoardNo() {
-    return this.boardNo;
-    }
-
-    public void setBoardNo(String boardNo) {
-    this.boardNo = boardNo;
-    }
+//    @Column(name="`board_no`", length=127)
+//    public String getBoardNo() {
+//    return this.boardNo;
+//    }
+//
+//    public void setBoardNo(String boardNo) {
+//    this.boardNo = boardNo;
+//    }
     
     @Column(name="`hole_no`", length=2)
     public String getHoleNo() {
@@ -90,14 +84,23 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
     }
     
     @Column(name="`create_user`")
-    public Integer getCreateUser() {
+    public Long getCreateUser() {
     return this.createUser;
     }
 
-    public void setCreateUser(Integer createUser) {
+    public void setCreateUser(Long createUser) {
     this.createUser = createUser;
     }
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "`board_no`", nullable = false)
+    public Board getBoard() {
+        return this.board;
+    }
+
+    public void setBoard(Board board){
+        this.board = board;
+    }
 
 	@Override
 	public String toString() {
