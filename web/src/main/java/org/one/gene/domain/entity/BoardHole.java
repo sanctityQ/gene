@@ -76,7 +76,7 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
 //    }
 
     @OneToOne
-    @JoinColumn(name = "`product_id`", nullable = false)
+    @JoinColumn(name = "`product_id`", nullable = false, updatable=false, insertable = false)
     public PrimerProduct getPrimerProduct() {
         return primerProduct;
     }
