@@ -25,7 +25,7 @@
 
         <h1>
                                 
-            <small>--菜单test
+            <small>--菜单test2222
                 <s:iterator value="#request.test2" >
                     <rc:rcDate format="yyyy/MM/dd hh:mm:ss" />
                 </s:iterator>
