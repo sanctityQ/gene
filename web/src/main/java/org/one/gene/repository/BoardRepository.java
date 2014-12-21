@@ -8,5 +8,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BoardRepository extends PagingAndSortingRepository<Board, Long> {
+   
+	Board findByBoardNo(String boardNo);
+    
+	
 }
 

@@ -9,6 +9,7 @@ import javax.persistence.*;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import com.google.common.collect.Lists;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -114,6 +115,13 @@ public class PrimerProduct implements java.io.Serializable {
 
     private List<PrimerProductOperation> primerProductOperations = Lists.newArrayList();
 
+    private String operationTypeDesc;//操作类型描述
+	private BigDecimal odTotal;//OD总量
+	private BigDecimal odTB;//OD/TB
+    private BigDecimal nmolTotal;//NUML总量
+    private BigDecimal nmolTB;//NUML/TB
+    private BigDecimal tbn;//碱基数
+    
     public PrimerProduct() {
     }
 
@@ -349,6 +357,67 @@ public class PrimerProduct implements java.io.Serializable {
         this.primerProductOperations = primerProductOperations;
     }
 
+	@Transient
+	public String getOperationTypeDesc() {
+		return operationTypeDesc;
+	}
+
+
+	public void setOperationTypeDesc(String operationTypeDesc) {
+		this.operationTypeDesc = operationTypeDesc;
+	}
+
+	@Transient
+	public BigDecimal getOdTotal() {
+		return odTotal;
+	}
+
+
+	public void setOdTotal(BigDecimal odTotal) {
+		this.odTotal = odTotal;
+	}
+
+	@Transient
+	public BigDecimal getOdTB() {
+		return odTB;
+	}
+
+
+	public void setOdTB(BigDecimal odTB) {
+		this.odTB = odTB;
+	}
+
+	@Transient
+	public BigDecimal getNmolTotal() {
+		return nmolTotal;
+	}
+
+
+	public void setNmolTotal(BigDecimal nmolTotal) {
+		this.nmolTotal = nmolTotal;
+	}
+
+	@Transient
+	public BigDecimal getNmolTB() {
+		return nmolTB;
+	}
+
+
+	public void setNmolTB(BigDecimal nmolTB) {
+		this.nmolTB = nmolTB;
+	}
+
+	@Transient
+	public BigDecimal getTbn() {
+		return tbn;
+	}
+
+
+	public void setTbn(BigDecimal tbn) {
+		this.tbn = tbn;
+	}
+
+	
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
