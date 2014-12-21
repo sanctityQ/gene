@@ -1,0 +1,105 @@
+﻿<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>订单修改</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <link href="resources/css/jquery-ui-themes.css" type="text/css" rel="stylesheet"/>
+    <link href="resources/css/axure_rp_page.css" type="text/css" rel="stylesheet"/>
+    <link href="../data/styles.css" type="text/css" rel="stylesheet"/>
+    <link href="../files/upLoadModify/styles.css" type="text/css" rel="stylesheet"/>
+    <script src="../resources/scripts/jquery-1.7.1.min.js"></script>
+    <script src="../resources/scripts/jquery-ui-1.8.10.custom.min.js"></script>
+    <script src="../resources/scripts/axure/axQuery.js"></script>
+    <script src="../resources/scripts/axure/globals.js"></script>
+    <script src="../resources/scripts/axutils.js"></script>
+    <script src="../resources/scripts/axure/annotation.js"></script>
+    <script src="../resources/scripts/axure/axQuery.std.js"></script>
+    <script src="../resources/scripts/axure/doc.js"></script>
+    <script src="../data/document.js"></script>
+    <script src="../resources/scripts/messagecenter.js"></script>
+    <script src="../resources/scripts/axure/events.js"></script>
+    <script src="../resources/scripts/axure/action.js"></script>
+    <script src="../resources/scripts/axure/expr.js"></script>
+    <script src="../resources/scripts/axure/geometry.js"></script>
+    <script src="../resources/scripts/axure/flyout.js"></script>
+    <script src="../resources/scripts/axure/ie.js"></script>
+    <script src="../resources/scripts/axure/model.js"></script>
+    <script src="../resources/scripts/axure/repeater.js"></script>
+    <script src="../resources/scripts/axure/sto.js"></script>
+    <script src="../resources/scripts/axure/utils.temp.js"></script>
+    <script src="../resources/scripts/axure/variables.js"></script>
+    <script src="../resources/scripts/axure/drag.js"></script>
+    <script src="../resources/scripts/axure/move.js"></script>
+    <script src="../resources/scripts/axure/visibility.js"></script>
+    <script src="../resources/scripts/axure/style.js"></script>
+    <script src="../resources/scripts/axure/adaptive.js"></script>
+    <script src="../resources/scripts/axure/tree.js"></script>
+    <script src="../resources/scripts/axure/init.temp.js"></script>
+    <script src="../files/upLoadModify/data.js"></script>
+    <script src="../resources/scripts/axure/legacy.js"></script>
+    <script src="../resources/scripts/axure/viewer.js"></script>
+
+  </head>
+  <body>
+  <form id="inputForm" modelAttribute="user" action="${ctx}/order/save" method="post">
+  <table border="1">
+  	<tr>
+  		<td>客户编号:<input type="text" id="code" name="customer.code" size="50" value="${customer.code}" /></td>
+  		<td>客户姓名：<input type="text" id="name" name="customer.name" size="50" value="${customer.name}" /></td>
+  	</tr>
+  	<tr>
+  		<td>负责人姓名：<input type="text" id="leaderName" name="customer.leaderName" size="50" value="${customer.leaderName}" /></td>
+  		<td>客户单位：<input type="text" id="comName" name="customer.comName" size="50" value="${customer.comName}" /></td>
+  	</tr>
+  	<tr>
+  		<td>发票抬头：<input type="text" id="invoiceTitle" name="customer.invoiceTitle" size="50" value="${customer.invoiceTitle}" /></td>
+  		<td>结账方式：<input type="text" id="payWays" name="customer.payWays" size="50" value="${customer.payWays}" /></td>
+  	</tr>
+  	<tr>
+  		<td>客户地址：<input type="text" id="address" name="customer.address" size="50" value="${customer.address}" /></td>
+  		<td></td>
+  	</tr>
+  	<tr>
+  		<td>联系电话：<input type="text" id="phoneNo" name="customer.phoneNo" size="50" value="${customer.phoneNo}" /></td>
+  		<td>Email：<input type="text" id="email" name="customer.email" size="50" value="${customer.email}" /></td>
+  	</tr>
+  	<tr>
+  		<td> 办事处：${customer.address}</td>
+  		<td></td>
+  	</tr>
+  </table>
+
+	<c:forEach  var="primerProduct" items="${primerProducts}" varStatus="status">     
+	      <p>
+	      	<span>&#149; 
+	      	<c:if test="${not empty primerProduct.productNo}">
+	      		<input type="text"  name="PrimerProducts[${status.index}].productNo" size="50" value="${primerProduct.productNo}" />
+	      	</c:if> 
+	      	<c:if test="${empty primerProduct.productNo}">
+	      		<input type="text"  name="PrimerProducts[${status.index}].outProductNo" size="50" value="${primerProduct.outProductNo}" />
+	      	</c:if>
+<input type="text"  name="primerProductList.primerProducts[${status.index}].primeName" size="50" value="${primerProduct.primeName}" />
+<input type="text"  name="primerProductList.primerProducts[${status.index}].geneOrder" size="50" value="${primerProduct.geneOrder}" />
+<input type="text"  name="primerProductList.primerProducts[${status.index}].purifyType" size="50" value="${primerProduct.purifyType}" />
+<input type="text"  name="primerProductList.primerProducts[${status.index}].modiFiveType" size="50" value="${primerProduct.modiFiveType}" />
+<input type="text"  name="primerProductList.primerProducts[${status.index}].modiThreeType" size="50" value="${primerProduct.modiThreeType}" />
+<input type="text"  name="primerProductList.primerProducts[${status.index}].modiMidType" size="50" value="${primerProduct.modiMidType}" />
+<input type="text"  name="primerProductList.primerProducts[${status.index}].modiSpeType" size="50" value="${primerProduct.modiSpeType}" />
+<input type="text"  name="primerProductList.primerProducts[${status.index}].modiPrice" size="50" value="${primerProduct.modiPrice}" />
+<input type="text"  name="primerProductList.primerProducts[${status.index}].baseVal" size="50" value="${primerProduct.baseVal}" />
+<input type="text"  name="primerProductList.primerProducts[${status.index}].purifyVal" size="50" value="${primerProduct.purifyVal}" />
+<input type="text"  name="primerProductList.primerProducts[${status.index}].totalVal" size="50" value="${primerProduct.totalVal}" />
+<input type="text"  name="primerProductList.primerProducts[${status.index}].remark" size="50" value="${primerProduct.remark}" />
+	      	</span>
+	      </p>   
+	</c:forEach>
+	
+	<input type="submit" style="cursor: pointer;"/>
+</form>
+  </body>
+</html>

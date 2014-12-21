@@ -8,5 +8,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CustomerRepository extends PagingAndSortingRepository<Customer, Long> {
+	
+	public Customer findByCode(String customerCode);
+	
+	public Customer findByNameLike(String customerName);
 }
 
