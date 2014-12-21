@@ -4,6 +4,8 @@ package org.one.gene.domain.entity;
 
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -16,24 +18,22 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
 
 
     private Board board;
-    /**
-    * 板号.
-    */
-    //private String boardNo;
+
     /**
     * 孔号.
     */
     private String holeNo;
+
     /**
     * 生产数据ID.
     */
-    //private Long productId;
     private PrimerProduct primerProduct;
 
     /**
     * 创建时间.
     */
     private Date createTime;
+
     /**
     * 创建user.
     */
@@ -48,14 +48,6 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
         this.createUser = createUser;
     }
 
-//    @Column(name="`board_no`", length=127)
-//    public String getBoardNo() {
-//    return this.boardNo;
-//    }
-//
-//    public void setBoardNo(String boardNo) {
-//    this.boardNo = boardNo;
-//    }
     
     @Column(name="`hole_no`", length=2)
     public String getHoleNo() {
@@ -65,18 +57,11 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
     public void setHoleNo(String holeNo) {
     this.holeNo = holeNo;
     }
-    
-//    @Column(name="`product_id`")
-//    public Long getProductId() {
-//    return this.productId;
-//    }
-//
-//    public void setProductId(Long productId) {
-//    this.productId = productId;
-//    }
 
+
+    @NotNull
     @OneToOne
-    @JoinColumn(name = "`product_id`", nullable = false, updatable=false, insertable = false)
+    @JoinColumn(name = "`product_id`", nullable = false)
     public PrimerProduct getPrimerProduct() {
         return primerProduct;
     }
