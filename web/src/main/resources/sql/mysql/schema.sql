@@ -70,21 +70,24 @@ CREATE TABLE `order` (
   KEY `idx_create_time` (`create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单表';
 
+
 CREATE TABLE `primer_product` (
   `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
   `product_no`          CHAR(12) NOT NULL COMMENT '生产编号',
   `order_no`            CHAR(12)  NOT NULL COMMENT '订单号',
-  `out_product_no`      VARCHAR(63) NOT NULL COMMENT '外部生产编号',
-  `from_product_no`   CHAR(12) NOT NULL COMMENT '来源编号ID',
+  `out_product_no`      VARCHAR(63) COMMENT '外部生产编号',
+  `from_product_no`   CHAR(12) COMMENT '来源编号ID',
   `prime_name`          VARCHAR(255) NOT NULL COMMENT '引物名称',
   `gene_order`          VARCHAR(255) NOT NULL COMMENT '引物序列',
   `purify_type`      VARCHAR(7) NOT NULL COMMENT '纯化方式',
-  `modi_five_type`      VARCHAR(63) COMMENT '5修饰类型',
+  `modi_five_type`      VARCHAR(63) COMMENT '5修饰',
   `modi_three_type`     VARCHAR(63) COMMENT '3修饰',
-  `modi_five_val`      VARCHAR(63) COMMENT '5修饰',
   `modi_mid_type`    VARCHAR(63) COMMENT '中间修饰',
   `modi_spe_type`    VARCHAR(63) COMMENT '特殊单体',
   `modi_price`   DECIMAL(10,2) COMMENT '修饰价格',
+  `base_val`     DECIMAL(10,2) COMMENT '碱基单价',
+  `purify_val`     DECIMAL(10,2) COMMENT '纯化价格',
+  `total_val`    DECIMAL(10,2) COMMENT '总价格:修饰单价+碱基单价*碱基数+纯化价格',
   `remark`              VARCHAR(255) COMMENT '描述',
   `operation_type`     VARCHAR(31) NOT NULL COMMENT '状态',
   `board_no`            VARCHAR(127) COMMENT '板号',
@@ -98,7 +101,7 @@ CREATE TABLE `primer_product` (
 CREATE TABLE `board` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
   `board_no`            VARCHAR(127) COMMENT '板号',
-  `board_type`          TINYINT(1) COMMENT '板类型:0-横排 1-竖排',
+  `board_type`        TINYINT(1) NOT NULL DEFAULT 1 COMMENT '板类型:0-横排 1-竖排',
   `type`              VARCHAR(31) COMMENT '类型',
   `create_time`       DATETIME NOT NULL COMMENT '创建时间',
   `create_user`       INT(11) NOT NULL COMMENT '创建user',

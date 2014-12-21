@@ -3,16 +3,12 @@ package org.one.gene.domain.entity;
 
 
 import java.math.BigDecimal;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
+import java.util.List;
+import javax.persistence.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -33,7 +29,9 @@ public class PrimerProduct implements java.io.Serializable {
     /**
      * 订单号.
      */
-    private String orderNo;
+   // private String orderNo;
+
+    private Order order;
     /**
      * 外部生产编号.
      */
@@ -63,10 +61,6 @@ public class PrimerProduct implements java.io.Serializable {
      */
     private String modiThreeType;
     /**
-     * 5修饰.
-     */
-    private String modiFiveVal;
-    /**
      * 中间修饰.
      */
     private String modiMidType;
@@ -78,6 +72,19 @@ public class PrimerProduct implements java.io.Serializable {
      * 修饰价格.
      */
     private BigDecimal modiPrice;
+
+    /**
+     * 碱基单价.
+     */
+    private BigDecimal baseVal;
+    /**
+     * 纯化价格.
+     */
+    private BigDecimal purifyVal;
+    /**
+     * 总价格:修饰单价+碱基单价*碱基数+纯化价格.
+     */
+    private BigDecimal totalVal;
     /**
      * 描述.
      */
@@ -103,13 +110,17 @@ public class PrimerProduct implements java.io.Serializable {
      */
     private String reviewFileName;
 
+    private List<PrimerProductValue> primerProductValues = Lists.newArrayList();
+
+    private List<PrimerProductOperation> primerProductOperations = Lists.newArrayList();
+
     public PrimerProduct() {
     }
 
 
-    public PrimerProduct(String productNo, String orderNo, String outProductNo, String fromProductNo, String primeName, String geneOrder, String purifyType, String operationType, String comCode) {
+    public PrimerProduct(String productNo, Order order, String outProductNo, String fromProductNo, String primeName, String geneOrder, String purifyType, String operationType, String comCode) {
         this.productNo = productNo;
-        this.orderNo = orderNo;
+        this.order = order;
         this.outProductNo = outProductNo;
         this.fromProductNo = fromProductNo;
         this.primeName = primeName;
@@ -139,13 +150,23 @@ public class PrimerProduct implements java.io.Serializable {
         this.productNo = productNo;
     }
 
-    @Column(name = "`order_no`", length = 12)
-    public String getOrderNo() {
-        return this.orderNo;
+//    @Column(name = "`order_no`", length = 12)
+//    public String getOrderNo() {
+//        return this.orderNo;
+//    }
+//
+//    public void setOrderNo(String orderNo) {
+//        this.orderNo = orderNo;
+//    }
+
+    @ManyToOne
+    @JoinColumn(name = "`order_no`", nullable = false)
+    public Order getOrder() {
+        return order;
     }
 
-    public void setOrderNo(String orderNo) {
-        this.orderNo = orderNo;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     @Column(name = "`out_product_no`", length = 63)
@@ -211,13 +232,13 @@ public class PrimerProduct implements java.io.Serializable {
         this.modiThreeType = modiThreeType;
     }
 
-    @Column(name = "`modi_five_val`", length = 63)
-    public String getModiFiveVal() {
-        return this.modiFiveVal;
+    @Column(name = "`base_val`", precision = 10)
+    public BigDecimal getBaseVal() {
+        return this.baseVal;
     }
 
-    public void setModiFiveVal(String modiFiveVal) {
-        this.modiFiveVal = modiFiveVal;
+    public void setBaseVal(BigDecimal baseVal) {
+        this.baseVal = baseVal;
     }
 
     @Column(name = "`modi_mid_type`", length = 63)
@@ -241,6 +262,24 @@ public class PrimerProduct implements java.io.Serializable {
     @Column(name = "`modi_price`", precision = 10)
     public BigDecimal getModiPrice() {
         return this.modiPrice;
+    }
+
+    @Column(name="`purify_val`", precision=10)
+    public BigDecimal getPurifyVal() {
+        return this.purifyVal;
+    }
+
+    public void setPurifyVal(BigDecimal purifyVal) {
+        this.purifyVal = purifyVal;
+    }
+
+    @Column(name="`total_val`", precision=10)
+    public BigDecimal getTotalVal() {
+        return this.totalVal;
+    }
+
+    public void setTotalVal(BigDecimal totalVal) {
+        this.totalVal = totalVal;
     }
 
     public void setModiPrice(BigDecimal modiPrice) {
@@ -301,12 +340,28 @@ public class PrimerProduct implements java.io.Serializable {
         this.reviewFileName = reviewFileName;
     }
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "primerProduct", fetch = FetchType.LAZY)
+    public List<PrimerProductValue> getPrimerProductValues() {
+        return primerProductValues;
+    }
+
+    public void setPrimerProductValues(List<PrimerProductValue> primerProductValues) {
+        this.primerProductValues = primerProductValues;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "primerProduct", fetch = FetchType.LAZY)
+    public List<PrimerProductOperation> getPrimerProductOperations() {
+        return primerProductOperations;
+    }
+
+    public void setPrimerProductOperations(List<PrimerProductOperation> primerProductOperations) {
+        this.primerProductOperations = primerProductOperations;
+    }
 
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-
 }
 
 
