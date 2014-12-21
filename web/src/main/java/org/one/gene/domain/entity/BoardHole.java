@@ -105,7 +105,7 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "`board_no`", nullable = false)
+    @JoinColumn(name = "`board_no`", referencedColumnName = "`board_no`", nullable = false)
     public Board getBoard() {
         return this.board;
     }

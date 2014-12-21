@@ -95,7 +95,8 @@ CREATE TABLE `primer_product` (
   `back_times`          TINYINT(2) DEFAULT '0' COMMENT '循环重回次数',
   `review_file_name`    VARCHAR(127) COMMENT '检测',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_product_no` (`product_no`)
+  UNIQUE KEY `uk_product_no` (`product_no`),
+  KEY `idx_order_no` (`order_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='引物生产数据表';
 
 CREATE TABLE `board` (

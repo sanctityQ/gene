@@ -150,17 +150,8 @@ public class PrimerProduct implements java.io.Serializable {
         this.productNo = productNo;
     }
 
-//    @Column(name = "`order_no`", length = 12)
-//    public String getOrderNo() {
-//        return this.orderNo;
-//    }
-//
-//    public void setOrderNo(String orderNo) {
-//        this.orderNo = orderNo;
-//    }
-
     @ManyToOne
-    @JoinColumn(name = "`order_no`", nullable = false)
+    @JoinColumn(name = "`order_no`", referencedColumnName="`order_no`", nullable = false)
     public Order getOrder() {
         return order;
     }
