@@ -35,14 +35,14 @@
 		<%@ include file="/WEB-INF/layouts/header.jsp"%>
 		<div id="content" class="span12">
 		<form id="inputForm"
-		  action="${ctx}/synthesis/makeTable/" method="post" enctype="multipart/form-data"
-		  class="form-horizontal">
+		  action="${ctx}/synthesis/makeTable/" method="post" class="form-horizontal">
             <table border="1" cellpadding="3" cellspacing="1" width="90%" align="left" style="background-color: #b9d8f3;"
 			    id="contentTable" class="table table-striped table-bordered table-condensed">
 				<thead>
 					<tr style="text-align: center; COLOR: #0076C8; BACKGROUND-COLOR: #F4FAFF; font-weight: bold">
 						<td><font size="4"></font></td>
 						<td><font size="4"></font></td>
+						<td><font size="4">生产编号id</font></td>
 						<td><font size="4">生产编号</font></td>
 						<td><font size="4">板号</font></td>
 						<td><font size="4">序列</font></td>
@@ -59,23 +59,33 @@
 				</thead>
 				<% int i=1;	%>
 				<tbody>
-					<c:forEach items="${primerProducts}" var="primerProduct">
+					<c:forEach items="${primerProducts}" var="primerProduct"  varStatus="status">
 						<tr bgcolor='#F4FAFF'>
-						    <td nowrap="nowrap" align="left"><%=i++ %><font size="2"></td>
-						    <td><input type="checkbox" id="checkFlag" name="checkFlag" value="" onclick="changeFlagValue()"/></td>
-						    <input type="hidden" id="productNoValue" name="productNoValue" value="0"/>
-						    <td align="left"><font size="2"><input type="text" id="productNo" name="productNo" value="${primerProduct.productNo}" style='readonly' readonly/></font></td>
-							<td align="left"><font size="2">${primerProduct.boardNo}</font></td>
-							<td align="left"><font size="2">${primerProduct.geneOrder}</font></td>
-							<td align="left"><font size="2">${primerProduct.odTotal}</font></td>
-							<td align="left"><font size="2">${primerProduct.odTB}</font></td>
-							<td align="left"><font size="2">${primerProduct.nmolTotal}</font></td>
-							<td align="left"><font size="2">${primerProduct.nmolTB}</font></td>
-							<td align="left"><font size="2">${primerProduct.odTotal}</font></td>
-							<td align="left"><font size="2">${primerProduct.tbn}</font></td>
-							<td align="left"><font size="2">${primerProduct.purifyType}</font></td>
-							<td align="left"><font size="2">${primerProduct.operationTypeDesc}</font></td>
-							<td align="left"><font size="2">${primerProduct.backTimes}</font></td>
+<td nowrap="nowrap" align="left"><%=i++ %></td>
+<td><input type="checkbox" id="selectFlag" name="primerProductList.primerProducts[${status.index}].selectFlag" value="" onclick=""/></td>
+
+<td align="left">
+    <input type="text" size="2" name="primerProductList.primerProducts[${status.index}].id" size="50" value="${primerProduct.id}" />
+</td>
+<td align="left">
+   	<c:if test="${not empty primerProduct.productNo}">
+   		<input type="text" size="12"  name="primerProductList.primerProducts[${status.index}].productNo" size="50" value="${primerProduct.productNo}" />
+   	</c:if> 
+   	<c:if test="${empty primerProduct.productNo}">
+   		<input type="text" size="12" name="primerProductList.primerProducts[${status.index}].outProductNo" size="50" value="${primerProduct.outProductNo}" />
+   	</c:if>
+</td>
+<td align="left">${primerProduct.boardNo}</td>
+<td align="left">${primerProduct.geneOrder}</td>
+<td align="left">${primerProduct.odTotal}</td>
+<td align="left">${primerProduct.odTB}</td>
+<td align="left">${primerProduct.nmolTotal}</td>
+<td align="left">${primerProduct.nmolTB}</td>
+<td align="left">${primerProduct.odTotal}</td>
+<td align="left">${primerProduct.tbn}</td>
+<td align="left">${primerProduct.purifyType}</td>
+<td align="left">${primerProduct.operationTypeDesc}</td>
+<td align="left">${primerProduct.backTimes}</td>
 						</tr>
 					</c:forEach>
 				</tbody>
