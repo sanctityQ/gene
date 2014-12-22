@@ -1,6 +1,6 @@
 ﻿<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt"%> 
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
@@ -48,6 +48,7 @@
   <body>
   <form id="inputForm" modelAttribute="user" action="${ctx}/order/save" method="post">
   <table border="1">
+    <input type="hidden" id="customerID" name="customer.id" size="50" value="${customer.id}" />
   	<tr>
   		<td>客户编号:<input type="text" id="code" name="customer.code" size="50" value="${customer.code}" /></td>
   		<td>客户姓名：<input type="text" id="name" name="customer.name" size="50" value="${customer.name}" /></td>
@@ -78,10 +79,10 @@
 	      <p>
 	      	<span>&#149; 
 	      	<c:if test="${not empty primerProduct.productNo}">
-	      		<input type="text"  name="PrimerProducts[${status.index}].productNo" size="50" value="${primerProduct.productNo}" />
+	      		<input type="text"  name="primerProductList.primerProducts[${status.index}].productNo" size="50" value="${primerProduct.productNo}" />
 	      	</c:if> 
 	      	<c:if test="${empty primerProduct.productNo}">
-	      		<input type="text"  name="PrimerProducts[${status.index}].outProductNo" size="50" value="${primerProduct.outProductNo}" />
+	      		<input type="text"  name="primerProductList.primerProducts[${status.index}].outProductNo" size="50" value="${primerProduct.outProductNo}" />
 	      	</c:if>
 <input type="text"  name="primerProductList.primerProducts[${status.index}].primeName" size="50" value="${primerProduct.primeName}" />
 <input type="text"  name="primerProductList.primerProducts[${status.index}].geneOrder" size="50" value="${primerProduct.geneOrder}" />
@@ -98,6 +99,31 @@
 	      	</span>
 	      </p>   
 	</c:forEach>
+	
+	<table border="1">
+  	<tr>
+  		<td>订单号:<input type="text" id="orderNo" name="order.orderNo" size="50" value="${order.orderNo}" /></td>
+  		<td>客户代码：<input type="text" id="customerCode" name="order.customerCode" size="50" value="${order.customerCode}" /></td>
+  	</tr>
+  	<tr>
+  		<td>姓名：<input type="text" id="customerName" name="order.customerName" size="50" value="${order.customerName}" /></td>
+  		<td>归属机构：<input type="text" id="comCode" name="order.comCode" size="50" value="${order.comCode}" /></td>
+  	</tr>
+  	<tr>
+  		<td>状态：<input type="text" id="status" name="order.status" size="50" value="${order.status}" /></td>
+  		<td>类型：<input type="text" id="type" name="order.type" size="50" value="${order.type}" /></td>
+  	</tr>
+  	<tr>
+  		<td>文件名称：<input type="text" id="fileName" name="order.fileName" size="50" value="${order.fileName}" /></td>
+  		<td></td>
+  	</tr>
+  	<tr>
+  	<td>
+  	创建时间：<input type="text" id="validate" name="order.createTime" size="50" value=<fmt:formatDate value='${order.createTime}' pattern='yyyy-MM-dd HH:mm:ss'/> /></td>
+  		<td>是否有效：<input type="text" id="validate" name="order.validate" size="50" value="${order.validate}" /></td>
+  	</tr>
+  </table>
+	
 	
 	<input type="submit" style="cursor: pointer;"/>
 </form>

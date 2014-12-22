@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.repository.CustomerRepository;
+import org.one.gene.web.order.AtomicLongUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,8 @@ public class OrderExcelPase {
 	private CustomerRepository customerRepository;
 	@Autowired
 	private OrderCaculate orderCaculate;
+    @Autowired
+    private AtomicLongUtil atomicLongUtil;
 	
 	/**
 	 * 组织解析excel验证异常信息
@@ -84,7 +87,7 @@ public class OrderExcelPase {
 				  case 1:
 					  //如果Excel导入中有生产编号存储为外部生产编号，如果没有系统自动生成
 					  if("".equals(v)){
-						  primerProduct.setProductNo(v);
+						  primerProduct.setProductNo(atomicLongUtil.getProductSerialNo());
 					  }else{
 						  primerProduct.setOutProductNo(v);
 					  }

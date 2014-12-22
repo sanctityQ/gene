@@ -4,6 +4,7 @@ package org.one.gene.repository;
 import com.sinosoft.one.data.jade.annotation.SQL;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -28,5 +29,7 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
     
     PrimerProduct findByProductNo(String productNo);
     
+    @SQL("select * from `primer_product` order by id desc limit 1")
+    public PrimerProduct getLastProduct();
 }
 

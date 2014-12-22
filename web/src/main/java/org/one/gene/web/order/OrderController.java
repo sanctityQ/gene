@@ -2,9 +2,11 @@ package org.one.gene.web.order;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.Date;
 
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
@@ -12,7 +14,9 @@ import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.excel.OrderExcelPase;
 import org.one.gene.repository.CustomerRepository;
 import org.one.gene.repository.OrderRepository;
+import org.one.gene.repository.PrimerProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sinosoft.one.mvc.web.Invocation;
@@ -34,11 +38,21 @@ public class OrderController {
     
     @Autowired
     private CustomerRepository customerRepository;
+    
+    @Autowired
+    private AtomicLongUtil atomicLongUtil;
+    
+    @Autowired
+    private PrimerProductRepository primerProductRepository;
 
     @Post("upload")
     public String upload(@Param("customerCode") String customerCode, @Param("file") MultipartFile[] files, Invocation inv) throws Exception {
 
     	ArrayList<String> errors = new ArrayList<String>();
+    	
+    	if("".equals(customerCode)){
+    		throw new Exception("客户代码为空，请您录入客户代码！");
+    	}
     	
     	//取得当前所在年份
 		Calendar nowCalendar = Calendar.getInstance();
@@ -88,12 +102,11 @@ public class OrderController {
         	}else{
         		customer = customerRepository.findByCode(customerCode);
         	}
-        	//直接组织order订单对象。在controller中写这样代码勿喷。懒
-        	Order order = new Order();
-        	order.setOrderNo("");
-        	order.setOutOrderNo("");
+        	//此处直接组织order订单对象。在controller中写这样代码勿喷。懒
+        	Order order = this.convertOrder(customer,filename);
         	ArrayList<PrimerProduct>  primerProducts = orderExcelPase.ReadExcel(path, 1,"2-");
         	inv.addModel("customer", customer);
+        	inv.addModel("order", order);
         	inv.addModel("primerProducts", primerProducts);
         	return "upLoadModify";
         }
@@ -101,11 +114,23 @@ public class OrderController {
     }
     
     @Post("save")
-    public String save(@Param("primerProductList") PrimerProductList primerProductList, @Param("customer") Customer customer, Invocation inv) throws IllegalStateException, IOException {
+    @Transactional(readOnly=false)
+    public String save(@Param("primerProductList") PrimerProductList primerProductList, @Param("customer") Customer customer, @Param("order") Order order,Invocation inv) throws IllegalStateException, IOException {
 
-        System.out.println(customer.getCode());
+    	//存储客户信息
+    	customerRepository.save(customer);
+    	//存储订单数据
+    	//外部订单号何处收集 
+    	order.setOutOrderNo(order.getOrderNo());
+    	order.setModifyTime(new Date());
+    	orderRepository.save(order);
+    	//存储生产数据
         for (PrimerProduct primerProduct : primerProductList.getPrimerProducts()) {
-        	System.out.println(primerProduct.getGeneOrder());
+        	//后续补充，获取登录操作人员的归属机构。
+        	primerProduct.setComCode("11000000");
+        	primerProduct.setOperationType("1");
+        	primerProduct.setOrder(order);
+        	primerProductRepository.save(primerProduct);
         }
 
         return "";
@@ -114,6 +139,31 @@ public class OrderController {
     public Reply test(){
         Order order = orderRepository.findOne(1l);
         return Replys.with(order.toString()).as(Text.class);
+    }
+    
+    /**
+     * 组织订单对象
+     * @param customer
+     * @param fileName
+     * @return
+     * @throws ParseException 
+     */
+    public Order convertOrder(Customer customer,String fileName) throws ParseException{
+    	Order order = new Order();
+    	order.setOrderNo(atomicLongUtil.getOrderSerialNo());
+    	
+    	order.setCustomerCode(customer.getCode());
+    	order.setCustomerName(customer.getName());
+    	//后续补充，获取登录操作人员的归属机构。
+    	order.setComCode("11000000");
+    	order.setStatus(Byte.parseByte("1"));
+    	order.setType("00");
+    	order.setFileName(fileName);
+    	SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-DD HH:mm:dd");
+    	order.setCreateTime(sf.parse(sf.format(new Date())));
+    	order.setValidate(true);
+    	
+    	return order;
     }
 
 }
