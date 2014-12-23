@@ -121,8 +121,9 @@ public class PrimerProduct implements java.io.Serializable {
     private BigDecimal nmolTotal;//NUML总量
     private BigDecimal nmolTB;//NUML/TB
     private BigDecimal tbn;//碱基数
-    
-    public PrimerProduct() {
+    private String selectFlag;//是否被选择，用于页面选择时使用，不存库
+
+	public PrimerProduct() {
     }
 
 
@@ -416,7 +417,17 @@ public class PrimerProduct implements java.io.Serializable {
 	public void setTbn(BigDecimal tbn) {
 		this.tbn = tbn;
 	}
+	
+	@Transient
+    public String getSelectFlag() {
+		return selectFlag;
+	}
 
+
+	public void setSelectFlag(String selectFlag) {
+		this.selectFlag = selectFlag;
+	}
+	
 	
     @Override
     public String toString() {

@@ -1,11 +1,9 @@
 package org.one.gene.web.synthesis;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import com.sinosoft.one.data.jade.parsers.util.StringUtil;
+
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
 import com.sinosoft.one.mvc.web.annotation.Path;
@@ -17,10 +15,8 @@ import com.sinosoft.one.mvc.web.instruction.reply.Replys;
 import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
 
 
-import org.apache.commons.lang.time.DateUtils;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
-import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductValue;
 import org.one.gene.repository.BoardHoleRepository;
@@ -28,6 +24,7 @@ import org.one.gene.repository.BoardRepository;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.repository.PrimerProductValueRepository;
+import org.one.gene.web.order.PrimerProductList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,8 +52,7 @@ public class SynthesisController {
      * 
      * */
     public String first(){
-    	System.out.println("===========first.jsp================");
-    	Order order = orderRepository.findOne(1l);
+
     	return "first";
     }
     
@@ -67,7 +63,7 @@ public class SynthesisController {
      * */
     @Get("preQuery")
     public String preQuery(){
-    	System.out.println("============preQuery===============");
+    	
     	return "synthesisForm";
     }
     
@@ -82,13 +78,17 @@ public class SynthesisController {
 					    		 @Param("modiFlag") String modiFlag,
 					    		 @Param("purifytype") String purifytype,
 					    		 Invocation inv){
-    	String modiFlagStr = "0";
-    	if(modiFlag!=null && modiFlag.equals("")){
+    	
+    	String modiFlagStr = "";
+    	//如果选择无修饰过滤，查询条件增加：
+    	//( pp.`modi_five_type` is null and pp.`modi_three_type` is null and pp.`modi_mid_type` is null and pp.`modi_spe_type` is null)
+    	//如果选择有修饰过滤，查询条件增加：
+    	//( pp.`modi_five_type` is not null and pp.`modi_three_type` is not null and pp.`modi_mid_type` is not null and pp.`modi_spe_type` is not null)
+		if (modiFlag != null && modiFlag.equals("")) {
     		modiFlagStr = "1";
     	}
-
     	
-    	 List<PrimerProduct> primerProducts = primerProductRepository.selectPrimerProduct(customer_code, purifytype, tbn1, tbn2);
+    	 List<PrimerProduct> primerProducts = primerProductRepository.selectPrimerProduct(customer_code, modiFlagStr, tbn1, tbn2, purifytype);
     	 //查询primer_product_value
          for (PrimerProduct primerProduct : primerProducts) {
         	 List<PrimerProductValue> primerProductValues = primerProductValueRepository.selectValueByPrimerProductId(primerProduct.getId());
@@ -142,111 +142,85 @@ public class SynthesisController {
     }
     
     @Post("makeTable")
-    public String makeTable(@Param("productNoValue") String[] productNoValues,
+    public String makeTable(@Param("primerProductList") PrimerProductList primerProductList,
     		                @Param("boardNo") String boardNo,
     		                Invocation inv) {
     	
-    	System.out.println("============板号="+boardNo);
-        
-        List<PrimerProduct> primerProducts = new ArrayList();//存前台选择的生产数据信息
-        PrimerProduct primerProduct = new PrimerProduct();
-		for (String product_no : productNoValues) {
-			
-			if (!"".equals(product_no) && !"0".equals(product_no)) {
-				
-				primerProduct = new PrimerProduct();
-				primerProduct.setProductNo(product_no);
-				primerProducts.add(primerProduct);
+        List<PrimerProduct> primerProducts = primerProductList.getPrimerProducts();
+		for (int i = primerProducts.size() - 1; i >= 0; i--) {
+			//如果页面没有选择，则移除
+			if (((PrimerProduct)primerProducts.get(i)).getSelectFlag() == null) {
+				primerProducts.remove(i);
 			}
 		}
         
         //查询板号信息
 		Board board = boardRepository.findByBoardNo(boardNo);
         
-		if (board != null){
+		String reStr = "";
+		if (board != null) {
+			
+			System.out.println("============修改板号="+boardNo);
 			
 			//查询孔号信息
 			PrimerProduct primerProductData = new PrimerProduct();
-			
-			for (BoardHole boardHole : board.getBoardHoles()) {
+			List<BoardHole> boardHoles = boardHoleRepository.findByBoard(board);
+			for (BoardHole boardHole : boardHoles) {
 				//根据id去查询生产编号，后续对自动根据 public Board findByBoardNo(String boardNo); 查出：Board，BoardHole和primerProduct
 				primerProductData = new PrimerProduct();
 				primerProductData = primerProductRepository.findOne(boardHole.getId());
 				if (primerProductData!=null){
-					inv.addModel(boardHole.getHoleNo(), primerProductData.getProductNo());
+					boardHole.setPrimerProduct(primerProductData);
 				}
+			}
+			if(boardHoles!=null){
+				board.setBoardHoles(boardHoles);
 			}
 			
 			inv.addModel("board", board);
+			reStr = "makeTableOld";
+			
+		}else{
+			System.out.println("============新增板号="+boardNo);
+			
+			reStr = "makeTable";
 		}
-        inv.addModel("primerProducts", primerProducts);
+		
+        inv.addModel("primerProductPages", primerProducts);
         
-        return "makeTable";
+        return reStr;
     }
 
     
     
     @Post("submitBoard")
-    public void submitBoard(@Param("boardNo") String boardNo, 
-    		                @Param("boardType") Boolean boardType, 
-    		                @Param("mapa") Map<String, String> mapa,
-    		                Invocation inv) {
+    public void submitBoard(Board board, Invocation inv) {
     	
-    	
-    	System.out.println("============制作合成板 提交 ，板号="+boardNo);
-    	System.out.println("============制作合成板 提交 ，排版="+boardType);
-    	System.out.println("============页面生产编号个数="+mapa.size());
-    	
-    	//先查是否有
-    	Board board = boardRepository.findByBoardNo(boardNo);
-		if (board == null) {
-			board = new Board();
-			board.setBoardNo(boardNo);
-			board.setBoardType(boardType);
-			board.setType("0");
-			board.setCreateUser(123);
-			board.setCreateTime(new Date());
-		}else{
-			board.setBoardType(boardType);
-			board.setType("0");
-			board.setCreateUser(123);
-			board.setCreateTime(new Date());
+		board.setCreateUser(123);//后续需要调整到从session取值
+		board.setCreateTime(new Date());
+		
+		List<BoardHole> boardHoles =  board.getBoardHoles();
+		BoardHole boardHole = null;
+		for (int i = boardHoles.size() - 1; i >= 0; i--) {
+			
+			boardHole = (BoardHole)boardHoles.get(i);
+			
+			boardHole.setCreateUser(123L);//后续需要调整到从session取值
+			boardHole.setCreateTime(new Date());
+			boardHole.setBoard(board);
+			
+			//如果没填生产编号id，就移除
+			if (boardHole.getPrimerProduct() == null || boardHole.getPrimerProduct().getId() == null){
+				//先手动删除孔号信息
+				if(boardHole.getId()!=null){
+					boardHoleRepository.delete(boardHole);
+				}
+				//然后移除
+				boardHoles.remove(i);
+			}
 		}
-    			
-        //查询孔号信息
-        List<BoardHole> boardHoles = new ArrayList();
-        BoardHole boardHole = new BoardHole();
-        
-		for (String key : mapa.keySet()) {
-			 System.out.println("key= " + key + " and value= " + mapa.get(key));
-			 
-			 if (!StringUtil.isEmpty(mapa.get(key))) {
-				 
-				 PrimerProduct primerProduct = primerProductRepository.findByProductNo(mapa.get(key)+"");
-				 
-				 boardHole = new BoardHole();
-				 
-				 boardHole.setBoard(board);
-				 boardHole.setHoleNo(key);
-				 boardHole.setPrimerProduct(primerProduct);
-				 boardHole.setCreateUser(123L);
-				 boardHole.setCreateTime(new Date());
-				 
-				 boardHoles.add(boardHole);
-				 
-//				 boardHoleRepository.delete(boardHole);
-			 } 
-		}
-		
-		board.setBoardHoles(boardHoles);
-		
-//		boardRepository.delete(board);
-		
+		//保存
 		boardRepository.save(board);
-//		boardHoleRepository.save(boardHoles);
-    	
-//    	return Replys.with(boardNo).as(Json.class);void
-
     }
     
     
