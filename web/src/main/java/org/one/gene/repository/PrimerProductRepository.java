@@ -14,16 +14,22 @@ import java.util.List;
 @Repository
 public interface PrimerProductRepository extends PagingAndSortingRepository<PrimerProduct, Long> {
 
-    @SQL("select pp.* " +
-    		" from `order` o , `primer_product` pp, `primer_product_value` ppv " +
-    		" where o.`order_no` =  pp.`order_no` and pp.`id` = ppv.`primer_product_id` and ppv.`type` = 'TBN' " +
-    		" and o.`status` = '02' and pp.`operation_type` = 'MakeTable' " +
-            "#if(:customer_code != '') { and o.`customer_code` = :customer_code } " +
-            "#if(:purifytype != '') { and pp.`purify_type` = :purifytype }" +
-            "#if(:tbn1 != '') { and ppv.`value` >= :tbn1 }" +
-            "#if(:tbn2 != '') { and ppv.`value` <= :tbn2 }" +
-            "")
-    List<PrimerProduct> selectPrimerProduct(@Param("customer_code") String customer_code, @Param("purifytype") String purifytype, @Param("tbn1") String tbn1, @Param("tbn2") String tbn2);
+	@SQL("select pp.* "
+			+ " from `order` o , `primer_product` pp, `primer_product_value` ppv "
+			+ " where o.`order_no` =  pp.`order_no` and pp.`id` = ppv.`primer_product_id` and ppv.`type` = 'TBN' "
+			+ " and o.`status` = '02' and pp.`operation_type` = 'MakeTable' "
+			+ "#if(:customer_code != '') { and o.`customer_code` = :customer_code } "
+			+ "#if(:purifytype != '') { and pp.`purify_type` = :purifytype }"
+			+ "#if(:tbn1 != '') { and ppv.`value` >= :tbn1 }"
+			+ "#if(:tbn2 != '') { and ppv.`value` <= :tbn2 }"
+			+ "#if(:modiFlag == '') { and ( pp.`modi_five_type` is null and pp.`modi_three_type` is null and pp.`modi_mid_type` is null and pp.`modi_spe_type` is null) }"
+			+ "#if(:modiFlag != '') { and ( pp.`modi_five_type` is not null or pp.`modi_three_type` is not null or pp.`modi_mid_type` is not null or pp.`modi_spe_type` is not null) }"
+			+ "")
+	List<PrimerProduct> selectPrimerProduct(
+			@Param("customer_code") String customer_code,
+			@Param("modiFlag") String modiFlag, @Param("tbn1") String tbn1,
+			@Param("tbn2") String tbn2,
+			@Param("purifytype") String purifytype);
     
     
     
