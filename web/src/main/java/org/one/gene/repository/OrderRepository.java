@@ -15,5 +15,8 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
     
     @SQL("select * from `order` order by id desc limit 1")
     public Order getLastOrder();
+    
+    public Order findByOrderNo(String orderNo);
+    public Order findByCustomerCode(String customerCode);
 }
 
