@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
@@ -97,10 +98,13 @@ public class OrderController {
     }
     
     @Post("query")
-    public String query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,Invocation inv) throws IllegalStateException, IOException {
-
-    	orderService.query(orderNo, customerCode);
-        return "";
+    public String query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,Invocation inv) throws Exception {
+    	if("".equals(orderNo)&&"".equals(customerCode)){
+    		throw new Exception("查询条件订单号或客户代码不能同时为空！");
+    	}
+    	List<OrderInfoList> orderInfoList = orderService.query(orderNo, customerCode);
+    	inv.addModel("orderInfos", orderInfoList);
+        return "orderInfo";
     }
 
     public Reply test(){

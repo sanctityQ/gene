@@ -18,6 +18,20 @@
     		</td>
     	</tr>
     </table>
+    <c:forEach  var="orderInfo" items="${orderInfos}" varStatus="status">     
+	      <p>
+	      	<span>&#149; 
+<input type="text"  name="orderInfos[${status.index}].orderNo" size="50" value="${orderInfo.orderNo}" />
+<input type="text"  name="orderInfos[${status.index}].customerName" size="50" value="${orderInfo.customerName}" />
+<input type="text"  name="orderInfos[${status.index}].productNoMinToMax" size="50" value="${orderInfo.productNoMinToMax}" />
+<input type="text"  name="orderInfos[${status.index}].tbnTotal" size="50" value="${orderInfo.tbnTotal}" />
+<input type="text"  name="orderInfos[${status.index}].status" size="50" value="${orderInfo.status}" />
+<input type="text"  name="orderInfos[${status.index}].createTime" size="50" value="${orderInfo.createTime}" />
+<input type="text"  name="orderInfos[${status.index}].modifyTime" size="50" value="${orderInfo.modifyTime}" />
+	      	</span>
+	      </p>   
+	</c:forEach>
+    <input type="submit" style="cursor: pointer;"/>
     </form>
   </body>
 </html>
