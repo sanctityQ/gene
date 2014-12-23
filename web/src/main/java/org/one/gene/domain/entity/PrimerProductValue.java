@@ -17,16 +17,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @Table(name = "`primer_product_value`", uniqueConstraints = @UniqueConstraint(columnNames = {"`primer_product_id`", "`type`"}))
 public class PrimerProductValue extends IdEntity implements java.io.Serializable {
 
-    /**
-     * 引物生产数据ID.
-     */
-    //private Integer primerProductId;
-
     private PrimerProduct primerProduct;
     /**
      * 值类型.
      */
-    private String type;
+    private PrimerValueType type;
     /**
      * 类型描述.
      */
@@ -43,15 +38,6 @@ public class PrimerProductValue extends IdEntity implements java.io.Serializable
     public PrimerProductValue() {
     }
 
-//    @Column(name = "`primer_product_id`")
-//    public Integer getPrimerProductId() {
-//        return this.primerProductId;
-//    }
-//
-//    public void setPrimerProductId(Integer primerProductId) {
-//        this.primerProductId = primerProductId;
-//    }
-
     @ManyToOne
     @JoinColumn(name = "`primer_product_id`", nullable = false)
     public PrimerProduct getPrimerProduct() {
@@ -63,11 +49,11 @@ public class PrimerProductValue extends IdEntity implements java.io.Serializable
     }
 
     @Column(name = "`type`", length = 31)
-    public String getType() {
+    public PrimerValueType getType() {
         return this.type;
     }
 
-    public void setType(String type) {
+    public void setType(PrimerValueType type) {
         this.type = type;
     }
 

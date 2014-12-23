@@ -5,9 +5,6 @@ package org.one.gene.domain.entity;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
-
-import static javax.persistence.GenerationType.IDENTITY;
-
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
