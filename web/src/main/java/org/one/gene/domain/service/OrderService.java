@@ -1,4 +1,4 @@
-package org.one.gene.service;
+package org.one.gene.domain.service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,10 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.one.gene.domain.entity.Customer;
-import org.one.gene.domain.entity.Order;
-import org.one.gene.domain.entity.PrimerProduct;
-import org.one.gene.domain.entity.PrimerProductValue;
+import org.one.gene.domain.entity.*;
 import org.one.gene.excel.OrderCaculate;
 import org.one.gene.excel.OrderExcelPase;
 import org.one.gene.repository.CustomerRepository;
@@ -22,11 +19,13 @@ import org.one.gene.web.order.AtomicLongUtil;
 import org.one.gene.web.order.OrderInfoList;
 import org.one.gene.web.order.PrimerProductList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class OrderService {
+
 	@Autowired
     private AtomicLongUtil atomicLongUtil;
 	
@@ -53,7 +52,6 @@ public class OrderService {
 	 * @param primerProductList
 	 * @param customer
 	 * @param order
-	 * @param inv
 	 * @return
 	 * @throws IllegalStateException
 	 * @throws IOException
@@ -79,7 +77,7 @@ public class OrderService {
         	for(int i=0;i<5;i++){
         		PrimerProductValue primerProductValue = new PrimerProductValue();
         		primerProductValue.setPrimerProduct(primerProduct);
-        		primerProductValue.setType("TM");//GC/MW
+        		primerProductValue.setType(PrimerValueType.TM);//GC/MW
         	}
         }
         
@@ -89,6 +87,7 @@ public class OrderService {
 
         return "success";
     }
+
 	
 	public Customer findCustomer(String customerCode){
 		Customer customer = new Customer();

@@ -4,13 +4,16 @@ package org.one.gene.repository;
 import java.util.List;
 
 import org.one.gene.domain.entity.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import com.sinosoft.one.data.jade.annotation.SQL;
 
 @Repository
-public interface OrderRepository extends PagingAndSortingRepository<Order, Long> {
+public interface OrderRepository extends PagingAndSortingRepository<Order, Long> , JpaSpecificationExecutor<Order> {
 
     @SQL("select * from `order` where id=1")
     public Order test();
@@ -19,6 +22,8 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
     public Order getLastOrder();
     
     public Order findByOrderNo(String orderNo);
+
     public List<Order> findByCustomerCode(String customerCode);
+
 }
 

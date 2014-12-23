@@ -18,16 +18,14 @@
     		</td>
     	</tr>
     </table>
-    <c:forEach  var="orderInfo" items="${orderInfos}" varStatus="status">     
+    <c:forEach  var="order"  items="${orderPage.content}" varStatus="status">
 	      <p>
 	      	<span>&#149; 
-<input type="text"  name="orderInfos[${status.index}].orderNo" size="50" value="${orderInfo.orderNo}" />
-<input type="text"  name="orderInfos[${status.index}].customerName" size="50" value="${orderInfo.customerName}" />
-<input type="text"  name="orderInfos[${status.index}].productNoMinToMax" size="50" value="${orderInfo.productNoMinToMax}" />
-<input type="text"  name="orderInfos[${status.index}].tbnTotal" size="50" value="${orderInfo.tbnTotal}" />
-<input type="text"  name="orderInfos[${status.index}].status" size="50" value="${orderInfo.status}" />
-<input type="text"  name="orderInfos[${status.index}].createTime" size="50" value="${orderInfo.createTime}" />
-<input type="text"  name="orderInfos[${status.index}].modifyTime" size="50" value="${orderInfo.modifyTime}" />
+<input type="text"  name="orderInfos[${status.index}].orderNo" size="50" value="${order.orderNo}" />
+<input type="text"  name="orderInfos[${status.index}].customerName" size="50" value="${order.customerName}" />
+<input type="text"  name="orderInfos[${status.index}].status" size="50" value="${order.status}" />
+<input type="text"  name="orderInfos[${status.index}].createTime" size="50" value="${order.createTime}" />
+<input type="text"  name="orderInfos[${status.index}].modifyTime" size="50" value="${order.modifyTime}" />
 	      	</span>
 	      </p>   
 	</c:forEach>

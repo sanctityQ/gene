@@ -5,13 +5,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
+import com.google.common.collect.Maps;
+import com.sinosoft.one.mvc.web.annotation.rest.Get;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.instrument.persistence.DynamicSpecifications;
+import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.OrderRepository;
-import org.one.gene.service.OrderService;
+import org.one.gene.domain.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sinosoft.one.mvc.web.Invocation;
@@ -98,12 +107,26 @@ public class OrderController {
     }
     
     @Post("query")
-    public String query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,Invocation inv) throws Exception {
-    	if("".equals(orderNo)&&"".equals(customerCode)){
-    		throw new Exception("查询条件订单号或客户代码不能同时为空！");
-    	}
-    	List<OrderInfoList> orderInfoList = orderService.query(orderNo, customerCode);
-    	inv.addModel("orderInfos", orderInfoList);
+    @Get("query")
+    public String query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,Integer pageNo,Integer pageSize,Invocation inv) throws Exception {
+
+        if(pageNo == null){
+            pageNo = 0;
+        }
+
+        if(pageSize == null){
+            pageSize = 10;
+        }
+
+        Pageable pageable = new PageRequest(pageNo,pageSize);
+        Map<String,Object> searchParams = Maps.newHashMap();
+        searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
+        searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
+        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
+        Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
+
+        Page<Order> orderPage = orderRepository.findAll(spec,pageable);
+    	inv.addModel("orderPage", orderPage);
         return "orderInfo";
     }
 
