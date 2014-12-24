@@ -36,5 +36,7 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
     
     @SQL("select * from `primer_product` order by id desc limit 1")
     public PrimerProduct getLastProduct();
+    
+    public List<PrimerProduct> findByOrder(Order order);
 }
 

@@ -1,6 +1,6 @@
 ﻿<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt"%> 
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%> 
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
@@ -119,7 +119,7 @@
   	</tr>
   	<tr>
   	<td>
-  	创建时间：<input type="text" id="validate" name="order.createTime" size="50" value=<fmt:formatDate value='${order.createTime}' pattern='yyyy-MM-dd HH:mm:ss'/> /></td>
+  	创建时间：<input type="text" id="createTime" name="order.createTime" size="50" value="<fmt:formatDate value="${order.createTime}" pattern="yyyy-MM-dd HH:mm:ss" />" /></td>
   		<td>是否有效：<input type="text" id="validate" name="order.validate" size="50" value="${order.validate}" /></td>
   	</tr>
   </table>

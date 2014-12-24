@@ -2,21 +2,25 @@ package org.one.gene.web.order;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
+import com.google.common.collect.Maps;
+import com.sinosoft.one.mvc.web.annotation.rest.Get;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
-import org.one.gene.excel.OrderExcelPase;
-import org.one.gene.repository.CustomerRepository;
+import org.one.gene.instrument.persistence.DynamicSpecifications;
+import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.OrderRepository;
-import org.one.gene.repository.PrimerProductRepository;
+import org.one.gene.domain.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sinosoft.one.mvc.web.Invocation;
@@ -29,29 +33,22 @@ import com.sinosoft.one.mvc.web.instruction.reply.transport.Text;
 
 @Path
 public class OrderController {
-
+    
+    @Autowired
+    private OrderService orderService;
     @Autowired
     private OrderRepository orderRepository;
     
-    @Autowired
-    private OrderExcelPase orderExcelPase;
-    
-    @Autowired
-    private CustomerRepository customerRepository;
-    
-    @Autowired
-    private AtomicLongUtil atomicLongUtil;
-    
-    @Autowired
-    private PrimerProductRepository primerProductRepository;
-
     @Post("upload")
-    public String upload(@Param("customerCode") String customerCode, @Param("file") MultipartFile[] files, Invocation inv) throws Exception {
+    public String upload(@Param("customerCode") String customerCode, @Param("file") MultipartFile file, Invocation inv) throws Exception {
 
     	ArrayList<String> errors = new ArrayList<String>();
     	
     	if("".equals(customerCode)){
     		throw new Exception("客户代码为空，请您录入客户代码！");
+    	}
+    	if (file.isEmpty()) {
+    		throw new Exception("请您选择要上传的文件！");
     	}
     	
     	//取得当前所在年份
@@ -63,14 +60,8 @@ public class OrderController {
 		String realpathdir = "";
     	String path="";//暂时按照只上传一个文件定义
     	String filename = "";
-        for (MultipartFile multipartFile : files) {
-        	/*if(multipartFile.getSize()==0){
-        		throw new Exception("请您选择要上传的文件！");
-        	}*/
-        	if(multipartFile.getOriginalFilename() == null){
-				continue;
-			}
-        	filename = multipartFile.getOriginalFilename();
+    	if (!file.isEmpty()) { 
+        	filename = file.getOriginalFilename();
         	realpathdir = inv.getServletContext().getRealPath("/")+"upExcel/"+year+month+day+"/";
         	path = realpathdir+filename;
         	
@@ -82,29 +73,23 @@ public class OrderController {
     	    }
     	    
         	System.out.println(path);
-			multipartFile.transferTo(new File(path));
-        }
-        
-        if(!"".equals(path)){
-	        errors = orderExcelPase.getExcelPaseErrors(path,1,2);
-	        inv.addModel("errors", errors);
-        }
-        
+        	file.transferTo(new File(path));
+	        
+	        if(!"".equals(path)){
+		        errors = orderService.getExcelPaseErrors(path,1,2);
+		        inv.addModel("errors", errors);
+	        }
+    	}
         if(errors.size()>0){
         	return "upLoadFail";
         }else{
-        	Customer customer = new Customer();
-        	//解析数据展示列表,第一个sheet客户信息不解析获取
-        	//orderExcelPase.ReadExcel(customerCode,path, 0, "4-",new String[] {"b","i"});
-        	//excel验证通过，根据客户ID查询客户信息，并解析订单数据存储
-        	if(orderExcelPase.isIncludedChinese(customerCode)) {
-        		customer = customerRepository.findByNameLike(customerCode);
-        	}else{
-        		customer = customerRepository.findByCode(customerCode);
-        	}
-        	//此处直接组织order订单对象。在controller中写这样代码勿喷。懒
-        	Order order = this.convertOrder(customer,filename);
-        	ArrayList<PrimerProduct>  primerProducts = orderExcelPase.ReadExcel(path, 1,"2-");
+        	//获取客户信息
+        	Customer customer = orderService.findCustomer(customerCode);
+        	//组织订单对象
+        	Order order = orderService.convertOrder(customer,filename);
+        	//解析产品信息
+        	ArrayList<PrimerProduct>  primerProducts = orderService.ReadExcel(path, 1,"2-");
+        	//推送页面赋值
         	inv.addModel("customer", customer);
         	inv.addModel("order", order);
         	inv.addModel("primerProducts", primerProducts);
@@ -114,26 +99,36 @@ public class OrderController {
     }
     
     @Post("save")
-    @Transactional(readOnly=false)
     public String save(@Param("primerProductList") PrimerProductList primerProductList, @Param("customer") Customer customer, @Param("order") Order order,Invocation inv) throws IllegalStateException, IOException {
 
-    	//存储客户信息
-    	customerRepository.save(customer);
-    	//存储订单数据
-    	//外部订单号何处收集 
-    	order.setOutOrderNo(order.getOrderNo());
-    	order.setModifyTime(new Date());
-    	orderRepository.save(order);
-    	//存储生产数据
-        for (PrimerProduct primerProduct : primerProductList.getPrimerProducts()) {
-        	//后续补充，获取登录操作人员的归属机构。
-        	primerProduct.setComCode("11000000");
-        	primerProduct.setOperationType("1");
-        	primerProduct.setOrder(order);
-        	primerProductRepository.save(primerProduct);
-        }
+    	orderService.save(primerProductList, customer, order);
 
         return "";
+    }
+    
+    @Post("query")
+    @Get("query")
+    public String query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,@Param("pageNo")Integer pageNo,
+                        @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
+
+        if(pageNo == null){
+            pageNo = 0;
+        }
+
+        if(pageSize == null){
+            pageSize = 10;
+        }
+
+        Pageable pageable = new PageRequest(pageNo,pageSize);
+        Map<String,Object> searchParams = Maps.newHashMap();
+        searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
+        searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
+        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
+        Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
+
+        Page<Order> orderPage = orderRepository.findAll(spec,pageable);
+    	inv.addModel("orderPage", orderPage);
+        return "orderInfo";
     }
 
     public Reply test(){
@@ -141,29 +136,6 @@ public class OrderController {
         return Replys.with(order.toString()).as(Text.class);
     }
     
-    /**
-     * 组织订单对象
-     * @param customer
-     * @param fileName
-     * @return
-     * @throws ParseException 
-     */
-    public Order convertOrder(Customer customer,String fileName) throws ParseException{
-    	Order order = new Order();
-    	order.setOrderNo(atomicLongUtil.getOrderSerialNo());
-    	
-    	order.setCustomerCode(customer.getCode());
-    	order.setCustomerName(customer.getName());
-    	//后续补充，获取登录操作人员的归属机构。
-    	order.setComCode("11000000");
-    	order.setStatus(Byte.parseByte("1"));
-    	order.setType("00");
-    	order.setFileName(fileName);
-    	SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-DD HH:mm:dd");
-    	order.setCreateTime(sf.parse(sf.format(new Date())));
-    	order.setValidate(true);
-    	
-    	return order;
-    }
+    
 
 }
