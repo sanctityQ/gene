@@ -60,6 +60,13 @@
 		
     }
     
+    //录入失败原因
+    function writeFailReason(){
+    	
+    	
+    	window.open("${ctx}/synthesis/failReason/","newwindow","resizable=1,scrollbars=1,width=600,height=300");
+    }
+
     function submitSynthesis(){
     	
 		var elements = document.getElementsByTagName("input");
@@ -88,8 +95,7 @@
         	document.getElementById("modiFlag").value = "0";
         }
 		
-		
-		//form.submit();
+		form.submit();
 		
     }
     
@@ -108,15 +114,16 @@
 				    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				    <input class="btn btn-primary" type="button" value="全选" onclick="selectAll();"/>&nbsp;&nbsp;
 				    <input class="btn btn-primary" type="button" value="成功" onclick="setValue('1');"/>&nbsp;&nbsp;
-				    <input class="btn btn-primary" type="button" value="失败" onclick="setValue('2');"/>&nbsp;&nbsp;
+				    <input class="btn btn-primary" type="button" value="失败" onclick="writeFailReason();"/>&nbsp;&nbsp;
 				    
-				    <input type="hidden" id="modiFlag" name="modiFlag" value="" />
+				    <input type="hidden" id="modiFlag" name="odiFlag" value="" />
 					<input type="hidden" name="id" value="${board.id}" />
 					<input type="hidden" name="boardNo" value="${board.boardNo}" />
 					<input type="hidden" name="boardType" value="${board.boardType}" />
 					<input type="hidden" name="type"  value="${board.type}" />
 					<input type="hidden" name="createTime"  value="<fmt:formatDate value="${board.createTime}" pattern="yyyy-MM-dd HH:mm:ss" />" />
-					<input type="hidden" name="createUser"  value="${board.createUser}" />
+					<input type="hidden" name="createUser"  value="${board.createUser}"/>
+					<input type="hidden" name="failReason" id="failReason"  value=""/>
 					
 				</div>
 		</fieldset>
@@ -133,12 +140,15 @@
 <input name="boardHoles[${status.index}].primerProduct.selectFlag" id="boardHoles[${status.index}].primerProduct.selectFlag" type="hidden" value="0"/>
 <input name="boardHoles[${status.index}].primerProduct.selectID" id="boardHoles[${status.index}].primerProduct.selectID" type="checkbox" value="0"/>
 <input name="boardHoles[${status.index}].id" size="10" type="hidden" value="${boardHole.id}"/>
+<input name="boardHoles[${status.index}].board.id" size="10" type="hidden" value="${boardHole.board.id}"/>
+<input name="boardHoles[${status.index}].board.boardNo" size="10" type="hidden" value="${boardHole.board.boardNo}"/>
 <input name="boardHoles[${status.index}].holeNo" size="10" type="hidden" value="${boardHole.holeNo}"/>
 <input name="boardHoles[${status.index}].createTime" size="10" type="hidden" value="<fmt:formatDate value="${boardHole.createTime}" pattern="yyyy-MM-dd HH:mm:ss" />"/>
 <input name="boardHoles[${status.index}].createUser" size="10" type="hidden" value="${boardHole.createUser}"/>
-<input name="boardHoles[${status.index}].primerProduct.id" size="10" id="boardHoles[${status.index}].primerProduct.id" type="hidden" value="${boardHole.primerProduct.id}"/>
-<input name="boardHoles[${status.index}].primerProduct.productNo" size="10" id="boardHoles[${status.index}].primerProduct.productNo" 
-  type="text" value="${boardHole.primerProduct.productNo}" />
+<input name="boardHoles[${status.index}].primerProduct.id" size="1" type="text" id="boardHoles[${status.index}].primerProduct.id" value="${boardHole.primerProduct.id}"/>
+<input name="boardHoles[${status.index}].primerProduct.order.id" size="1" type="hidden" id="boardHoles[${status.index}].primerProduct.order.id" value="${boardHole.primerProduct.order.id}"/>
+<input name="boardHoles[${status.index}].primerProduct.order.orderNo" size="1" type="hidden" id="boardHoles[${status.index}].primerProduct.order.orderNo" value="${boardHole.primerProduct.order.orderNo}"/>
+<input name="boardHoles[${status.index}].primerProduct.productNo" size="10" type="text" id="boardHoles[${status.index}].primerProduct.productNo" value="${boardHole.primerProduct.productNo}" />
 <input name="boardHoles[${status.index}].primerProduct.outProductNo" type="hidden" value="${boardHole.primerProduct.outProductNo}"/>
 <input name="boardHoles[${status.index}].primerProduct.fromProductNo" type="hidden" value="${boardHole.primerProduct.fromProductNo}"/>
 <input name="boardHoles[${status.index}].primerProduct.primeName" type="hidden" value="${boardHole.primerProduct.primeName}"/>
@@ -158,18 +168,6 @@
 <input name="boardHoles[${status.index}].primerProduct.comCode" type="hidden" value="${boardHole.primerProduct.comCode}"/>
 <input name="boardHoles[${status.index}].primerProduct.backTimes" type="hidden" value="${boardHole.primerProduct.backTimes}"/>
 <input name="boardHoles[${status.index}].primerProduct.reviewFileName" type="hidden" value="${boardHole.primerProduct.reviewFileName}"/>
-    <c:forEach items="${boardHole.primerProduct.primerProductOperations}" var="primerProductOperation" varStatus="v1Status">
-<input name="boardHoles[${status.index}].primerProduct.primerProductOperations[${v1Status.index}].id" type="hidden" value="${primerProductOperation.id}"/>
-<input name="boardHoles[${status.index}].primerProduct.primerProductOperations[${v1Status.index}].primerProduct.id" type="hidden" value="${primerProductOperation.primerProduct.id}"/>
-<input name="boardHoles[${status.index}].primerProduct.primerProductOperations[${v1Status.index}].type" type="hidden" value="${primerProductOperation.type}"/>
-<input name="boardHoles[${status.index}].primerProduct.primerProductOperations[${v1Status.index}].typeDesc" type="hidden" value="${primerProductOperation.typeDesc}"/>
-<input name="boardHoles[${status.index}].primerProduct.primerProductOperations[${v1Status.index}].backTimes" type="hidden" value="${primerProductOperation.backTimes}"/>
-<input name="boardHoles[${status.index}].primerProduct.primerProductOperations[${v1Status.index}].userCode" type="hidden" value="${primerProductOperation.userCode}"/>
-<input name="boardHoles[${status.index}].primerProduct.primerProductOperations[${v1Status.index}].userName" type="hidden" value="${primerProductOperation.userName}"/>
-<input name="boardHoles[${status.index}].primerProduct.primerProductOperations[${v1Status.index}].createTime" type="hidden" value="<fmt:formatDate value="${primerProductOperation.createTime}" pattern="yyyy-MM-dd HH:mm:ss" />"/>
-<input name="boardHoles[${status.index}].primerProduct.primerProductOperations[${v1Status.index}].failReason" type="hidden" value="${primerProductOperation.failReason}"/>
-    </c:forEach>
-
  </td>
 </c:forEach>
 					</tr>

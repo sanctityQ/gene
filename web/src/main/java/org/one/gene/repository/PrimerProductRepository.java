@@ -4,6 +4,7 @@ package org.one.gene.repository;
 import com.sinosoft.one.data.jade.annotation.SQL;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;

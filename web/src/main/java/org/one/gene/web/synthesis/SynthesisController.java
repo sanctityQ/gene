@@ -58,6 +58,15 @@ public class SynthesisController {
     
     
     /**
+     * 打开录入失败原因页面
+     * 
+     * */
+    public String failReason(){
+
+    	return "failReason";
+    }
+
+    /**
      * 进入首页面
      * 
      * */
@@ -65,7 +74,6 @@ public class SynthesisController {
 
     	return "first";
     }
-    
     
     /**
      * 进入制表查询页面
@@ -196,12 +204,14 @@ public class SynthesisController {
      * 提交合成信息
      * */
     @Post("submitSynthesis")
-    public String submitSynthesis(Board board, @Param("modiFlag") String modiFlag, Invocation inv) {
+	public String submitSynthesis(Board board,
+			@Param("modiFlag") String modiFlag,
+			@Param("failReason") String failReason, Invocation inv) {
     	
     	
-    	synthesisService.submitSynthesis(board, modiFlag);
+    	synthesisService.submitSynthesis(board, modiFlag, failReason);
     	
-    	inv.addModel("message", "完成提交！");
+    	inv.addModel("message", "完成合成提交！");
     	
     	return "returnMessage";
     }

@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
+import org.one.gene.domain.entity.PrimerOperationType;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerProductValue;
@@ -85,32 +86,36 @@ public class SynthesisService {
 				}
 			}
 			// 翻译操作类型
-			String operationType = primerProduct.getOperationType();
-			if (operationType.equals("ListImport")) {
-				primerProduct.setOperationTypeDesc("订单");
-			} else if (operationType.equals("MakeTable")) {
-				primerProduct.setOperationTypeDesc("制表");
-			} else if (operationType.equals("Synthesis")) {
-				primerProduct.setOperationTypeDesc("合成");
-			} else if (operationType.equals("Label")) {
-				primerProduct.setOperationTypeDesc("贴标签");
-			} else if (operationType.equals("Modification")) {
+			PrimerOperationType operationType = primerProduct.getOperationType();
+			if (operationType.equals(PrimerOperationType.orderInit)) {
+				primerProduct.setOperationTypeDesc("订单初始化");
+			} else if (operationType.equals(PrimerOperationType.orderCheckFailure)) {
+				primerProduct.setOperationTypeDesc("订单检查失败");
+			} else if (operationType.equals(PrimerOperationType.orderCheckSuccess)) {
+				primerProduct.setOperationTypeDesc("订单检查成功");
+			} else if (operationType.equals("synthesisPrepare")) {
+				primerProduct.setOperationTypeDesc("合成准备");
+			} else if (operationType.equals("synthesisSuccess")) {
+				primerProduct.setOperationTypeDesc("合成成功");
+			} else if (operationType.equals("synthesisFailure")) {
+				primerProduct.setOperationTypeDesc("合成失败");
+			} else if (operationType.equals(PrimerOperationType.modification)) {
 				primerProduct.setOperationTypeDesc("修饰");
-			} else if (operationType.equals("Ammonia")) {
+			} else if (operationType.equals(PrimerOperationType.ammonia)) {
 				primerProduct.setOperationTypeDesc("氨解");
-			} else if (operationType.equals("Purify")) {
+			} else if (operationType.equals(PrimerOperationType.purify)) {
 				primerProduct.setOperationTypeDesc("纯化");
-			} else if (operationType.equals("Measure")) {
+			} else if (operationType.equals(PrimerOperationType.measure)) {
 				primerProduct.setOperationTypeDesc("测值");
-			} else if (operationType.equals("Pack")) {
+			} else if (operationType.equals(PrimerOperationType.pack)) {
 				primerProduct.setOperationTypeDesc("分装");
-			} else if (operationType.equals("Bake")) {
+			} else if (operationType.equals(PrimerOperationType.bake)) {
 				primerProduct.setOperationTypeDesc("烘干");
-			} else if (operationType.equals("Detect")) {
+			} else if (operationType.equals(PrimerOperationType.detect)) {
 				primerProduct.setOperationTypeDesc("检测");
-			} else if (operationType.equals("Delivery")) {
+			} else if (operationType.equals(PrimerOperationType.delivery)) {
 				primerProduct.setOperationTypeDesc("发货");
-			} else if (operationType.equals("Back")) {
+			} else if (operationType.equals(PrimerOperationType.back)) {
 				primerProduct.setOperationTypeDesc("召回");
 			}
 		}
@@ -216,12 +221,12 @@ public class SynthesisService {
 			}else{
 				primerProductOperation = new PrimerProductOperation();
 				primerProductOperation.setPrimerProduct(boardHole.getPrimerProduct());
-				primerProductOperation.setType("MakeTable");
-				primerProductOperation.setTypeDesc("制表");
+				primerProductOperation.setType(PrimerOperationType.synthesisPrepare);
+				primerProductOperation.setTypeDesc("合成准备");
 				primerProductOperation.setUserCode("123");//后续从session取得
 				primerProductOperation.setUserName("张三");//后续从session取得
 				primerProductOperation.setCreateTime(new Date());
-				primerProductOperation.setBackTimes(Byte.parseByte("0"));
+				primerProductOperation.setBackTimes(0);
 				primerProductOperation.setFailReason("成功了");
 				primerProductOperations.add(primerProductOperation);
 				
@@ -230,7 +235,7 @@ public class SynthesisService {
 				PrimerProduct primerProduct = primerProductRepository.findOne(boardHole.getPrimerProduct().getId());
 				if( primerProduct != null ){
 					primerProduct.setBoardNo(board.getBoardNo());
-					primerProduct.setOperationType("Synthesis");
+					primerProduct.setOperationType(PrimerOperationType.synthesisPrepare);
 					primerProductRepository.save(primerProduct);
 				}
 				
@@ -257,33 +262,48 @@ public class SynthesisService {
 	
 	//提交合成信息
     @Transactional(readOnly = false)
-	public String submitSynthesis(Board board, String modiFlag) {
+	public String submitSynthesis(Board board, String modiFlag, String failReason) {
     	
-    	for (BoardHole boardHole : board.getBoardHoles()) {
-    		String selectFlag = boardHole.getPrimerProduct().getSelectFlag();
-    		System.out.println("页面选择0 未选择 1成功 2 失败 ="+boardHole.getPrimerProduct().getSelectFlag());
-    		System.out.println("页面选择的生产数据id ="+boardHole.getPrimerProduct().getId());
-    		System.out.println("页面选择的生产数据编码 ="+boardHole.getPrimerProduct().getProductNo());
-    		
+		BoardHole boardHole = null;
+		List<BoardHole> boardHoles = board.getBoardHoles();
+		for (int i = board.getBoardHoles().size() - 1; i >= 0; i--) {
+			boardHole = (BoardHole) board.getBoardHoles().get(i);
+			String selectFlag = boardHole.getPrimerProduct().getSelectFlag();
     		
 			if ("1".equals(selectFlag)) { // Synthesis success
 				
-				
+				if ("1".equals(modiFlag)){ //需要修饰，到修饰状态
+					boardHole.getPrimerProduct().setOperationType(PrimerOperationType.modification);
+				} else {//不需要修饰，到氨解状态
+					boardHole.getPrimerProduct().setOperationType(PrimerOperationType.ammonia);
+				}
 
 			} else if ("2".equals(selectFlag)) { // Synthesis fail
-				
-				PrimerProduct primerProduct = boardHole.getPrimerProduct();
-				primerProduct.setOperationType("MakeTable");
-				primerProduct.setBoardNo("");
-				primerProduct.setBackTimes(Byte.parseByte((primerProduct.getBackTimes()+1)+""));
+
+				boardHole.getPrimerProduct().setOperationType(PrimerOperationType.synthesisFailure);//回到合成准备阶段
+				boardHole.getPrimerProduct().setBoardNo("");//清空板号
+				boardHole.getPrimerProduct().setBackTimes(boardHole.getPrimerProduct().getBackTimes()+1);//循环重回次数+1
                 
 				//删除孔信息
 				boardHoleRepository.delete(boardHole);
+				boardHoles.remove(i);
 				
-				//更新操作信息
+				
+				//更新操作信息--------待和客户讨论后添加
+				//primer_product_operation
+				//failReason
+				
+				
 			}
-    		
+			
+			//保存primer_product表数据
+			primerProductRepository.save(boardHole.getPrimerProduct());
+			
     	}
+    	
+		boardRepository.save(board);
+		
+    	
     	return "";
     }
     
