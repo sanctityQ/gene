@@ -27,10 +27,6 @@ public class PrimerProduct implements java.io.Serializable {
      * 生产编号.
      */
     private String productNo;
-    /**
-     * 订单号.
-     */
-   // private String orderNo;
 
     private Order order;
     /**
@@ -93,7 +89,7 @@ public class PrimerProduct implements java.io.Serializable {
     /**
      * 状态.
      */
-    private String operationType;
+    private PrimerOperationType operationType;
     /**
      * 板号.
      */
@@ -127,7 +123,8 @@ public class PrimerProduct implements java.io.Serializable {
     }
 
 
-    public PrimerProduct(String productNo, Order order, String outProductNo, String fromProductNo, String primeName, String geneOrder, String purifyType, String operationType, String comCode) {
+    public PrimerProduct(String productNo, Order order, String outProductNo, String fromProductNo, String primeName, String geneOrder, String purifyType,
+                         PrimerOperationType operationType, String comCode) {
         this.productNo = productNo;
         this.order = order;
         this.outProductNo = outProductNo;
@@ -296,11 +293,12 @@ public class PrimerProduct implements java.io.Serializable {
     }
 
     @Column(name = "`operation_type`", length = 31)
-    public String getOperationType() {
+    @Enumerated(value = EnumType.STRING)
+    public PrimerOperationType getOperationType() {
         return this.operationType;
     }
 
-    public void setOperationType(String operationType) {
+    public void setOperationType(PrimerOperationType operationType) {
         this.operationType = operationType;
     }
 
