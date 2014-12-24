@@ -17,8 +17,7 @@
 		<%@ include file="/WEB-INF/layouts/header.jsp"%>
 		<div id="content" class="span12">
 	<form id="inputForm"
-	action="${ctx}/synthesis/synthesisQuery/" method="post" enctype="multipart/form-data"
-	class="form-horizontal">
+	action="${ctx}/synthesis/makeTableQuery/" method="post" class="form-horizontal">
 		<fieldset>
 			<legend><small>安排合成查询</small></legend>
 	
