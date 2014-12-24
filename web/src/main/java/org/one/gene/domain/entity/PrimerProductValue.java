@@ -49,6 +49,7 @@ public class PrimerProductValue extends IdEntity implements java.io.Serializable
     }
 
     @Column(name = "`type`", length = 31)
+    @Enumerated(value = EnumType.STRING)
     public PrimerValueType getType() {
         return this.type;
     }

@@ -19,12 +19,11 @@ public class PrimerProductOperation extends IdEntity implements java.io.Serializ
     /**
      * 引物生产数据ID.
      */
-    //private Integer primerProductId;
     private PrimerProduct primerProduct;
     /**
      * 类型.
      */
-    private String type;
+    private PrimerOperationType type;
     /**
      * 类型描述.
      */
@@ -32,7 +31,7 @@ public class PrimerProductOperation extends IdEntity implements java.io.Serializ
     /**
      * 工艺循环次数.
      */
-    private Byte backTimes;
+    private Integer backTimes;
     /**
      * 用户代码.
      */
@@ -54,7 +53,7 @@ public class PrimerProductOperation extends IdEntity implements java.io.Serializ
     }
 
 
-    public PrimerProductOperation(PrimerProduct primerProduct, String type, String typeDesc, String userCode, String userName, Date createTime, String failReason) {
+    public PrimerProductOperation(PrimerProduct primerProduct, PrimerOperationType type, String typeDesc, String userCode, String userName, Date createTime, String failReason) {
         this.primerProduct = primerProduct;
         this.type = type;
         this.typeDesc = typeDesc;
@@ -62,6 +61,7 @@ public class PrimerProductOperation extends IdEntity implements java.io.Serializ
         this.userName = userName;
         this.createTime = createTime;
         this.failReason = failReason;
+
     }
 
 //    @Column(name = "`primer_product_id`")
@@ -84,11 +84,12 @@ public class PrimerProductOperation extends IdEntity implements java.io.Serializ
     }
 
     @Column(name = "`type`", length = 31)
-    public String getType() {
+    @Enumerated(value = EnumType.STRING)
+    public PrimerOperationType getType() {
         return this.type;
     }
 
-    public void setType(String type) {
+    public void setType(PrimerOperationType type) {
         this.type = type;
     }
 
@@ -102,11 +103,11 @@ public class PrimerProductOperation extends IdEntity implements java.io.Serializ
     }
 
     @Column(name = "`back_times`")
-    public Byte getBackTimes() {
+    public Integer getBackTimes() {
         return this.backTimes;
     }
 
-    public void setBackTimes(Byte backTimes) {
+    public void setBackTimes(Integer backTimes) {
         this.backTimes = backTimes;
     }
 

@@ -105,7 +105,7 @@ public class PrimerProduct implements java.io.Serializable {
     /**
      * 循环重回次数.
      */
-    private Byte backTimes;
+    private Integer backTimes;
     /**
      * 检测.
      */
@@ -323,11 +323,11 @@ public class PrimerProduct implements java.io.Serializable {
     }
 
     @Column(name = "`back_times`")
-    public Byte getBackTimes() {
+    public Integer getBackTimes() {
         return this.backTimes;
     }
 
-    public void setBackTimes(Byte backTimes) {
+    public void setBackTimes(Integer backTimes) {
         this.backTimes = backTimes;
     }
 
