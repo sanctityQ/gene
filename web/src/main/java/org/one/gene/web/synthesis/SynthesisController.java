@@ -30,6 +30,9 @@ import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.repository.PrimerProductValueRepository;
 import org.one.gene.web.order.PrimerProductList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 @Path
@@ -94,10 +97,33 @@ public class SynthesisController {
 					    		 @Param("tbn2") String tbn2,
 					    		 @Param("modiFlag") String modiFlag,
 					    		 @Param("purifytype") String purifytype,
+					    		 @Param("pageNo") Integer pageNo,
+			                     @Param("pageSize") Integer pageSize,
 					    		 Invocation inv){
     	
-    	 List<PrimerProduct> primerProducts = synthesisService.makeTableQuery(customer_code, modiFlag, tbn1, tbn2, purifytype);
-    	 inv.addModel("primerProducts", primerProducts);
+    	
+    	modiFlag = modiFlag==null?"0":modiFlag;
+		
+        if(pageNo == null){
+            pageNo = 1;
+        }
+
+        if(pageSize == null){
+            pageSize = 2;
+        }
+        Pageable pageable = new PageRequest(pageNo-1,pageSize);
+        
+        Page<PrimerProduct> primerProductPage = synthesisService.makeTableQuery(customer_code, modiFlag, tbn1, tbn2, purifytype, pageable);
+    	inv.addModel("page", primerProductPage);
+    	inv.addModel("preRequestPath", inv.getRequestPath().getUri());
+    	inv.addModel("pageSize", pageSize);
+    	
+    	inv.addModel("customer_code", customer_code);
+    	inv.addModel("tbn1", tbn1);
+    	inv.addModel("tbn2", tbn2);
+    	inv.addModel("modiFlag", modiFlag);
+    	inv.addModel("purifytype", purifytype);
+    	
     	return "makeTableList";
     }
     
@@ -214,6 +240,22 @@ public class SynthesisController {
     	inv.addModel("message", "完成合成提交！");
     	
     	return "returnMessage";
+    }
+    
+    /**
+     * 进入导出上机表页面
+     * */
+    public String preExportPrimerProduct(){
+
+    	return "exportPrimerProduct";
+    }
+    
+    /**
+     * 导出上机表文件
+     * */
+    public String exportPrimerProduct(@Param("boardNo") String boardNo, Invocation inv){
+
+    	return "";
     }
     
 }

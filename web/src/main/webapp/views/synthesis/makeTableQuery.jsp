@@ -14,7 +14,7 @@
 
 <body>
 	<div class="container">
-		<%@ include file="/WEB-INF/layouts/header.jsp"%>
+		<%@ include file="/static/layouts/header.jsp"%>
 		<div id="content" class="span12">
 	<form id="inputForm"
 	action="${ctx}/synthesis/makeTableQuery/" method="post" class="form-horizontal">

@@ -13,10 +13,21 @@
 </head>
 
 <body>
-
 	<div class="container">
 		<%@ include file="/static/layouts/header.jsp"%>
+		<div id="content" class="span12">
+	<form id="inputForm" action="${ctx}/synthesis/exportPrimerProduct/" method="post" class="form-horizontal">
+		<fieldset>
+			<legend><small>录入板号，导出上机表</small></legend>
+	
+			<div class="control-group">
+				<label for="loginName" class="control-label">板号:</label>
+				<input type="text" id="boardNo" name="boardNo" size="50" value="" class="required"/>
+				<input id="submit" class="btn btn-primary" type="submit" value="导出" />&nbsp;
+			</div>
+		</fieldset>
 		
-	</div>
+	</form>
+	
 </body>
 </html>

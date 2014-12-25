@@ -105,7 +105,7 @@
 
 <body>
 	<form name="form" action="${ctx}/synthesis/submitSynthesis/" method="post" class="form-horizontal">
-		<%@ include file="/WEB-INF/layouts/header.jsp"%>
+		<%@ include file="/static/layouts/header.jsp"%>
 	   
 		<fieldset>
 			<legend><small>录入合成结果</small></legend>

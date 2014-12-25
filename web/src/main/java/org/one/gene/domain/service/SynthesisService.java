@@ -20,6 +20,8 @@ import org.one.gene.repository.PrimerProductValueRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,36 +54,25 @@ public class SynthesisService {
 
 //    @Transactional(readOnly = false)
     //安排合成查询
-	public List<PrimerProduct> makeTableQuery(String customer_code,
-			String modiFlag, String tbn1, String tbn2, String purifytype) {
+	public Page<PrimerProduct> makeTableQuery(String customer_code,
+			String modiFlag, String tbn1, String tbn2, String purifytype,
+			Pageable pageable) {
 
-		String modiFlagStr = "";
-		// 如果选择无修饰过滤，查询条件增加：
-		// ( pp.`modi_five_type` is null and pp.`modi_three_type` is null and
-		// pp.`modi_mid_type` is null and pp.`modi_spe_type` is null)
-		// 如果选择有修饰过滤，查询条件增加：
-		// ( pp.`modi_five_type` is not null and pp.`modi_three_type` is not
-		// null and pp.`modi_mid_type` is not null and pp.`modi_spe_type` is not
-		// null)
-		if (modiFlag != null && modiFlag.equals("")) {
-			modiFlagStr = "1";
-		}
-
-		List<PrimerProduct> primerProducts = primerProductRepository.selectPrimerProduct(customer_code, modiFlagStr, tbn1, tbn2, purifytype);
+		Page<PrimerProduct> primerProductPage = primerProductRepository.selectPrimerProduct(customer_code, modiFlag, tbn1, tbn2, purifytype, pageable);
 		
 		// 查询primer_product_value
-		for (PrimerProduct primerProduct : primerProducts) {
+		for (PrimerProduct primerProduct : primerProductPage) {
 			List<PrimerProductValue> primerProductValues = primerProductValueRepository.selectValueByPrimerProductId(primerProduct.getId());
 			for (PrimerProductValue ppv : primerProductValues) {
-				if (ppv.getType().equals("ODTOTAL")) {
+				if (ppv.getType().equals("odTotal")) {
 					primerProduct.setOdTotal(ppv.getValue());
-				} else if (ppv.getType().equals("ODTB")) {
+				} else if (ppv.getType().equals("odTB")) {
 					primerProduct.setOdTB(ppv.getValue());
-				} else if (ppv.getType().equals("NMOLTOTAL")) {
+				} else if (ppv.getType().equals("nmolTotal")) {
 					primerProduct.setNmolTotal(ppv.getValue());
-				} else if (ppv.getType().equals("NMOLTB")) {
+				} else if (ppv.getType().equals("nmolTB")) {
 					primerProduct.setNmolTB(ppv.getValue());
-				} else if (ppv.getType().equals("TBN")) {
+				} else if (ppv.getType().equals("tbn")) {
 					primerProduct.setTbn(ppv.getValue());
 				}
 			}
@@ -120,7 +111,7 @@ public class SynthesisService {
 			}
 		}
 
-		return primerProducts;
+		return primerProductPage;
 	}
 
     //到制表页面

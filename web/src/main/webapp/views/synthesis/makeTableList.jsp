@@ -26,41 +26,46 @@
 		
 		
 	}
+	
+	function makeTable(){
+		form.submit();
+	}
 </script>
 
 </head>
 
-<body>
-	<div class="container">
-		<%@ include file="/WEB-INF/layouts/header.jsp"%>
-		<div id="content" class="span12">
-		<form id="inputForm"
-		  action="${ctx}/synthesis/makeTableEdit/" method="post" class="form-horizontal">
-            <table border="1" cellpadding="3" cellspacing="1" width="90%" align="left" style="background-color: #b9d8f3;"
-			    id="contentTable" class="table table-striped table-bordered table-condensed">
-				<thead>
-					<tr style="text-align: center; COLOR: #0076C8; BACKGROUND-COLOR: #F4FAFF; font-weight: bold">
-						<td><font size="4"></font></td>
-						<td><font size="4"></font></td>
-						<td><font size="4">生产编号id</font></td>
-						<td><font size="4">生产编号</font></td>
-						<td><font size="4">板号</font></td>
-						<td><font size="4">序列</font></td>
-						<td><font size="4">OD总量</font></td>
-						<td><font size="4">OD/TB</font></td>
-						<td><font size="4">NUML总量</font></td>
-						<td><font size="4">NUML/TB</font></td>
-						<td><font size="4">碱基数</font></td>
-						<td><font size="4">纯化方式</font></td>
-						<td><font size="4">修饰</font></td>
-						<td><font size="4">状态</font></td>
-						<td><font size="4">重回次数</font></td>
-					</tr>
-				</thead>
-				<% int i=1;	%>
-				<tbody>
-					<c:forEach items="${primerProducts}" var="primerProduct"  varStatus="status">
-						<tr bgcolor='#F4FAFF'>
+<body topmargin="0" leftmargin="0" rightmargin="0" onload="">
+  <form name="form" action="${ctx}/synthesis/makeTableEdit/" method="post" class="form-horizontal">
+     <table border="1" cellpadding="3" cellspacing="1" width="100%" style="background-color: #b9d8f3;" id="contentTable" class="common">
+		<thead>
+		<tr><%@ include file="/static/layouts/header.jsp"%></tr>
+	    <tr>
+			<td colspan="2"> 板号：</td>
+			<td colspan="2"><input type="text" id="boardNo" name="boardNo" value=""/></td>
+			<td><input class="btn btn-primary" type="button" value="制作合成板" onclick="makeTable()"/></td>
+	    </tr>
+		<tr style="text-align: center; COLOR: #0076C8; BACKGROUND-COLOR: #F4FAFF; font-weight: bold">
+			<td><font size="4"></font></td>
+			<td><font size="4"></font></td>
+			<td><font size="4">生产编号id</font></td>
+			<td><font size="4">生产编号</font></td>
+			<td><font size="4">板号</font></td>
+			<td><font size="4">序列</font></td>
+			<td><font size="4">OD总量</font></td>
+			<td><font size="4">OD/TB</font></td>
+			<td><font size="4">NUML总量</font></td>
+			<td><font size="4">NUML/TB</font></td>
+			<td><font size="4">碱基数</font></td>
+			<td><font size="4">纯化方式</font></td>
+			<td><font size="4">修饰</font></td>
+			<td><font size="4">状态</font></td>
+			<td><font size="4">重回次数</font></td>
+		</tr>
+		</thead>
+		<% int i=1;	%>
+		<tbody>
+			<c:forEach items="${page.content}" var="primerProduct"  varStatus="status">
+				<tr bgcolor='#F4FAFF'>
 <td nowrap="nowrap" align="left"><%=i++ %></td>
 <td><input type="checkbox" id="selectFlag" name="primerProductList.primerProducts[${status.index}].selectFlag" value="" onclick=""/></td>
 
@@ -75,7 +80,7 @@
    		<input type="text" size="12" name="primerProductList.primerProducts[${status.index}].outProductNo" size="50" value="${primerProduct.outProductNo}" />
    	</c:if>
 </td>
-<td align="left">${primerProduct.boardNo}</td>
+<td align="left"><input type="text" size="12"  name="primerProductList.primerProducts[${status.index}].geneOrder" size="10" value="${primerProduct.boardNo}" /></td>
 <td align="left">${primerProduct.geneOrder}</td>
 <td align="left">${primerProduct.odTotal}</td>
 <td align="left">${primerProduct.odTB}</td>
@@ -86,19 +91,29 @@
 <td align="left">${primerProduct.purifyType}</td>
 <td align="left">${primerProduct.operationTypeDesc}</td>
 <td align="left">${primerProduct.backTimes}</td>
-						</tr>
-					</c:forEach>
-				</tbody>
-				
-				<div class="form-actions">
-				    <input id="submit" class="btn btn-primary" type="submit" value="制表" />&nbsp;
-				    板号：<input type="text" id="boardNo" name="boardNo" value="board_2014121901"/>
-			    </div>
-			
-			</table>
-			</form>
-		</div>
-
-	</div>
+				</tr>
+			</c:forEach>
+		</tbody>
+		<tfoot>
+		    <!-- 翻页 -->
+		      <table width="100%" class="common" align="center" cellpadding="0" cellspacing="0">
+		           <tr>
+		               <%@ include file="/common/pub/TurnOverPage.jsp" %>
+		           </tr>
+		           
+		           <!-- 传递条件 -->
+		           <input type="hidden" name="preRequestPath" value="${preRequestPath}" />
+		           <input type="hidden" name="pageSize" value="${pageSize}" />
+		           <input type="hidden" name="customer_code" value="${customer_code}" />
+		           <input type="hidden" name="tbn1" value="${tbn1}" />
+		           <input type="hidden" name="tbn2" value="${tbn2}" />
+		           <input type="hidden" name="modiFlag" value="${modiFlag}" />
+		           <input type="hidden" name="purifytype" value="${purifytype}" />
+		           
+		      </table>
+		</tfoot>
+	  </table>
+	  <br>
+	</form>
 </body>
 </html>
