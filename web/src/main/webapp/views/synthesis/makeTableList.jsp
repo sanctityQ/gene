@@ -30,6 +30,13 @@
 	function makeTable(){
 		form.submit();
 	}
+	
+	function viewPrimerProduct(primerProductId){
+		window.open("${ctx}/synthesis/viewPrimerProduct/"+primerProductId,""+primerProductId,"resizable=1,scrollbars=1,width=700,height=600");
+	}
+	
+	
+	
 </script>
 
 </head>
@@ -73,11 +80,14 @@
     <input type="text" size="2" name="primerProductList.primerProducts[${status.index}].id" size="50" value="${primerProduct.id}" />
 </td>
 <td align="left">
+  
    	<c:if test="${not empty primerProduct.productNo}">
-   		<input type="text" size="12"  name="primerProductList.primerProducts[${status.index}].productNo" size="50" value="${primerProduct.productNo}" />
+   		<input type="hidden" size="12"  name="primerProductList.primerProducts[${status.index}].productNo" size="50" value="${primerProduct.productNo}" />
+   		<a href="javascript:viewPrimerProduct(${primerProduct.id});">${primerProduct.productNo}</a>
    	</c:if> 
    	<c:if test="${empty primerProduct.productNo}">
-   		<input type="text" size="12" name="primerProductList.primerProducts[${status.index}].outProductNo" size="50" value="${primerProduct.outProductNo}" />
+   		<input type="hidden" size="12" name="primerProductList.primerProducts[${status.index}].outProductNo" size="50" value="${primerProduct.outProductNo}" />
+   		<a href="javascript:viewPrimerProduct(${primerProduct.id});">${primerProduct.outProductNo}</a>
    	</c:if>
 </td>
 <td align="left"><input type="text" size="12"  name="primerProductList.primerProducts[${status.index}].geneOrder" size="10" value="${primerProduct.boardNo}" /></td>

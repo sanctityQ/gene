@@ -258,4 +258,16 @@ public class SynthesisController {
     	return "";
     }
     
+    /**
+     * 查看生产数据信息
+     * */
+    @Get("viewPrimerProduct/{primerProductId}")
+    public String viewPrimerProduct(@Param("primerProductId") Long primerProductId, Invocation inv){
+    	
+    	PrimerProduct primerProduct = primerProductRepository.findOne(primerProductId);
+    	
+    	inv.addModel("primerProduct", primerProduct);
+    	return "viewPrimerProduct";
+    }
+    
 }
