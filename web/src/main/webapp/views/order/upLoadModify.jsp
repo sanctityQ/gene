@@ -77,6 +77,7 @@
 
 	<c:forEach  var="primerProduct" items="${primerProducts}" varStatus="status">     
 	      <p>
+	      <c:if test="${empty primerProduct.fromProductNo}">
 	      	<span>&#149; 
 	      	<c:if test="${not empty primerProduct.productNo}">
 	      		<input type="text"  name="primerProductList.primerProducts[${status.index}].productNo" size="50" value="${primerProduct.productNo}" />
@@ -96,6 +97,12 @@
 <input type="text"  name="primerProductList.primerProducts[${status.index}].purifyVal" size="50" value="${primerProduct.purifyVal}" />
 <input type="text"  name="primerProductList.primerProducts[${status.index}].totalVal" size="50" value="${primerProduct.totalVal}" />
 <input type="text"  name="primerProductList.primerProducts[${status.index}].remark" size="50" value="${primerProduct.remark}" />
+<input type="hidden"  name="primerProductList.primerProducts[${status.index}].nmolTotal" size="50" value="${primerProduct.nmolTotal}" />
+<input type="hidden"  name="primerProductList.primerProducts[${status.index}].nmolTB" size="50" value="${primerProduct.nmolTB}" />
+<input type="hidden"  name="primerProductList.primerProducts[${status.index}].odTotal" size="50" value="${primerProduct.odTotal}" />
+<input type="hidden"  name="primerProductList.primerProducts[${status.index}].odTB" size="50" value="${primerProduct.odTB}" />
+<a href="${ctx}/order/copy/${primerProduct.productNo}" >复制</a>
+</c:if>
 	      	</span>
 	      </p>   
 	</c:forEach>

@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -212,7 +213,7 @@ public class Order extends IdEntity implements java.io.Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-
+    @Transient
 	public String getProductNoMinToMax() {
 		return productNoMinToMax;
 	}
@@ -220,7 +221,7 @@ public class Order extends IdEntity implements java.io.Serializable {
 	public void setProductNoMinToMax(String productNoMinToMax) {
 		this.productNoMinToMax = productNoMinToMax;
 	}
-
+	@Transient
 	public String getTbnTotal() {
 		return tbnTotal;
 	}

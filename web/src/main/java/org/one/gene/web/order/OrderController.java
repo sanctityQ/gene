@@ -1,10 +1,14 @@
 package org.one.gene.web.order;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
 
 import org.one.gene.domain.entity.Customer;
@@ -14,6 +18,7 @@ import org.one.gene.domain.service.OrderService;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.OrderRepository;
+import org.one.gene.repository.PrimerProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +43,8 @@ public class OrderController {
     private OrderService orderService;
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private PrimerProductRepository primerProductRepository;
     
     @Post("upload")
     public String upload(@Param("customerCode") String customerCode, @Param("file") MultipartFile file, Invocation inv) throws Exception {
@@ -107,7 +114,6 @@ public class OrderController {
     }
     
     @Post("query")
-    @Get("query/{orderNo}") 
     public String query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,@Param("pageNo")Integer pageNo,
                         @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
 
@@ -125,12 +131,63 @@ public class OrderController {
         searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
-
-        Page<Order> orderPage = orderRepository.findAll(spec,pageable);
-        orderPage = orderService.convertOrderList(orderPage.getContent());
         
-    	inv.addModel("orderPage", orderPage);
+        Page<Order> orderPage = orderRepository.findAll(spec,pageable);
+        //orderPage = orderService.convertOrderList(orderPage.getContent());
+        
+    	inv.addModel("page", orderPage);
+    	inv.addModel("pageSize", pageSize);
         return "orderInfo";
+    }
+    
+    @Get("modify/{orderNo}") 
+    public String modify(@Param("orderNo") String orderNo,Invocation inv){
+    	Order order = orderRepository.findByOrderNo(orderNo);
+    	Customer customer = orderService.findCustomer(order.getCustomerCode());
+    	inv.addModel("customer", customer);
+    	inv.addModel("order", order);
+    	inv.addModel("primerProducts", order.getPrimerProducts());
+    	return "upLoadModify";
+    }
+    
+    @Get("copy/{productNo}") 
+    public String copy(@Param("productNo") String productNo,Invocation inv) throws Exception{
+    	orderService.copy(productNo);
+    	
+    	return "";
+    }
+    
+    @Get("downLoad") 
+    @Post("downLoad") 
+    public String downLoad(Invocation inv) throws Exception{
+		String fileName = "views\\downLoad\\template\\订购表模版.xls";
+		String filePath = inv.getRequest().getSession().getServletContext().getRealPath(fileName);
+		
+		System.out.println("文件下载路径filePath::::::"+filePath);
+		
+        File file=new File(filePath);
+        
+        InputStream is=new FileInputStream(file);
+        OutputStream os=inv.getResponse().getOutputStream();
+        BufferedInputStream bis = new BufferedInputStream(is);
+        BufferedOutputStream bos = new BufferedOutputStream(os);
+        
+        fileName = java.net.URLEncoder.encode(fileName, "UTF-8");// 处理中文文件名的问题
+        fileName = new String(fileName.getBytes("UTF-8"), "GBK");// 处理中文文件名的问题
+        inv.getResponse().reset();
+        inv.getResponse().setContentType("application/x-msdownload");// 不同类型的文件对应不同的MIME类型
+        inv.getResponse().setHeader("Content-Disposition", "attachment; filename="+fileName);
+        int bytesRead = 0;
+        byte[] buffer = new byte[1024];
+        while ((bytesRead = bis.read(buffer)) != -1){
+            bos.write(buffer, 0, bytesRead);// 将文件发送到客户端
+        }
+        bos.flush();
+        bis.close();
+        bos.close();
+        is.close();
+        os.close();
+        return null;
     }
 
     public Reply test(){

@@ -1,11 +1,8 @@
 package org.one.gene.web.order;
 
 import java.util.Date;
-import java.util.List;
 
 import org.one.gene.domain.entity.Customer;
-import org.one.gene.domain.entity.Order;
-import org.one.gene.domain.entity.PrimerProduct;
 
 /**
  * 订单列表信息
@@ -24,10 +21,6 @@ public class OrderInfoList {
 	private Date modifyTime;
 	//客户对象
 	private Customer customer;
-	//订单对象
-	private Order order;
-	//生产数据对象集合
-	private List<PrimerProduct> primerProducts;
 	
 	public String getOrderNo() {
 		return orderNo;
@@ -76,18 +69,6 @@ public class OrderInfoList {
 	}
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
-	}
-	public Order getOrder() {
-		return order;
-	}
-	public void setOrder(Order order) {
-		this.order = order;
-	}
-	public List<PrimerProduct> getPrimerProducts() {
-		return primerProducts;
-	}
-	public void setPrimerProducts(List<PrimerProduct> primerProducts) {
-		this.primerProducts = primerProducts;
 	}
 	
 }

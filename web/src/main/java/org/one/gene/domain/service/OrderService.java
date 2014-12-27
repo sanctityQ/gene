@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
+import org.one.gene.domain.entity.PrimerOperationType;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductValue;
 import org.one.gene.domain.entity.PrimerValueType;
@@ -69,8 +71,10 @@ public class OrderService {
 		types.add("GC");
 		types.add("MW");
 		types.add("μgOD");
-		types.add("ODUMOL");
-		types.add("PMOL");
+		types.add("nmolTotal");
+		types.add("nmolTB");
+		types.add("odTotal");
+		types.add("odTB");
     	//存储客户信息
     	customerRepository.save(customer);
     	//存储订单数据
@@ -82,7 +86,7 @@ public class OrderService {
         for (PrimerProduct primerProduct : primerProductList.getPrimerProducts()) {
         	//后续补充，获取登录操作人员的归属机构。
         	primerProduct.setComCode("11000000");
-        	primerProduct.setOperationType("1");
+        	primerProduct.setOperationType(PrimerOperationType.orderCheckSuccess);
         	primerProduct.setOrder(order);
         	for(int i=0;i<types.size();i++){
         		PrimerProductValue primerProductValue = new PrimerProductValue();
@@ -109,7 +113,31 @@ public class OrderService {
         		if(types.get(i).equals("μgOD")){
         			primerProductValue.setType(PrimerValueType.μgOD);
         			primerProductValue.setTypeDesc("μgOD值");
-        			primerProductValue.setValue(new BigDecimal(orderCaculate.getg_OD(primerProduct.getGeneOrder(),"100")));
+        			primerProductValue.setValue(new BigDecimal(orderCaculate.getg_OD(primerProduct.getGeneOrder(),primerProduct.getNmolTB().toString())));
+        			primerProduct.getPrimerProductValues().add(primerProductValue);
+        		}
+        		if(types.get(i).equals("nmolTotal")){
+        			primerProductValue.setType(PrimerValueType.nmolTotal);
+        			primerProductValue.setTypeDesc("nmolTotal值");
+        			primerProductValue.setValue(primerProduct.getNmolTotal());
+        			primerProduct.getPrimerProductValues().add(primerProductValue);
+        		}
+        		if(types.get(i).equals("nmolTB")){
+        			primerProductValue.setType(PrimerValueType.nmolTB);
+        			primerProductValue.setTypeDesc("nmolTB值");
+        			primerProductValue.setValue(primerProduct.getNmolTB());
+        			primerProduct.getPrimerProductValues().add(primerProductValue);
+        		}
+        		if(types.get(i).equals("odTotal")){
+        			primerProductValue.setType(PrimerValueType.odTotal);
+        			primerProductValue.setTypeDesc("odTotal值");
+        			primerProductValue.setValue(primerProduct.getOdTotal());
+        			primerProduct.getPrimerProductValues().add(primerProductValue);
+        		}
+        		if(types.get(i).equals("odTB")){
+        			primerProductValue.setType(PrimerValueType.odTB);
+        			primerProductValue.setTypeDesc("odTB值");
+        			primerProductValue.setValue(primerProduct.getOdTB());
         			primerProduct.getPrimerProductValues().add(primerProductValue);
         		}
         	}
@@ -138,8 +166,8 @@ public class OrderService {
 	
 	public Page<Order>  convertOrderList(List<Order> orders) throws IllegalStateException, IOException {
 		//生产编号（头尾）、碱基总数
-		/* Page<Order> orderPage = 
-		OrderInfoList OrderInfo = new OrderInfoList();
+		//Page<Order> orderPage = new Page<Order>();
+				/*OrderInfoList OrderInfo = new OrderInfoList();
 		
 		for(Order order:orders){
 			OrderInfo = getOrderInfos(order);
@@ -209,6 +237,34 @@ public class OrderService {
     	order.setValidate(true);
     	
     	return order;
+    }
+    
+    @Transactional(readOnly=false)
+    public void copy(String productNo) throws Exception{
+    	PrimerProduct primerProductTemp = new PrimerProduct();
+    	PrimerProduct primerProduct = primerProductRepository.findByProductNo(productNo);
+//    	PropertyUtils.copyProperties(primerProductTemp, primerProduct);
+    	primerProductTemp.setProductNo(primerProduct.getProductNo()+"1");
+    	primerProductTemp.setOrder(primerProduct.getOrder());
+    	primerProductTemp.setFromProductNo(primerProduct.getProductNo());
+    	primerProductTemp.setPrimeName(primerProduct.getPrimeName());
+    	primerProductTemp.setGeneOrder(primerProduct.getGeneOrder());
+    	primerProductTemp.setPurifyType(primerProduct.getPurifyType());
+    	primerProductTemp.setModiFiveType(primerProduct.getModiFiveType());
+    	primerProductTemp.setModiThreeType(primerProduct.getModiThreeType());
+    	primerProductTemp.setModiMidType(primerProduct.getModiMidType());
+    	primerProductTemp.setModiSpeType(primerProduct.getModiSpeType());
+    	primerProductTemp.setModiPrice(primerProduct.getModiPrice());
+    	primerProductTemp.setBaseVal(primerProduct.getBaseVal());
+    	primerProductTemp.setPurifyVal(primerProduct.getPurifyVal());
+    	primerProductTemp.setTotalVal(primerProduct.getTotalVal());
+    	primerProductTemp.setRemark(primerProduct.getRemark());
+    	primerProductTemp.setOperationType(primerProduct.getOperationType());
+    	primerProductTemp.setBoardNo(primerProduct.getBoardNo());
+    	primerProductTemp.setComCode(primerProduct.getComCode());
+    	primerProductTemp.setBackTimes(primerProduct.getBackTimes());
+    	primerProductTemp.setReviewFileName(primerProduct.getReviewFileName());
+    	primerProductRepository.save(primerProductTemp);
     }
     
     public ArrayList<PrimerProduct> ReadExcel(String path, int sheetIndex, String rows) {
