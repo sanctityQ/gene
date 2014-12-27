@@ -15,7 +15,8 @@
 <body>
 
 	<div class="container">
-		<%@ include file="/static/layouts/header.jsp"%>
+	    <%@ include file="/static/layouts/header.jsp"%>
+		${message}
 		
 	</div>
 </body>

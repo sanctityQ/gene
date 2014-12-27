@@ -52,8 +52,8 @@
 					if(elements[j].name.slice(0,10) == "boardHoles")
 					{
 						//boardHoles[0].holeNo
-						var headStr = elements[j].name.slice(0,14);
-						var lastStr = elements[j].name.slice(14);
+						var headStr = elements[j].name.slice(0,elements[j].name.indexOf("]")+2);
+						var lastStr = elements[j].name.slice(elements[j].name.indexOf("]")+2);
 						if ( lastStr == "primerProduct.id"){
 							var div = document.getElementById(elements[j].name);
 							if ( div.value == pageIdList[i].value){
@@ -78,7 +78,7 @@
 
 <body>
 	<div class="container">
-		<%@ include file="/WEB-INF/layouts/header.jsp"%>
+		<%@ include file="/static/layouts/header.jsp"%>
 		<div id="content" class="span12">
 	<form id="inputForm"
 	action="${ctx}/synthesis/submitBoard/" method="post" class="form-horizontal">
@@ -109,17 +109,18 @@
 	   		</fieldset>
 					
 		<fieldset>
-			<legend><small>制作合成板 - 新增</small></legend>
+			<legend><small>制作合成板 - 修改</small></legend>
 	
 				<div class="controls">
-				    <label for="loginName" class="control-label">板号:</label>
-					<input type="text" id="boardNo" name="boardNo" size="40" value="" class="required"/>
-				    <input id="submit" class="btn btn-primary" type="button" value="查询(暂不能用)" onclick="ajaxSubmit();"/>&nbsp;&nbsp;
-				    <input id="submit" class="btn btn-primary" type="button" value="添加生产编号" onclick="addProductNo();"/>&nbsp;&nbsp;
+				    <label for="loginName" class="control-label">板号id:</label>
+					<input type="text" name="id" size="10" value="${board.id}" class="required"/>
+					<label for="loginName" class="control-label">板号:</label>
+					<input type="text" id="boardNo" name="boardNo" size="40" value="${board.boardNo}" class="required"/>
 
-					<input type="radio" value="0" name="boardType" checked/>横排&nbsp;
-					<input type="radio" value="1" name="boardType" />竖排
+					<input type="radio" value="0" name="boardType" ${board.boardType eq "0" || null == board.boardType ? "checked='checked'" : ''}/>横排&nbsp;
+					<input type="radio" value="1" name="boardType" ${board.boardType eq "1" ? "checked='checked'" : ''}/>竖排
 					<input type="hidden" value="0" name="type" />
+				    <input class="btn btn-primary" type="button" value="添加生产编号" onclick="addProductNo();"/>&nbsp;&nbsp;
 				</div>
 		</fieldset>
 
@@ -130,39 +131,14 @@
 				    id="contentTable0" style="display:" class="table table-striped table-bordered table-condensed">
 
 					<tr bgcolor='#F4FAFF'>
-					    <td align="left"><font size="2">A1：</font>
-					        <input name="boardHoles[0].holeNo" size="10" id="A1" type="text" value="A1"/>
-					        <input name="boardHoles[0].primerProduct.id" size="10" id="boardHoles[0].primerProduct.id" type="text" value=""/>
-					        <input name="boardHoles[0].primerProduct.productNo" size="10" id="boardHoles[0].primerProduct.productNo" type="text" value=""/>
-					    </td>
-					    <td align="left"><font size="2">A2：</font>
-					        <input name="boardHoles[1].holeNo" size="10" id="A2" type="text" value="A2"/>
-					        <input name="boardHoles[1].primerProduct.id" size="10" id="boardHoles[1].primerProduct.id" type="text" value=""/>
-					        <input name="boardHoles[1].primerProduct.productNo" size="10" id="boardHoles[1].primerProduct.productNo" type="text" value=""/>
-					    </td>
-					    <td align="left"><font size="2">A3：</font>
-					        <input name="boardHoles[2].holeNo" size="10" id="A3" type="text" value="A3"/>
-					        <input name="boardHoles[2].primerProduct.id" size="10" id="boardHoles[2].primerProduct.id" type="text" value=""/>
-					        <input name="boardHoles[2].primerProduct.productNo" size="10" id="boardHoles[2].primerProduct.productNo" type="text" value=""/>
-					    </td>
-					</tr>
-					<tr bgcolor='#F4FAFF'>
-					    <td align="left"><font size="2">B1：</font>
-					        <input name="boardHoles[3].holeNo" size="10" id="B1" type="text" value="B1"/>
-					        <input name="boardHoles[3].primerProduct.id" size="10" id="boardHoles[3].primerProduct.id" type="text" value=""/>
-					        <input name="boardHoles[3].primerProduct.productNo" size="10" id="boardHoles[3].primerProduct.productNo" type="text" value=""/>
-					    </td>
-					    <td align="left"><font size="2">B2：</font>
-					        <input name="boardHoles[4].holeNo" size="10" id="B2" type="text" value="B2"/>
-					        <input name="boardHoles[4].primerProduct.id" size="10" id="boardHoles[4].primerProduct.id" type="text" value=""/>
-					        <input name="boardHoles[4].primerProduct.productNo" size="10" id="boardHoles[4].primerProduct.productNo" type="text" value=""/>
-					    </td>
-					    <td align="left"><font size="2">B3：</font>
-					        <input name="boardHoles[5].holeNo" size="10" id="B3" type="text" value="B3"/>
-					        <input name="boardHoles[5].primerProduct.id" size="10" id="boardHoles[5].primerProduct.id" type="text" value=""/>
-					        <input name="boardHoles[5].primerProduct.productNo" size="10" id="boardHoles[5].primerProduct.productNo" type="text" value=""/>
-					    </td>
-
+<c:forEach items="${board.boardHoles}" var="boardHole" varStatus="status">
+ <td align="left"><font size="2">${boardHole.holeNo}：</font>
+     <input name="boardHoles[${status.index}].id" size="10" type="text" value="${boardHole.id}"/>
+     <input name="boardHoles[${status.index}].holeNo" size="10" type="text" value="${boardHole.holeNo}"/>
+     <input name="boardHoles[${status.index}].primerProduct.id" size="10" id="boardHoles[${status.index}].primerProduct.id" type="text" value="${boardHole.primerProduct.id}"/>
+     <input name="boardHoles[${status.index}].primerProduct.productNo" size="10" id="boardHoles[${status.index}].primerProduct.productNo" type="text" value="${boardHole.primerProduct.productNo}"/>
+ </td>
+</c:forEach>
 					</tr>
 
 				</table>

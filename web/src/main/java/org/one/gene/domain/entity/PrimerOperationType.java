@@ -9,6 +9,14 @@ public enum PrimerOperationType {
     synthesisPrepare,
     synthesisSuccess,
     synthesisFailure,
-
+    modification,
+    ammonia,
+    purify,
+    measure,
+    pack,
+    bake,
+    detect,
+    delivery,
+    back,
 
 }

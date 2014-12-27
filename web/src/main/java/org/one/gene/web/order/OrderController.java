@@ -107,8 +107,9 @@ public class OrderController {
     }
     
     @Post("query")
-    @Get("query/{orderNo}")
-    public String query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,Integer pageNo,Integer pageSize,Invocation inv) throws Exception {
+    @Get("query/{orderNo}") 
+    public String query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,@Param("pageNo")Integer pageNo,
+                        @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
 
         if(pageNo == null){
             pageNo = 0;
