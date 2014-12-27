@@ -4,9 +4,19 @@ package org.one.gene.domain.entity;
 
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
-import com.google.common.collect.Lists;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.google.common.collect.Lists;
 
 /**
  * Order.
@@ -61,6 +71,15 @@ public class Order extends IdEntity implements java.io.Serializable {
     private boolean validate;
 
     List<PrimerProduct> primerProducts = Lists.newArrayList();
+    
+    /**
+     * 订单中生产数据头尾生产编码
+     */
+    private String productNoMinToMax;
+    /**
+     * 订单中所有生产数据碱基数汇总
+     */
+	private String tbnTotal;
 
     public Order() {
     }
@@ -194,6 +213,22 @@ public class Order extends IdEntity implements java.io.Serializable {
         return ToStringBuilder.reflectionToString(this);
     }
 
+	public String getProductNoMinToMax() {
+		return productNoMinToMax;
+	}
+
+	public void setProductNoMinToMax(String productNoMinToMax) {
+		this.productNoMinToMax = productNoMinToMax;
+	}
+
+	public String getTbnTotal() {
+		return tbnTotal;
+	}
+
+	public void setTbnTotal(String tbnTotal) {
+		this.tbnTotal = tbnTotal;
+	}
+    
 }
 
 

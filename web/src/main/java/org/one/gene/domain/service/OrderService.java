@@ -8,7 +8,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.one.gene.domain.entity.*;
+import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.Order;
+import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.entity.PrimerProductValue;
+import org.one.gene.domain.entity.PrimerValueType;
 import org.one.gene.excel.OrderCaculate;
 import org.one.gene.excel.OrderExcelPase;
 import org.one.gene.repository.CustomerRepository;
@@ -60,30 +64,59 @@ public class OrderService {
     public String save(PrimerProductList primerProductList,Customer customer,Order order) throws IllegalStateException, IOException {
 
 		//保存方法重写
+		List<String> types = new ArrayList<String>();
+		types.add("TM");
+		types.add("GC");
+		types.add("MW");
+		types.add("μgOD");
+		types.add("ODUMOL");
+		types.add("PMOL");
     	//存储客户信息
     	customerRepository.save(customer);
     	//存储订单数据
     	//外部订单号何处收集 
     	order.setOutOrderNo(order.getOrderNo());
     	order.setModifyTime(new Date());
-    	orderRepository.save(order);
+    	
     	//存储生产数据
         for (PrimerProduct primerProduct : primerProductList.getPrimerProducts()) {
         	//后续补充，获取登录操作人员的归属机构。
         	primerProduct.setComCode("11000000");
         	primerProduct.setOperationType("1");
         	primerProduct.setOrder(order);
-        	primerProductRepository.save(primerProduct);
-        	for(int i=0;i<5;i++){
+        	for(int i=0;i<types.size();i++){
         		PrimerProductValue primerProductValue = new PrimerProductValue();
         		primerProductValue.setPrimerProduct(primerProduct);
-        		primerProductValue.setType(PrimerValueType.TM);//GC/MW
+        		primerProductValue.setCreateTime(new Date());
+        		if(types.get(i).equals("TM")){
+        			primerProductValue.setType(PrimerValueType.TM);
+        			primerProductValue.setTypeDesc("TM值");
+        			primerProductValue.setValue(new BigDecimal(orderCaculate.getTM(primerProduct.getGeneOrder())));
+        			primerProduct.getPrimerProductValues().add(primerProductValue);
+        		}
+        		if(types.get(i).equals("GC")){
+        			primerProductValue.setType(PrimerValueType.GC);
+        			primerProductValue.setTypeDesc("GC值");
+        			primerProductValue.setValue(new BigDecimal(orderCaculate.getGC(primerProduct.getGeneOrder())));
+        			primerProduct.getPrimerProductValues().add(primerProductValue);
+        		}
+        		if(types.get(i).equals("MW")){
+        			primerProductValue.setType(PrimerValueType.MW);
+        			primerProductValue.setTypeDesc("MW值");
+        			primerProductValue.setValue(new BigDecimal(orderCaculate.getMW(primerProduct.getGeneOrder())));
+        			primerProduct.getPrimerProductValues().add(primerProductValue);
+        		}
+        		if(types.get(i).equals("μgOD")){
+        			primerProductValue.setType(PrimerValueType.μgOD);
+        			primerProductValue.setTypeDesc("μgOD值");
+        			primerProductValue.setValue(new BigDecimal(orderCaculate.getg_OD(primerProduct.getGeneOrder(),"100")));
+        			primerProduct.getPrimerProductValues().add(primerProductValue);
+        		}
         	}
+        	order.getPrimerProducts().add(primerProduct);
         }
         
-        //存储生产数据数值表
-        PrimerProductValue primerProductValue = new PrimerProductValue();
-        //primerProductValueRepository
+        orderRepository.save(order);
 
         return "success";
     }
@@ -103,42 +136,30 @@ public class OrderService {
     	return customer;
 	}
 	
-	public List<OrderInfoList> query(String orderNo,String customerCode) throws IllegalStateException, IOException {
-		//订单号、客户姓名、生产编号（头尾）、碱基总数、状态、导⼊时间，修改时间
-		List<Order> orders = new ArrayList<Order>();
-		List<OrderInfoList> orderInfoList = new ArrayList<OrderInfoList>();
+	public Page<Order>  convertOrderList(List<Order> orders) throws IllegalStateException, IOException {
+		//生产编号（头尾）、碱基总数
+		/* Page<Order> orderPage = 
 		OrderInfoList OrderInfo = new OrderInfoList();
-		//使用订单号查询订单列表时
-		if(!"".equals(orderNo)){
-			OrderInfo = this.getOrderInfos(orderNo);
+		
+		for(Order order:orders){
+			OrderInfo = getOrderInfos(order);
 			orderInfoList.add(OrderInfo);
-		}
-		//使用客户代码查询订单列表时
-		if(!"".equals(customerCode)){
-			//根据客户代码获取客户下订单集合
-			orders = orderRepository.findByCustomerCode(customerCode);
-			//遍历集合分别组织订单列表对象
-			for(Order order:orders){
-				OrderInfo = this.getOrderInfos(order.getOrderNo());
-				orderInfoList.add(OrderInfo);
-			}
-		}
-        return orderInfoList;
+		}*/
+		
+        return null;
     }
 	
-	public OrderInfoList getOrderInfos(String orderNo){
+	public OrderInfoList getOrderInfos(Order order){
 		OrderInfoList OrderInfo = new OrderInfoList();
 		List<PrimerProduct> PrimerProducts = new ArrayList<PrimerProduct>();
 		
-		Order order = new Order();
-		order = orderRepository.findByOrderNo(orderNo);
 		//组织订单列表对象
-		OrderInfo.setOrderNo(orderNo);
+		OrderInfo.setOrderNo(order.getOrderNo());
 		OrderInfo.setCustomerName(order.getCustomerName());
 		OrderInfo.setCreateTime(order.getCreateTime());
 		OrderInfo.setModifyTime(order.getModifyTime());
 		OrderInfo.setStatus(String.valueOf(order.getStatus()));
-		PrimerProducts = primerProductRepository.findByOrder(order);
+		PrimerProducts = order.getPrimerProducts();
 		BigDecimal tbnTotal = new BigDecimal("0");
 		//定义订单集合中第一个生产代码
 		String firstProductNO = "";

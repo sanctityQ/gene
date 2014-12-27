@@ -7,15 +7,13 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
-import com.sinosoft.one.mvc.web.annotation.rest.Get;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.service.OrderService;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.OrderRepository;
-import org.one.gene.domain.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,9 +21,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.common.collect.Maps;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
 import com.sinosoft.one.mvc.web.annotation.Path;
+import com.sinosoft.one.mvc.web.annotation.rest.Get;
 import com.sinosoft.one.mvc.web.annotation.rest.Post;
 import com.sinosoft.one.mvc.web.instruction.reply.Reply;
 import com.sinosoft.one.mvc.web.instruction.reply.Replys;
@@ -107,7 +107,7 @@ public class OrderController {
     }
     
     @Post("query")
-    @Get("query")
+    @Get("query/{orderNo}")
     public String query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,Integer pageNo,Integer pageSize,Invocation inv) throws Exception {
 
         if(pageNo == null){
@@ -115,7 +115,7 @@ public class OrderController {
         }
 
         if(pageSize == null){
-            pageSize = 10;
+            pageSize = 5;
         }
 
         Pageable pageable = new PageRequest(pageNo,pageSize);
@@ -126,6 +126,8 @@ public class OrderController {
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
 
         Page<Order> orderPage = orderRepository.findAll(spec,pageable);
+        orderPage = orderService.convertOrderList(orderPage.getContent());
+        
     	inv.addModel("orderPage", orderPage);
         return "orderInfo";
     }
