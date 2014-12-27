@@ -21,6 +21,7 @@
     <c:forEach  var="order"  items="${orderPage.content}" varStatus="status">
 	      <p>
 	      	<span>&#149; 
+	      	<a href="${ctx}/order/query?orderNo=${order.orderNo}" >${order.orderNo}</a>
 <input type="text"  name="orderInfos[${status.index}].orderNo" size="50" value="${order.orderNo}" />
 <input type="text"  name="orderInfos[${status.index}].customerName" size="50" value="${order.customerName}" />
 <input type="text"  name="orderInfos[${status.index}].status" size="50" value="${order.status}" />
