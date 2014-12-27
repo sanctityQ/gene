@@ -1,8 +1,12 @@
 package org.one.gene.web.synthesis;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.servlet.ServletConfig;
 
 
 import com.sinosoft.one.mvc.web.Invocation;
@@ -11,6 +15,7 @@ import com.sinosoft.one.mvc.web.annotation.Path;
 import com.sinosoft.one.mvc.web.annotation.rest.Post;
 
 import com.sinosoft.one.mvc.web.annotation.rest.Get;
+import com.sinosoft.one.mvc.web.instruction.reply.EntityReply;
 import com.sinosoft.one.mvc.web.instruction.reply.Reply;
 import com.sinosoft.one.mvc.web.instruction.reply.Replys;
 import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
@@ -253,9 +258,15 @@ public class SynthesisController {
     /**
      * 导出上机表文件
      * */
-    public String exportPrimerProduct(@Param("boardNo") String boardNo, Invocation inv){
-
-    	return "";
+    public EntityReply<File> exportPrimerProduct(@Param("boardNo") String boardNo, Invocation inv){
+    	EntityReply<File> fileStr = null;
+    	try {
+    		fileStr = synthesisService.exportPimerProduct(boardNo, inv);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return fileStr;
     }
     
     /**

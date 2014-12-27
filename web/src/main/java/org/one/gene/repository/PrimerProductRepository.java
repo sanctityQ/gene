@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.springframework.data.repository.query.Param;
@@ -42,5 +43,8 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
     public PrimerProduct getLastProduct();
     
     public List<PrimerProduct> findByOrder(Order order);
+    
+    public List<PrimerProduct> findByBoardNo(String boardNo);
+    
 }
 

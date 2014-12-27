@@ -1,8 +1,18 @@
 package org.one.gene.domain.service;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
+import java.util.Properties;
+import com.sinosoft.one.mvc.web.instruction.reply.transport.Raw;
 
 import org.apache.commons.lang.StringUtils;
 import org.one.gene.domain.entity.Board;
@@ -20,10 +30,17 @@ import org.one.gene.repository.PrimerProductValueRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.sinosoft.one.mvc.util.MvcPathUtil;
+import com.sinosoft.one.mvc.web.Invocation;
+import com.sinosoft.one.mvc.web.annotation.Param;
+import com.sinosoft.one.mvc.web.instruction.reply.EntityReply;
+import com.sinosoft.one.mvc.web.instruction.reply.Replys;
 
 //Spring Bean的标识.
 @Component
@@ -298,5 +315,44 @@ public class SynthesisService {
     	return "";
     }
     
-    
+    /**
+     * 导出上机表文件
+     * @throws IOException 
+     * */
+	public EntityReply<File> exportPimerProduct(String boardNo, Invocation inv) throws IOException {
+		
+		String tableContext = "";//
+		List<PrimerProduct> PrimerProducts = primerProductRepository.findByBoardNo(boardNo);
+		int i = 0;
+		for(PrimerProduct primerProduct:PrimerProducts){
+			if ( i !=0 ){//行尾加回车
+				tableContext += "\r\n";
+			}
+			tableContext += primerProduct.getProductNo()+", ";
+			tableContext += primerProduct.getGeneOrder();
+			i++;
+		}
+    	
+		//读取上机表文件输出地址
+		InputStream inputStream  =   this .getClass().getClassLoader().getResourceAsStream("application.properties");    
+		Properties p = new  Properties(); 
+		try {
+			p.load(inputStream);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}   
+		
+		//生成文件
+		String fileName = boardNo + "_shangjibiao.txt";
+		FileOutputStream   fos = new FileOutputStream(p.getProperty("sjbPath")+fileName);
+		OutputStreamWriter osw = new OutputStreamWriter(fos);
+		BufferedWriter     bw  = new BufferedWriter(osw);
+		bw.write(tableContext);
+		bw.newLine();
+		bw.close();
+		
+		File file = new File(p.getProperty("sjbPath"), fileName); 
+		
+		return Replys.with(file).as(Raw.class).downloadFileName(fileName);
+    }
 }
