@@ -55,7 +55,6 @@ public class OrderService {
 	
 	/**
 	 * 订单入库
-	 * @param primerProductList
 	 * @param customer
 	 * @param order
 	 * @return
@@ -63,85 +62,24 @@ public class OrderService {
 	 * @throws IOException
 	 */
 	@Transactional(readOnly=false)
-    public String save(PrimerProductList primerProductList,Customer customer,Order order) throws IllegalStateException, IOException {
+    public String save(Customer customer,Order order){
 
-		//保存方法重写
-		List<String> types = new ArrayList<String>();
-		types.add("TM");
-		types.add("GC");
-		types.add("MW");
-		types.add("μgOD");
-		types.add("nmolTotal");
-		types.add("nmolTB");
-		types.add("odTotal");
-		types.add("odTB");
-    	//存储客户信息
-    	customerRepository.save(customer);
+    	//存储客户信息，这里不能调整客户表的信息！！！！
+    	//customerRepository.save(customer);
     	//存储订单数据
-    	//外部订单号何处收集 
+    	//外部订单号何处收集,这里不能设置外部订单号！！！
     	order.setOutOrderNo(order.getOrderNo());
     	order.setModifyTime(new Date());
+        if(order.getCreateTime() == null){
+            order.setCreateTime(new Date());
+        }
     	
     	//存储生产数据
-        for (PrimerProduct primerProduct : primerProductList.getPrimerProducts()) {
-        	//后续补充，获取登录操作人员的归属机构。
-        	primerProduct.setComCode("11000000");
-        	primerProduct.setOperationType(PrimerOperationType.orderCheckSuccess);
-        	primerProduct.setOrder(order);
-        	for(int i=0;i<types.size();i++){
-        		PrimerProductValue primerProductValue = new PrimerProductValue();
-        		primerProductValue.setPrimerProduct(primerProduct);
-        		primerProductValue.setCreateTime(new Date());
-        		if(types.get(i).equals("TM")){
-        			primerProductValue.setType(PrimerValueType.TM);
-        			primerProductValue.setTypeDesc("TM值");
-        			primerProductValue.setValue(new BigDecimal(orderCaculate.getTM(primerProduct.getGeneOrder())));
-        			primerProduct.getPrimerProductValues().add(primerProductValue);
-        		}
-        		if(types.get(i).equals("GC")){
-        			primerProductValue.setType(PrimerValueType.GC);
-        			primerProductValue.setTypeDesc("GC值");
-        			primerProductValue.setValue(new BigDecimal(orderCaculate.getGC(primerProduct.getGeneOrder())));
-        			primerProduct.getPrimerProductValues().add(primerProductValue);
-        		}
-        		if(types.get(i).equals("MW")){
-        			primerProductValue.setType(PrimerValueType.MW);
-        			primerProductValue.setTypeDesc("MW值");
-        			primerProductValue.setValue(new BigDecimal(orderCaculate.getMW(primerProduct.getGeneOrder())));
-        			primerProduct.getPrimerProductValues().add(primerProductValue);
-        		}
-        		if(types.get(i).equals("μgOD")){
-        			primerProductValue.setType(PrimerValueType.μgOD);
-        			primerProductValue.setTypeDesc("μgOD值");
-        			primerProductValue.setValue(new BigDecimal(orderCaculate.getg_OD(primerProduct.getGeneOrder(),primerProduct.getNmolTB().toString())));
-        			primerProduct.getPrimerProductValues().add(primerProductValue);
-        		}
-        		if(types.get(i).equals("nmolTotal")){
-        			primerProductValue.setType(PrimerValueType.nmolTotal);
-        			primerProductValue.setTypeDesc("nmolTotal值");
-        			primerProductValue.setValue(primerProduct.getNmolTotal());
-        			primerProduct.getPrimerProductValues().add(primerProductValue);
-        		}
-        		if(types.get(i).equals("nmolTB")){
-        			primerProductValue.setType(PrimerValueType.nmolTB);
-        			primerProductValue.setTypeDesc("nmolTB值");
-        			primerProductValue.setValue(primerProduct.getNmolTB());
-        			primerProduct.getPrimerProductValues().add(primerProductValue);
-        		}
-        		if(types.get(i).equals("odTotal")){
-        			primerProductValue.setType(PrimerValueType.odTotal);
-        			primerProductValue.setTypeDesc("odTotal值");
-        			primerProductValue.setValue(primerProduct.getOdTotal());
-        			primerProduct.getPrimerProductValues().add(primerProductValue);
-        		}
-        		if(types.get(i).equals("odTB")){
-        			primerProductValue.setType(PrimerValueType.odTB);
-        			primerProductValue.setTypeDesc("odTB值");
-        			primerProductValue.setValue(primerProduct.getOdTB());
-        			primerProduct.getPrimerProductValues().add(primerProductValue);
-        		}
-        	}
-        	order.getPrimerProducts().add(primerProduct);
+        for (PrimerProduct primerProduct : order.getPrimerProducts()) {
+            //后续补充，获取登录操作人员的归属机构。
+            primerProduct.setComCode("11000000");
+            primerProduct.setOperationType(PrimerOperationType.orderInit);//!!!是初始状态不是审核通过状态
+            primerProduct.setOrder(order);
         }
         
         orderRepository.save(order);
