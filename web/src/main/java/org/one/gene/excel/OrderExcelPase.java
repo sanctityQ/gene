@@ -99,10 +99,14 @@ public class OrderExcelPase {
 					  primerProduct.setGeneOrder(v);
 					break;
 				  case 4:	
-					  primerProduct.setNmolTotal(new BigDecimal(v));
+					  if(!"".equals(v)){
+					    primerProduct.setNmolTotal(new BigDecimal(v));
+					  }
 					break;
 				  case 5:	
-					  primerProduct.setNmolTB(new BigDecimal(v));
+					  if(!"".equals(v)){
+					    primerProduct.setNmolTB(new BigDecimal(v));
+					  }
 					break;
 				  case 6:	
 					  if(!"".equals(v)){

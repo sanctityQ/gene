@@ -133,9 +133,9 @@ public class OrderController {
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         
         Page<Order> orderPage = orderRepository.findAll(spec,pageable);
-        //orderPage = orderService.convertOrderList(orderPage.getContent());
+        Page<OrderInfoList> orderListPage = orderService.convertOrderList(orderPage,pageable);
         
-    	inv.addModel("page", orderPage);
+    	inv.addModel("page", orderListPage);
     	inv.addModel("pageSize", pageSize);
         return "orderInfo";
     }

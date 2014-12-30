@@ -77,6 +77,7 @@
 
 	<c:forEach  var="primerProduct" items="${primerProducts}" varStatus="status">     
 	      <p>
+	      <!-- 拆分的数据不显示使用是否本公司人员标识判断 -->
 	      <c:if test="${empty primerProduct.fromProductNo}">
 	      	<span>&#149; 
 	      	<c:if test="${not empty primerProduct.productNo}">

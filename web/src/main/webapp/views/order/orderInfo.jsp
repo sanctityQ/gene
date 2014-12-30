@@ -28,6 +28,8 @@
 <input type="text"  name="orderInfos[${status.index}].orderNo" size="50" value="${order.orderNo}" />
 <input type="text"  name="orderInfos[${status.index}].customerName" size="50" value="${order.customerName}" />
 <input type="text"  name="orderInfos[${status.index}].status" size="50" value="${order.status}" />
+<input type="text"  name="orderInfos[${status.index}].productNoMinToMax" size="50" value="${order.productNoMinToMax}" />
+<input type="text"  name="orderInfos[${status.index}].tbnTotal" size="50" value="${order.tbnTotal}" />
 <input type="text"  name="orderInfos[${status.index}].createTime" size="50" value="${order.createTime}" />
 <input type="text"  name="orderInfos[${status.index}].modifyTime" size="50" value="${order.modifyTime}" />
 

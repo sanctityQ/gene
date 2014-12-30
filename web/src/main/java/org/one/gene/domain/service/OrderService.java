@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerOperationType;
@@ -26,6 +25,8 @@ import org.one.gene.web.order.OrderInfoList;
 import org.one.gene.web.order.PrimerProductList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,6 +76,7 @@ public class OrderService {
 		types.add("nmolTB");
 		types.add("odTotal");
 		types.add("odTB");
+		types.add("odμmole");
     	//存储客户信息
     	customerRepository.save(customer);
     	//存储订单数据
@@ -140,6 +142,12 @@ public class OrderService {
         			primerProductValue.setValue(primerProduct.getOdTB());
         			primerProduct.getPrimerProductValues().add(primerProductValue);
         		}
+        		if(types.get(i).equals("odμmole")){
+        			primerProductValue.setType(PrimerValueType.odμmole);
+        			primerProductValue.setTypeDesc("odμmole值");
+        			primerProductValue.setValue(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())));
+        			primerProduct.getPrimerProductValues().add(primerProductValue);
+        		}
         	}
         	order.getPrimerProducts().add(primerProduct);
         }
@@ -164,17 +172,19 @@ public class OrderService {
     	return customer;
 	}
 	
-	public Page<Order>  convertOrderList(List<Order> orders) throws IllegalStateException, IOException {
+	public Page<OrderInfoList>  convertOrderList(Page<Order> orderPage,Pageable pageable) throws IllegalStateException, IOException {
 		//生产编号（头尾）、碱基总数
-		//Page<Order> orderPage = new Page<Order>();
-				/*OrderInfoList OrderInfo = new OrderInfoList();
+		OrderInfoList orderInfo = new OrderInfoList();
+		List<OrderInfoList> orderInfoList = new ArrayList<OrderInfoList>();
 		
-		for(Order order:orders){
-			OrderInfo = getOrderInfos(order);
-			orderInfoList.add(OrderInfo);
-		}*/
+		for(Order order:orderPage.getContent()){
+			orderInfo = getOrderInfos(order);
+			orderInfoList.add(orderInfo);
+		}
 		
-        return null;
+		Page<OrderInfoList> orderListPage = new PageImpl<OrderInfoList>(orderInfoList,pageable,orderPage.getSize());
+		
+        return orderListPage;
     }
 	
 	public OrderInfoList getOrderInfos(Order order){
