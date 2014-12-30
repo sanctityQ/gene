@@ -81,28 +81,28 @@
 	      <c:if test="${empty primerProduct.fromProductNo}">
 	      	<span>&#149; 
 	      	<c:if test="${not empty primerProduct.productNo}">
-	      		<input type="text"  name="primerProductList.primerProducts[${status.index}].productNo" size="50" value="${primerProduct.productNo}" />
+	      		<input type="text" name="order.primerProducts[${status.index}].productNo" size="50" value="${primerProduct.productNo}" />
 	      	</c:if> 
 	      	<c:if test="${empty primerProduct.productNo}">
-	      		<input type="text"  name="primerProductList.primerProducts[${status.index}].outProductNo" size="50" value="${primerProduct.outProductNo}" />
+	      		<input type="text" name="order.primerProducts[${status.index}].outProductNo" size="50" value="${primerProduct.outProductNo}" />
 	      	</c:if>
-<input type="text"  name="primerProductList.primerProducts[${status.index}].primeName" size="50" value="${primerProduct.primeName}" />
-<input type="text"  name="primerProductList.primerProducts[${status.index}].geneOrder" size="50" value="${primerProduct.geneOrder}" />
-<input type="text"  name="primerProductList.primerProducts[${status.index}].purifyType" size="50" value="${primerProduct.purifyType}" />
-<input type="text"  name="primerProductList.primerProducts[${status.index}].modiFiveType" size="50" value="${primerProduct.modiFiveType}" />
-<input type="text"  name="primerProductList.primerProducts[${status.index}].modiThreeType" size="50" value="${primerProduct.modiThreeType}" />
-<input type="text"  name="primerProductList.primerProducts[${status.index}].modiMidType" size="50" value="${primerProduct.modiMidType}" />
-<input type="text"  name="primerProductList.primerProducts[${status.index}].modiSpeType" size="50" value="${primerProduct.modiSpeType}" />
-<input type="text"  name="primerProductList.primerProducts[${status.index}].modiPrice" size="50" value="${primerProduct.modiPrice}" />
-<input type="text"  name="primerProductList.primerProducts[${status.index}].baseVal" size="50" value="${primerProduct.baseVal}" />
-<input type="text"  name="primerProductList.primerProducts[${status.index}].purifyVal" size="50" value="${primerProduct.purifyVal}" />
-<input type="text"  name="primerProductList.primerProducts[${status.index}].totalVal" size="50" value="${primerProduct.totalVal}" />
-<input type="text"  name="primerProductList.primerProducts[${status.index}].remark" size="50" value="${primerProduct.remark}" />
-<input type="hidden"  name="primerProductList.primerProducts[${status.index}].nmolTotal" size="50" value="${primerProduct.nmolTotal}" />
-<input type="hidden"  name="primerProductList.primerProducts[${status.index}].nmolTB" size="50" value="${primerProduct.nmolTB}" />
-<input type="hidden"  name="primerProductList.primerProducts[${status.index}].odTotal" size="50" value="${primerProduct.odTotal}" />
-<input type="hidden"  name="primerProductList.primerProducts[${status.index}].odTB" size="50" value="${primerProduct.odTB}" />
-<a href="${ctx}/order/copy/${primerProduct.productNo}" >复制</a>
+            <input type="text" name="order.primerProducts[${status.index}].primeName" size="50" value="${primerProduct.primeName}" />
+            <input type="text" name="order.primerProducts[${status.index}].geneOrder" size="50" value="${primerProduct.geneOrder}" />
+            <input type="text" name="order.primerProducts[${status.index}].purifyType" size="50" value="${primerProduct.purifyType}" />
+            <input type="text" name="order.primerProducts[${status.index}].modiFiveType" size="50" value="${primerProduct.modiFiveType}" />
+            <input type="text" name="order.primerProducts[${status.index}].modiThreeType" size="50" value="${primerProduct.modiThreeType}" />
+            <input type="text" name="order.primerProducts[${status.index}].modiMidType" size="50" value="${primerProduct.modiMidType}" />
+            <input type="text" name="order.primerProducts[${status.index}].modiSpeType" size="50" value="${primerProduct.modiSpeType}" />
+            <input type="text" name="order.primerProducts[${status.index}].modiPrice" size="50" value="${primerProduct.modiPrice}" />
+            <input type="text" name="order.primerProducts[${status.index}].baseVal" size="50" value="${primerProduct.baseVal}" />
+            <input type="text" name="order.primerProducts[${status.index}].purifyVal" size="50" value="${primerProduct.purifyVal}" />
+            <input type="text" name="order.primerProducts[${status.index}].totalVal" size="50" value="${primerProduct.totalVal}" />
+            <input type="text" name="order.primerProducts[${status.index}].remark" size="50" value="${primerProduct.remark}" />
+            <input type="hidden" name="order.primerProducts[${status.index}].nmolTotal" size="50" value="${primerProduct.nmolTotal}" />
+            <input type="hidden" name="order.primerProducts[${status.index}].nmolTB" size="50" value="${primerProduct.nmolTB}" />
+            <input type="hidden" name="order.primerProducts[${status.index}].odTotal" size="50" value="${primerProduct.odTotal}" />
+            <input type="hidden" name="order.primerProducts[${status.index}].odTB" size="50" value="${primerProduct.odTB}" />
+            <a href="${ctx}/order/copy/${primerProduct.productNo}" >复制</a>
 </c:if>
 	      	</span>
 	      </p>   

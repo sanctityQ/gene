@@ -4,12 +4,14 @@ package org.one.gene.domain.entity;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 import com.google.common.collect.Lists;
 
+import com.google.common.collect.Maps;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -431,6 +433,31 @@ public class PrimerProduct implements java.io.Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
+
+    @PrePersist
+    @PreUpdate
+    public void generatePrimerProductValue(){
+
+        //初始化数据
+        for (PrimerValueType type : PrimerValueType.values()) {
+            primerProductValueMap.put(type,type.create(this));
+        }
+
+        //补ID
+        for (PrimerProductValue pv : this.getPrimerProductValues()) {
+            PrimerProductValue npv = primerProductValueMap.get(pv.getType());
+            if(npv != null){
+                npv.setId(pv.getId());
+            }
+        }
+
+        //重新设置
+        this.setPrimerProductValues(Lists.newArrayList(primerProductValueMap.values()));
+
+    }
+
+    private Map<PrimerValueType,PrimerProductValue> primerProductValueMap = Maps.newEnumMap(PrimerValueType.class);
 }
 
 

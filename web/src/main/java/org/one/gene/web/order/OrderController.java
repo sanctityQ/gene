@@ -106,9 +106,9 @@ public class OrderController {
     }
     
     @Post("save")
-    public String save(@Param("primerProductList") PrimerProductList primerProductList, @Param("customer") Customer customer, @Param("order") Order order,Invocation inv) throws IllegalStateException, IOException {
+    public String save(@Param("customer") Customer customer, @Param("order") Order order,Invocation inv) throws IllegalStateException, IOException {
 
-    	orderService.save(primerProductList, customer, order);
+    	orderService.save(customer, order);
 
         return "";
     }
