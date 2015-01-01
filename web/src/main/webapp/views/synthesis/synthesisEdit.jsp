@@ -88,13 +88,6 @@
 			}
 		}
 		
-		//是否修饰
-        if (confirm("请确认是否需要修饰，需要修饰点击‘确定’，不需要修饰点击‘取消’？")){
-        	document.getElementById("modiFlag").value = "1";
-        }else{
-        	document.getElementById("modiFlag").value = "0";
-        }
-		
 		form.submit();
 		
     }
@@ -116,7 +109,6 @@
 				    <input class="btn btn-primary" type="button" value="成功" onclick="setValue('1');"/>&nbsp;&nbsp;
 				    <input class="btn btn-primary" type="button" value="失败" onclick="writeFailReason();"/>&nbsp;&nbsp;
 				    
-				    <input type="hidden" id="modiFlag" name="odiFlag" value="" />
 					<input type="hidden" name="id" value="${board.id}" />
 					<input type="hidden" name="boardNo" value="${board.boardNo}" />
 					<input type="hidden" name="boardType" value="${board.boardType}" />
