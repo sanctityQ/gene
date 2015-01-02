@@ -13,6 +13,7 @@ import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerOperationType;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
+import org.one.gene.domain.entity.PrimerProduct_OperationType;
 import org.one.gene.excel.OrderCaculate;
 import org.one.gene.excel.OrderExcelPase;
 import org.one.gene.repository.CustomerRepository;
@@ -76,7 +77,7 @@ public class OrderService {
         for (PrimerProduct primerProduct : order.getPrimerProducts()) {
             //后续补充，获取登录操作人员的归属机构。
             primerProduct.setComCode("11000000");
-            primerProduct.setOperationType(PrimerOperationType.orderInit);//!!!是初始状态不是审核通过状态
+            primerProduct.setOperationType(PrimerProduct_OperationType.listImport);//!!!是初始状态不是审核通过状态
             primerProduct.setOrder(order);
             primerProduct.getPrimerProductOperations().add(createPrimerProductOperation(primerProduct));
         }
@@ -186,6 +187,7 @@ public class OrderService {
     	primerProductOperation.setType(PrimerOperationType.orderInit);
     	primerProductOperation.setTypeDesc("订单初始化");
     	primerProductOperation.setBackTimes(0);
+    	//默认值，后续调整
     	primerProductOperation.setUserCode("19820833");
     	primerProductOperation.setUserName("检查工2号");
     	primerProductOperation.setCreateTime(new Date());
