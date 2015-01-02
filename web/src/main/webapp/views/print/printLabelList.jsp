@@ -9,25 +9,31 @@
 <title></title>
 <script type="text/javascript">
 
-	function changeFlagValue(){
-		var checkFlagList = document.getElementsByName("checkFlag");
-		var productNoValueList = document.getElementsByName("productNoValue");
-		var productNoList = document.getElementsByName("productNo");
+	function selectAll() {
+		var elements = document.getElementsByTagName("input");
 		
-		if(checkFlagList.length!=0){
-			for(var i = 0;i<checkFlagList.length;i++){
-				if(checkFlagList[i].checked==true){
-					productNoValueList[i].value = productNoList[i].value;
-				}else{
-					productNoValueList[i].value = "0";
+		for(var j = 0; j < elements.length; j++) 
+		{
+			if(elements[j].name.slice(0,elements[j].name.indexOf("[")) == "primerProductList.primerProducts")
+			{   
+				var headStr = elements[j].name.slice(0,elements[j].name.indexOf("]")+2);
+				var lastStr = elements[j].name.slice(elements[j].name.indexOf("]")+2);
+				if ( lastStr == "selectFlag"){
+					var div = document.getElementById(elements[j].name);
+					var all = document.getElementById("all");
+
+					if (all.checked == true){
+					    div.checked = true;
+					}else{
+						div.checked = false;
+					}
 				}
 			}
 		}
 		
-		
 	}
 	
-	function makeTable(){
+	function exportPrintLabel(){
 		form.submit();
 	}
 	
@@ -42,7 +48,7 @@
 </head>
 
 <body topmargin="0" leftmargin="0" rightmargin="0" onload="">
-  <form name="form" action="${ctx}/synthesis/makeTableEdit/" method="post" class="form-horizontal">
+  <form name="form" action="${ctx}/print/exportLabel/" method="post" class="form-horizontal">
      <table border="1" cellpadding="3" cellspacing="1" width="100%" style="background-color: #b9d8f3;" id="contentTable" class="common">
 		<thead>
 		<tr><%@ include file="/static/layouts/header.jsp"%></tr>
@@ -51,7 +57,7 @@
 	    </tr>
 		<tr style="text-align: center; COLOR: #0076C8; BACKGROUND-COLOR: #F4FAFF; font-weight: bold">
 			<td><font size="4"></font></td>
-			<td><font size="4"></font></td>
+			<td>全选<input type="checkbox" id="all" name="all" value="" onclick="selectAll()"/></td>
 			<td><font size="4">生产编号id</font></td>
 			<td><font size="4">生产编号</font></td>
 			<td><font size="4">板号</font></td>
@@ -69,8 +75,12 @@
 		</thead>
 		<% int i=1;	%>
 		<tbody>
-			<c:forEach items="${primerProducts}" var="primerProduct"  varStatus="status">
+			<c:forEach items="${page.content}" var="primerProduct"  varStatus="status">
 				<tr bgcolor='#F4FAFF'>
+<input type="hidden" name="primerProductList.primerProducts[${status.index}].order.id" value="${primerProduct.order.id}" />
+<input type="hidden" name="primerProductList.primerProducts[${status.index}].order.orderNo" value="${primerProduct.order.orderNo}" />
+<input type="hidden" name="primerProductList.primerProducts[${status.index}].order.customerCode" value="${primerProduct.order.customerCode}" />
+
 <td nowrap="nowrap" align="left"><%=i++ %></td>
 <td><input type="checkbox" id="selectFlag" name="primerProductList.primerProducts[${status.index}].selectFlag" value="" onclick=""/></td>
 
@@ -99,6 +109,22 @@
 <td align="left">${primerProduct.purifyType}</td>
 <td align="left">${primerProduct.operationTypeDesc}</td>
 <td align="left">${primerProduct.backTimes}</td>
+
+<input type="hidden" name="primerProductList.primerProducts[${status.index}].odTotal" value="${primerProduct.odTotal}"/>
+<input type="hidden" name="primerProductList.primerProducts[${status.index}].odTB"    value="${primerProduct.odTB}"/>
+<input type="hidden" name="primerProductList.primerProducts[${status.index}].primeName"    value="${primerProduct.primeName}"/>
+<input type="hidden" name="primerProductList.primerProducts[${status.index}].modiFiveType"    value="${primerProduct.modiFiveType}"/>
+<input type="hidden" name="primerProductList.primerProducts[${status.index}].modiThreeType"    value="${primerProduct.modiThreeType}"/>
+<input type="hidden" name="primerProductList.primerProducts[${status.index}].modiMidType"    value="${primerProduct.modiMidType}"/>
+<input type="hidden" name="primerProductList.primerProducts[${status.index}].modiSpeType"    value="${primerProduct.modiSpeType}"/>
+
+<c:forEach items="${primerProduct.primerProductValues}" var="primerProductValue"  varStatus="status1">
+<input type="hidden" name="primerProductList.primerProducts[${status.index}].primerProductValues[${status1.index}].id" value="${primerProductValue.id}" />
+<input type="hidden" name="primerProductList.primerProducts[${status.index}].primerProductValues[${status1.index}].type" value="${primerProductValue.type}" />
+<input type="hidden" name="primerProductList.primerProducts[${status.index}].primerProductValues[${status1.index}].typeDesc" value="${primerProductValue.typeDesc}" />
+<input type="hidden" name="primerProductList.primerProducts[${status.index}].primerProductValues[${status1.index}].value" value="${primerProductValue.value}" />
+</c:forEach>
+
 				</tr>
 			</c:forEach>
 		</tbody>

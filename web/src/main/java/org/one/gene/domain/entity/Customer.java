@@ -2,9 +2,12 @@ package org.one.gene.domain.entity;
 // Generated Dec 14, 2014 1:21:34 AM by One Data Tools 1.0.0
 
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Transient;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -13,6 +16,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.google.common.collect.Lists;
 
 /**
  * Customer.
@@ -62,7 +67,10 @@ public class Customer extends IdEntity implements java.io.Serializable {
      */
     private String email;
 
-    public Customer() {
+    private List<PrimerProduct> primerProducts = Lists.newArrayList();
+    
+
+	public Customer() {
     }
 
 
@@ -166,6 +174,15 @@ public class Customer extends IdEntity implements java.io.Serializable {
         return ToStringBuilder.reflectionToString(this);
     }
 
+    @Transient
+    public List<PrimerProduct> getPrimerProducts() {
+		return primerProducts;
+	}
+
+
+	public void setPrimerProducts(List<PrimerProduct> primerProducts) {
+		this.primerProducts = primerProducts;
+	}
 }
 
 

@@ -22,17 +22,19 @@
 			<legend><small>打印标签查询</small></legend>
 			<div class="control-group">
 				<div class="controls">
-				    <label for="loginName" class="control-label">公司：</label>
-				    <select name="comcode" class="required" >
-        					<option value="">睿博</option>
-        					<option value="T">擎科</option>
-        					<option value="J">金唯智</option>
-        					<option value="X">梓熙</option>
-        					<option value="A">A普通</option>
-        					<option value="M">美吉</option>
-        					<option value="D">华大</option>
-        					<option value="N">华诺</option>
-        			</select>
+     				<label for="loginName" class="control-label">订单号:</label>
+					<input type="text" id="orderNo" name="orderNo" size="20" value="" class="required"/>
+				    <label for="loginName" class="control-label">客户代码:</label>
+					<input type="text" id="customer_code" name="customer_code" size="20" value="" class="required"/>
+				</div>
+				<div class="controls">
+     				<label for="loginName" class="control-label">生产数据:</label>
+					<input type="text" id="productNo" name="productNo" size="20" value="" class="required"/>
+				    <label for="loginName" class="control-label">订单导入日期</label>从
+					<input type="text" id="create_time_start" name="create_time_start" size="10" value="" class="required"/>到
+					<input type="text" id="create_time_end" name="create_time_end" size="10" value="" class="required"/>
+				</div>				
+				<div class="controls">
         			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         			<input id="submit" class="btn btn-primary" type="submit" value="查询" />
 				</div>				
