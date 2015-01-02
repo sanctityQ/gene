@@ -46,5 +46,10 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
     
     public List<PrimerProduct> findByBoardNo(String boardNo);
     
+	@SQL("select * from `primer_product` where "
+			+ "#if(:comcode1 != '') {`product_no` like :comcode1 } "
+			+ "#if(:comcode1 == '') {`product_no` REGEXP '^[0-9]'}")
+	List<PrimerProduct> selectPrimerProductForLabel(@Param("comcode1") String comcode1);
+	
 }
 
