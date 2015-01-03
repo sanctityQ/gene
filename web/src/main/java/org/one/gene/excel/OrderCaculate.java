@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import com.google.common.base.CharMatcher;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,27 +32,29 @@ public class OrderCaculate {
 	 * TCGUINBDHKMRSWYV 需要自动去除除以上字符外的所有字符，字符可以自动转换为大写
 	 */
 	public String getYWSeqValue(String str){
-		str = str.toUpperCase();
-		char [] ch = "TCGUINBDHKMRSWYV".toCharArray();
-		Map<Character,Character> map = new TreeMap<Character,Character>();
-		for (int i = 0; i < ch.length; i++){
-			map.put(ch[i], ch[i]);
-		}
-		StringBuilder sb = new StringBuilder();
-		
-		char [] chStr = str.toCharArray();
-		for (int j = 0; j < chStr.length; j++){
-			if(map.containsKey(chStr[j])){
-				sb.append(chStr[j]);
-			}
-		}
-		return sb.toString();
+        CharMatcher charMatcher = CharMatcher.anyOf(str.toUpperCase());
+        return charMatcher.retainFrom("ATCGUINBDHKMRSWYV");
+//		str = str.toUpperCase();
+//		char [] ch = "TCGUINBDHKMRSWYV".toCharArray();
+//		Map<Character,Character> map = new TreeMap<Character,Character>();
+//		for (int i = 0; i < ch.length; i++){
+//			map.put(ch[i], ch[i]);
+//		}
+//		StringBuilder sb = new StringBuilder();
+//
+//		char [] chStr = str.toCharArray();
+//		for (int j = 0; j < chStr.length; j++){
+//			if(map.containsKey(chStr[j])){
+//				sb.append(chStr[j]);
+//			}
+//		}
+//		return sb.toString();
 	}
 	
 	
 	//获取指定字符个数
 	public String getCount(String str,char chr){
-		char [] ch = str.toCharArray();
+        char [] ch = str.toCharArray();
 		Map<Character,Integer> map = new TreeMap<Character,Integer>();
 		for (int i = 0; i < ch.length; i++){
 			//只统计里面英语字母的个数
@@ -89,14 +93,14 @@ public class OrderCaculate {
 	  //当碱基数 > 20 = 81.5+(0.41 * GC(%)) - (600/碱基数）- 16.6 ，保留1位小数
 	  //当碱基数 < 20 = 4 * (#C + #G) + 2 * (#A + #T)
 	public String getTM(String str){
-		String dbgc = getGC(str);
 		String countC = getCount(str,'C');
-		String countG = getCount(str,'G');
-		String countA = getCount(str,'A');
-		String countT = getCount(str,'T');
-		String tm = "";
-		if(str.length()>20){
-			tm = new BigDecimal("81.5").add(new BigDecimal("0.41").multiply(new BigDecimal(dbgc)))
+        String countG = getCount(str,'G');
+        String countA = getCount(str,'A');
+        String countT = getCount(str,'T');
+        String tm = "";
+        if(str.length()>20){
+            String dbgc = getGC(str);
+            tm = new BigDecimal("81.5").add(new BigDecimal("0.41").multiply(new BigDecimal(dbgc)))
 					.subtract(new BigDecimal("600").divide(new BigDecimal(getAnJiShu(str)),2,BigDecimal.ROUND_HALF_UP))
 					.subtract(new BigDecimal("16.6")).setScale(1, RoundingMode.HALF_UP).toString();
 		}

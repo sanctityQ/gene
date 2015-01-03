@@ -37,7 +37,8 @@ public class SearchFilter {
 			// 过滤掉空值
 			String key = entry.getKey();
 			Object value = entry.getValue();
-			if (StringUtils.isBlank((String) value)) {
+
+			if (value == null || StringUtils.isBlank(String.valueOf(value))) {
 				continue;
 			}
 
