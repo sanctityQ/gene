@@ -21,7 +21,8 @@ import org.one.gene.domain.entity.PrimerOperationType;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerProductValue;
-import org.one.gene.domain.entity.PrimerProduct_OperationType;
+import org.one.gene.domain.entity.PrimerType;
+import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.repository.BoardHoleRepository;
 import org.one.gene.repository.BoardRepository;
 import org.one.gene.repository.OrderRepository;
@@ -95,31 +96,29 @@ public class SynthesisService {
 				}
 			}
 			// 翻译操作类型
-			PrimerProduct_OperationType operationType = primerProduct.getOperationType();
-			if (operationType.equals(PrimerProduct_OperationType.listImport)) {
-				primerProduct.setOperationTypeDesc("订单导入");
-			} else if (operationType.equals(PrimerProduct_OperationType.makeTable)) {
-				primerProduct.setOperationTypeDesc("待制表");
-			} else if (operationType.equals(PrimerProduct_OperationType.synthesis)) {
-				primerProduct.setOperationTypeDesc("待合成");
-			} else if (operationType.equals(PrimerProduct_OperationType.modi)) {
-				primerProduct.setOperationTypeDesc("待修饰");
-			} else if (operationType.equals(PrimerProduct_OperationType.ammonia)) {
-				primerProduct.setOperationTypeDesc("待氨解");
-			} else if (operationType.equals(PrimerProduct_OperationType.purify)) {
-				primerProduct.setOperationTypeDesc("待纯化");
-			} else if (operationType.equals(PrimerProduct_OperationType.measure)) {
-				primerProduct.setOperationTypeDesc("待测值");
-			} else if (operationType.equals(PrimerProduct_OperationType.pack)) {
-				primerProduct.setOperationTypeDesc("待分装");
-			} else if (operationType.equals(PrimerProduct_OperationType.bake)) {
-				primerProduct.setOperationTypeDesc("待烘干");
-			} else if (operationType.equals(PrimerProduct_OperationType.detect)) {
-				primerProduct.setOperationTypeDesc("待检测");
-			} else if (operationType.equals(PrimerProduct_OperationType.delivery)) {
-				primerProduct.setOperationTypeDesc("待发货");
-			} else if (operationType.equals(PrimerProduct_OperationType.finish)) {
-				primerProduct.setOperationTypeDesc("结束");
+			PrimerStatusType operationType = primerProduct.getOperationType();
+			if (operationType.equals(PrimerStatusType.orderInit)) {
+				primerProduct.setOperationTypeDesc(PrimerStatusType.orderInit.desc());
+			} else if (operationType.equals(PrimerStatusType.makeBoard)) {
+				primerProduct.setOperationTypeDesc(PrimerStatusType.makeBoard.desc());
+			} else if (operationType.equals(PrimerStatusType.synthesis)) {
+				primerProduct.setOperationTypeDesc(PrimerStatusType.synthesis.desc());
+			} else if (operationType.equals(PrimerStatusType.modification)) {
+				primerProduct.setOperationTypeDesc(PrimerStatusType.modification.desc());
+			} else if (operationType.equals(PrimerStatusType.ammonia)) {
+				primerProduct.setOperationTypeDesc(PrimerStatusType.ammonia.desc());
+			} else if (operationType.equals(PrimerStatusType.purify)) {
+				primerProduct.setOperationTypeDesc(PrimerStatusType.purify.desc());
+			} else if (operationType.equals(PrimerStatusType.measure)) {
+				primerProduct.setOperationTypeDesc(PrimerStatusType.measure.desc());
+			} else if (operationType.equals(PrimerStatusType.pack)) {
+				primerProduct.setOperationTypeDesc(PrimerStatusType.pack.desc());
+			} else if (operationType.equals(PrimerStatusType.bake)) {
+				primerProduct.setOperationTypeDesc(PrimerStatusType.bake.desc());
+			} else if (operationType.equals(PrimerStatusType.detect)) {
+				primerProduct.setOperationTypeDesc(PrimerStatusType.detect.desc());
+			} else if (operationType.equals(PrimerStatusType.delivery)) {
+				primerProduct.setOperationTypeDesc(PrimerStatusType.delivery.desc());
 			}
 		}
 
@@ -239,7 +238,7 @@ public class SynthesisService {
 				PrimerProduct primerProduct = primerProductRepository.findOne(boardHole.getPrimerProduct().getId());
 				if( primerProduct != null ){
 					primerProduct.setBoardNo(board.getBoardNo());
-					primerProduct.setOperationType(PrimerProduct_OperationType.synthesis);//待合成
+					primerProduct.setOperationType(PrimerStatusType.synthesis);//待合成
 					primerProductRepository.save(primerProduct);
 				}
 				
@@ -289,9 +288,9 @@ public class SynthesisService {
 						|| !"".equals(primerProduct.getModiThreeType())
 						|| !"".equals(primerProduct.getModiMidType())
 						|| !"".equals(primerProduct.getModiSpeType())) { // 需要修饰，到待修饰状态
-					boardHole.getPrimerProduct().setOperationType(PrimerProduct_OperationType.modi);
+					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.modification);
 				} else {//不需要修饰，到待氨解状态
-					boardHole.getPrimerProduct().setOperationType(PrimerProduct_OperationType.ammonia);
+					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.ammonia);
 				}
 
 				type = PrimerOperationType.synthesisSuccess;
@@ -299,7 +298,7 @@ public class SynthesisService {
 				
 			} else if ("2".equals(selectFlag)) { // Synthesis fail
 
-				boardHole.getPrimerProduct().setOperationType(PrimerProduct_OperationType.synthesis);//回到待合成
+				boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
 				boardHole.getPrimerProduct().setBoardNo("");//清空板号
 				boardHole.getPrimerProduct().setBackTimes(boardHole.getPrimerProduct().getBackTimes()+1);//循环重回次数+1
                 

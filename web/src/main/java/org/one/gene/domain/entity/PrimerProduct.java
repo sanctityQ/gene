@@ -26,6 +26,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -107,7 +108,7 @@ public class PrimerProduct implements java.io.Serializable {
     /**
      * 状态.
      */
-    private PrimerProduct_OperationType operationType;
+    private PrimerStatusType operationType;
     /**
      * 板号.
      */
@@ -142,7 +143,7 @@ public class PrimerProduct implements java.io.Serializable {
 
 
     public PrimerProduct(String productNo, Order order, String outProductNo, String fromProductNo, String primeName, String geneOrder, String purifyType,
-    		PrimerProduct_OperationType operationType, String comCode) {
+    		PrimerStatusType operationType, String comCode) {
         this.productNo = productNo;
         this.order = order;
         this.outProductNo = outProductNo;
@@ -312,11 +313,11 @@ public class PrimerProduct implements java.io.Serializable {
 
     @Column(name = "`operation_type`", length = 31)
     @Enumerated(value = EnumType.STRING)
-    public PrimerProduct_OperationType getOperationType() {
+    public PrimerStatusType getOperationType() {
         return this.operationType;
     }
 
-    public void setOperationType(PrimerProduct_OperationType operationType) {
+    public void setOperationType(PrimerStatusType operationType) {
         this.operationType = operationType;
     }
 
