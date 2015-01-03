@@ -66,7 +66,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
     baseCount {
         @Override
         String desc() {
-            return null;
+            return "baseCount";
         }
 
         @Override
@@ -277,7 +277,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
-            return primerProduct.getOdTotal().divide(primerProduct.getOdTB());
+            return primerProduct.getOdTotal().divide(primerProduct.getOdTB(), 0, BigDecimal.ROUND_UP);
         }
     },
 
@@ -330,7 +330,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 					.add(new BigDecimal("296.7").multiply(yv.value(primerProduct)))
 					.subtract(new BigDecimal(61))
 //					.add(每种修饰的分子量());
-					.setScale(1,RoundingMode.HALF_UP);
+					.setScale(1, RoundingMode.HALF_UP);
         }
     },
 
@@ -403,7 +403,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
         primerProductValue.setCreateTime(DateTime.now().toDate());
         primerProductValue.setType(this);
         primerProductValue.setTypeDesc(this.desc());
-        primerProductValue.setValue(this.value(primerProduct));
+        primerProductValue.setValue(this.value(primerProduct).setScale(1, BigDecimal.ROUND_HALF_UP));
         return primerProductValue;
     }
 

@@ -33,7 +33,7 @@ CREATE TABLE `customer` (
   `address` VARCHAR(255) COMMENT '客户地址',
   `phone_no` VARCHAR(15) COMMENT '联系电话',
   `email` VARCHAR(63) COMMENT '邮箱',
-  `web_site` varchar(120) DEFAULT NULL COMMENT '网址',
+  `web_site` varchar(127) DEFAULT NULL COMMENT '网址',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户信息表';
@@ -143,7 +143,7 @@ CREATE TABLE `primer_product_value` (
   `primer_product_id` INT(11) NOT NULL COMMENT '引物生产数据ID',
   `type`  VARCHAR(31) NOT NULL COMMENT '值类型',
   `type_desc` VARCHAR(63) NOT NULL COMMENT '类型描述',
-  `value`  DECIMAL(10,2) NOT NULL COMMENT '数值',
+  `value`  DECIMAL(20,2) NOT NULL COMMENT '数值',
   `create_time`  DATETIME NOT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_ppid_type` (`primer_product_id`,`type`)
