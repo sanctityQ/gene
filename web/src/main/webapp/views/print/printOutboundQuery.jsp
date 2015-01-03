@@ -42,11 +42,12 @@ function ajaxSubmit() {
           i++
       }
 	});
+	alert(JSON.stringify(outboundList))
     $.ajax({
     	async:false,
         url: "${ctx}/print/printOutBound",
         type: "POST",
-        data:JSON.stringify(outboundList),
+        data:{outboundJson:JSON.stringify(outboundList)},
         dataType: "json",
         success: function(data) {
             /* alert(data.length);

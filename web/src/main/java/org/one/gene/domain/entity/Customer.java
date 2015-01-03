@@ -6,13 +6,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Transient;
-
-import static javax.persistence.GenerationType.IDENTITY;
-
-import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -70,10 +65,7 @@ public class Customer extends IdEntity implements java.io.Serializable {
      * 网址
      */
     private String webSite;
-    /**
-     * 客户公司logo
-     */
-    private String companylogoPath;
+
     
     private List<PrimerProduct> primerProducts = Lists.newArrayList();
     
@@ -184,14 +176,7 @@ public class Customer extends IdEntity implements java.io.Serializable {
 	public void setWebSite(String webSite) {
 		this.webSite = webSite;
 	}
-	@Column(name = "`companylogo_path`", length = 120)
-	public String getCompanylogoPath() {
-		return companylogoPath;
-	}
 
-	public void setCompanylogoPath(String companylogoPath) {
-		this.companylogoPath = companylogoPath;
-	}
 
 
 	@Override

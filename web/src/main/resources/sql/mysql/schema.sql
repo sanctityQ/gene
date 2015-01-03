@@ -33,8 +33,7 @@ CREATE TABLE `customer` (
   `address` VARCHAR(255) COMMENT '客户地址',
   `phone_no` VARCHAR(15) COMMENT '联系电话',
   `email` VARCHAR(63) COMMENT '邮箱',
-  `webSite`VARCHAR(120) COMMENT '网址',
-  `companylogo_path`VARCHAR(120) COMMENT '公司logo路径',
+  `web_site` varchar(120) DEFAULT NULL COMMENT '网址',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户信息表';

@@ -115,7 +115,7 @@ public class PrintController {
     }
     
     @Post("printOutBound")
-    public String printOutBound(String outboundJson,Invocation inv) throws Exception {
+    public String printOutBound(@Param("outboundJson")String outboundJson,Invocation inv) throws Exception {
     		System.out.println(outboundJson);
         
         return "success";
