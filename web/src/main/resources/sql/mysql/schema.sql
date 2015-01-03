@@ -33,6 +33,8 @@ CREATE TABLE `customer` (
   `address` VARCHAR(255) COMMENT '客户地址',
   `phone_no` VARCHAR(15) COMMENT '联系电话',
   `email` VARCHAR(63) COMMENT '邮箱',
+  `webSite`VARCHAR(120) COMMENT '网址',
+  `companylogo_path`VARCHAR(120) COMMENT '公司logo路径',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户信息表';
@@ -149,24 +151,25 @@ CREATE TABLE `primer_product_value` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='引物数据数值表';
 
 CREATE TABLE `primer_label_config` (
-  `id`             INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
-  `com_code`       VARCHAR(15)      NOT NULL COMMENT '机构代码',
-  `com_name`       VARCHAR(127)     NOT NULL COMMENT '机构名称',
-  `columns`  TINYINT(2) DEFAULT '0' COMMENT '标签排列列数',
-  `user_code`   VARCHAR(15) NOT NULL COMMENT '用户代码',
-  `user_name`   VARCHAR(31) NOT NULL COMMENT '用户名称',
-  `create_time`   DATETIME NOT NULL COMMENT '操作时间',
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `customer_code` VARCHAR(31)      NOT NULL COMMENT '客户代码',
+  `customer_name` VARCHAR(127)     NOT NULL COMMENT '客户名称',
+  `columns` TINYINT(2) DEFAULT 1 COMMENT '标签排列列数',
+  `user_code` VARCHAR(15) NOT NULL COMMENT '用户代码',
+  `user_name` VARCHAR(31) NOT NULL COMMENT '用户名称',
+  `create_time` DATETIME NOT NULL COMMENT '创建时间',
+  `modify_time` DATETIME NOT NULL COMMENT '最后修改时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_plc_com_code` (`com_code`)
+  UNIQUE KEY `uk_plc_customer_code` (`customer_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='引物标签打印配置主表';
 
 CREATE TABLE `primer_label_config_sub` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
   `primer_label_config_id` INT(11) NOT NULL COMMENT '引物标签打印配置主表ID',
-  `type`  VARCHAR(31) NOT NULL COMMENT '值类型',
+  `type` VARCHAR(31) NOT NULL COMMENT '值类型',
   `type_desc` VARCHAR(63) NOT NULL COMMENT '类型描述',
-  `sorting`  TINYINT(2) DEFAULT '0' COMMENT '排序',
+  `sorting` TINYINT(2) DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_plcid_type` (`primer_label_config_id`,`type`)
+  UNIQUE KEY `uk_plc_id_type` (`primer_label_config_id`,`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='引物标签打印配置子表';
 

@@ -4,9 +4,9 @@ package org.one.gene.domain.entity;
 public enum PrimerOperationType {
 
     orderInit,
-    orderCheckFailure,
     orderCheckSuccess,
-    makeTableSuccess,
+    orderCheckFailure,
+    makeTable,
     synthesisSuccess,
     synthesisFailure,
     modiSuccess,
@@ -19,13 +19,13 @@ public enum PrimerOperationType {
     measureFailure,
     packSuccess,
     packFailure,
-    bakeSuccess,
-    bakeFailure,
+    dryingSuccess,
+    dryingFailure,
     detectSuccess,
     detectFailure,
     deliverySuccess,
     deliveryFailure,
     backSuccess,
-    backFailure,
+    backFailure
 
 }

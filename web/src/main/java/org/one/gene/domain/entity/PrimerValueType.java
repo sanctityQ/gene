@@ -368,12 +368,28 @@ public enum PrimerValueType implements CalculatePrimerValue {
     ODμmol {
     	@Override
         String desc() {
-            return "μgOD";
+            return "ODμmol";
         }
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
-            return nmolTB.value(primerProduct).multiply(MW.value(primerProduct).divide(new BigDecimal(1000)));
+            return av.value(primerProduct).multiply(new BigDecimal("15.4"))
+    				.add(tv.value(primerProduct)).multiply(new BigDecimal("8.8"))
+    				.add(cv.value(primerProduct)).multiply(new BigDecimal("7.3"))
+    				.add(gv.value(primerProduct)).multiply(new BigDecimal("11.7"))
+    				.add(uv.value(primerProduct)).multiply(new BigDecimal("10.1"))
+    				.add(iv.value(primerProduct)).multiply(new BigDecimal("12.25"))
+    				.add(nv.value(primerProduct)).multiply(new BigDecimal("10.95"))
+    				.add(bv.value(primerProduct)).multiply(new BigDecimal("9.5"))
+    				.add(dv.value(primerProduct)).multiply(new BigDecimal("12.1"))
+    				.add(hv.value(primerProduct)).multiply(new BigDecimal("10.7"))
+    				.add(kv.value(primerProduct)).multiply(new BigDecimal("10.6"))
+    				.add(mv.value(primerProduct)).multiply(new BigDecimal("11.4"))
+    				.add(rv.value(primerProduct)).multiply(new BigDecimal("13.6"))
+    				.add(sv.value(primerProduct)).multiply(new BigDecimal("9.6"))
+    				.add(vv.value(primerProduct)).multiply(new BigDecimal("11.5"))
+    				.add(wv.value(primerProduct)).multiply(new BigDecimal("12.3"))
+    				.add(yv.value(primerProduct)).multiply(new BigDecimal("8.35"));
         }
     };
 
