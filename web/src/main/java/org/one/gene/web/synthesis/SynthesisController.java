@@ -236,11 +236,10 @@ public class SynthesisController {
      * */
     @Post("submitSynthesis")
 	public String submitSynthesis(Board board,
-			@Param("modiFlag") String modiFlag,
 			@Param("failReason") String failReason, Invocation inv) {
     	
     	
-    	synthesisService.submitSynthesis(board, modiFlag, failReason);
+    	synthesisService.submitSynthesis(board, failReason);
     	
     	inv.addModel("message", "完成合成提交！");
     	

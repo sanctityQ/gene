@@ -3,9 +3,17 @@ package org.one.gene.domain.entity;
 
 
 import java.util.Date;
-import javax.persistence.*;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -152,7 +160,6 @@ public class PrimerProductOperation extends IdEntity implements java.io.Serializ
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-
 }
 
 

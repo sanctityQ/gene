@@ -3,6 +3,7 @@ package org.one.gene.excel;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -96,7 +97,7 @@ public class OrderExcelPase {
 					  primerProduct.setPrimeName(v);
 					break;
 				  case 3:	
-					  primerProduct.setGeneOrder(v);
+					  primerProduct.setGeneOrder(orderCaculate.getYWSeqValue(v));
 					break;
 				  case 4:	
 					  if(!"".equals(v)){
@@ -142,16 +143,29 @@ public class OrderExcelPase {
 					  primerProduct.setPurifyVal(new BigDecimal(v));
 				  
 					  //获取碱基数
-					  String tbnStr = orderCaculate.getAnJiShu(orderCaculate.getYWSeqValue(primerProduct.getGeneOrder()));
+					  String tbnStr = orderCaculate.getAnJiShu(primerProduct.getGeneOrder());
 					  //总价格:修饰单价+碱基单价*碱基数+纯化价格(9+10*碱基数+11)
 					  BigDecimal totalVal = primerProduct.getModiPrice().add(primerProduct.getBaseVal().multiply(new BigDecimal(tbnStr))).add(primerProduct.getPurifyVal());
 					  primerProduct.setTotalVal(totalVal);
+					  if(primerProduct.getNmolTotal()==null&&primerProduct.getNmolTB()==null){
+						//通过od值计算  1000 * 'OD总量' / 'OD/μmol'
+						primerProduct.setNmolTotal(new BigDecimal(1000).multiply(primerProduct.getOdTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
+						//1000 * 'OD/tube' / 'OD/μmol'
+						primerProduct.setNmolTB(new BigDecimal(1000).multiply(primerProduct.getOdTB()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
+					  }
+					  if(primerProduct.getOdTB()==null&&primerProduct.getOdTotal()==null){
+						//（'nmol/tube' * 'OD/μmol'）/ 1000
+						primerProduct.setOdTB(new BigDecimal(1000).multiply(primerProduct.getNmolTB()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
+						//（'nmol总量' * 'OD/μmol'）/ 1000
+						primerProduct.setOdTotal(new BigDecimal(1000).multiply(primerProduct.getNmolTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
+					  }
 				  case 16:	
 					  primerProduct.setRemark(v);
 					break;	
 				  default:
 					break;
 				}
+				
 				index ++;
 				
 			}

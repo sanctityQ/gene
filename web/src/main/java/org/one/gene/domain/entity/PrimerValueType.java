@@ -312,10 +312,25 @@ public enum PrimerValueType implements CalculatePrimerValue {
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
             return new BigDecimal("313.2").multiply(av.value(primerProduct))
-                    .add(new BigDecimal("289.2").multiply(cv.value(primerProduct)))
-                    .add(new BigDecimal("329.2").multiply(gv.value(primerProduct)))
-                    .add(new BigDecimal("304.2").multiply(tv.value(primerProduct)))
-                    .setScale(1, RoundingMode.HALF_UP);
+            		.add(new BigDecimal("289.2").multiply(cv.value(primerProduct)))
+            		.add(new BigDecimal("329.2").multiply(gv.value(primerProduct)))
+            		.add(new BigDecimal("304.2").multiply(tv.value(primerProduct)))
+            		.add(new BigDecimal("290.2").multiply(uv.value(primerProduct)))
+            		.add(new BigDecimal("314.2").multiply(iv.value(primerProduct)))
+					.add(new BigDecimal("309").multiply(nv.value(primerProduct)))
+					.add(new BigDecimal("307.5").multiply(bv.value(primerProduct)))
+					.add(new BigDecimal("315.5").multiply(dv.value(primerProduct)))
+					.add(new BigDecimal("302.2").multiply(hv.value(primerProduct)))
+					.add(new BigDecimal("316.7").multiply(kv.value(primerProduct)))
+					.add(new BigDecimal("301.2").multiply(mv.value(primerProduct)))
+					.add(new BigDecimal("321.2").multiply(rv.value(primerProduct)))
+					.add(new BigDecimal("309.2").multiply(sv.value(primerProduct)))
+					.add(new BigDecimal("310.5").multiply(vv.value(primerProduct)))
+					.add(new BigDecimal("308.7").multiply(wv.value(primerProduct)))
+					.add(new BigDecimal("296.7").multiply(yv.value(primerProduct)))
+					.subtract(new BigDecimal(61))
+//					.add(每种修饰的分子量());
+					.setScale(1,RoundingMode.HALF_UP);
         }
     },
 
@@ -347,6 +362,34 @@ public enum PrimerValueType implements CalculatePrimerValue {
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
             return nmolTB.value(primerProduct).multiply(MW.value(primerProduct).divide(new BigDecimal(1000)));
+        }
+    },
+    
+    ODμmol {
+    	@Override
+        String desc() {
+            return "ODμmol";
+        }
+
+        @Override
+        BigDecimal value(PrimerProduct primerProduct) {
+            return av.value(primerProduct).multiply(new BigDecimal("15.4"))
+    				.add(tv.value(primerProduct)).multiply(new BigDecimal("8.8"))
+    				.add(cv.value(primerProduct)).multiply(new BigDecimal("7.3"))
+    				.add(gv.value(primerProduct)).multiply(new BigDecimal("11.7"))
+    				.add(uv.value(primerProduct)).multiply(new BigDecimal("10.1"))
+    				.add(iv.value(primerProduct)).multiply(new BigDecimal("12.25"))
+    				.add(nv.value(primerProduct)).multiply(new BigDecimal("10.95"))
+    				.add(bv.value(primerProduct)).multiply(new BigDecimal("9.5"))
+    				.add(dv.value(primerProduct)).multiply(new BigDecimal("12.1"))
+    				.add(hv.value(primerProduct)).multiply(new BigDecimal("10.7"))
+    				.add(kv.value(primerProduct)).multiply(new BigDecimal("10.6"))
+    				.add(mv.value(primerProduct)).multiply(new BigDecimal("11.4"))
+    				.add(rv.value(primerProduct)).multiply(new BigDecimal("13.6"))
+    				.add(sv.value(primerProduct)).multiply(new BigDecimal("9.6"))
+    				.add(vv.value(primerProduct)).multiply(new BigDecimal("11.5"))
+    				.add(wv.value(primerProduct)).multiply(new BigDecimal("12.3"))
+    				.add(yv.value(primerProduct)).multiply(new BigDecimal("8.35"));
         }
     };
 

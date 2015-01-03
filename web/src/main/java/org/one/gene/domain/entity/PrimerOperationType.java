@@ -25,6 +25,7 @@ public enum PrimerOperationType {
     detectFailure,
     deliverySuccess,
     deliveryFailure,
-    recall,
+    backSuccess,
+    backFailure
 
 }

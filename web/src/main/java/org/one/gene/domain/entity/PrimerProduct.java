@@ -2,17 +2,33 @@ package org.one.gene.domain.entity;
 // Generated Dec 14, 2014 1:21:34 AM by One Data Tools 1.0.0
 
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.*;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.google.common.collect.Lists;
-
 import com.google.common.collect.Maps;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * PrimerProduct.
@@ -91,7 +107,7 @@ public class PrimerProduct implements java.io.Serializable {
     /**
      * 状态.
      */
-    private PrimerOperationType operationType;
+    private PrimerProduct_OperationType operationType;
     /**
      * 板号.
      */
@@ -126,7 +142,7 @@ public class PrimerProduct implements java.io.Serializable {
 
 
     public PrimerProduct(String productNo, Order order, String outProductNo, String fromProductNo, String primeName, String geneOrder, String purifyType,
-                         PrimerOperationType operationType, String comCode) {
+    		PrimerProduct_OperationType operationType, String comCode) {
         this.productNo = productNo;
         this.order = order;
         this.outProductNo = outProductNo;
@@ -296,11 +312,11 @@ public class PrimerProduct implements java.io.Serializable {
 
     @Column(name = "`operation_type`", length = 31)
     @Enumerated(value = EnumType.STRING)
-    public PrimerOperationType getOperationType() {
+    public PrimerProduct_OperationType getOperationType() {
         return this.operationType;
     }
 
-    public void setOperationType(PrimerOperationType operationType) {
+    public void setOperationType(PrimerProduct_OperationType operationType) {
         this.operationType = operationType;
     }
 

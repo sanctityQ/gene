@@ -2,11 +2,7 @@ package org.one.gene.excel;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import com.google.common.base.CharMatcher;
@@ -81,9 +77,7 @@ public class OrderCaculate {
 	
 	//GC(%) 100 * (#C + #G) / 碱基数
 	public String getGC(String str){
-		String countC = getCount(str,'C');
-		String countG = getCount(str,'G');
-		String strAdd = new BigDecimal(countC).add(new BigDecimal(countG)).toString();
+		String strAdd = new BigDecimal(StringUtils.countMatches(str,"C")).add(new BigDecimal(StringUtils.countMatches(str,"G"))).toString();
 		String strMul = new BigDecimal("100").multiply(new BigDecimal(strAdd)).toString();
 		String strDiv = new BigDecimal(strMul).divide(new BigDecimal(getAnJiShu(str)),4,BigDecimal.ROUND_HALF_UP).toString();
 		return strDiv.toString();
@@ -93,14 +87,14 @@ public class OrderCaculate {
 	  //当碱基数 > 20 = 81.5+(0.41 * GC(%)) - (600/碱基数）- 16.6 ，保留1位小数
 	  //当碱基数 < 20 = 4 * (#C + #G) + 2 * (#A + #T)
 	public String getTM(String str){
-		String countC = getCount(str,'C');
-        String countG = getCount(str,'G');
-        String countA = getCount(str,'A');
-        String countT = getCount(str,'T');
-        String tm = "";
-        if(str.length()>20){
-            String dbgc = getGC(str);
-            tm = new BigDecimal("81.5").add(new BigDecimal("0.41").multiply(new BigDecimal(dbgc)))
+		String dbgc = getGC(str);
+		int countC = StringUtils.countMatches(str,"C");
+		int countG = StringUtils.countMatches(str,"G");
+		int countA = StringUtils.countMatches(str,"A");
+		int countT = StringUtils.countMatches(str,"T");
+		String tm = "";
+		if(str.length()>20){
+			tm = new BigDecimal("81.5").add(new BigDecimal("0.41").multiply(new BigDecimal(dbgc)))
 					.subtract(new BigDecimal("600").divide(new BigDecimal(getAnJiShu(str)),2,BigDecimal.ROUND_HALF_UP))
 					.subtract(new BigDecimal("16.6")).setScale(1, RoundingMode.HALF_UP).toString();
 		}
@@ -114,17 +108,30 @@ public class OrderCaculate {
 	}
 	
 	//MW
-	//MW =  (313.2 * #A + 289.2 * #C + 329.2 * #G+ 304.2 * #T 保留1位小数 
+/*	MW =  (313.2 * #A + 289.2 * #C + 329.2 * #G+ 304.2 * #T + #U * 290.2 + #I * 314.2 + #N * 309 
+	         + #B * 307.5 + #D * 315.5 + #H * 302.2 + #K * 316.7 + #M * 301.2 + #R * 321.2 
+	         + #S * 309.2 + #V * 310.5 + #W * 308.7 + #Y * 296.7 - 61) + 每种修饰的分子量()保留1位小数 */
 	public String getMW(String str){
 		String mw = "";
-		String countC = getCount(str,'C');
-		String countG = getCount(str,'G');
-		String countA = getCount(str,'A');
-		String countT = getCount(str,'T');
-		mw = new BigDecimal("313.2").multiply(new BigDecimal(countA))
-			.add(new BigDecimal("289.2").multiply(new BigDecimal(countC)))
-			.add(new BigDecimal("329.2").multiply(new BigDecimal(countG)))
-			.add(new BigDecimal("304.2").multiply(new BigDecimal(countT)))
+		mw = new BigDecimal("313.2").multiply(new BigDecimal(StringUtils.countMatches(str,"A")))
+			.add(new BigDecimal("289.2").multiply(new BigDecimal(StringUtils.countMatches(str,"C"))))
+			.add(new BigDecimal("329.2").multiply(new BigDecimal(StringUtils.countMatches(str,"G"))))
+			.add(new BigDecimal("304.2").multiply(new BigDecimal(StringUtils.countMatches(str,"T"))))
+			.add(new BigDecimal("290.2").multiply(new BigDecimal(StringUtils.countMatches(str,"U"))))
+			.add(new BigDecimal("314.2").multiply(new BigDecimal(StringUtils.countMatches(str,"I"))))
+			.add(new BigDecimal("309").multiply(new BigDecimal(StringUtils.countMatches(str,"N"))))
+			.add(new BigDecimal("307.5").multiply(new BigDecimal(StringUtils.countMatches(str,"B"))))
+			.add(new BigDecimal("315.5").multiply(new BigDecimal(StringUtils.countMatches(str,"D"))))
+			.add(new BigDecimal("302.2").multiply(new BigDecimal(StringUtils.countMatches(str,"H"))))
+			.add(new BigDecimal("316.7").multiply(new BigDecimal(StringUtils.countMatches(str,"K"))))
+			.add(new BigDecimal("301.2").multiply(new BigDecimal(StringUtils.countMatches(str,"M"))))
+			.add(new BigDecimal("321.2").multiply(new BigDecimal(StringUtils.countMatches(str,"R"))))
+			.add(new BigDecimal("309.2").multiply(new BigDecimal(StringUtils.countMatches(str,"S"))))
+			.add(new BigDecimal("310.5").multiply(new BigDecimal(StringUtils.countMatches(str,"V"))))
+			.add(new BigDecimal("308.7").multiply(new BigDecimal(StringUtils.countMatches(str,"W"))))
+			.add(new BigDecimal("296.7").multiply(new BigDecimal(StringUtils.countMatches(str,"Y"))))
+			.subtract(new BigDecimal(61))
+//			.add(每种修饰的分子量());
 			.setScale(1,RoundingMode.HALF_UP).toString();
 		return mw;
 	}
@@ -143,23 +150,23 @@ public class OrderCaculate {
 	public String getOD_Vmol(String str){
 		String od_vmole = "";
 		
-		od_vmole = new BigDecimal(getCount(str,'A')).multiply(new BigDecimal("15.4"))
-				.add(new BigDecimal(getCount(str,'T')).multiply(new BigDecimal("8.8")))
-				.add(new BigDecimal(getCount(str,'C')).multiply(new BigDecimal("7.3")))
-				.add(new BigDecimal(getCount(str,'G')).multiply(new BigDecimal("11.7")))
-				.add(new BigDecimal(getCount(str,'U')).multiply(new BigDecimal("10.1")))
-				.add(new BigDecimal(getCount(str,'I')).multiply(new BigDecimal("12.25")))
-				.add(new BigDecimal(getCount(str,'N')).multiply(new BigDecimal("10.95")))
-				.add(new BigDecimal(getCount(str,'B')).multiply(new BigDecimal("9.5")))
-				.add(new BigDecimal(getCount(str,'D')).multiply(new BigDecimal("12.1")))
-				.add(new BigDecimal(getCount(str,'H')).multiply(new BigDecimal("10.7")))
-				.add(new BigDecimal(getCount(str,'K')).multiply(new BigDecimal("10.6")))
-				.add(new BigDecimal(getCount(str,'M')).multiply(new BigDecimal("11.4")))
-				.add(new BigDecimal(getCount(str,'R')).multiply(new BigDecimal("13.6")))
-				.add(new BigDecimal(getCount(str,'S')).multiply(new BigDecimal("9.6")))
-				.add(new BigDecimal(getCount(str,'V')).multiply(new BigDecimal("11.5")))
-				.add(new BigDecimal(getCount(str,'W')).multiply(new BigDecimal("12.3")))
-				.add(new BigDecimal(getCount(str,'Y')).multiply(new BigDecimal("8.35"))).toString();
+		od_vmole = new BigDecimal(StringUtils.countMatches(str,"A")).multiply(new BigDecimal("15.4"))
+				.add(new BigDecimal(StringUtils.countMatches(str,"T")).multiply(new BigDecimal("8.8")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"C")).multiply(new BigDecimal("7.3")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"G")).multiply(new BigDecimal("11.7")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"U")).multiply(new BigDecimal("10.1")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"I")).multiply(new BigDecimal("12.25")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"N")).multiply(new BigDecimal("10.95")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"B")).multiply(new BigDecimal("9.5")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"D")).multiply(new BigDecimal("12.1")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"H")).multiply(new BigDecimal("10.7")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"K")).multiply(new BigDecimal("10.6")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"M")).multiply(new BigDecimal("11.4")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"R")).multiply(new BigDecimal("13.6")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"S")).multiply(new BigDecimal("9.6")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"V")).multiply(new BigDecimal("11.5")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"W")).multiply(new BigDecimal("12.3")))
+				.add(new BigDecimal(StringUtils.countMatches(str,"Y")).multiply(new BigDecimal("8.35"))).toString();
 		
 		return od_vmole;
 	}

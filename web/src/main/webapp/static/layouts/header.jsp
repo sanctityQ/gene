@@ -21,6 +21,7 @@
             <li id="user-tab"><a href="${ctx}/synthesis/preMakeTableQuery">制作合成板</a></li>
             <li id="user-tab"><a href="${ctx}/synthesis/preSynthesisQuery">录入合成结果</a></li>
             <li id="user-tab"><a href="${ctx}/synthesis/preExportPrimerProduct">导出上机表</a></li>
+            <li id="user-tab"><a href="${ctx}/print/prePrintLabelQuery">打印标签</a></li>
         </ul>
     </div>
 </div>

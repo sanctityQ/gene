@@ -5,6 +5,7 @@ import com.sinosoft.one.data.jade.annotation.SQL;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import org.one.gene.domain.entity.Board;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PrimerProductRepository extends PagingAndSortingRepository<PrimerProduct, Long> {
+public interface PrimerProductRepository extends PagingAndSortingRepository<PrimerProduct, Long>  , JpaSpecificationExecutor<PrimerProduct> {
 
 	@SQL("select pp.* "
 			+ " from `order` o , `primer_product` pp, `primer_product_value` ppv "
@@ -45,6 +46,5 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
     public List<PrimerProduct> findByOrder(Order order);
     
     public List<PrimerProduct> findByBoardNo(String boardNo);
-    
 }
 
