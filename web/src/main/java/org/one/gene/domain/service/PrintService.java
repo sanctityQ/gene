@@ -19,6 +19,7 @@ import java.util.zip.ZipOutputStream;
 import com.sinosoft.one.mvc.web.annotation.Param;
 import com.sinosoft.one.mvc.web.instruction.reply.transport.Raw;
 
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -310,7 +311,9 @@ public class PrintService {
          				value = printLabel.getMidi();
          			}
          			
-         			cell.setCellValue(value);
+					if (!"null".equals(value)) {
+         				cell.setCellValue(value);
+         			}
          		}
 
         		rowNum+=1;
@@ -352,6 +355,218 @@ public class PrintService {
 		return Replys.with(file).as(Raw.class).downloadFileName(zipFileName);
     }
 	
+    /**
+     * 导出打印报告单文件
+     * @throws IOException 
+     * */
+	public EntityReply<File> exportReport( List<PrimerProduct> primerProducts, Invocation inv) throws IOException {
+		
+		
+		//读取上机表文件输出地址
+		InputStream inputStream  =   this.getClass().getClassLoader().getResourceAsStream("application.properties");  
+		Properties p = new  Properties(); 
+		try {
+			p.load(inputStream);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		String strFilePath = p.getProperty("sjbPath");
+		String report_templet_Path = p.getProperty("report_templet_Path");
+		String strFileName = "";
+		List<String> fileNames = new ArrayList<String>();
+		
+		//组装Map
+		
+		String customerCode = "";//客户代码
+		Map<String, Customer> map = new HashMap<String, Customer>();
+		Customer customer = new Customer();
+		for(PrimerProduct primerProduct:primerProducts){
+			customerCode = primerProduct.getOrder().getCustomerCode();
+			customer = new Customer();
+			//如果没有就新放入
+			if( map.get(customerCode) == null){
+				customer = customerRepository.findByCode(customerCode);
+				if (customer != null) {
+					customer.getPrimerProducts().add(primerProduct);
+					map.put(customerCode, customer);
+				}
+			}else{
+				customer = (Customer) map.get(customerCode);
+				customer.getPrimerProducts().add(primerProduct);
+				map.put(customerCode, customer);
+			}
+			
+		}
+		
+		Map<String, List<PrintLabel>> printReportMap = new HashMap<String, List<PrintLabel>>();
+		List<PrintLabel> printLabels = new ArrayList<PrintLabel>();
+	    
+		for (Map.Entry<String,Customer> customerMap : map.entrySet()) {
+			
+			PrintLabel printLabel = new PrintLabel();
+
+			for(PrimerProduct primerProduct:customerMap.getValue().getPrimerProducts()){
+				printLabel = new PrintLabel();
+				
+				//生产编号
+				if(!"".equals(primerProduct.getProductNo())){
+					printLabel.setProductNo(primerProduct.getProductNo());
+				}else{
+					printLabel.setProductNo(primerProduct.getOutProductNo());
+				}
+				
+				printLabel.setPrimeName(primerProduct.getPrimeName());//引物名称
+				printLabel.setOrderNo(primerProduct.getOrder().getOrderNo());//订单号
+				printLabel.setGeneOrder(primerProduct.getGeneOrder());//引物序列
+				//修饰
+				String midi = "";
+				if (!"".equals(primerProduct.getModiFiveType())) {
+					midi += primerProduct.getModiFiveType()+",";
+				}
+				if (!"".equals(primerProduct.getModiMidType())) {
+					midi += primerProduct.getModiMidType()+",";
+				}
+				if (!"".equals(primerProduct.getModiSpeType())) {
+					midi += primerProduct.getModiSpeType()+",";
+				}
+				if (!"".equals(primerProduct.getModiThreeType())) {
+					midi += primerProduct.getModiThreeType()+",";
+				}
+				if(!"".equals(midi)){
+					midi = "("+midi.substring(0, midi.length()-1)+")";
+					printLabel.setMidi(midi);
+				}
+				
+				for(PrimerProductValue primerProductValue:primerProduct.getPrimerProductValues()){
+					PrimerValueType type = primerProductValue.getType();
+					if(type.equals(PrimerValueType.odTotal)){//OD总量
+						printLabel.setOdTotal(primerProductValue.getValue());
+					}else if(type.equals(PrimerValueType.odTB)){//OD/TB
+						printLabel.setOdTB(primerProductValue.getValue());
+					}else if(type.equals(PrimerValueType.nmolTotal)){//NUML总量
+						printLabel.setNmolTotal(primerProductValue.getValue());
+					}else if(type.equals(PrimerValueType.nmolTB)){//NUML/TB
+						printLabel.setNmolTB(primerProductValue.getValue());
+					}else if(type.equals(PrimerValueType.baseCount)){//碱基数
+						printLabel.setTbn(primerProductValue.getValue());
+					}else if(type.equals(PrimerValueType.MW)){//MW
+						printLabel.setMw(primerProductValue.getValue());
+					}else if(type.equals(PrimerValueType.TM)){//TM
+						printLabel.setTm(primerProductValue.getValue());
+					}else if(type.equals(PrimerValueType.mv)){//MV
+						printLabel.setMv(primerProductValue.getValue());
+					}else if(type.equals(PrimerValueType.GC)){//GC
+						printLabel.setGc(primerProductValue.getValue());
+					}
+					
+					if(type.equals(PrimerValueType.nmolTB)){//加水量
+						printLabel.setPmole(new BigDecimal(10).multiply(primerProductValue.getValue()));
+					}
+				}
+				
+				printLabels.add(printLabel);
+			}
+			
+			printReportMap.put(customerMap.getKey(), printLabels);
+			printLabels = new ArrayList<PrintLabel>();
+			
+		}
+			
+		//形成Excel
+		for (Map.Entry<String, List<PrintLabel>> printReportapExcels : printReportMap.entrySet()) {
+			
+			//读取3种模板
+			String costumerCodeExcel = printReportapExcels.getKey();
+			strFileName = costumerCodeExcel+System.currentTimeMillis()+".xls";
+			Customer customerFile = map.get(costumerCodeExcel);
+			
+			if(customerFile.getCode().equals("1102")){//金唯智
+
+			}
+			
+			//----------------------------------
+	        HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream("D:\\templet\\report\\金唯智报告单.xls"));
+
+	        HSSFSheet sheet = workbook.getSheetAt(0);  
+			
+			FileOutputStream fos = null;
+			HSSFRow row = null;
+			
+			int rowNum = 7;
+        	for (PrintLabel printLabel:(List<PrintLabel>)printReportapExcels.getValue()) {
+        		
+        		row = sheet.getRow(rowNum);
+         		
+         		for (int k=1;k<13;k++){
+         			HSSFCell cell = row.createCell((short) k);//产生单元格
+         			//设置单元格内容为字符串型
+         			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+         			//为了能在单元格中写入中文，设置字符编码为UTF_16
+         			//往单元格中写入信息
+         			String value = "";
+         			if(k==1){
+         				value = printLabel.getProductNo();
+         			}else if(k==2){
+         				value = printLabel.getPrimeName();
+         			}else if(k==3){
+         				value = printLabel.getGeneOrder();
+         			}else if(k==4){
+         				value = printLabel.getTbn()+"";
+         			}else if(k==5){
+         				value = printLabel.getTm()+"";
+         			}else if(k==6){
+         				value = printLabel.getGc()+"";
+         			}else if(k==7){
+         				value = printLabel.getMv()+"";
+         			}else if(k==8){
+         				value = printLabel.getUgTB()+"";//===========需要确认μg/OD
+         			}else if(k==9){
+         				value = printLabel.getTbn()+"";//============OD/μmole
+         			}else if(k==10){
+         				value = printLabel.getOdTB()+"";
+         			}else if(k==11){
+         				value = printLabel.getNmolTB()+"";
+         			}else if(k==12){
+         				value = printLabel.getTbn()+"";//==============μl/100μM
+         			}
+					if (!"null".equals(value)) {
+         				cell.setCellValue(value);
+         			}
+         		}
+         		rowNum+=1;
+  
+        	}
+        	fos = new FileOutputStream(strFilePath + strFileName);
+    		// 把相应的Excel 工作簿存盘
+    		workbook.write(fos);
+			
+    		fileNames.add(strFileName);
+		}
+		
+		//打包
+    	String zipFileName = System.currentTimeMillis() + ".zip";
+		ZipOutputStream zipWrit = new ZipOutputStream(new FileOutputStream(strFilePath + zipFileName));
+		for (String fileName : fileNames) {
+			File file = new File(strFilePath +fileName);
+			FileInputStream fileIn = new FileInputStream(file);
+			zipWrit.putNextEntry(new ZipEntry(file.getName()));
+			byte[] bytes = new byte[1204];
+			while (fileIn.read(bytes) > 0) {
+				zipWrit.write(bytes);
+			}
+			zipWrit.closeEntry();
+			fileIn.close();
+			file.delete();
+		}
+		zipWrit.flush();
+		zipWrit.close();
+
+		
+		File file = new File(strFilePath, zipFileName); 
+		
+		return Replys.with(file).as(Raw.class).downloadFileName(zipFileName);
+    }
 	
 	
 }

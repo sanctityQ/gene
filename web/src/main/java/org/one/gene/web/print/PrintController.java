@@ -106,4 +106,81 @@ public class PrintController {
     	return fileStr;
     }
 	
+	
+    /**
+     * 进入打印报告单查询页面
+     * 
+     * */
+    @Get("prePrintReportQuery")
+    public String prePrintReportQuery(){
+    	
+    	return "printReportQuery";
+    }
+    
+    /**
+     * 打印报告单查询
+     * */
+	public String printReportQuery(@Param("orderNo") String orderNo,
+			@Param("customer_code") String customer_code,
+			@Param("productNo") String productNo,
+			@Param("create_time_start") Date create_time_start,
+			@Param("create_time_end") Date create_time_end,
+			@Param("pageNo") Integer pageNo,
+			@Param("pageSize") Integer pageSize, Invocation inv) {
+    	
+        if(pageNo == null){
+            pageNo = 0;
+        }
+
+        if(pageSize == null){
+            pageSize = 96;
+        }
+
+        Pageable pageable = new PageRequest(pageNo,pageSize);
+        Map<String,Object> searchParams = Maps.newHashMap();
+        searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
+        searchParams.put(SearchFilter.Operator.EQ+"_order.customerCode",customer_code);
+        searchParams.put(SearchFilter.Operator.EQ+"_productNo",productNo);
+        searchParams.put(SearchFilter.Operator.GTE+"_order.createTime",create_time_start);
+        searchParams.put(SearchFilter.Operator.LTE+"_order.createTime",create_time_end);
+        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
+        Specification<PrimerProduct> spec = DynamicSpecifications.bySearchFilter(filters.values(), PrimerProduct.class);
+        
+        Page<PrimerProduct> primerProductPage = primerProductRepository.findAll(spec,pageable);
+    	
+    	inv.addModel("page", primerProductPage);
+    	
+    	return "printReportList";
+    }
+    
+    
+    /**
+     * 打印报告单
+     * */
+	public EntityReply<File> exportReport(@Param("primerProductList") PrimerProductList primerProductList, Invocation inv) {
+    	
+        List<PrimerProduct> primerProducts = primerProductList.getPrimerProducts();
+		for (int i = primerProducts.size() - 1; i >= 0; i--) {
+			//如果页面没有选择，则移除
+			if (((PrimerProduct)primerProducts.get(i)).getSelectFlag() == null) {
+				primerProducts.remove(i);
+			}
+		}
+		
+    	EntityReply<File> fileStr = null;
+    	try {
+    		fileStr = printService.exportReport(primerProducts, inv);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return fileStr;
+    }
+	
+	
+	
+    
+    
+    
+    
 }
