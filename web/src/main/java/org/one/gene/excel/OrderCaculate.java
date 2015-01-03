@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.google.common.base.CharMatcher;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -27,27 +28,29 @@ public class OrderCaculate {
 	 * TCGUINBDHKMRSWYV 需要自动去除除以上字符外的所有字符，字符可以自动转换为大写
 	 */
 	public String getYWSeqValue(String str){
-		str = str.toUpperCase();
-		char [] ch = "TCGUINBDHKMRSWYV".toCharArray();
-		Map<Character,Character> map = new TreeMap<Character,Character>();
-		for (int i = 0; i < ch.length; i++){
-			map.put(ch[i], ch[i]);
-		}
-		StringBuilder sb = new StringBuilder();
-		
-		char [] chStr = str.toCharArray();
-		for (int j = 0; j < chStr.length; j++){
-			if(map.containsKey(chStr[j])){
-				sb.append(chStr[j]);
-			}
-		}
-		return sb.toString();
+        CharMatcher charMatcher = CharMatcher.anyOf(str.toUpperCase());
+        return charMatcher.retainFrom("ATCGUINBDHKMRSWYV");
+//		str = str.toUpperCase();
+//		char [] ch = "TCGUINBDHKMRSWYV".toCharArray();
+//		Map<Character,Character> map = new TreeMap<Character,Character>();
+//		for (int i = 0; i < ch.length; i++){
+//			map.put(ch[i], ch[i]);
+//		}
+//		StringBuilder sb = new StringBuilder();
+//
+//		char [] chStr = str.toCharArray();
+//		for (int j = 0; j < chStr.length; j++){
+//			if(map.containsKey(chStr[j])){
+//				sb.append(chStr[j]);
+//			}
+//		}
+//		return sb.toString();
 	}
 	
 	
 	//获取指定字符个数
 	public String getCount(String str,char chr){
-		char [] ch = str.toCharArray();
+        char [] ch = str.toCharArray();
 		Map<Character,Integer> map = new TreeMap<Character,Integer>();
 		for (int i = 0; i < ch.length; i++){
 			//只统计里面英语字母的个数

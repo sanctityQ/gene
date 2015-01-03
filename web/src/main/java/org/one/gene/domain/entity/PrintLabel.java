@@ -6,7 +6,8 @@ public class PrintLabel {
 
     private String productNo;//生产编号
 	private String primeName;//引物名称
-    private String orderNo;//订单号
+	private String geneOrder;//引物序列
+	private String orderNo;//订单号
     private BigDecimal tube;//管数
 	private BigDecimal odTotal;//OD总量
 	private BigDecimal odTB;//OD/TB
@@ -16,7 +17,8 @@ public class PrintLabel {
     private BigDecimal mw;//MW
     private BigDecimal tm;//TM
     private BigDecimal gc;//GC
-    private BigDecimal ugTB;//ug/tube
+    private BigDecimal mv;//MV
+	private BigDecimal ugTB;//ug/tube
     private BigDecimal pmole;//加水量
     private String remark;//备注/日期  ？？
     private String midi;//修饰
@@ -32,6 +34,12 @@ public class PrintLabel {
 	}
 	public void setPrimeName(String primeName) {
 		this.primeName = primeName;
+	}
+    public String getGeneOrder() {
+		return geneOrder;
+	}
+	public void setGeneOrder(String geneOrder) {
+		this.geneOrder = geneOrder;
 	}
 	public String getOrderNo() {
 		return orderNo;
@@ -92,6 +100,12 @@ public class PrintLabel {
 	}
 	public void setGc(BigDecimal gc) {
 		this.gc = gc;
+	}
+    public BigDecimal getMv() {
+		return mv;
+	}
+	public void setMv(BigDecimal mv) {
+		this.mv = mv;
 	}
 	public BigDecimal getUgTB() {
 		return ugTB;

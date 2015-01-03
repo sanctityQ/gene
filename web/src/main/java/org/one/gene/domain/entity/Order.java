@@ -213,6 +213,7 @@ public class Order extends IdEntity implements java.io.Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
     @Transient
 	public String getProductNoMinToMax() {
 		return productNoMinToMax;
