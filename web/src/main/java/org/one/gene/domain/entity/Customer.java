@@ -66,7 +66,15 @@ public class Customer extends IdEntity implements java.io.Serializable {
      * 邮箱.
      */
     private String email;
-
+    /**
+     * 网址
+     */
+    private String webSite;
+    /**
+     * 客户公司logo
+     */
+    private String companylogoPath;
+    
     private List<PrimerProduct> primerProducts = Lists.newArrayList();
     
 
@@ -168,8 +176,25 @@ public class Customer extends IdEntity implements java.io.Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
+    
+    @Column(name = "`web_site`", length = 120)
+    public String getWebSite() {
+		return webSite;
+	}
+	public void setWebSite(String webSite) {
+		this.webSite = webSite;
+	}
+	@Column(name = "`companylogo_path`", length = 120)
+	public String getCompanylogoPath() {
+		return companylogoPath;
+	}
 
-    @Override
+	public void setCompanylogoPath(String companylogoPath) {
+		this.companylogoPath = companylogoPath;
+	}
+
+
+	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }

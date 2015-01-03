@@ -3,13 +3,10 @@ package org.one.gene.web.print;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.one.gene.domain.entity.Order;
-import org.apache.commons.lang3.StringUtils;
-import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.service.PrintService;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
@@ -17,7 +14,6 @@ import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.web.order.OrderInfoList;
-import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.web.order.PrimerProductList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -119,13 +115,10 @@ public class PrintController {
     }
     
     @Post("printOutBound")
-    public String printOutBound(@Param("orderInfos") List<OrderInfoList> outboundList,Invocation inv) throws Exception {
-    	for(OrderInfoList outbound:outboundList){
-    		System.out.println(outbound.getCommodityCode());
-    		System.out.println(outbound.getCommodityName());
-    	}
+    public String printOutBound(String outboundJson,Invocation inv) throws Exception {
+    		System.out.println(outboundJson);
         
-        return "";
+        return "success";
     }
 
     /**

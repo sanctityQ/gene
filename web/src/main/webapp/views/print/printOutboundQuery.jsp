@@ -6,6 +6,7 @@
 <head>
 <title></title>
 <script type="text/javascript"src="${ctx}/static/jquery/jquery-1.7.2.js"></script>
+<script type="text/javascript"src="${ctx}/static/jquery/json2.js"></script>
 <script type="text/javascript">
 var outbound = {
   "customerName":"",
@@ -21,22 +22,31 @@ var outbound = {
   "commodityName":""
 }
 function ajaxSubmit() {
-	jQuery("input[name='orderCheck']:checked").each(function(){
-		alert(jQuery(this).attr("checked"))
+	var outboundList = new Array();
+	var i =0;
+	jQuery("input[name='orderCheck']:checked").each(function(index){
       if ("checked" == jQuery(this).attr("checked")) {
-          alert("1111") 
+          var index = this.value;
+          outbound.customerName = jQuery("input[name='orderInfos["+index+"].customerName']")[0].value;
+          outbound.customerPhoneNm = jQuery("input[name='orderInfos["+index+"].customerPhoneNm']")[0].value;
+          outbound.orderNo = jQuery("input[name='orderInfos["+index+"].orderNo']")[0].value;
+          outbound.handlerCode = jQuery("input[name='orderInfos["+index+"].handlerCode']")[0].value;
+          outbound.createTime = jQuery("input[name='orderInfos["+index+"].createTime']")[0].value;
+          outbound.makingNo = jQuery("input[name='orderInfos["+index+"].makingNo']")[0].value;
+          outbound.operatorCode = jQuery("input[name='orderInfos["+index+"].operatorCode']")[0].value;
+          outbound.linkName = jQuery("input[name='orderInfos["+index+"].linkName']")[0].value;
+          outbound.makingDate = jQuery("input[name='orderInfos["+index+"].makingDate']")[0].value;
+          outbound.commodityCode = jQuery("input[name='orderInfos["+index+"].commodityCode']")[0].value;
+          outbound.commodityName = jQuery("input[name='orderInfos["+index+"].commodityName']")[0].value;
+          outboundList[i]=outbound;
+          i++
       }
 	});
-	
-	$('input:checkbox[name="orderCheck"]:checked').each(function(){  
-	   $(this).val();  
-	}); 
-   
     $.ajax({
     	async:false,
         url: "${ctx}/print/printOutBound",
         type: "POST",
-        data:outbound,
+        data:JSON.stringify(outboundList),
         dataType: "json",
         success: function(data) {
             /* alert(data.length);
@@ -65,7 +75,7 @@ function ajaxSubmit() {
     <c:forEach  var="order"  items="${page.content}" varStatus="status">
 	      <p>
 	      	<span>&#149; 
-<input type="checkbox"  name="orderCheck" size="50" onclick=""/>
+<input type="checkbox"  name="orderCheck" size="50" value="${status.index}" onclick=""/>
 <input type="text"  name="orderInfos[${status.index}].orderNo" size="50" value="${order.orderNo}" />
 <input type="text"  name="orderInfos[${status.index}].customerName" size="50" value="${order.customerName}" />
 <input type="text"  name="orderInfos[${status.index}].status" size="50" value="${order.status}" />
