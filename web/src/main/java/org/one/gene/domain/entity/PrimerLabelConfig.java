@@ -15,7 +15,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * PrimerLabelConfig.
  */
 @Entity
-@Table(name = "primer_label_config", uniqueConstraints = @UniqueConstraint(columnNames = "customer_code"))
+@Table(name = "`primer_label_config`", uniqueConstraints = @UniqueConstraint(columnNames = "`customer_code`"))
 public class PrimerLabelConfig extends IdEntity implements java.io.Serializable {
 
     public static enum ColumnType {
@@ -87,7 +87,7 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
         this.modifyTime = modifyTime;
     }
 
-    @Column(name = "customer_code", unique = true, length = 31)
+    @Column(name = "`customer_code`", unique = true, length = 31)
     public String getCustomerCode() {
         return this.customerCode;
     }
@@ -96,7 +96,7 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
         this.customerCode = customerCode;
     }
 
-    @Column(name = "customer_name", length = 127)
+    @Column(name = "`customer_name`", length = 127)
     public String getCustomerName() {
         return this.customerName;
     }
@@ -114,7 +114,7 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
         this.columns = columns.getValue();
     }
 
-    @Column(name = "user_code", length = 15)
+    @Column(name = "`user_code`", length = 15)
     public String getUserCode() {
         return this.userCode;
     }
@@ -123,7 +123,7 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
         this.userCode = userCode;
     }
 
-    @Column(name = "user_name", length = 31)
+    @Column(name = "`user_name`", length = 31)
     public String getUserName() {
         return this.userName;
     }
@@ -133,7 +133,7 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
     }
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_time", length = 19)
+    @Column(name = "`create_time`", length = 19)
     public Date getCreateTime() {
         return this.createTime;
     }
@@ -143,7 +143,7 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
     }
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "modify_time", length = 19)
+    @Column(name = "`modify_time`", length = 19)
     public Date getModifyTime() {
         return this.modifyTime;
     }

@@ -224,7 +224,7 @@ public class SynthesisService {
 			}else{
 				primerProductOperation = new PrimerProductOperation();
 				primerProductOperation.setPrimerProduct(boardHole.getPrimerProduct());
-				primerProductOperation.setType(PrimerOperationType.makeTableSuccess);
+				primerProductOperation.setType(PrimerOperationType.makeTable);
 				primerProductOperation.setTypeDesc("制表成功");
 				primerProductOperation.setUserCode("123");//后续从session取得
 				primerProductOperation.setUserName("张三");//后续从session取得

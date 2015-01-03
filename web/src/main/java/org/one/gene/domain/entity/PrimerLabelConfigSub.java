@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * PrimerLabelConfigSub.
  */
 @Entity
-@Table(name = "primer_label_config_sub", uniqueConstraints = @UniqueConstraint(columnNames = {"primer_label_config_id", "type"}))
+@Table(name = "`primer_label_config_sub`", uniqueConstraints = @UniqueConstraint(columnNames = {"`primer_label_config_id`", "`type`"}))
 public class PrimerLabelConfigSub extends IdEntity implements java.io.Serializable {
 
     enum Type{
@@ -57,7 +57,7 @@ public class PrimerLabelConfigSub extends IdEntity implements java.io.Serializab
         this.primerLabelConfig = primerLabelConfig;
     }
 
-    @Column(name = "type", length = 31)
+    @Column(name = "`type`", length = 31)
     public String getType() {
         return this.type;
     }
@@ -66,7 +66,7 @@ public class PrimerLabelConfigSub extends IdEntity implements java.io.Serializab
         this.type = type;
     }
 
-    @Column(name = "type_desc", length = 63)
+    @Column(name = "`type_desc`", length = 63)
     public String getTypeDesc() {
         return this.typeDesc;
     }
@@ -75,7 +75,7 @@ public class PrimerLabelConfigSub extends IdEntity implements java.io.Serializab
         this.typeDesc = typeDesc;
     }
 
-    @Column(name = "sorting")
+    @Column(name = "`sorting`")
     public Integer getSorting() {
         return this.sorting;
     }
