@@ -28,8 +28,7 @@ public class OrderCaculate {
 	 * TCGUINBDHKMRSWYV 需要自动去除除以上字符外的所有字符，字符可以自动转换为大写
 	 */
 	public String getYWSeqValue(String str){
-        CharMatcher charMatcher = CharMatcher.anyOf(str.toUpperCase());
-        return charMatcher.retainFrom("ATCGUINBDHKMRSWYV");
+        return CharMatcher.anyOf("ATCGUINBDHKMRSWYV").retainFrom(str.toUpperCase());
 //		str = str.toUpperCase();
 //		char [] ch = "TCGUINBDHKMRSWYV".toCharArray();
 //		Map<Character,Character> map = new TreeMap<Character,Character>();
@@ -46,6 +45,11 @@ public class OrderCaculate {
 //		}
 //		return sb.toString();
 	}
+
+    public static void  main(String[] args){
+        CharMatcher charMatcher = CharMatcher.anyOf("ATCGUINBDHKMRSWYV");
+        System.out.println(charMatcher.retainFrom("TCGAGAAGCTTGGTACCGCATGCGGGCCCCwCCGGGGGTACCCCGCGGG1111111")) ;
+    }
 	
 	
 	//获取指定字符个数
