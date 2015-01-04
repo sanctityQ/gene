@@ -18,6 +18,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @Table(name = "`primer_label_config`", uniqueConstraints = @UniqueConstraint(columnNames = "`customer_code`"))
 public class PrimerLabelConfig extends IdEntity implements java.io.Serializable {
 
+
     public static enum ColumnType {
 
         one(1), two(2), three(3);
@@ -32,14 +33,6 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
             return this.value;
         }
 
-        public static ColumnType convertValue(Integer value) {
-            for (ColumnType columnType : ColumnType.values()) {
-                if (columnType.getValue() == value) {
-                    return columnType;
-                }
-            }
-            throw new IllegalArgumentException("no this type value exception");
-        }
     }
 
     /**
@@ -53,8 +46,7 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
     /**
      * 标签排列列数.
      */
-    @Column(name = "`columns`")
-    private Integer columns;
+    private ColumnType columns;
     /**
      * 用户代码.
      */
@@ -105,13 +97,13 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
         this.customerName = customerName;
     }
 
-
+    @Column(name = "`columns`")
     public ColumnType getColumns() {
-        return ColumnType.convertValue(this.columns);
+        return this.columns;
     }
 
-    public void setColumns(Integer columns) {
-        this.columns =columns;
+    public void setColumns(ColumnType columns) {
+        this.columns = columns;
     }
 
     @Column(name = "`user_code`", length = 15)
