@@ -31,7 +31,7 @@ public class PrimerProductOperation extends IdEntity implements java.io.Serializ
     /**
      * 类型.
      */
-    private PrimerOperationType type;
+    private PrimerType.PrimerOperationType type;
     /**
      * 类型描述.
      */
@@ -61,7 +61,7 @@ public class PrimerProductOperation extends IdEntity implements java.io.Serializ
     }
 
 
-    public PrimerProductOperation(PrimerProduct primerProduct, PrimerOperationType type, String typeDesc, String userCode, String userName, Date createTime, String failReason) {
+    public PrimerProductOperation(PrimerProduct primerProduct, PrimerType.PrimerOperationType type, String typeDesc, String userCode, String userName, Date createTime, String failReason) {
         this.primerProduct = primerProduct;
         this.type = type;
         this.typeDesc = typeDesc;
@@ -93,11 +93,11 @@ public class PrimerProductOperation extends IdEntity implements java.io.Serializ
 
     @Column(name = "`type`", length = 31)
     @Enumerated(value = EnumType.STRING)
-    public PrimerOperationType getType() {
+    public PrimerType.PrimerOperationType getType() {
         return this.type;
     }
 
-    public void setType(PrimerOperationType type) {
+    public void setType(PrimerType.PrimerOperationType type) {
         this.type = type;
     }
 

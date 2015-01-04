@@ -8,11 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.one.gene.domain.entity.Customer;
-import org.one.gene.domain.entity.Order;
-import org.one.gene.domain.entity.PrimerOperationType;
-import org.one.gene.domain.entity.PrimerProduct;
-import org.one.gene.domain.entity.PrimerProductOperation;
+import org.one.gene.domain.entity.*;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.excel.OrderCaculate;
 import org.one.gene.excel.OrderExcelPase;
@@ -184,7 +180,7 @@ public class OrderService {
     public PrimerProductOperation createPrimerProductOperation(PrimerProduct primerProduct) {
     	PrimerProductOperation primerProductOperation = new PrimerProductOperation();
     	primerProductOperation.setPrimerProduct(primerProduct);
-    	primerProductOperation.setType(PrimerOperationType.orderInit);
+    	primerProductOperation.setType(PrimerType.PrimerOperationType.orderInit);
     	primerProductOperation.setTypeDesc("订单初始化");
     	primerProductOperation.setBackTimes(0);
     	//默认值，后续调整

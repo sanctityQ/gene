@@ -2,7 +2,6 @@ package org.one.gene.domain.service;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,14 +9,12 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 import java.util.Properties;
 import com.sinosoft.one.mvc.web.instruction.reply.transport.Raw;
 
 import org.apache.commons.lang.StringUtils;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
-import org.one.gene.domain.entity.PrimerOperationType;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerProductValue;
@@ -32,15 +29,12 @@ import org.one.gene.repository.PrimerProductValueRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sinosoft.one.mvc.util.MvcPathUtil;
 import com.sinosoft.one.mvc.web.Invocation;
-import com.sinosoft.one.mvc.web.annotation.Param;
 import com.sinosoft.one.mvc.web.instruction.reply.EntityReply;
 import com.sinosoft.one.mvc.web.instruction.reply.Replys;
 
@@ -97,29 +91,7 @@ public class SynthesisService {
 			}
 			// 翻译操作类型
 			PrimerStatusType operationType = primerProduct.getOperationType();
-			if (operationType.equals(PrimerStatusType.orderInit)) {
-				primerProduct.setOperationTypeDesc(PrimerStatusType.orderInit.desc());
-			} else if (operationType.equals(PrimerStatusType.makeBoard)) {
-				primerProduct.setOperationTypeDesc(PrimerStatusType.makeBoard.desc());
-			} else if (operationType.equals(PrimerStatusType.synthesis)) {
-				primerProduct.setOperationTypeDesc(PrimerStatusType.synthesis.desc());
-			} else if (operationType.equals(PrimerStatusType.modification)) {
-				primerProduct.setOperationTypeDesc(PrimerStatusType.modification.desc());
-			} else if (operationType.equals(PrimerStatusType.ammonia)) {
-				primerProduct.setOperationTypeDesc(PrimerStatusType.ammonia.desc());
-			} else if (operationType.equals(PrimerStatusType.purify)) {
-				primerProduct.setOperationTypeDesc(PrimerStatusType.purify.desc());
-			} else if (operationType.equals(PrimerStatusType.measure)) {
-				primerProduct.setOperationTypeDesc(PrimerStatusType.measure.desc());
-			} else if (operationType.equals(PrimerStatusType.pack)) {
-				primerProduct.setOperationTypeDesc(PrimerStatusType.pack.desc());
-			} else if (operationType.equals(PrimerStatusType.bake)) {
-				primerProduct.setOperationTypeDesc(PrimerStatusType.bake.desc());
-			} else if (operationType.equals(PrimerStatusType.detect)) {
-				primerProduct.setOperationTypeDesc(PrimerStatusType.detect.desc());
-			} else if (operationType.equals(PrimerStatusType.delivery)) {
-				primerProduct.setOperationTypeDesc(PrimerStatusType.delivery.desc());
-			}
+            primerProduct.setOperationTypeDesc(operationType.desc());
 		}
 
 		return primerProductPage;
@@ -223,7 +195,7 @@ public class SynthesisService {
 			}else{
 				primerProductOperation = new PrimerProductOperation();
 				primerProductOperation.setPrimerProduct(boardHole.getPrimerProduct());
-				primerProductOperation.setType(PrimerOperationType.makeTable);
+				primerProductOperation.setType(PrimerType.PrimerOperationType.makeTable);
 				primerProductOperation.setTypeDesc("制表成功");
 				primerProductOperation.setUserCode("123");//后续从session取得
 				primerProductOperation.setUserName("张三");//后续从session取得
@@ -272,7 +244,7 @@ public class SynthesisService {
 		PrimerProduct primerProduct = new PrimerProduct(); 
 		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
 		List<PrimerProductOperation> primerProductOperations = new ArrayList<PrimerProductOperation>();
-		PrimerOperationType type = null;
+		PrimerType.PrimerOperationType type = null;
 		String typeDesc = "";
 		
 		for (int i = board.getBoardHoles().size() - 1; i >= 0; i--) {
@@ -293,7 +265,7 @@ public class SynthesisService {
 					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.ammonia);
 				}
 
-				type = PrimerOperationType.synthesisSuccess;
+				type = PrimerType.PrimerOperationType.synthesisSuccess;
 				typeDesc = "合成成功";
 				
 			} else if ("2".equals(selectFlag)) { // Synthesis fail
@@ -306,7 +278,7 @@ public class SynthesisService {
 				boardHoleRepository.delete(boardHole);
 				boardHoles.remove(i);
 				
-				type = PrimerOperationType.synthesisFailure;
+				type = PrimerType.PrimerOperationType.synthesisFailure;
 				typeDesc = "合成失败";
 				
 			}

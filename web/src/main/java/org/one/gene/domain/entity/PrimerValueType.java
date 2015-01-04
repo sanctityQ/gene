@@ -7,12 +7,12 @@ import org.one.gene.domain.CalculatePrimerValue;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public enum PrimerValueType implements CalculatePrimerValue {
+public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc {
 
     odTotal {
 
         @Override
-        String desc() {
+        public String desc() {
             return "odTotal";
         }
 
@@ -25,7 +25,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     odTB {
         @Override
-        String desc() {
+        public String desc() {
             return "OD/tb";
         }
 
@@ -38,7 +38,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     nmolTotal {
         @Override
-        String desc() {
+        public String desc() {
             return "nmolTotal";
         }
 
@@ -50,7 +50,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     nmolTB {
         @Override
-        String desc() {
+        public String desc() {
             return "nmol/tb";
         }
 
@@ -65,7 +65,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
      */
     baseCount {
         @Override
-        String desc() {
+        public String desc() {
             return "baseCount";
         }
 
@@ -77,7 +77,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     av {
         @Override
-        String desc() {
+        public String desc() {
             return "#A";
         }
 
@@ -90,7 +90,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     tv {
         @Override
-        String desc() {
+        public String desc() {
             return "#T";
         }
 
@@ -102,7 +102,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     cv {
         @Override
-        String desc() {
+        public String desc() {
             return "#C";
         }
 
@@ -114,7 +114,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     gv {
         @Override
-        String desc() {
+        public String desc() {
             return "#G";
         }
 
@@ -126,7 +126,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     uv {
         @Override
-        String desc() {
+        public String desc() {
             return "#U";
         }
 
@@ -138,7 +138,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     iv {
         @Override
-        String desc() {
+        public String desc() {
             return "#I";
         }
 
@@ -149,7 +149,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
     },
     nv {
         @Override
-        String desc() {
+        public String desc() {
             return "#N";
         }
 
@@ -160,7 +160,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
     },
     bv {
         @Override
-        String desc() {
+        public String desc() {
             return "#B";
         }
 
@@ -171,7 +171,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
     },
     dv {
         @Override
-        String desc() {
+        public String desc() {
             return "#D";
         }
 
@@ -183,7 +183,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     hv {
         @Override
-        String desc() {
+        public String desc() {
             return "#H";
         }
 
@@ -196,7 +196,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     kv {
         @Override
-        String desc() {
+        public String desc() {
             return "#K";
         }
 
@@ -206,7 +206,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
         }
     }, mv {
         @Override
-        String desc() {
+        public String desc() {
             return "#M";
         }
 
@@ -216,7 +216,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
         }
     }, rv {
         @Override
-        String desc() {
+        public String desc() {
             return "#R";
         }
 
@@ -226,7 +226,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
         }
     }, sv {
         @Override
-        String desc() {
+        public String desc() {
             return "#S";
         }
 
@@ -236,7 +236,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
         }
     }, wv {
         @Override
-        String desc() {
+        public String desc() {
             return "#W";
         }
 
@@ -246,7 +246,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
         }
     }, yv {
         @Override
-        String desc() {
+        public String desc() {
             return "#Y";
         }
 
@@ -256,7 +256,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
         }
     }, vv {
         @Override
-        String desc() {
+        public String desc() {
             return "#V";
         }
 
@@ -271,7 +271,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
      */
     tb {
         @Override
-        String desc() {
+        public String desc() {
             return "分装管数";
         }
 
@@ -283,7 +283,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     TM {
         @Override
-        String desc() {
+        public String desc() {
             return "TM";
         }
 
@@ -305,15 +305,15 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     MW {
         @Override
-        String desc() {
+        public String desc() {
             return "MW";
         }
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
-            return new BigDecimal("313.2").multiply(av.value(primerProduct))
-            		.add(new BigDecimal("289.2").multiply(cv.value(primerProduct)))
-            		.add(new BigDecimal("329.2").multiply(gv.value(primerProduct)))
+            return new BigDecimal(313.2).multiply(av.value(primerProduct))
+            		.add(new BigDecimal(289.2).multiply(cv.value(primerProduct)))
+            		.add(new BigDecimal(329.2).multiply(gv.value(primerProduct)))
             		.add(new BigDecimal("304.2").multiply(tv.value(primerProduct)))
             		.add(new BigDecimal("290.2").multiply(uv.value(primerProduct)))
             		.add(new BigDecimal("314.2").multiply(iv.value(primerProduct)))
@@ -336,7 +336,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     GC {
         @Override
-        String desc() {
+        public String desc() {
             return "GC";
         }
 
@@ -355,7 +355,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
 
     μgOD {
         @Override
-        String desc() {
+        public String desc() {
             return "μgOD";
         }
 
@@ -367,7 +367,7 @@ public enum PrimerValueType implements CalculatePrimerValue {
     
     ODμmol {
     	@Override
-        String desc() {
+        public String desc() {
             return "ODμmol";
         }
 
@@ -392,8 +392,6 @@ public enum PrimerValueType implements CalculatePrimerValue {
     				.add(yv.value(primerProduct)).multiply(new BigDecimal("8.35"));
         }
     };
-
-    abstract String desc();
 
     abstract BigDecimal value(PrimerProduct primerProduct);
 

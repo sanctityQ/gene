@@ -5,7 +5,7 @@ package org.one.gene.domain.entity;
  */
 public class PrimerType {
 
-    interface TypeDesc{
+    public interface TypeDesc{
         String desc();
     }
 
@@ -101,6 +101,157 @@ public class PrimerType {
                 return "发货";
             }
         };
+
+    }
+
+    public static enum PrimerOperationType implements TypeDesc{
+
+
+        orderInit {
+            @Override
+            public String desc() {
+                return "订单初始化";
+            }
+        },
+        orderCheckSuccess {
+            @Override
+            public String desc() {
+                return "订单检查成功";
+            }
+        },
+        orderCheckFailure {
+            @Override
+            public String desc() {
+                return "订单检查失败";
+            }
+        },
+        makeTable {
+            @Override
+            public String desc() {
+                return "制表";
+            }
+        },
+        synthesisSuccess {
+            @Override
+            public String desc() {
+                return "合成成功";
+            }
+        },
+        synthesisFailure {
+            @Override
+            public String desc() {
+                return "合成失败";
+            }
+        },
+        modiSuccess {
+            @Override
+            public String desc() {
+                return "修饰成功";
+            }
+        },
+        modiFailure {
+            @Override
+            public String desc() {
+                return "修饰失败";
+            }
+        },
+        ammoniaSuccess {
+            @Override
+            public String desc() {
+                return "氨解成功";
+            }
+        },
+        ammoniaFailure {
+            @Override
+            public String desc() {
+                return "氨解失败";
+            }
+        },
+        purifySuccess {
+            @Override
+            public String desc() {
+                return "纯化成功";
+            }
+        },
+        purifyFailure {
+            @Override
+            public String desc() {
+                return "纯化失败";
+            }
+        },
+        measureSuccess {
+            @Override
+            public String desc() {
+                return "测试成功";
+            }
+        },
+        measureFailure {
+            @Override
+            public String desc() {
+                return "测试失败";
+            }
+        },
+        packSuccess {
+            @Override
+            public String desc() {
+                return PrimerStatusType.pack.desc()+"成功";
+            }
+        },
+        packFailure {
+            @Override
+            public String desc() {
+                return PrimerStatusType.pack.desc()+"失败";
+            }
+        },
+        bakeSuccess {
+            @Override
+            public String desc() {
+                return PrimerStatusType.bake.desc()+"成功";
+            }
+        },
+        bakeFailure {
+            @Override
+            public String desc() {
+                return PrimerStatusType.bake.desc()+"失败";
+            }
+        },
+        detectSuccess {
+            @Override
+            public String desc() {
+                return PrimerStatusType.detect.desc()+"成功";
+            }
+        },
+        detectFailure {
+            @Override
+            public String desc() {
+                return PrimerStatusType.detect.desc()+"失败";
+            }
+        },
+
+        deliverySuccess {
+            @Override
+            public String desc() {
+                return PrimerStatusType.delivery.desc()+"成功";
+            }
+        },
+        deliveryFailure {
+            @Override
+            public String desc() {
+                return PrimerStatusType.delivery.desc()+"失败";
+            }
+        },
+        backSuccess {
+            @Override
+            public String desc() {
+                return null;
+            }
+        },
+        backFailure {
+            @Override
+            public String desc() {
+                return null;
+            }
+        }
 
     }
 }
