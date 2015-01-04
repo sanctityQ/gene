@@ -22,22 +22,12 @@
 			<legend><small>打印标签查询</small></legend>
 			<div class="control-group">
 				<div class="controls">
-     				<label for="loginName" class="control-label">订单号:</label>
-					<input type="text" id="orderNo" name="orderNo" size="20" value="" class="required"/>
-				    <label for="loginName" class="control-label">客户代码:</label>
-					<input type="text" id="customer_code" name="customer_code" size="20" value="" class="required"/>
-				</div>
-				<div class="controls">
-     				<label for="loginName" class="control-label">生产数据:</label>
+     				<label for="loginName" class="control-label">板号:</label>
+					<input type="text" id="boardNo" name="boardNo" size="20" value="" class="required"/>
+				    <label for="loginName" class="control-label">生产编号:</label>
 					<input type="text" id="productNo" name="productNo" size="20" value="" class="required"/>
-				    <label for="loginName" class="control-label">订单导入日期</label>从
-					<input type="text" id="create_time_start" name="create_time_start" size="10" value="" class="required"/>到
-					<input type="text" id="create_time_end" name="create_time_end" size="10" value="" class="required"/>
-				</div>				
-				<div class="controls">
-        			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         			<input id="submit" class="btn btn-primary" type="submit" value="查询" />
-				</div>				
+				</div>			
 			</div>
 		</fieldset>
 	</form>
