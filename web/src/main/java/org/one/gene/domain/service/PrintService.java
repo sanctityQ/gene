@@ -22,6 +22,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerLabelConfig;
+import org.one.gene.domain.entity.PrimerLabelConfigSub;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductValue;
 import org.one.gene.domain.entity.PrimerValueType;
@@ -229,33 +230,7 @@ public class PrintService {
 			throw new Exception("客户代码"+customerCode+"的引物标签打印信息为空，请配置！");
 		}
 
-		ArrayList elements = new ArrayList();
-		elements.add("productNo");//生产编号
-		elements.add("primeName");//引物名称
-		elements.add("orderNo");//订单号
-		elements.add("odTB");//OD/Tube
-		elements.add("odTotal");//odTotal 
-		elements.add("tube");//管数
-		elements.add("nmolTB");//nmol/Tube
-		elements.add("MW");//MW
-		elements.add("TM");//TM
-		elements.add("remark");//备注/日期  ？？
-		elements.add("pmole");//加水量：100pmole/μl = 'nmol/tube' * 10
-		elements.add("midi");//修饰
-		
-		if(customerCode.equals("1102")){//金唯智
-			elements = new ArrayList();
-			elements.add("orderNo");//订单号
-			elements.add("productNo");//生产编号
-			elements.add("primeName");//引物名称
-			elements.add("odTB");//OD/Tube
-			elements.add("nmolTB");//nmol/Tube
-			elements.add("MW");//MW
-			elements.add("ugTB");//ug/tube  --------------------？？？  如何得到
-			elements.add("midi");//修饰
-		}
-		
-		//----------------------------------
+		//计算第一列多少行
 		BigDecimal totalListCount = new BigDecimal(printLabels.size());//本excel的条数
 		int totalcolumns = totalListCount.divide(new BigDecimal(primerLabelConfig.getColumns().getValue()), 0, BigDecimal.ROUND_UP).intValue();//总共的行数
 		
@@ -284,9 +259,10 @@ public class PrintService {
 			}else{
 				row = sheet.getRow(rowNumForpage);
 			}
-			for (int k=0;k<elements.size();k++){
-				String type =(String) elements.get(k);
-				HSSFCell cell = row.createCell((short) ((columNum-1)*elements.size()+k));//产生单元格
+			List<PrimerLabelConfigSub> primerLabelConfigSubs = primerLabelConfig.getPrimerLabelConfigSubs();
+			for (int k=0;k<primerLabelConfigSubs.size();k++){
+				String type = ((PrimerLabelConfigSub) primerLabelConfigSubs.get(k)).getType();
+				HSSFCell cell = row.createCell((short) ((columNum-1)*primerLabelConfigSubs.size()+k));//产生单元格
 				//设置单元格内容为字符串型
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				//往单元格中写入信息
