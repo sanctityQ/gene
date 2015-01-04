@@ -53,7 +53,7 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
     /**
      * 标签排列列数.
      */
-    @Column(name = "columns")
+    @Column(name = "`columns`")
     private Integer columns;
     /**
      * 用户代码.
