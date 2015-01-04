@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -33,6 +31,14 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
             return this.value;
         }
 
+        public static ColumnType covertValue(Integer value){
+            for (ColumnType type : ColumnType.values()) {
+                if(type.getValue() == value)
+                    return type;
+            }
+            throw new IllegalArgumentException("this value:" + value + "is not exists");
+        }
+
     }
 
     /**
@@ -43,10 +49,13 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
      * 客户名称.
      */
     private String customerName;
+
     /**
      * 标签排列列数.
      */
-    private ColumnType columns;
+    @Column(name = "`columns`", nullable = false)
+    @Access( value = AccessType.FIELD)
+    private Integer columns;
     /**
      * 用户代码.
      */
@@ -97,13 +106,13 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
         this.customerName = customerName;
     }
 
-    @Column(name = "`columns`")
-    public ColumnType getColumns() {
-        return this.columns;
+    @Transient
+    public ColumnType getColumnType() {
+        return ColumnType.covertValue(this.columns);
     }
 
-    public void setColumns(ColumnType columns) {
-        this.columns = columns;
+    public void setColumnType(ColumnType columns) {
+        this.columns = columns.getValue();
     }
 
     @Column(name = "`user_code`", length = 15)
@@ -145,6 +154,7 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
     }
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "primerLabelConfig")
+    @OrderBy(value = "sorting ASC")
     public List<PrimerLabelConfigSub> getPrimerLabelConfigSubs() {
         return primerLabelConfigSubs;
     }
