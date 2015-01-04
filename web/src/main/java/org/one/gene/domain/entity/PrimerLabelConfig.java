@@ -110,8 +110,8 @@ public class PrimerLabelConfig extends IdEntity implements java.io.Serializable 
         return ColumnType.convertValue(this.columns);
     }
 
-    public void setColumns(ColumnType columns) {
-        this.columns = columns.getValue();
+    public void setColumns(Integer columns) {
+        this.columns =columns;
     }
 
     @Column(name = "`user_code`", length = 15)
