@@ -21,8 +21,8 @@ var outbound = {
   "commodityCode":"",
   "commodityName":""
 }
+var outboundList = new Array();
 function ajaxSubmit() {
-	var outboundList = new Array();
 	var i =0;
 	jQuery("input[name='orderCheck']:checked").each(function(index){
       if ("checked" == jQuery(this).attr("checked")) {
@@ -42,12 +42,11 @@ function ajaxSubmit() {
           i++
       }
 	});
-	alert(JSON.stringify(outboundList))
     $.ajax({
     	async:false,
         url: "${ctx}/print/printOutBound",
         type: "POST",
-        data:{outboundJson:JSON.stringify(outboundList)},
+        data:{"outboundList":JSON.stringify(outboundList)},
         dataType: "json",
         success: function(data) {
             /* alert(data.length);
