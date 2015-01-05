@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.one.gene.domain.CalculatePrimerValue;
 
+import com.sinosoft.one.data.jade.parsers.parser.function.Add;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -311,9 +313,9 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
-            return new BigDecimal(313.2).multiply(av.value(primerProduct))
-            		.add(new BigDecimal(289.2).multiply(cv.value(primerProduct)))
-            		.add(new BigDecimal(329.2).multiply(gv.value(primerProduct)))
+            return new BigDecimal("313.2").multiply(av.value(primerProduct))
+            		.add(new BigDecimal("289.2").multiply(cv.value(primerProduct)))
+            		.add(new BigDecimal("329.2").multiply(gv.value(primerProduct)))
             		.add(new BigDecimal("304.2").multiply(tv.value(primerProduct)))
             		.add(new BigDecimal("290.2").multiply(uv.value(primerProduct)))
             		.add(new BigDecimal("314.2").multiply(iv.value(primerProduct)))
@@ -373,23 +375,23 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
-            return av.value(primerProduct).multiply(new BigDecimal("15.4"))
-    				.add(tv.value(primerProduct)).multiply(new BigDecimal("8.8"))
-    				.add(cv.value(primerProduct)).multiply(new BigDecimal("7.3"))
-    				.add(gv.value(primerProduct)).multiply(new BigDecimal("11.7"))
-    				.add(uv.value(primerProduct)).multiply(new BigDecimal("10.1"))
-    				.add(iv.value(primerProduct)).multiply(new BigDecimal("12.25"))
-    				.add(nv.value(primerProduct)).multiply(new BigDecimal("10.95"))
-    				.add(bv.value(primerProduct)).multiply(new BigDecimal("9.5"))
-    				.add(dv.value(primerProduct)).multiply(new BigDecimal("12.1"))
-    				.add(hv.value(primerProduct)).multiply(new BigDecimal("10.7"))
-    				.add(kv.value(primerProduct)).multiply(new BigDecimal("10.6"))
-    				.add(mv.value(primerProduct)).multiply(new BigDecimal("11.4"))
-    				.add(rv.value(primerProduct)).multiply(new BigDecimal("13.6"))
-    				.add(sv.value(primerProduct)).multiply(new BigDecimal("9.6"))
-    				.add(vv.value(primerProduct)).multiply(new BigDecimal("11.5"))
-    				.add(wv.value(primerProduct)).multiply(new BigDecimal("12.3"))
-    				.add(yv.value(primerProduct)).multiply(new BigDecimal("8.35"));
+        	return new BigDecimal("15.4").multiply(av.value(primerProduct))
+        	    .add(new BigDecimal("8.8").multiply(tv.value(primerProduct)))
+        	    .add(new BigDecimal("7.3").multiply(cv.value(primerProduct)))
+        	    .add(new BigDecimal("11.7").multiply(gv.value(primerProduct)))
+        	    .add(new BigDecimal("10.1").multiply(uv.value(primerProduct)))
+        	    .add(new BigDecimal("12.25").multiply(iv.value(primerProduct)))
+        	    .add(new BigDecimal("10.95").multiply(nv.value(primerProduct)))
+        	    .add(new BigDecimal("9.5").multiply(bv.value(primerProduct)))
+        	    .add(new BigDecimal("12.1").multiply(dv.value(primerProduct)))
+        	    .add(new BigDecimal("10.7").multiply(hv.value(primerProduct)))
+        	    .add(new BigDecimal("10.6").multiply(kv.value(primerProduct)))
+        	    .add(new BigDecimal("11.4").multiply(mv.value(primerProduct)))
+        	    .add(new BigDecimal("13.6").multiply(rv.value(primerProduct)))
+        	    .add(new BigDecimal("9.6").multiply(sv.value(primerProduct)))
+        	    .add(new BigDecimal("11.5").multiply(vv.value(primerProduct)))
+        	    .add(new BigDecimal("12.3").multiply(wv.value(primerProduct)))
+        	    .add(new BigDecimal("8.35").multiply(yv.value(primerProduct)));
         }
     };
 
