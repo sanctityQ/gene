@@ -57,73 +57,30 @@
 	    </tr>
 		<tr style="text-align: center; COLOR: #0076C8; BACKGROUND-COLOR: #F4FAFF; font-weight: bold">
 			<td><font size="4"></font></td>
-			<td>全选<input type="checkbox" id="all" name="all" value="" onclick="selectAll()"/></td>
-			<td><font size="4">生产编号id</font></td>
+			<td>选择</td>
+			<td><font size="4">订单号</font></td>
+			<td><font size="4">客户姓名</font></td>
 			<td><font size="4">生产编号</font></td>
-			<td><font size="4">板号</font></td>
-			<td><font size="4">序列</font></td>
-			<td><font size="4">OD总量</font></td>
-			<td><font size="4">OD/TB</font></td>
-			<td><font size="4">NUML总量</font></td>
-			<td><font size="4">NUML/TB</font></td>
-			<td><font size="4">碱基数</font></td>
-			<td><font size="4">纯化方式</font></td>
-			<td><font size="4">修饰</font></td>
+			<td><font size="4">碱基总数</font></td>
 			<td><font size="4">状态</font></td>
-			<td><font size="4">重回次数</font></td>
+			<td><font size="4">导入时间</font></td>
+			<td><font size="4">修改时间</font></td>
 		</tr>
 		</thead>
 		<% int i=1;	%>
 		<tbody>
-			<c:forEach items="${page.content}" var="primerProduct"  varStatus="status">
+			<c:forEach  var="order"  items="${page.content}" varStatus="status">
 				<tr bgcolor='#F4FAFF'>
-<input type="hidden" name="primerProductList.primerProducts[${status.index}].order.id" value="${primerProduct.order.id}" />
-<input type="hidden" name="primerProductList.primerProducts[${status.index}].order.orderNo" value="${primerProduct.order.orderNo}" />
-<input type="hidden" name="primerProductList.primerProducts[${status.index}].order.customerCode" value="${primerProduct.order.customerCode}" />
-
 <td nowrap="nowrap" align="left"><%=i++ %></td>
-<td><input type="checkbox" id="selectFlag" name="primerProductList.primerProducts[${status.index}].selectFlag" value="" onclick=""/></td>
+<td align="left"><input type="radio"  name="selectFlag" value="" /></td>
+<td align="left"><input type="text"  name="orderInfos[${status.index}].orderNo" size="10" value="${order.orderNo}" /></td>
+<td align="left"><input type="text"  name="orderInfos[${status.index}].customerName" size="10" value="${order.customerName}" /></td>
+<td align="left"><input type="text"  name="orderInfos[${status.index}].status" size="10" value="${order.status}" /></td>
+<td align="left"><input type="text"  name="orderInfos[${status.index}].productNoMinToMax" size="10" value="${order.productNoMinToMax}" /></td>
+<td align="left"><input type="text"  name="orderInfos[${status.index}].tbnTotal" size="10" value="${order.tbnTotal}" /></td>
+<td align="left"><input type="text"  name="orderInfos[${status.index}].createTime" size="10" value="${order.createTime}" /></td>
+<td align="left"><input type="text"  name="orderInfos[${status.index}].modifyTime" size="10" value="${order.modifyTime}" /></td>
 
-<td align="left">
-    <input type="text" size="2" name="primerProductList.primerProducts[${status.index}].id" size="50" value="${primerProduct.id}" />
-</td>
-<td align="left">
-  
-   	<c:if test="${not empty primerProduct.productNo}">
-   		<input type="hidden" size="12"  name="primerProductList.primerProducts[${status.index}].productNo" size="50" value="${primerProduct.productNo}" />
-   		<a href="javascript:viewPrimerProduct(${primerProduct.id});">${primerProduct.productNo}</a>
-   	</c:if> 
-   	<c:if test="${empty primerProduct.productNo}">
-   		<input type="hidden" size="12" name="primerProductList.primerProducts[${status.index}].outProductNo" size="50" value="${primerProduct.outProductNo}" />
-   		<a href="javascript:viewPrimerProduct(${primerProduct.id});">${primerProduct.outProductNo}</a>
-   	</c:if>
-</td>
-<td align="left"><input type="text" size="12"  name="primerProductList.primerProducts[${status.index}].geneOrder" size="10" value="${primerProduct.geneOrder}" /></td>
-<td align="left">${primerProduct.geneOrder}</td>
-<td align="left">${primerProduct.odTotal}</td>
-<td align="left">${primerProduct.odTB}</td>
-<td align="left">${primerProduct.nmolTotal}</td>
-<td align="left">${primerProduct.nmolTB}</td>
-<td align="left">${primerProduct.odTotal}</td>
-<td align="left">${primerProduct.tbn}</td>
-<td align="left">${primerProduct.purifyType}</td>
-<td align="left">${primerProduct.operationTypeDesc}</td>
-<td align="left">${primerProduct.backTimes}</td>
-
-<input type="hidden" name="primerProductList.primerProducts[${status.index}].odTotal" value="${primerProduct.odTotal}"/>
-<input type="hidden" name="primerProductList.primerProducts[${status.index}].odTB"    value="${primerProduct.odTB}"/>
-<input type="hidden" name="primerProductList.primerProducts[${status.index}].primeName"    value="${primerProduct.primeName}"/>
-<input type="hidden" name="primerProductList.primerProducts[${status.index}].modiFiveType"    value="${primerProduct.modiFiveType}"/>
-<input type="hidden" name="primerProductList.primerProducts[${status.index}].modiThreeType"    value="${primerProduct.modiThreeType}"/>
-<input type="hidden" name="primerProductList.primerProducts[${status.index}].modiMidType"    value="${primerProduct.modiMidType}"/>
-<input type="hidden" name="primerProductList.primerProducts[${status.index}].modiSpeType"    value="${primerProduct.modiSpeType}"/>
-
-<c:forEach items="${primerProduct.primerProductValues}" var="primerProductValue"  varStatus="status1">
-<input type="hidden" name="primerProductList.primerProducts[${status.index}].primerProductValues[${status1.index}].id" value="${primerProductValue.id}" />
-<input type="hidden" name="primerProductList.primerProducts[${status.index}].primerProductValues[${status1.index}].type" value="${primerProductValue.type}" />
-<input type="hidden" name="primerProductList.primerProducts[${status.index}].primerProductValues[${status1.index}].typeDesc" value="${primerProductValue.typeDesc}" />
-<input type="hidden" name="primerProductList.primerProducts[${status.index}].primerProductValues[${status1.index}].value" value="${primerProductValue.value}" />
-</c:forEach>
 
 				</tr>
 			</c:forEach>

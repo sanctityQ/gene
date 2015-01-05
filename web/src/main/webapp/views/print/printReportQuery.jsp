@@ -32,13 +32,12 @@ function reportQuery(){
     		<td>
     			客户代码：<input type="text" name="customerCode"/>
     		</td>
+    		<td>
+        			<input id="query" class="btn btn-primary" type="button" value="查询" onclick="reportQuery()"/>
+    		</td>
     	</tr>
     </table>	
 		<fieldset>
-				<div class="controls">
-        			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        			<input id="query" class="btn btn-primary" type="button" value="查询" onclick="reportQuery()"/>
-				</div>				
 			</div>
 		</fieldset>
 	</form>
