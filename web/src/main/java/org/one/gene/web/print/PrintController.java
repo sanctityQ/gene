@@ -63,6 +63,16 @@ public class PrintController {
     	
     	return "printLabelList";
     }
+
+    /**
+     * 进入打印标签配置页面
+     * 
+     * */
+    @Get("printLabelConfig")
+    public String printLabelConfig(){
+    	return "printLabelConfig";
+    }
+    
     
     @Post("printOutBoundQuery")
     public String printOutBoundQuery(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,@Param("pageNo")Integer pageNo,

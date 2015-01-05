@@ -232,7 +232,7 @@ public class PrintService {
 
 		//计算第一列多少行
 		BigDecimal totalListCount = new BigDecimal(printLabels.size());//本excel的条数
-		int totalcolumns = totalListCount.divide(new BigDecimal(primerLabelConfig.getColumns().getValue()), 0, BigDecimal.ROUND_UP).intValue();//总共的行数
+		int totalcolumns = totalListCount.divide(new BigDecimal(primerLabelConfig.getColumnType().getValue()), 0, BigDecimal.ROUND_UP).intValue();//总共的行数
 		
 		
 		FileOutputStream fos = null;

@@ -22,6 +22,7 @@
             <li id="user-tab"><a href="${ctx}/synthesis/preSynthesisQuery">录入合成结果</a></li>
             <li id="user-tab"><a href="${ctx}/synthesis/preExportPrimerProduct">导出上机表</a></li>
             <li id="user-tab"><a href="${ctx}/print/prePrintLabelQuery">打印标签</a></li>
+            <li id="user-tab"><a href="${ctx}/print/printLabelConfig">打印标签配置</a></li>
             <li id="user-tab"><a href="${ctx}/print/prePrintReportQuery">打印报告单</a></li>
         </ul>
     </div>
