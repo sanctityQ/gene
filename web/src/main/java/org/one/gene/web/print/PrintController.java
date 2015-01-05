@@ -190,19 +190,12 @@ public class PrintController {
     /**
      * 打印报告单
      * */
-	public EntityReply<File> exportReport(@Param("primerProductList") PrimerProductList primerProductList, Invocation inv) {
+	@Post("exportReport/{orderNo}")
+	public EntityReply<File> exportReport(@Param("orderNo") String orderNo, Invocation inv) {
     	
-        List<PrimerProduct> primerProducts = primerProductList.getPrimerProducts();
-		for (int i = primerProducts.size() - 1; i >= 0; i--) {
-			//如果页面没有选择，则移除
-			if (((PrimerProduct)primerProducts.get(i)).getSelectFlag() == null) {
-				primerProducts.remove(i);
-			}
-		}
-		
     	EntityReply<File> fileStr = null;
     	try {
-    		fileStr = printService.exportReport(primerProducts, inv);
+    		fileStr = printService.exportReport(orderNo, inv);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

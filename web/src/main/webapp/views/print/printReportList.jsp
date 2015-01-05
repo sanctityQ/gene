@@ -8,40 +8,28 @@
 <head>
 <title></title>
 <script type="text/javascript">
-
-	function selectAll() {
-		var elements = document.getElementsByTagName("input");
+	function exportReport(){
 		
-		for(var j = 0; j < elements.length; j++) 
+		var selectFlags = document.getElementsByName("selectFlag");
+		var orderNos = document.getElementsByName("orderNo");
+		var check = false;
+		var orderNo = "";
+		for(var j = 0; j < selectFlags.length; j++)
 		{
-			if(elements[j].name.slice(0,elements[j].name.indexOf("[")) == "primerProductList.primerProducts")
-			{   
-				var headStr = elements[j].name.slice(0,elements[j].name.indexOf("]")+2);
-				var lastStr = elements[j].name.slice(elements[j].name.indexOf("]")+2);
-				if ( lastStr == "selectFlag"){
-					var div = document.getElementById(elements[j].name);
-					var all = document.getElementById("all");
-
-					if (all.checked == true){
-					    div.checked = true;
-					}else{
-						div.checked = false;
-					}
-				}
+			if(selectFlags[j].checked == true){
+				orderNo = orderNos[j].value;
+				check = true;
 			}
 		}
 		
+		if(check){
+			form.action = "${ctx}/print/exportReport/"+orderNo;
+    		form.submit();
+		}else{
+			alert("请选择订单号！");
+		}
 	}
-	
-	function exportReport(){
-		form.submit();
-	}
-	
-	function viewPrimerProduct(primerProductId){
-		window.open("${ctx}/synthesis/viewPrimerProduct/"+primerProductId,""+primerProductId,"resizable=1,scrollbars=1,width=700,height=600");
-	}
-	
-	
+
 	
 </script>
 
@@ -73,13 +61,13 @@
 				<tr bgcolor='#F4FAFF'>
 <td nowrap="nowrap" align="left"><%=i++ %></td>
 <td align="left"><input type="radio"  name="selectFlag" value="" /></td>
-<td align="left"><input type="text"  name="orderInfos[${status.index}].orderNo" size="10" value="${order.orderNo}" /></td>
-<td align="left"><input type="text"  name="orderInfos[${status.index}].customerName" size="10" value="${order.customerName}" /></td>
-<td align="left"><input type="text"  name="orderInfos[${status.index}].status" size="10" value="${order.status}" /></td>
-<td align="left"><input type="text"  name="orderInfos[${status.index}].productNoMinToMax" size="10" value="${order.productNoMinToMax}" /></td>
-<td align="left"><input type="text"  name="orderInfos[${status.index}].tbnTotal" size="10" value="${order.tbnTotal}" /></td>
-<td align="left"><input type="text"  name="orderInfos[${status.index}].createTime" size="10" value="${order.createTime}" /></td>
-<td align="left"><input type="text"  name="orderInfos[${status.index}].modifyTime" size="10" value="${order.modifyTime}" /></td>
+<td align="left"><input type="text"  name="orderNo" size="10" value="${order.orderNo}" /></td>
+<td align="left"><input type="text"  name="customerName" size="10" value="${order.customerName}" /></td>
+<td align="left"><input type="text"  name="productNoMinToMax" size="10" value="${order.productNoMinToMax}" /></td>
+<td align="left"><input type="text"  name="tbnTotal" size="10" value="${order.tbnTotal}" /></td>
+<td align="left"><input type="text"  name="status" size="10" value="${order.status}" /></td>
+<td align="left"><input type="text"  name="createTime" size="10" value="${order.createTime}" /></td>
+<td align="left"><input type="text"  name="modifyTime" size="10" value="${order.modifyTime}" /></td>
 
 
 				</tr>
