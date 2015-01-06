@@ -23,19 +23,17 @@ CREATE TABLE `company` (
 
 CREATE TABLE `customer` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
-  `code` VARCHAR(31) NOT NULL COMMENT '客户代码',
-  `name` VARCHAR(127) NOT NULL COMMENT '客户姓名',
+  `com_name` VARCHAR(120) NOT NULL COMMENT '机构名称',
   `leader_name` VARCHAR(127) COMMENT '负责人姓名',
-  `com_id` VARCHAR(120) COMMENT '机构代码',
-  `com_name` VARCHAR(120) COMMENT '机构名称',
   `invoice_title` VARCHAR(120) COMMENT '发票抬头',
   `pay_ways` VARCHAR(15) COMMENT '结账方式',
   `address` VARCHAR(255) COMMENT '客户地址',
   `phone_no` VARCHAR(15) COMMENT '联系电话',
+  `fax` VARCHAR(15) COMMENT '传真',
   `email` VARCHAR(63) COMMENT '邮箱',
   `web_site` varchar(127) DEFAULT NULL COMMENT '网址',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_code` (`code`)
+  UNIQUE KEY `uk_cus_com_name` (`com_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户信息表';
 
 CREATE TABLE `user` (
@@ -48,8 +46,9 @@ CREATE TABLE `user` (
   `email`       VARCHAR(63) NOT NULL DEFAULT '' COMMENT '邮箱',
   `staff_flag`    TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否本公司用户标识,0-不是，1-是',
   `validate` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否有效,0-不是，1-是',
+  `customer_id`        BIGINT(20) COMMENT '客户信息数据ID',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_code` (`code`)
+  UNIQUE KEY `uk_user_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户信息表';
 
 
