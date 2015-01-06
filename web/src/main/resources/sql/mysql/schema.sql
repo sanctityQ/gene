@@ -12,7 +12,7 @@ CREATE TABLE `company` (
   `com_type`       VARCHAR(15)      NOT NULL COMMENT '机构类型',
   `com_level`      TINYINT(4)       NOT NULL COMMENT '机构级别',
   `phone_number`   VARCHAR(35) COMMENT '电话号码',
-  `fax_number`     VARCHAR(20) COMMENT '传真号码',
+  `fax_number`     VARCHAR(15) COMMENT '传真号码',
   `post_code`      CHAR(6) COMMENT '邮编',
   `address`        VARCHAR(255) COMMENT '地址',
   `desc`          VARCHAR(511) COMMENT '描述',
@@ -23,9 +23,10 @@ CREATE TABLE `company` (
 
 CREATE TABLE `customer` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
-  `com_name` VARCHAR(120) NOT NULL COMMENT '机构名称',
+  `code`    VARCHAR(15) NOT NULL COMMENT '用户代码',
+  `com_name` VARCHAR(127) NOT NULL COMMENT '机构名称',
   `leader_name` VARCHAR(127) COMMENT '负责人姓名',
-  `invoice_title` VARCHAR(120) COMMENT '发票抬头',
+  `invoice_title` VARCHAR(127) COMMENT '发票抬头',
   `pay_ways` VARCHAR(15) COMMENT '结账方式',
   `address` VARCHAR(255) COMMENT '客户地址',
   `phone_no` VARCHAR(15) COMMENT '联系电话',
@@ -40,13 +41,13 @@ CREATE TABLE `user` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
   `code`    VARCHAR(15) NOT NULL COMMENT '用户代码',
   `name`    VARCHAR(31) NOT NULL DEFAULT '' COMMENT '用户名称',
-  `password`    VARCHAR(64) NOT NULL COMMENT '用户密码',
-  `com_code`    VARCHAR(10) NOT NULL DEFAULT '' COMMENT '机构代码',
+  `password`    VARCHAR(63) NOT NULL COMMENT '用户密码',
+  `com_code`    VARCHAR(15) NOT NULL DEFAULT '' COMMENT '机构代码',
   `mobile`      CHAR(11) NOT NULL DEFAULT '' COMMENT '手机号',
   `email`       VARCHAR(63) NOT NULL DEFAULT '' COMMENT '邮箱',
   `staff_flag`    TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否本公司用户标识,0-不是，1-是',
   `validate` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否有效,0-不是，1-是',
-  `customer_id`        BIGINT(20) COMMENT '客户信息数据ID',
+  `customer_id`      INT(11) COMMENT '客户信息数据ID',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_user_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户信息表';
