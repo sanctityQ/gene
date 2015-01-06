@@ -8,49 +8,30 @@
 <script type="text/javascript"src="${ctx}/static/jquery/jquery-1.7.2.js"></script>
 <script type="text/javascript"src="${ctx}/static/jquery/json2.js"></script>
 <script type="text/javascript">
-var outbound = {
-  "customerName":"",
-  "customerPhoneNm":"",
-  "orderNo":"",
-  "handlerCode":"",
-  "createTime":"",
-  "makingNo":"",
-  "operatorCode":"",
-  "linkName":"",
-  "makingDate":"",
-  "commodityCode":"",
-  "commodityName":""
-}
-var outboundList = new Array();
+
+
 function ajaxSubmit() {
-	var i =0;
+	var orderInfoList=new Array();
 	jQuery("input[name='orderCheck']:checked").each(function(index){
       if ("checked" == jQuery(this).attr("checked")) {
+    	  var outbound = {
+	    			     "orderNo":""
+	    			     };
+    	  outbound["orderNo"] = "";
           var index = this.value;
-          outbound.customerName = jQuery("input[name='orderInfos["+index+"].customerName']")[0].value;
-          outbound.customerPhoneNm = jQuery("input[name='orderInfos["+index+"].customerPhoneNm']")[0].value;
-          outbound.orderNo = jQuery("input[name='orderInfos["+index+"].orderNo']")[0].value;
-          outbound.handlerCode = jQuery("input[name='orderInfos["+index+"].handlerCode']")[0].value;
-          outbound.createTime = jQuery("input[name='orderInfos["+index+"].createTime']")[0].value;
-          outbound.makingNo = jQuery("input[name='orderInfos["+index+"].makingNo']")[0].value;
-          outbound.operatorCode = jQuery("input[name='orderInfos["+index+"].operatorCode']")[0].value;
-          outbound.linkName = jQuery("input[name='orderInfos["+index+"].linkName']")[0].value;
-          outbound.makingDate = jQuery("input[name='orderInfos["+index+"].makingDate']")[0].value;
-          outbound.commodityCode = jQuery("input[name='orderInfos["+index+"].commodityCode']")[0].value;
-          outbound.commodityName = jQuery("input[name='orderInfos["+index+"].commodityName']")[0].value;
-          outboundList[i]=outbound;
-          i++
+          outbound["orderNo"] = jQuery("input[name='orderInfos["+index+"].orderNo']")[0].value;
+          orderInfoList.push(outbound);
       }
 	});
     $.ajax({
     	async:false,
         url: "${ctx}/print/printOutBound",
         type: "POST",
-        data:{"outboundList":JSON.stringify(outboundList)},
+        data:"orderInfoList="+JSON.stringify(orderInfoList),
         dataType: "json",
         success: function(data) {
-            /* alert(data.length);
-            for(var i=0;i<data.length;i++){
+            //alert(data);
+            /*for(var i=0;i<data.length;i++){
                 alert(data[i].propertyPath +":"+data[i].message+"<br/>");
             } */
         }

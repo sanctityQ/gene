@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
@@ -103,10 +104,17 @@ public class PrintController {
     }
     
     @Post("printOutBound")
-    public String printOutBound(@Param("outboundList")String outboundJson,Invocation inv) throws Exception {
-    		System.out.println(outboundJson);
-        
-        return "";
+    public EntityReply<File> printOutBound(@Param("orderInfoList")String orderInfoList,Invocation inv) throws Exception {
+    	 List<OrderInfoList> orderInfoLists = JSON.parseArray(orderInfoList, OrderInfoList.class);
+    	
+    	 EntityReply<File> fileStr = null;
+     	try {
+     		fileStr =  printService.printOutbound(orderInfoLists,inv);
+ 		} catch (IOException e) {
+ 			// TODO Auto-generated catch block
+ 			e.printStackTrace();
+ 		}
+     	return fileStr;
     }
 
     /**

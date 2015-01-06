@@ -137,7 +137,7 @@ public class OrderService {
 				 firstProductNO = primerProduct.getProductNo();
 		     }
 			 if(count==PrimerProducts.size()) {
-				 LastProductNO = primerProduct.getProductNo();
+				 LastProductNO = "~"+primerProduct.getProductNo();
 		     }
 			 //计算每条生产数据的碱基数
 			String tbnStr = orderCaculate.getAnJiShu(primerProduct.getGeneOrder());
@@ -145,7 +145,7 @@ public class OrderService {
 		    tbnTotal= tbnTotal.add(new BigDecimal(tbnStr));
 		    
 		}
-		OrderInfo.setProductNoMinToMax(firstProductNO+"~"+LastProductNO);
+		OrderInfo.setProductNoMinToMax(firstProductNO+LastProductNO);
 		OrderInfo.setTbnTotal(tbnTotal.toString());
 		
 		return OrderInfo;

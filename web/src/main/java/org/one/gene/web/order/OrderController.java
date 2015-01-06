@@ -52,7 +52,7 @@ public class OrderController {
     	ArrayList<String> errors = new ArrayList<String>();
     	
     	if("".equals(customerCode)){
-    		throw new Exception("客户代码为空，请您录入客户代码！");
+    		throw new Exception("客户代码或名称未录入，请您录入！");
     	}
     	if (file.isEmpty()) {
     		throw new Exception("请您选择要上传的文件！");
@@ -92,6 +92,9 @@ public class OrderController {
         }else{
         	//获取客户信息
         	Customer customer = orderService.findCustomer(customerCode);
+        	if(customer==null){
+        		throw new Exception("无此客户信息，请您确认后重新上传！");
+        	}
         	//组织订单对象
         	Order order = orderService.convertOrder(customer,filename);
         	//解析产品信息

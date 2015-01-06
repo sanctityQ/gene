@@ -1,5 +1,6 @@
 package org.one.gene.web.order;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -29,11 +30,12 @@ public class AtomicLongUtil {
 	@Autowired
 	private PrimerProductRepository primerProductRepository;
 	
-	//取得当前所在年份
-	Calendar nowCalendar = Calendar.getInstance();
-	int year = nowCalendar.get(Calendar.YEAR);	
-	int month = nowCalendar.get(Calendar.MONTH)+1;
-	int day = nowCalendar.get(Calendar.DAY_OF_MONTH);
+	// 用于时间的格式化
+	SimpleDateFormat sFormat = new SimpleDateFormat("yyyyMMdd");
+ 	// 用于时间的处理
+	Calendar calendar = Calendar.getInstance();
+	// 格式化新的时间
+	String dateString = sFormat.format(calendar.getTime());
 	 
 	 /**
 	  * 获取订单号
@@ -145,7 +147,7 @@ public class AtomicLongUtil {
 		//当前的流水号
 		String current_serial_number = df.format(sn);
 		
-		String current_number = year+""+month+""+day+""+current_serial_number;
+		String current_number = dateString+current_serial_number;
 		return current_number;
 	 }
 	 
@@ -155,7 +157,7 @@ public class AtomicLongUtil {
 	  * @return
 	  */
 	 public String productNoFormat(long sn){
-		//X+(年份最后⼀位) + MM-DD + 四位流水号
+		//X+(年份最后1位) + MM-DD + 四位流水号
 		//取得序列号格式化字符串
 		int count ="XXXX".length();
 		StringBuilder sb = new StringBuilder();
@@ -167,7 +169,7 @@ public class AtomicLongUtil {
 		//当前的流水号
 		String current_serial_number = df.format(sn);
 		
-		String current_number = "X"+String.valueOf(year).substring(String.valueOf(year).length()-1)+""+month+""+day+""+current_serial_number;
+		String current_number = "X"+dateString.substring(3)+current_serial_number;
 		return current_number;
 	 }
 	 

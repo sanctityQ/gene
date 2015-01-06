@@ -49,6 +49,9 @@ public class OrderCaculate {
     public static void  main(String[] args){
         CharMatcher charMatcher = CharMatcher.anyOf("ATCGUINBDHKMRSWYV");
         System.out.println(charMatcher.retainFrom("TCGAGAAGCTTGGTACCGCATGCGGGCCCCwCCGGGGGTACCCCGCGGG1111111")) ;
+        
+        System.out.println(StringUtils.countMatches("TCGAGAAGCTTGGTACCGCATGCGGGCCCCwCCGGGGGTACCCCGCGGG1111111","N"));
+        System.out.println(getOD_Vmol("TCGAGAAGCTTGGTACCGCATGCGGGCCCCWCCGGGGGTACCCCGCGGG"));
     }
 	
 	
@@ -115,7 +118,7 @@ public class OrderCaculate {
 /*	MW =  (313.2 * #A + 289.2 * #C + 329.2 * #G+ 304.2 * #T + #U * 290.2 + #I * 314.2 + #N * 309 
 	         + #B * 307.5 + #D * 315.5 + #H * 302.2 + #K * 316.7 + #M * 301.2 + #R * 321.2 
 	         + #S * 309.2 + #V * 310.5 + #W * 308.7 + #Y * 296.7 - 61) + 每种修饰的分子量()保留1位小数 */
-	public String getMW(String str){
+	public static String getMW(String str){
 		String mw = "";
 		mw = new BigDecimal("313.2").multiply(new BigDecimal(StringUtils.countMatches(str,"A")))
 			.add(new BigDecimal("289.2").multiply(new BigDecimal(StringUtils.countMatches(str,"C"))))
@@ -151,7 +154,7 @@ public class OrderCaculate {
 	/*OD/μmol = #A * 15.4 + #T * 8.8 + #C * 7.3 + #G * 11.7 + #U * 10.1 
 				+ #I * 12.25 + #N * 10.95 + #B * 9.5 + #D * 12.1 + #H * 10.7 
 				+ #K * 10.6 + #M * 11.4 + #R * 13.6 + #S * 9.6 + #V * 11.5 + #W * 12.3 + #Y * 8.35*/
-	public String getOD_Vmol(String str){
+	public static String getOD_Vmol(String str){
 		String od_vmole = "";
 		
 		od_vmole = new BigDecimal(StringUtils.countMatches(str,"A")).multiply(new BigDecimal("15.4"))
