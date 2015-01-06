@@ -11,10 +11,10 @@ function toggleWest(e){
     }else{
         $('body').layout('panel', 'west').panel('collapse');
         $('body').layout('panel', 'center').panel('resize',{'left':0,'width':$('body').width()});
-        $(e).css("left", 0).addClass("hide");;
-
-    };
+        $(e).css("left", 0).addClass("hide");
+    }
 }
+
 function goToPage(url){
     var tab = $('#tabList');
     var theTab = tab.tabs('getSelected'); // get selected panel

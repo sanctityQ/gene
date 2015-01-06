@@ -45,6 +45,12 @@ public class OrderController {
     private OrderRepository orderRepository;
     @Autowired
     private PrimerProductRepository primerProductRepository;
+
+
+    @Get("import")
+    public String orderImport(){
+        return "orderImport";
+    }
     
     @Post("upload")
     public String upload(@Param("customerCode") String customerCode, @Param("file") MultipartFile file, Invocation inv) throws Exception {
