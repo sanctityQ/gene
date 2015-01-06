@@ -19,7 +19,9 @@ public class PrintLabel {
     private BigDecimal gc;//GC
     private BigDecimal mv;//MV
 	private BigDecimal ugTB;//ug/tube
-    private BigDecimal pmole;//加水量
+	private BigDecimal ugOD;//ug/OD=μg/OD='nmol/tube' * 'MW' /1000
+	private BigDecimal odμmol;
+	private BigDecimal pmole;//加水量
     private String remark;//备注/日期  ？？
     private String midi;//修饰
     
@@ -107,12 +109,6 @@ public class PrintLabel {
 	public void setMv(BigDecimal mv) {
 		this.mv = mv;
 	}
-	public BigDecimal getUgTB() {
-		return ugTB;
-	}
-	public void setUgTB(BigDecimal ugTB) {
-		this.ugTB = ugTB;
-	}
 	public BigDecimal getPmole() {
 		return pmole;
 	}
@@ -131,7 +127,24 @@ public class PrintLabel {
 	public void setMidi(String midi) {
 		this.midi = midi;
 	}
-
+	public BigDecimal getUgTB() {
+		return ugTB;
+	}
+	public void setUgTB(BigDecimal ugTB) {
+		this.ugTB = ugTB;
+	}
+	public BigDecimal getUgOD() {
+		return ugOD;
+	}
+	public void setUgOD(BigDecimal ugOD) {
+		this.ugOD = ugOD;
+	}
+	public BigDecimal getOdμmol() {
+		return odμmol;
+	}
+	public void setOdμmol(BigDecimal odμmol) {
+		this.odμmol = odμmol;
+	}
 }
 
 

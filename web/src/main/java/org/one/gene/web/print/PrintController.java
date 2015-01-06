@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.service.OrderService;
 import org.one.gene.domain.service.PrintService;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
@@ -40,6 +41,8 @@ public class PrintController {
     private OrderRepository orderRepository;
 	@Autowired
 	private PrintService printService;
+    @Autowired
+    private OrderService orderService;
     
     /**
      * 进入打印标签查询页面
@@ -159,36 +162,34 @@ public class PrintController {
     
     /**
      * 打印报告单查询
+     * @throws IOException 
+     * @throws Exception 
      * */
 	public String printReportQuery(@Param("orderNo") String orderNo,
-			@Param("customer_code") String customer_code,
-			@Param("productNo") String productNo,
-			@Param("create_time_start") Date create_time_start,
-			@Param("create_time_end") Date create_time_end,
+			@Param("customerCode") String customerCode,
 			@Param("pageNo") Integer pageNo,
-			@Param("pageSize") Integer pageSize, Invocation inv) {
+			@Param("pageSize") Integer pageSize, Invocation inv) throws Exception {
     	
         if(pageNo == null){
             pageNo = 0;
         }
 
         if(pageSize == null){
-            pageSize = 96;
+            pageSize = 5;
         }
 
         Pageable pageable = new PageRequest(pageNo,pageSize);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
-        searchParams.put(SearchFilter.Operator.EQ+"_order.customerCode",customer_code);
-        searchParams.put(SearchFilter.Operator.EQ+"_productNo",productNo);
-        searchParams.put(SearchFilter.Operator.GTE+"_order.createTime",create_time_start);
-        searchParams.put(SearchFilter.Operator.LTE+"_order.createTime",create_time_end);
+        searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
-        Specification<PrimerProduct> spec = DynamicSpecifications.bySearchFilter(filters.values(), PrimerProduct.class);
+        Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         
-        Page<PrimerProduct> primerProductPage = primerProductRepository.findAll(spec,pageable);
-    	
-    	inv.addModel("page", primerProductPage);
+        Page<Order> orderPage = orderRepository.findAll(spec,pageable);
+        Page<OrderInfoList> orderListPage = orderService.convertOrderList(orderPage,pageable);
+        
+    	inv.addModel("page", orderListPage);
+    	inv.addModel("pageSize", pageSize);
     	
     	return "printReportList";
     }
@@ -197,19 +198,12 @@ public class PrintController {
     /**
      * 打印报告单
      * */
-	public EntityReply<File> exportReport(@Param("primerProductList") PrimerProductList primerProductList, Invocation inv) {
+	@Post("exportFile/{orderNo}/{flag}")
+	public EntityReply<File> exportFile(@Param("orderNo") String orderNo, @Param("flag") String flag, Invocation inv) {
     	
-        List<PrimerProduct> primerProducts = primerProductList.getPrimerProducts();
-		for (int i = primerProducts.size() - 1; i >= 0; i--) {
-			//如果页面没有选择，则移除
-			if (((PrimerProduct)primerProducts.get(i)).getSelectFlag() == null) {
-				primerProducts.remove(i);
-			}
-		}
-		
     	EntityReply<File> fileStr = null;
     	try {
-    		fileStr = printService.exportReport(primerProducts, inv);
+    		fileStr = printService.exportFile(orderNo, flag, inv);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
