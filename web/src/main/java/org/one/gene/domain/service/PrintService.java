@@ -328,6 +328,23 @@ public class PrintService {
     }
 	
     /**
+     * 导出文件
+     * @throws IOException 
+     * */
+	public EntityReply<File> exportFile( String orderNo,String flag, Invocation inv) throws IOException {
+		
+		EntityReply<File> fileStr = null;
+		if ("0".equals(flag)) {
+			fileStr = this.exportReport(orderNo, inv);
+		} else if ("1".equals(flag)) {
+			fileStr = this.exportEnvelope(orderNo, inv);
+		}
+    		
+      return fileStr;
+	}
+	
+	
+    /**
      * 导出打印报告单文件
      * @throws IOException 
      * */
@@ -361,16 +378,7 @@ public class PrintService {
 		List<PrintLabel> printLabels = new ArrayList<PrintLabel>();
 		for (PrimerProduct primerProduct : order.getPrimerProducts()) {
 			
-			//计算订单下的OD总量和OD/tube
-			for (PrimerProductValue ppv : primerProduct.getPrimerProductValues()) {
-				if(ppv.getType().equals(PrimerValueType.odTotal)){
-					orderODTotal = orderODTotal.add(ppv.getValue());
-				}else if(ppv.getType().equals(PrimerValueType.tb)){
-					orderTbTotal = orderTbTotal.add(ppv.getValue());
-				}
-			}
 			purifyType = primerProduct.getPurifyType();
-			
 			
 			printLabel = new PrintLabel();
 
@@ -406,6 +414,7 @@ public class PrintService {
 			for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
 				PrimerValueType type = primerProductValue.getType();
 				if (type.equals(PrimerValueType.odTotal)) {// OD总量
+					orderODTotal = orderODTotal.add(primerProductValue.getValue());
 					printLabel.setOdTotal(primerProductValue.getValue());
 				} else if (type.equals(PrimerValueType.odTB)) {// OD/TB
 					printLabel.setOdTB(primerProductValue.getValue());
@@ -428,8 +437,10 @@ public class PrintService {
 					printLabel.setUgOD(primerProductValue.getValue());
 				} else if (type.equals(PrimerValueType.ODμmol)) {
 					printLabel.setOdμmol(primerProductValue.getValue());
-				}  
-
+				} else if(type.equals(PrimerValueType.tb)){
+					orderTbTotal = orderTbTotal.add(primerProductValue.getValue());
+				}
+				
 				if (type.equals(PrimerValueType.nmolTB)) {// 加水量
 					printLabel.setPmole(new BigDecimal(10)
 							.multiply(primerProductValue.getValue()));
@@ -626,6 +637,80 @@ public class PrintService {
 		
 		return Replys.with(file).as(Raw.class).downloadFileName(strFileName);
     }
+
+    /**
+     * 导出打印信封文件
+     * @throws IOException 
+     * */
+	public EntityReply<File> exportEnvelope( String orderNo, Invocation inv) throws IOException {
+		
+		
+		//读取上机表文件输出地址
+		InputStream inputStream  =   this.getClass().getClassLoader().getResourceAsStream("application.properties");  
+		Properties p = new  Properties(); 
+		try {
+			p.load(inputStream);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		Order order = orderRepository.findByOrderNo(orderNo);
+		String strFilePath = p.getProperty("sjbPath");
+		String report_templet_Path = p.getProperty("report_templet_Path");
+		String customerCode = order.getCustomerCode();//客户代码
+		String customerName = order.getCustomerName();//客户名称
+		Customer customer = customerRepository.findByCode(customerCode);
+		String strFileName = customerCode+"-"+System.currentTimeMillis()+".xls";
+		
+		BigDecimal orderBaseCount = new BigDecimal(0);//订单碱基数总量
+
+		for (PrimerProduct primerProduct : order.getPrimerProducts()) {
+			for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
+				PrimerValueType type = primerProductValue.getType();
+				if (type.equals(PrimerValueType.baseCount)) {// 碱基数
+					orderBaseCount = orderBaseCount.add(primerProductValue.getValue());
+				}
+			}
+		  }
+	    
+		//形成Excel
+		//读取信封模板
+		String templetName = "envelope.xls";
+		
+		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(report_templet_Path+templetName));
+        HSSFSheet sheet = workbook.getSheetAt(0);
+		FileOutputStream fos = null;
+		HSSFRow row = null;
+		HSSFCell cell = null;
+		
+		row = sheet.getRow(0);
+		cell = row.getCell(0);//得到单元格
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(orderNo);
+		cell = row.getCell(4);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(orderBaseCount+"");
+        
+		row = sheet.getRow(1);
+		cell = row.getCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(customer.getComName());
+		
+		row = sheet.getRow(2);
+		cell = row.getCell(3);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(customer.getName());
+		
+    	fos = new FileOutputStream(strFilePath + strFileName);
+		// 把相应的Excel 工作簿存盘
+		workbook.write(fos);
+
+	   //读取文件
+	   File file = new File(strFilePath, strFileName);
+		
+	   return Replys.with(file).as(Raw.class).downloadFileName(strFileName);
+    }
+	
 	
 	/**
 	 * 出库单打印对象组织

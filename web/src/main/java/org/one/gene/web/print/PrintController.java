@@ -190,12 +190,12 @@ public class PrintController {
     /**
      * 打印报告单
      * */
-	@Post("exportReport/{orderNo}")
-	public EntityReply<File> exportReport(@Param("orderNo") String orderNo, Invocation inv) {
+	@Post("exportFile/{orderNo}/{flag}")
+	public EntityReply<File> exportFile(@Param("orderNo") String orderNo, @Param("flag") String flag, Invocation inv) {
     	
     	EntityReply<File> fileStr = null;
     	try {
-    		fileStr = printService.exportReport(orderNo, inv);
+    		fileStr = printService.exportFile(orderNo, flag, inv);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

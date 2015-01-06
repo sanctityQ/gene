@@ -8,7 +8,7 @@
 <head>
 <title></title>
 <script type="text/javascript">
-	function exportReport(){
+	function exportFile(flag){
 		
 		var selectFlags = document.getElementsByName("selectFlag");
 		var orderNos = document.getElementsByName("orderNo");
@@ -23,7 +23,7 @@
 		}
 		
 		if(check){
-			form.action = "${ctx}/print/exportReport/"+orderNo;
+			form.action = "${ctx}/print/exportFile/"+orderNo+"/"+flag;
     		form.submit();
 		}else{
 			alert("请选择订单号！");
@@ -41,7 +41,8 @@
 		<thead>
 		<tr><%@ include file="/static/layouts/header.jsp"%></tr>
 	    <tr>
-			<td><input class="btn btn-primary" type="button" value="导出报告单" onclick="exportReport()"/></td>
+			<td><input class="btn btn-primary" type="button" value="导出报告单" onclick="exportFile('0')"/></td>
+			<td><input class="btn btn-primary" type="button" value="导出信封" onclick="exportFile('1')"/></td>
 	    </tr>
 		<tr style="text-align: center; COLOR: #0076C8; BACKGROUND-COLOR: #F4FAFF; font-weight: bold">
 			<td><font size="4"></font></td>
