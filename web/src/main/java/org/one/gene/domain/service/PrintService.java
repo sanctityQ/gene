@@ -498,11 +498,6 @@ public class PrintService {
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellValue("完成日期：");
 				
-				row = sheet.getRow(4);
-				cell = row.getCell(1);
-				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				cell.setCellValue("引物信息:");
-				
 			} else {
 				startRowNum = 12;
 				
