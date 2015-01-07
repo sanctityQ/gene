@@ -693,7 +693,7 @@ public class PrintService {
 		row = sheet.getRow(1);
 		cell = row.getCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(customer.getComName());
+		cell.setCellValue(customer.getName());
 		
 		row = sheet.getRow(2);
 		cell = row.getCell(3);

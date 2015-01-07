@@ -2,10 +2,7 @@ package org.one.gene.domain.entity;
 // Generated Dec 14, 2014 1:21:34 AM by One Data Tools 1.0.0
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -48,6 +45,9 @@ public class User extends IdEntity implements java.io.Serializable {
      * 是否有效,0-不是，1-是.
      */
     private boolean validate;
+
+    private Customer customer;
+
 
     public User() {
     }
@@ -124,11 +124,20 @@ public class User extends IdEntity implements java.io.Serializable {
         this.validate = validate;
     }
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="`customer_id`")
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-
 }
 
 

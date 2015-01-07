@@ -18,8 +18,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * Company.
  */
 @Entity
-@Table(name = "`company`", uniqueConstraints = @UniqueConstraint(columnNames = "`com_code`")
-)
+@Table(name = "`company`", uniqueConstraints = @UniqueConstraint(columnNames = "`com_code`"))
 public class Company extends IdEntity implements java.io.Serializable {
 
     /**
@@ -137,7 +136,7 @@ public class Company extends IdEntity implements java.io.Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    @Column(name = "`fax_number`", length = 20)
+    @Column(name = "`fax_number`", length = 15)
     public String getFaxNumber() {
         return this.faxNumber;
     }

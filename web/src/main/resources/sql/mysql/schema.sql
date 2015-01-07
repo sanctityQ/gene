@@ -23,8 +23,8 @@ CREATE TABLE `company` (
 
 CREATE TABLE `customer` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
-  `code`    VARCHAR(15) NOT NULL COMMENT '用户代码',
-  `com_name` VARCHAR(127) NOT NULL COMMENT '机构名称',
+  `code`    VARCHAR(15) NOT NULL COMMENT '客户代码',
+  `name` VARCHAR(127) NOT NULL COMMENT '客户名称',
   `leader_name` VARCHAR(127) COMMENT '负责人姓名',
   `invoice_title` VARCHAR(127) COMMENT '发票抬头',
   `pay_ways` VARCHAR(15) COMMENT '结账方式',
@@ -34,7 +34,7 @@ CREATE TABLE `customer` (
   `email` VARCHAR(63) COMMENT '邮箱',
   `web_site` varchar(127) DEFAULT NULL COMMENT '网址',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_cus_com_name` (`com_name`)
+  UNIQUE KEY `uk_customer_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户信息表';
 
 CREATE TABLE `user` (

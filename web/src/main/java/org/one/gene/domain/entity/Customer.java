@@ -33,14 +33,7 @@ public class Customer extends IdEntity implements java.io.Serializable {
      * 负责人姓名.
      */
     private String leaderName;
-    /**
-     * 机构代码.
-     */
-    private String comId;
-    /**
-     * 机构名称.
-     */
-    private String comName;
+
     /**
      * 发票抬头.
      */
@@ -57,6 +50,11 @@ public class Customer extends IdEntity implements java.io.Serializable {
      * 联系电话.
      */
     private String phoneNo;
+
+    /**
+     * 传真.
+     */
+    private String fax;
     /**
      * 邮箱.
      */
@@ -79,7 +77,7 @@ public class Customer extends IdEntity implements java.io.Serializable {
         this.name = name;
     }
 
-    @Column(name = "`code`", unique = true, length = 31)
+    @Column(name = "`code`", unique = true, length = 15)
     public String getCode() {
         return this.code;
     }
@@ -104,24 +102,6 @@ public class Customer extends IdEntity implements java.io.Serializable {
 
     public void setLeaderName(String leaderName) {
         this.leaderName = leaderName;
-    }
-
-    @Column(name = "`com_id`", length = 120)
-    public String getComId() {
-        return this.comId;
-    }
-
-    public void setComId(String comId) {
-        this.comId = comId;
-    }
-
-    @Column(name = "`com_name`", length = 120)
-    public String getComName() {
-        return this.comName;
-    }
-
-    public void setComName(String comName) {
-        this.comName = comName;
     }
 
     @Column(name = "`invoice_title`", length = 120)
@@ -177,22 +157,29 @@ public class Customer extends IdEntity implements java.io.Serializable {
 		this.webSite = webSite;
 	}
 
+    @Transient
+    public List<PrimerProduct> getPrimerProducts() {
+        return primerProducts;
+    }
 
+
+    public void setPrimerProducts(List<PrimerProduct> primerProducts) {
+        this.primerProducts = primerProducts;
+    }
+
+    @Column(name="fax", length=15)
+    public String getFax() {
+        return fax;
+    }
+
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
 
 	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-
-    @Transient
-    public List<PrimerProduct> getPrimerProducts() {
-		return primerProducts;
-	}
-
-
-	public void setPrimerProducts(List<PrimerProduct> primerProducts) {
-		this.primerProducts = primerProducts;
-	}
 }
 
 
