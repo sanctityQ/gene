@@ -9,10 +9,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -123,25 +119,6 @@ public class ExcelCreateUtil {
 	 */
 	public void setWb(Workbook wb) {
 		this.wb = wb;
-	}
-
-	/**
-	 * 创建内容单元格
-	 * 
-	 * @param wb HSSFWorkbook
-	 * @param row HSSFRow
-	 * @param col short型的列索引
-	 * @param align 对齐方式
-	 * @param val 列值
-	 */
-	public void cteateCell(HSSFWorkbook wb, HSSFRow row, int col,
-			short align, String val) {
-		HSSFCell cell = row.createCell(col);
-		cell.setCellType(HSSFCell.ENCODING_UTF_16);
-		cell.setCellValue(new HSSFRichTextString(val));
-		HSSFCellStyle cellstyle = wb.createCellStyle();
-		cellstyle.setAlignment(align);
-		cell.setCellStyle(cellstyle);
 	}
 
 

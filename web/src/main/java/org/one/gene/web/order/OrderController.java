@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
@@ -65,17 +66,19 @@ public class OrderController {
     	}
     	
     	//取得当前所在年份
-		Calendar nowCalendar = Calendar.getInstance();
-		int year = nowCalendar.get(Calendar.YEAR);	
-		int month = nowCalendar.get(Calendar.MONTH)+1;
-		int day = nowCalendar.get(Calendar.DAY_OF_MONTH);
+    	// 用于时间的格式化
+    	SimpleDateFormat sFormat = new SimpleDateFormat("yyyyMMdd");
+     	// 用于时间的处理
+    	Calendar calendar = Calendar.getInstance();
+    	// 格式化新的时间
+    	String dateString = sFormat.format(calendar.getTime());
 
 		String realpathdir = "";
     	String path="";//暂时按照只上传一个文件定义
     	String filename = "";
     	if (!file.isEmpty()) { 
         	filename = file.getOriginalFilename();
-        	realpathdir = inv.getServletContext().getRealPath("/")+"upExcel/"+year+month+day+"/";
+        	realpathdir = inv.getServletContext().getRealPath("/")+"upExcel/"+dateString+"/";
         	path = realpathdir+filename;
         	
     	    // 创建文件目录

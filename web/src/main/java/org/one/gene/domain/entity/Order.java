@@ -70,6 +70,10 @@ public class Order extends IdEntity implements java.io.Serializable {
      * 是否有效,0-不是，1-是.
      */
     private boolean validate;
+    /**
+     * 订单导入类型 nmol、od
+     */
+    private String orderUpType;
 
     List<PrimerProduct> primerProducts = Lists.newArrayList();
     
@@ -195,8 +199,16 @@ public class Order extends IdEntity implements java.io.Serializable {
     public void setValidate(boolean validate) {
         this.validate = validate;
     }
+    @Column(name = "`orderUp_Type`")
+    public String getOrderUpType() {
+		return orderUpType;
+	}
 
-    /**
+	public void setOrderUpType(String orderUpType) {
+		this.orderUpType = orderUpType;
+	}
+
+	/**
      * 获取引物生产数据
      * @return
      */
