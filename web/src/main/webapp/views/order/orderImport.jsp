@@ -19,7 +19,6 @@
 <title>订单导入</title>
 </head>
 <body>
-<form id="fm"  method="post" enctype="multipart/form-data" class="form-horizontal">
 <div class="page_padding">
 	<div class="content_box">
 		<h2>导入单订信息</h2>
@@ -46,6 +45,5 @@
 	</div>
 </div>
 <script src="${ctx}/static/js/vagueSeach.js" ></script>
-</form>
 </body>
 </html>
