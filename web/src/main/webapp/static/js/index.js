@@ -33,7 +33,7 @@ var ajaxFileUpload=function() {
             type: 'post',
             secureuri: false, //是否需要安全协议，一般设置为false
             data: {customerCode: $("#customerCode").val()},
-            fileElementId:"file",
+            fileElementId:"upload",
             dataType: 'JSON', //返回值类型 一般设置为JSON
             success: function (data,status)  //服务器成功响应处理函数
             {
