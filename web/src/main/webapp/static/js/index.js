@@ -24,26 +24,59 @@ function goToPage(url){
     //var tab = $('#tt').tabs('getSelected'); // get selected panel
     theTab.panel('refresh', url);
 }
-
+var errors = null;
 var ajaxFileUpload=function() {
     $.ajaxFileUpload
     (
         {
             url: "order/upload", //用于文件上传的服务器端请求地址
-            type: 'post',
             secureuri: false, //是否需要安全协议，一般设置为false
             data: {customerCode: $("#customerCode").val()},
             fileElementId:"upload",
             dataType: 'JSON', //返回值类型 一般设置为JSON
             success: function (data,status)  //服务器成功响应处理函数
             {
-            	goToPage('views/order/orderInfo.jsp');
+            	
+            	if(data != null){
+            		//此处没返回两个不同类型的对象处理。待优化
+            		if(data.orderNo!=undefined){
+            			goToPage('views/order/orderInfo.jsp?orderNo='+data.orderNo);
+            			orderNo = data.orderNo;
+	            	}else{
+	            		goToPage('views/order/importError.jsp');
+	            	}
+            	}
             },
             error: function (data, status, e)//服务器响应失败处理函数
             {
-            	alert("无法获取数据信息");
+            	alert("无法获取数据信息!");
             }
         }
     )
     //return false;
+}
+
+var getProduct=function(){
+	alert('11111')
+	$.ajax({
+		type : "post",
+		url : "order/productQuery",
+		dataType : "json",
+		data:"orderNo="+orderNo,
+		success : function(data) {
+			if(data != null){
+				/*赋值 begin*/
+                $("#code").val(data.customerCode);
+                /*赋值 end*/
+        		var total = data.primerProducts.length;
+        		var reSultdata = data.primerProducts;
+//        		var jsonDate = $.parseJSON(reSultdata)
+        		var jsonsource = {total: total, rows: reSultdata};
+        		$('#bigToSmall').datagrid("loadData",jsonsource);
+			}
+		},
+		error:function(){
+			alert("无法获取信息");
+		}
+	});
 }

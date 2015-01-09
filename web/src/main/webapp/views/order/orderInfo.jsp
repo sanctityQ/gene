@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%> 
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
+<c:set var="orderNo" value="${param.orderNo}" />
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,9 +19,12 @@
 <script src="${ctx}/static/js/jquery.easyui.min.js" ></script>
 <script src="${ctx}/static/js/perfect-scrollbar.min.js" ></script>
 <script src="${ctx}/static/js/index.js" ></script>
+<script type="text/javascript">
+var orderNo = ${orderNo};
+</script>
 </head>
 <body>
-<form id="inputForm" modelAttribute="user" action="${ctx}/order/save" method="post">
+<%-- <form id="inputForm" modelAttribute="user" action="${ctx}/order/save" method="post"> --%>
 <div class="page_padding">
 	<div class="content_box totle margin_btoom">
 	<input type="hidden" id="orderNo" name="order.orderNo" size="50" value="${order.orderNo}" />
@@ -74,25 +78,22 @@
 	</div>
 	<div class="content_box info margin_btoom">
 		<h2><a href="javascript:;" class="right btn-primary submit" onclick="appendRow()" type="button">添加数据</a>生产数据</h2>
-		<table id="bigToSmall" class="easyui-datagrid" data-options="fitColumns:true,singleSelect: true,iconCls: 'icon-save',url: 'datagrid_data1.json',striped:true,method: 'get',onClickRow: onClickRow">
+		<table id="bigToSmall" class="easyui-datagrid" data-options="fitColumns:true,singleSelect: true,iconCls: 'icon-save',striped:true,method: 'get',onClickRow: onClickRow">
 		<thead>
 			<tr>
-				<th data-options="field:'itemid',width:80,sortable:true,editor:'text'">生产编号</th>
-				<th data-options="field:'productid',width:80,sortable:true,editor:'text'">引物名称</th>
-				<th data-options="field:'listprice',width:80,sortable:true,editor:'text'">序列</th>
-				<th data-options="field:'status',width:80,sortable:true,editor:'text'">碱基数</th>
-				<th data-options="field:'attr1',width:80,sortable:true,editor:'text'">纯化方式</th>
-				<th data-options="field:'unitcost',width:80,sortable:true,editor:'text',styler:cellStyler">碱基数</th>
-				<th data-options="field:'attr3',width:80,sortable:true,editor:'text'">状态</th>
-				<th data-options="field:'attr4',width:80,sortable:true,editor:'text'">板号</th>
-				<th data-options="field:'attr5',width:80,sortable:true,editor:'text'">操作时间</th>
-				<th data-options="field:'attr6',width:80,sortable:true,editor:'text'">修饰价格</th>
-				<th data-options="field:'attr7',width:80,sortable:true,editor:'text'">碱基单价</th>
-				<th data-options="field:'attr8',width:80,sortable:true,editor:'text'">纯化价格</th>
+				<th data-options="field:'productNo',width:80,sortable:true,editor:'text'">生产编号</th>
+				<th data-options="field:'primeName',width:80,sortable:true,editor:'text'">引物名称</th>
+				<th data-options="field:'geneOrder',width:80,sortable:true,editor:'text'">序列</th>
+				<th data-options="field:'tbn',width:80,sortable:true,editor:'text'">碱基数</th>
+				<th data-options="field:'purifyType',width:80,sortable:true,editor:'text'">纯化方式</th>
+				<th data-options="field:'modiPrice',width:80,sortable:true,editor:'text'">修饰价格</th>
+				<th data-options="field:'baseVal',width:80,sortable:true,editor:'text'">碱基单价</th>
+				<th data-options="field:'purifyVal',width:80,sortable:true,editor:'text'">纯化价格</th>
+				<th data-options="field:'totalVal',width:80,sortable:true,editor:'text'">总价格</th>
 				<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>
 			</tr>
 		</thead>
-		
+		<%-- 
 		<c:forEach  var="primerProduct" items="${primerProducts}" varStatus="status">     
 	      <p>
 	      <c:if test="${empty primerProduct.fromProductNo}">
@@ -122,7 +123,7 @@
             <a href="${ctx}/order/copy/${primerProduct.productNo}" >复制</a>
 			</c:if>
 	      </p>   
-	</c:forEach>
+	</c:forEach> --%>
 	</table>
 	</div>
 	<div class="tools">
@@ -130,7 +131,6 @@
 		<button type="submit" class="btn btn-primary">保 存</button>
 	</div>
 </div>
-</form>
 <script src="${ctx}/views/order/js/orderInfo.js" ></script>
 </body>
 </html>

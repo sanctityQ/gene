@@ -204,7 +204,7 @@ public class Order extends IdEntity implements java.io.Serializable {
     public void setValidate(boolean validate) {
         this.validate = validate;
     }
-    @Column(name = "`orderUp_type`")
+    @Column(name = "`order_up_type`")
     public String getOrderUpType() {
 		return orderUpType;
 	}
@@ -212,7 +212,7 @@ public class Order extends IdEntity implements java.io.Serializable {
 	public void setOrderUpType(String orderUpType) {
 		this.orderUpType = orderUpType;
 	}
-
+	@Transient
 	public BigDecimal getTotalValue() {
 		return totalValue;
 	}

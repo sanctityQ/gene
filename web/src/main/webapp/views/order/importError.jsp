@@ -1,8 +1,9 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
 <head>
 <title></title>
-<meta charset="utf-8">
 <link href="css/easyui.css" type="text/css" rel="stylesheet" />
 <link href="css/icon.css" type="text/css" rel="stylesheet" />
 <link href="css/perfect-scrollbar.min.css" type="text/css" rel="stylesheet" />

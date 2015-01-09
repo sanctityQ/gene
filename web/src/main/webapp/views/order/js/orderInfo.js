@@ -55,3 +55,30 @@ function copyRow(e){
     });
     bigToSmall.datagrid('beginEdit',ind);
 }
+/**
+ * 初始化加载导入订单列表
+ */
+alert(orderNo)
+getProduct();
+$(document).ready(function() {
+	alert('22222')
+	$.ajax({
+		type : "post",
+		url : "gene/order/productQuery",
+		dataType : "json",
+		data:"orderNo="+orderNo,
+		success : function(data) {
+			if(data != null){
+                $("#code").val(data.customerCode);
+        		var total = data.primerProducts.length;
+        		var reSultdata = data.primerProducts;
+        		var jsonDate = $.parseJSON(reSultdata)
+        		var jsonsource = {total: total, rows: reSultdata};
+        		$('#bigToSmall').datagrid("loadData",jsonsource);
+			}
+		},
+		error:function(){
+			alert("无法获取信息");
+		}
+	});
+});

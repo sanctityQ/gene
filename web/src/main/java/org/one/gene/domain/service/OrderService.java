@@ -58,7 +58,7 @@ public class OrderService {
 	 * @throws IOException
 	 */
 	@Transactional(readOnly=false)
-    public String save(Customer customer,Order order){
+    public void save(Order order){
 
     	//存储订单数据
     	//外部订单号何处收集,这里不能设置外部订单号！！！
@@ -81,7 +81,6 @@ public class OrderService {
         
         orderRepository.save(order);
 
-        return "success";
     }
 
 	
