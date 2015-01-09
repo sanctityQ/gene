@@ -159,8 +159,7 @@ public class OrderService {
      * @return
      * @throws ParseException 
      */
-    public Order convertOrder(Customer customer,String fileName) throws ParseException{
-    	Order order = new Order();
+    public Order convertOrder(Customer customer,String fileName,Order order) throws ParseException{
     	order.setOrderNo(atomicLongUtil.getOrderSerialNo());
     	
     	order.setCustomerCode(customer.getCode());
@@ -219,8 +218,8 @@ public class OrderService {
     	primerProductRepository.save(primerProductTemp);
     }
     
-    public ArrayList<PrimerProduct> ReadExcel(String path, int sheetIndex, String rows) {
-    	return orderExcelPase.ReadExcel(path, 1,"2-");
+    public Order ReadExcel(String path, int sheetIndex, String rows,Order order) {
+    	return orderExcelPase.ReadExcel(path, 1,"2-",order);
     }
     
     public ArrayList<String> getExcelPaseErrors(String path,int ignoreRows, int sheetIndex) throws FileNotFoundException, IOException{

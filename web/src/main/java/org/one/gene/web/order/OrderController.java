@@ -97,7 +97,7 @@ public class OrderController {
 	        }
     	}
         if(errors.size()>0){
-        	return "upLoadFail";
+        	return "importError";
         }else{
         	//获取客户信息
         	Customer customer = orderService.findCustomer(customerCode);
@@ -105,14 +105,16 @@ public class OrderController {
         		throw new Exception("无此客户信息，请您确认后重新上传！");
         	}
         	//组织订单对象
-        	Order order = orderService.convertOrder(customer,filename);
+        	Order order = new Order();
+        	order = orderService.ReadExcel(path, 1,"2-",order);
+        	orderService.convertOrder(customer,filename,order);
         	//解析产品信息
-        	ArrayList<PrimerProduct>  primerProducts = orderService.ReadExcel(path, 1,"2-");
+        	ArrayList<PrimerProduct>  primerProducts = (ArrayList<PrimerProduct>) order.getPrimerProducts();
         	//推送页面赋值
         	inv.addModel("customer", customer);
         	inv.addModel("order", order);
         	inv.addModel("primerProducts", primerProducts);
-        	return "upLoadModify";
+        	return "orderInfo.jsp";
         }
         
     }
@@ -172,9 +174,9 @@ public class OrderController {
     @Get("downLoad") 
     @Post("downLoad") 
     public String downLoad(Invocation inv) throws Exception{
-		String fileName = "views\\downLoad\\template\\订购表模版.xls";
-		String filePath = inv.getRequest().getSession().getServletContext().getRealPath(fileName);
-		
+		String fileName = "订购表模版.xls";
+		String filePath = inv.getRequest().getSession().getServletContext().getRealPath("/");
+		filePath = filePath+"views\\downLoad\\template\\"+fileName;
 		System.out.println("文件下载路径filePath::::::"+filePath);
 		
         File file=new File(filePath);

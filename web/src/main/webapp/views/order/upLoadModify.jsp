@@ -55,7 +55,6 @@
   	</tr>
   	<tr>
   		<td>负责人姓名：<input type="text" id="leaderName" name="customer.leaderName" size="50" value="${customer.leaderName}" /></td>
-  		<td>客户单位：<input type="text" id="comName" name="customer.comName" size="50" value="${customer.comName}" /></td>
   	</tr>
   	<tr>
   		<td>发票抬头：<input type="text" id="invoiceTitle" name="customer.invoiceTitle" size="50" value="${customer.invoiceTitle}" /></td>
