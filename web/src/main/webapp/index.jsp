@@ -20,6 +20,7 @@
     <script src="${ctx}/static/js/jquery.easyui.min.js"></script>
     <script src="${ctx}/static/js/perfect-scrollbar.min.js"></script>
     <script src="${ctx}/static/js/ajaxfileupload.js" ></script>
+    <script src="${ctx}/static/js/json2.js"></script>
     <script>
         var ctx = '${ctx}';
     </script>
