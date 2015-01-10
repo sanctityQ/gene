@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,14 +28,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
 import com.sinosoft.one.mvc.web.annotation.Path;
 import com.sinosoft.one.mvc.web.annotation.rest.Get;
 import com.sinosoft.one.mvc.web.annotation.rest.Post;
-import com.sinosoft.one.mvc.web.instruction.reply.EntityReply;
 import com.sinosoft.one.mvc.web.instruction.reply.Reply;
 import com.sinosoft.one.mvc.web.instruction.reply.Replys;
 import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
@@ -120,17 +119,54 @@ public class OrderController {
         
     }
     
+    /**
+     * 订单导入列表展示
+     * @param orderNo
+     * @param inv
+     * @return
+     * @throws Exception
+     */
     @Post("productQuery")
-    public Reply productQuery(@Param("orderNo") String orderNo, Invocation inv) throws Exception {
+    public Reply productQuery(@Param("orderNo") String orderNo,@Param("pageNo")Integer pageNo,
+            @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
         
-        Order order = orderRepository.findByOrderNo(orderNo);
-        return Replys.with(order).as(Json.class);
+    	if(pageNo == null){
+            pageNo = 0;
+        }
+
+        if(pageSize == null){
+            pageSize = 5;
+        }
+
+        Pageable pageable = new PageRequest(pageNo,pageSize);
+        Map<String,Object> searchParams = Maps.newHashMap();
+        searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
+        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
+        Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
+        
+        Page<Order> orderPage = orderRepository.findAll(spec,pageable);
+        
+        BigDecimal orderTotalValue = new BigDecimal("0");
+        String coustomerCode = "";
+        for(Order order:orderPage.getContent()){
+        	coustomerCode = order.getCustomerCode();
+        	for(PrimerProduct product:order.getPrimerProducts()){
+        		product.setTbn(new BigDecimal(product.getGeneOrder().length()));
+        		orderTotalValue = orderTotalValue.add(product.getTotalVal());
+        	}
+        	order.setTotalValue(orderTotalValue);
+		}
+        Customer customer = orderService.findCustomer(coustomerCode);
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setCustomer(customer);
+        orderInfo.setOrderPage(orderPage);
+        return Replys.with(orderInfo).as(Json.class);
     }
     
     @Post("save")
-    public String save(@Param("order") Order order,Invocation inv) throws IllegalStateException, IOException {
-
-    	orderService.save(order);
+    public String save(@Param("order") String primerProducts,Invocation inv) throws IllegalStateException, IOException {
+    	System.out.println(primerProducts);
+    	//orderService.save();
 
         return "";
     }

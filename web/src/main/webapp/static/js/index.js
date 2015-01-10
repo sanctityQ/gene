@@ -24,7 +24,8 @@ function goToPage(url){
     //var tab = $('#tt').tabs('getSelected'); // get selected panel
     theTab.panel('refresh', url);
 }
-var errors = null;
+
+var errors = new Array();
 var ajaxFileUpload=function() {
     $.ajaxFileUpload
     (
@@ -43,6 +44,7 @@ var ajaxFileUpload=function() {
             			goToPage('views/order/orderInfo.jsp?orderNo='+data.orderNo);
             			orderNo = data.orderNo;
 	            	}else{
+	            		errors=data;
 	            		goToPage('views/order/importError.jsp');
 	            	}
             	}
@@ -54,29 +56,4 @@ var ajaxFileUpload=function() {
         }
     )
     //return false;
-}
-
-var getProduct=function(){
-	alert('11111')
-	$.ajax({
-		type : "post",
-		url : "order/productQuery",
-		dataType : "json",
-		data:"orderNo="+orderNo,
-		success : function(data) {
-			if(data != null){
-				/*赋值 begin*/
-                $("#code").val(data.customerCode);
-                /*赋值 end*/
-        		var total = data.primerProducts.length;
-        		var reSultdata = data.primerProducts;
-//        		var jsonDate = $.parseJSON(reSultdata)
-        		var jsonsource = {total: total, rows: reSultdata};
-        		$('#bigToSmall').datagrid("loadData",jsonsource);
-			}
-		},
-		error:function(){
-			alert("无法获取信息");
-		}
-	});
 }

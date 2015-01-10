@@ -2,6 +2,9 @@ package org.one.gene.web.order;
 
 import java.util.Date;
 
+import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.Order;
+
 /**
  * 订单列表信息
  * @author ThinkPad User
@@ -34,6 +37,8 @@ public class OrderInfoList {
 	//货物名称
 	private String commodityName;
 	
+	private Customer customer;
+	private Order order;
 	
 	
 	public String getOrderNo() {

@@ -36,9 +36,24 @@ function onClickRow(index){
   }
 }
 function getChanesSave(){
-    var data = bigToSmall.datagrid('getChanges');
-    alert(data.length + "条数据更改");
-    goToPage('orderList.html');
+    var jsonData = bigToSmall.datagrid('getChanges');
+//    var primerProducts = JSON.stringify(jsonData.rows);
+//    alert(data);
+    $.ajax({
+		type : "post",
+		url : "order/save",
+		dataType : "json",
+		data:{primerProducts:jsonData.rows},
+		success : function(data) {
+			if(data != null){
+				goToPage('views/order/orderList.jsp');
+			}
+		},
+		error:function(){
+			alert("数据保存失败，请重试！");
+		}
+	});
+    
 }
 function copyRow(e){
     var tr = $(e).parents('tr');
@@ -48,31 +63,42 @@ function copyRow(e){
     bigToSmall.datagrid('insertRow',{
         index: ind, // index start with 0
         row: {
-            itemid: '新生产编号',
-            productid: 30,
-            listprice: 'some messages'
+        	productNo: '新生产编号',
+        	primeName: 30,
+            geneOrder: 'some messages'
         }
     });
     bigToSmall.datagrid('beginEdit',ind);
 }
+
 /**
  * 初始化加载导入订单列表
  */
-alert(orderNo)
-getProduct();
-$(document).ready(function() {
-	alert('22222')
+var getProduct=function(){
 	$.ajax({
 		type : "post",
-		url : "gene/order/productQuery",
+		url : "order/productQuery",
 		dataType : "json",
 		data:"orderNo="+orderNo,
 		success : function(data) {
 			if(data != null){
-                $("#code").val(data.customerCode);
-        		var total = data.primerProducts.length;
-        		var reSultdata = data.primerProducts;
-        		var jsonDate = $.parseJSON(reSultdata)
+				/*赋值 begin*/
+                $("#code").val(data.customer.code);
+                $("#name").val(data.customer.name);
+                $("#leaderName").val(data.customer.leaderName);
+                $("#invoiceTitle").val(data.customer.invoiceTitle);
+                $("#payWays").val(data.customer.payWays);
+                $("#address").val(data.customer.address);
+                $("#phoneNo").val(data.customer.phoneNo);
+                $("#email").val(data.customer.email);
+                $("#webSite").val(data.customer.webSite);
+                $("#customerUnit").val(data.customer.invoiceTitle);
+                
+                $("#createTime").html("<b>订购日期：</b>"+data.orderPage.content[0].createTime);
+                $("#totalValue").html("<b class='bule'>订单总计：</b>￥ "+data.orderPage.content[0].totalValue);
+                /*赋值 end*/
+        		var total = data.orderPage.content[0].primerProducts.length;
+        		var reSultdata = data.orderPage.content[0].primerProducts;
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#bigToSmall').datagrid("loadData",jsonsource);
 			}
@@ -81,4 +107,4 @@ $(document).ready(function() {
 			alert("无法获取信息");
 		}
 	});
-});
+}

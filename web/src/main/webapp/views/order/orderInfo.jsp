@@ -19,6 +19,7 @@
 <script src="${ctx}/static/js/jquery.easyui.min.js" ></script>
 <script src="${ctx}/static/js/perfect-scrollbar.min.js" ></script>
 <script src="${ctx}/static/js/index.js" ></script>
+<script src="${ctx}/static/js/json2.js"></script>
 <script type="text/javascript">
 var orderNo = ${orderNo};
 </script>
@@ -27,11 +28,9 @@ var orderNo = ${orderNo};
 <%-- <form id="inputForm" modelAttribute="user" action="${ctx}/order/save" method="post"> --%>
 <div class="page_padding">
 	<div class="content_box totle margin_btoom">
-	<input type="hidden" id="orderNo" name="order.orderNo" size="50" value="${order.orderNo}" />
-	<input type="hidden" id="createTime" name="order.createTime" size="50" value="<fmt:formatDate value="${order.createTime}" pattern="yyyy-MM-dd HH:mm:ss" />" />
-		<b>订单号：</b>${order.orderNo}<br />
-		<b>订购日期：</b><fmt:formatDate value="${order.createTime}" pattern="yyyy-MM-dd" /><br />
-		<b class="bule">订单总计：</b>￥ ${order.totalValue}
+		<b>订单号：</b>${orderNo}<br />
+		<div id="createTime"></div>
+		<div id="totalValue"></div>
 	</div>
 	<div class="content_box info margin_btoom">
 		<h2>客户信息</h2>
@@ -49,7 +48,7 @@ var orderNo = ${orderNo};
 				<td align="right">负责人姓名:</td>
 				<td><input id="leaderName" name="customer.leaderName" class="inp_text" type="text" value="${customer.leaderName}" style="width: 80%" /></td>
 				<td align="right">客户单位:</td>
-				<td><input class="inp_text" type="text" value="" style="width: 80%" /></td>
+				<td><input id="customerUnit" class="inp_text" type="text" value="" style="width: 80%" /></td>
 			</tr>
 			<tr>
 				<td align="right">发票抬头:</td>
@@ -68,8 +67,8 @@ var orderNo = ${orderNo};
 				<td><input id="email" name="customer.email" class="inp_text" type="text" value="${customer.email}" style="width: 80%" /></td>
 			</tr>
 			<tr>
-				<td align="right">办事处:</td>
-				<td colspan="3"><input class="inp_text" type="text" value="" style="width: 50%" /></td>
+				<td align="right">网址:</td>
+				<td colspan="3"><input id="webSite" class="" type="text" value="" style="width: 50%" /></td>
 			</tr>
 			<tr>
 				<td colspan="4" height="10"></td>
@@ -93,44 +92,16 @@ var orderNo = ${orderNo};
 				<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>
 			</tr>
 		</thead>
-		<%-- 
-		<c:forEach  var="primerProduct" items="${primerProducts}" varStatus="status">     
-	      <p>
-	      <c:if test="${empty primerProduct.fromProductNo}">
-	      	&#149; 
-	      	<c:if test="${not empty primerProduct.productNo}">
-	      		<input type="text" name="order.primerProducts[${status.index}].productNo" size="50" value="${primerProduct.productNo}" />
-	      	</c:if> 
-	      	<c:if test="${empty primerProduct.productNo}">
-	      		<input type="text" name="order.primerProducts[${status.index}].outProductNo" size="50" value="${primerProduct.outProductNo}" />
-	      	</c:if>
-            <input type="text" name="order.primerProducts[${status.index}].primeName" size="50" value="${primerProduct.primeName}" />
-            <input type="text" name="order.primerProducts[${status.index}].geneOrder" size="50" value="${primerProduct.geneOrder}" />
-            <input type="text" name="order.primerProducts[${status.index}].purifyType" size="50" value="${primerProduct.purifyType}" />
-            <input type="text" name="order.primerProducts[${status.index}].modiFiveType" size="50" value="${primerProduct.modiFiveType}" />
-            <input type="text" name="order.primerProducts[${status.index}].modiThreeType" size="50" value="${primerProduct.modiThreeType}" />
-            <input type="text" name="order.primerProducts[${status.index}].modiMidType" size="50" value="${primerProduct.modiMidType}" />
-            <input type="text" name="order.primerProducts[${status.index}].modiSpeType" size="50" value="${primerProduct.modiSpeType}" />
-            <input type="text" name="order.primerProducts[${status.index}].modiPrice" size="50" value="${primerProduct.modiPrice}" />
-            <input type="text" name="order.primerProducts[${status.index}].baseVal" size="50" value="${primerProduct.baseVal}" />
-            <input type="text" name="order.primerProducts[${status.index}].purifyVal" size="50" value="${primerProduct.purifyVal}" />
-            <input type="text" name="order.primerProducts[${status.index}].totalVal" size="50" value="${primerProduct.totalVal}" />
-            <input type="text" name="order.primerProducts[${status.index}].remark" size="50" value="${primerProduct.remark}" />
-            <input type="text" name="order.primerProducts[${status.index}].nmolTotal" size="50" value="${primerProduct.nmolTotal}" />
-            <input type="text" name="order.primerProducts[${status.index}].nmolTB" size="50" value="${primerProduct.nmolTB}" />
-            <input type="text" name="order.primerProducts[${status.index}].odTotal" size="50" value="${primerProduct.odTotal}" />
-            <input type="text" name="order.primerProducts[${status.index}].odTB" size="50" value="${primerProduct.odTB}" />
-            <a href="${ctx}/order/copy/${primerProduct.productNo}" >复制</a>
-			</c:if>
-	      </p>   
-	</c:forEach> --%>
 	</table>
 	</div>
-	<div class="tools">
-		<button type="button" class="btn" onclick="goToPage('orderImport.jsp');">取 消</button>
-		<button type="submit" class="btn btn-primary">保 存</button>
+	<div class="tools_bar">
+		<button type="" class="btn" onclick="goToPage('views/order/orderImport.jsp');">取 消</button>
+		<button type="" class="btn btn-primary" onclick="getChanesSave();">保 存</button>
 	</div>
 </div>
 <script src="${ctx}/views/order/js/orderInfo.js" ></script>
+<script type="text/javascript">
+getProduct();
+</script>
 </body>
 </html>
