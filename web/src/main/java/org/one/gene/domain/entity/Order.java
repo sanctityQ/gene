@@ -2,6 +2,7 @@ package org.one.gene.domain.entity;
 // Generated Dec 14, 2014 1:21:34 AM by One Data Tools 1.0.0
 
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -70,6 +71,14 @@ public class Order extends IdEntity implements java.io.Serializable {
      * 是否有效,0-不是，1-是.
      */
     private boolean validate;
+    /**
+     * 订单导入类型 nmol、od
+     */
+    private String orderUpType;
+    /**
+     * 订单总计 所有生产数据总价格合计
+     */
+    private BigDecimal totalValue;
 
     List<PrimerProduct> primerProducts = Lists.newArrayList();
     
@@ -195,8 +204,24 @@ public class Order extends IdEntity implements java.io.Serializable {
     public void setValidate(boolean validate) {
         this.validate = validate;
     }
+    @Column(name = "`order_up_type`")
+    public String getOrderUpType() {
+		return orderUpType;
+	}
 
-    /**
+	public void setOrderUpType(String orderUpType) {
+		this.orderUpType = orderUpType;
+	}
+	@Transient
+	public BigDecimal getTotalValue() {
+		return totalValue;
+	}
+
+	public void setTotalValue(BigDecimal totalValue) {
+		this.totalValue = totalValue;
+	}
+
+	/**
      * 获取引物生产数据
      * @return
      */

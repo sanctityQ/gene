@@ -14,16 +14,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.hssf.util.CellRangeAddress;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerLabelConfig;
@@ -41,7 +39,7 @@ import org.one.gene.repository.PrimerLabelConfigRepository;
 import org.one.gene.repository.PrimerProductOperationRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.repository.PrimerProductValueRepository;
-import org.one.gene.web.order.OrderInfoList;
+import org.one.gene.web.order.OrderInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -719,17 +717,17 @@ public class PrintService {
 	 * @throws IllegalStateException
 	 * @throws IOException
 	 */
-	public Page<OrderInfoList>  convertOutbound(Page<Order> orderPage,Pageable pageable) throws IllegalStateException, IOException {
+	public Page<OrderInfo>  convertOutbound(Page<Order> orderPage,Pageable pageable) throws IllegalStateException, IOException {
 		//生产编号（头尾）、碱基总数
-		OrderInfoList orderInfo = new OrderInfoList();
-		List<OrderInfoList> orderInfoList = new ArrayList<OrderInfoList>();
+		OrderInfo orderInfo = new OrderInfo();
+		List<OrderInfo> orderInfoList = new ArrayList<OrderInfo>();
 		
 		for(Order order:orderPage.getContent()){
 			orderInfo = getOutbound(order);
 			orderInfoList.add(orderInfo);
 		}
 		
-		Page<OrderInfoList> orderListPage = new PageImpl<OrderInfoList>(orderInfoList,pageable,orderPage.getSize());
+		Page<OrderInfo> orderListPage = new PageImpl<OrderInfo>(orderInfoList,pageable,orderPage.getSize());
 		
         return orderListPage;
     }
@@ -738,10 +736,10 @@ public class PrintService {
 	 * 出库单打印对象组织，生成打印excel
 	 * @throws FileNotFoundException 
 	 */
-	public EntityReply<File> printOutbound(List<OrderInfoList> orderInfoLists,Invocation inv) throws Exception{
-		OrderInfoList orderInfo = new OrderInfoList();
-		List<OrderInfoList> orderInfoList = new ArrayList<OrderInfoList>();
-		for(OrderInfoList orders:orderInfoLists){
+	public EntityReply<File> printOutbound(List<OrderInfo> orderInfoLists,Invocation inv) throws Exception{
+		OrderInfo orderInfo = new OrderInfo();
+		List<OrderInfo> orderInfoList = new ArrayList<OrderInfo>();
+		for(OrderInfo orders:orderInfoLists){
 			Order order = orderRepository.findByOrderNo(orders.getOrderNo());
 			orderInfo = getOutbound(order);
 			orderInfoList.add(orderInfo);
@@ -758,7 +756,7 @@ public class PrintService {
 		System.out.println("文件下载路径outFilePath::::::"+outFilePath);
 		List<String> fileNames = new ArrayList<String>();
 		ExcelCreateUtil exportExcel = new ExcelCreateUtil();
-		for(OrderInfoList outbound:orderInfoList){
+		for(OrderInfo outbound:orderInfoList){
 		
 			exportExcel.setSrcPath(filePath);
 			exportExcel.setDesPath(outFilePath+outbound.getOrderNo()+".xlsx");
@@ -803,8 +801,8 @@ public class PrintService {
 		return Replys.with(file).as(Raw.class).downloadFileName(zipFileName);
 	}
 	
-	public OrderInfoList getOutbound(Order order){
-		OrderInfoList orderInfo = new OrderInfoList();
+	public OrderInfo getOutbound(Order order){
+		OrderInfo orderInfo = new OrderInfo();
 		
 		//组织订单列表对象
 		orderInfo.setOrderNo(order.getOrderNo());

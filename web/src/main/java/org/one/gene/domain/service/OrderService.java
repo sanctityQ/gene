@@ -8,7 +8,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.one.gene.domain.entity.*;
+import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.Order;
+import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.entity.PrimerProductOperation;
+import org.one.gene.domain.entity.PrimerType;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.excel.OrderCaculate;
 import org.one.gene.excel.OrderExcelPase;
@@ -17,7 +21,7 @@ import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.repository.PrimerProductValueRepository;
 import org.one.gene.web.order.AtomicLongUtil;
-import org.one.gene.web.order.OrderInfoList;
+import org.one.gene.web.order.OrderInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -58,7 +62,7 @@ public class OrderService {
 	 * @throws IOException
 	 */
 	@Transactional(readOnly=false)
-    public String save(Customer customer,Order order){
+    public void save(Order order){
 
     	//存储订单数据
     	//外部订单号何处收集,这里不能设置外部订单号！！！
@@ -81,7 +85,6 @@ public class OrderService {
         
         orderRepository.save(order);
 
-        return "success";
     }
 
 	
@@ -99,23 +102,23 @@ public class OrderService {
     	return customer;
 	}
 	
-	public Page<OrderInfoList>  convertOrderList(Page<Order> orderPage,Pageable pageable) throws IllegalStateException, IOException {
+	public Page<OrderInfo>  convertOrderList(Page<Order> orderPage,Pageable pageable) throws IllegalStateException, IOException {
 		//生产编号（头尾）、碱基总数
-		OrderInfoList orderInfo = new OrderInfoList();
-		List<OrderInfoList> orderInfoList = new ArrayList<OrderInfoList>();
+		OrderInfo orderInfo = new OrderInfo();
+		List<OrderInfo> orderInfoList = new ArrayList<OrderInfo>();
 		
 		for(Order order:orderPage.getContent()){
 			orderInfo = getOrderInfos(order);
 			orderInfoList.add(orderInfo);
 		}
 		
-		Page<OrderInfoList> orderListPage = new PageImpl<OrderInfoList>(orderInfoList,pageable,orderPage.getSize());
+		Page<OrderInfo> orderListPage = new PageImpl<OrderInfo>(orderInfoList,pageable,orderPage.getSize());
 		
         return orderListPage;
     }
 	
-	public OrderInfoList getOrderInfos(Order order){
-		OrderInfoList OrderInfo = new OrderInfoList();
+	public OrderInfo getOrderInfos(Order order){
+		OrderInfo OrderInfo = new OrderInfo();
 		List<PrimerProduct> PrimerProducts = new ArrayList<PrimerProduct>();
 		
 		//组织订单列表对象
@@ -159,8 +162,7 @@ public class OrderService {
      * @return
      * @throws ParseException 
      */
-    public Order convertOrder(Customer customer,String fileName) throws ParseException{
-    	Order order = new Order();
+    public Order convertOrder(Customer customer,String fileName,Order order) throws ParseException{
     	order.setOrderNo(atomicLongUtil.getOrderSerialNo());
     	
     	order.setCustomerCode(customer.getCode());
@@ -219,8 +221,8 @@ public class OrderService {
     	primerProductRepository.save(primerProductTemp);
     }
     
-    public ArrayList<PrimerProduct> ReadExcel(String path, int sheetIndex, String rows) {
-    	return orderExcelPase.ReadExcel(path, 1,"2-");
+    public Order ReadExcel(String path, int sheetIndex, String rows,Order order) {
+    	return orderExcelPase.ReadExcel(path, 1,"2-",order);
     }
     
     public ArrayList<String> getExcelPaseErrors(String path,int ignoreRows, int sheetIndex) throws FileNotFoundException, IOException{

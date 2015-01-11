@@ -7,7 +7,7 @@
 	<div title="订单管理" data-options="iconCls:'order'" style="height:200px;">
 		<ul class="sbu_menu">
 			<li url="${ctx}/order/import" id="orderImport"><i class="icon-upload-alt"></i>订单导入</li>
-			<li url="importError.html" id="orderInfo"><i class="icon-file-text"></i>订单信息</li>
+			<li url="${ctx}/order/orderList" id="orderInfo"><i class="icon-file-text"></i>订单信息</li>
 			<li url="" id="orderExamine"><i class="icon-thumbs-up-alt"></i>订单审核</li>
 		</ul>
 	</div>

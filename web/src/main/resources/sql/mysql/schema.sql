@@ -71,6 +71,7 @@ CREATE TABLE `order` (
   `file_name`         VARCHAR(127) COMMENT '上传文件名称',
   `create_time`       DATETIME NOT NULL COMMENT '创建时间',
   `modify_time`       DATETIME NOT NULL COMMENT '修改时间',
+  `order_up_type`      varchar(10)  NULL COMMENT '订单导入类型',
   `validate` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否有效,0-不是，1-是',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_order_no` (`order_no`),

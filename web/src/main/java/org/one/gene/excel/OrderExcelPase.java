@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.repository.CustomerRepository;
 import org.one.gene.web.order.AtomicLongUtil;
@@ -73,10 +74,11 @@ public class OrderExcelPase {
 	 * @param sheetIndex 第几个sheet页
 	 * @param rows 忽略的行数或从第几行开始
 	 */
-	public ArrayList<PrimerProduct> ReadExcel(String path, int sheetIndex, String rows) {
+	public Order ReadExcel(String path, int sheetIndex, String rows,Order order) {
 		// 获取Excel文件的第1个sheet的内容
 		ArrayList<ArrayList<String>> lists = excelResolver.ReadExcel(path, 1,"2-");
-		ArrayList<PrimerProduct>  primerProducts = new ArrayList<PrimerProduct>();
+//		ArrayList<PrimerProduct>  primerProducts = new ArrayList<PrimerProduct>();
+		BigDecimal orderTotalValue = new BigDecimal("0");
     	//输出单元格数据
 		for(ArrayList<String> data : lists) {
 			if(data==null){continue;}
@@ -139,6 +141,7 @@ public class OrderExcelPase {
 					break;
 				  case 14:	
 					  primerProduct.setBaseVal(new BigDecimal(v));
+					  break;
 				  case 15:	
 					  primerProduct.setPurifyVal(new BigDecimal(v));
 				  
@@ -147,18 +150,22 @@ public class OrderExcelPase {
 					  //总价格:修饰单价+碱基单价*碱基数+纯化价格(9+10*碱基数+11)
 					  BigDecimal totalVal = primerProduct.getModiPrice().add(primerProduct.getBaseVal().multiply(new BigDecimal(tbnStr))).add(primerProduct.getPurifyVal());
 					  primerProduct.setTotalVal(totalVal);
+					  orderTotalValue = orderTotalValue.add(primerProduct.getTotalVal());
 					  if(primerProduct.getNmolTotal()==null&&primerProduct.getNmolTB()==null){
+						  order.setOrderUpType("od");
 						//通过od值计算  1000 * 'OD总量' / 'OD/μmol'
 						primerProduct.setNmolTotal(new BigDecimal(1000).multiply(primerProduct.getOdTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
 						//1000 * 'OD/tube' / 'OD/μmol'
 						primerProduct.setNmolTB(new BigDecimal(1000).multiply(primerProduct.getOdTB()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
 					  }
 					  if(primerProduct.getOdTB()==null&&primerProduct.getOdTotal()==null){
+						  order.setOrderUpType("nmol");
 						//（'nmol/tube' * 'OD/μmol'）/ 1000
 						primerProduct.setOdTB(new BigDecimal(1000).multiply(primerProduct.getNmolTB()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
 						//（'nmol总量' * 'OD/μmol'）/ 1000
 						primerProduct.setOdTotal(new BigDecimal(1000).multiply(primerProduct.getNmolTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
 					  }
+					  break;
 				  case 16:	
 					  primerProduct.setRemark(v);
 					break;	
@@ -167,11 +174,11 @@ public class OrderExcelPase {
 				}
 				
 				index ++;
-				
 			}
-			primerProducts.add(primerProduct);
+			order.getPrimerProducts().add(primerProduct);
+			order.setTotalValue(orderTotalValue);
 		}
-		return primerProducts;
+		return order;
 	}
 	
 	/**
@@ -199,7 +206,7 @@ public class OrderExcelPase {
 					customer.setLeaderName(v);
 					break;
 				  case 3:	
-					customer.setComName(v);
+					customer.setName(v);
 					break;
 				  case 4:	
 					customer.setInvoiceTitle(v);

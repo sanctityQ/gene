@@ -2,14 +2,29 @@ package org.one.gene.web.order;
 
 import java.util.Date;
 
-/**
- * 订单列表信息
- * @author ThinkPad User
- *
- */
-public class OrderInfoList {
+import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.Order;
+import org.springframework.data.domain.Page;
 
-	//订单列表:订单号、客户姓名、生产编号（头尾）、碱基总数、状态、导入时间，修改时间
+public class OrderInfo {
+
+	//订单导入属性
+	private Customer customer;
+	private Page<Order> orderPage;
+	public Customer getCustomer() {
+		return customer;
+	}
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+	public Page<Order> getOrderPage() {
+		return orderPage;
+	}
+	public void setOrderPage(Page<Order> orderPage) {
+		this.orderPage = orderPage;
+	}
+	
+	//订单信息列表属性
 	private String orderNo;
 	private String customerName;
 	private String productNoMinToMax;
@@ -17,25 +32,6 @@ public class OrderInfoList {
 	private String status;
 	private Date createTime;
 	private Date modifyTime;
-	//客户电话
-	private String customerPhoneNm;
-	//业务员
-	private String handlerCode;
-	//单据编号
-	private String makingNo;
-	//制单人（当前系统操作人员）
-	private String operatorCode;
-	//联系人（客户管理中的联系人）
-	private String linkName;
-	//制单日期
-	private Date makingDate;
-	//商品编码
-	private String commodityCode;
-	//货物名称
-	private String commodityName;
-	
-	
-	
 	public String getOrderNo() {
 		return orderNo;
 	}
@@ -66,18 +62,37 @@ public class OrderInfoList {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public Date getModifyTime() {
-		return modifyTime;
-	}
-	public void setModifyTime(Date modifyTime) {
-		this.modifyTime = modifyTime;
-	}
 	public Date getCreateTime() {
 		return createTime;
 	}
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
+	public Date getModifyTime() {
+		return modifyTime;
+	}
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = modifyTime;
+	}
+	/**
+	 * 打印列表属性
+	*/
+	//客户电话
+	private String customerPhoneNm;
+	//业务员
+	private String handlerCode;
+	//单据编号
+	private String makingNo;
+	//制单人（当前系统操作人员）
+	private String operatorCode;
+	//联系人（客户管理中的联系人）
+	private String linkName;
+	//制单日期
+	private Date makingDate;
+	//商品编码
+	private String commodityCode;
+	//货物名称
+	private String commodityName;
 	public String getCustomerPhoneNm() {
 		return customerPhoneNm;
 	}

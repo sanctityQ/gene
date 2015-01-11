@@ -2,7 +2,6 @@ package org.one.gene.web.print;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +13,7 @@ import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductRepository;
-import org.one.gene.web.order.OrderInfoList;
+import org.one.gene.web.order.OrderInfo;
 import org.one.gene.web.order.PrimerProductList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -99,7 +98,7 @@ public class PrintController {
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         
         Page<Order> orderPage = orderRepository.findAll(spec,pageable);
-        Page<OrderInfoList> orderListPage = printService.convertOutbound(orderPage,pageable);
+        Page<OrderInfo> orderListPage = printService.convertOutbound(orderPage,pageable);
         
     	inv.addModel("page", orderListPage);
     	inv.addModel("pageSize", pageSize);
@@ -108,7 +107,7 @@ public class PrintController {
     
     @Post("printOutBound")
     public EntityReply<File> printOutBound(@Param("orderInfoList")String orderInfoList,Invocation inv) throws Exception {
-    	 List<OrderInfoList> orderInfoLists = JSON.parseArray(orderInfoList, OrderInfoList.class);
+    	 List<OrderInfo> orderInfoLists = JSON.parseArray(orderInfoList, OrderInfo.class);
     	
     	 EntityReply<File> fileStr = null;
      	try {
@@ -186,7 +185,7 @@ public class PrintController {
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         
         Page<Order> orderPage = orderRepository.findAll(spec,pageable);
-        Page<OrderInfoList> orderListPage = orderService.convertOrderList(orderPage,pageable);
+        Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
         
     	inv.addModel("page", orderListPage);
     	inv.addModel("pageSize", pageSize);
