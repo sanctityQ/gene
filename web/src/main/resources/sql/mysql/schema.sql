@@ -17,6 +17,8 @@ CREATE TABLE `company` (
   `address`        VARCHAR(255) COMMENT '地址',
   `desc`          VARCHAR(511) COMMENT '描述',
   `validate`       TINYINT(1)  NOT NULL COMMENT '是否有效,0-无效，1-有效',
+  `create_time` DATETIME NOT NULL COMMENT '创建时间',
+  `modify_time` DATETIME NOT NULL COMMENT '最后修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_com_code` (`com_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='机构表';
@@ -33,6 +35,8 @@ CREATE TABLE `customer` (
   `fax` VARCHAR(15) COMMENT '传真',
   `email` VARCHAR(63) COMMENT '邮箱',
   `web_site` varchar(127) DEFAULT NULL COMMENT '网址',
+  `create_time` DATETIME NOT NULL COMMENT '创建时间',
+  `modify_time` DATETIME NOT NULL COMMENT '最后修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_customer_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户信息表';
@@ -48,6 +52,8 @@ CREATE TABLE `user` (
   `staff_flag`    TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否本公司用户标识,0-不是，1-是',
   `validate` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否有效,0-不是，1-是',
   `customer_id`      INT(11) COMMENT '客户信息数据ID',
+  `create_time` DATETIME NOT NULL COMMENT '创建时间',
+  `modify_time` DATETIME NOT NULL COMMENT '最后修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_user_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户信息表';
