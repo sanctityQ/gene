@@ -106,6 +106,7 @@
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jdbc</artifactId>
         </dependency>
+
         <!-- WEB begin -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -116,8 +117,32 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>sitemesh</artifactId>
+            <version>${sitemesh.version}</version>
+            <scope>runtime</scope>
+        </dependency>
         <!-- WEB end -->
 
+        <!-- SECURITY begin -->
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <version>${shiro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-ehcache</artifactId>
+            <version>${shiro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.9</version>
+        </dependency>
+        <!-- SECURITY end -->
 
         <!-- LOGGING begin -->
         <dependency>
@@ -244,26 +269,6 @@
                     <path>/gene</path>
                     <useTestClasspath>true</useTestClasspath>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>ch.qos.cal10n.plugins</groupId>
-                <artifactId>maven-cal10n-plugin</artifactId>
-                <version>0.8.1</version>
-                <executions>
-                    <execution>
-                        <id>check cal10</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>verify</goal>
-                        </goals>
-                        <configuration>
-                            <enumTypes>
-                                <!-- list every enum type you would like to see checked -->
-                                <enumType>com.fusionspy.beacon.site.AlarmMessageFormat</enumType>
-                            </enumTypes>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
         <resources>
