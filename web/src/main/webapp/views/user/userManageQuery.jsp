@@ -8,17 +8,28 @@
 <script src="${ctx}/static/js/jquery.min.js" ></script>
 <script src="${ctx}/static/js/jquery.easyui.min.js" ></script>
 <script src="${ctx}/static/js/perfect-scrollbar.min.js" ></script>
+<script src="${ctx}/static/js/index.js" ></script>
+<script src="${ctx}/static/js/json2.js"></script>
 <script type="text/javascript">
 
 
 function ajaxBatchDelete() {
 
 	var userInfoList=new Array();
+	var selectFlag = false;
 
 	jQuery("input[name='userCheck']:checked").each(function(index){
+  	      var outbound = { "id":"" };
+          outbound["id"] = "";
           outbound["id"] = jQuery("input[name='users["+index+"].id']")[0].value;
           userInfoList.push(outbound);
+          selectFlag = true;
 	});
+	
+	if(!selectFlag){
+		alert("请选择要删除的业务员。");
+		return false;
+	}
 	
     $.ajax({
     	async:false,
