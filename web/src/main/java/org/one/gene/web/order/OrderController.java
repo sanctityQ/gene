@@ -54,6 +54,10 @@ public class OrderController {
     public String orderImport(){
         return "orderImport";
     }
+    @Get("orderList")
+    public String orderList(){
+        return "orderList";
+    }
     
     @Post("upload")
     public Reply upload(@Param("customerCode") String customerCode, @Param("file") MultipartFile file, Invocation inv) throws Exception {
@@ -166,7 +170,6 @@ public class OrderController {
     @Post("save")
     public String save(@Param("order") String primerProducts,Invocation inv) throws IllegalStateException, IOException {
     	System.out.println(primerProducts);
-    	//orderService.save();
 
         return "";
     }

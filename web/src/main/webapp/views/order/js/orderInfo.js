@@ -37,13 +37,13 @@ function onClickRow(index){
 }
 function getChanesSave(){
     var jsonData = bigToSmall.datagrid('getChanges');
-//    var primerProducts = JSON.stringify(jsonData.rows);
-//    alert(data);
+    var primerProducts = $.toJSON(jsonData);//JSON.stringify(jsonData.rows);
+    alert(primerProducts);
     $.ajax({
 		type : "post",
 		url : "order/save",
 		dataType : "json",
-		data:{primerProducts:jsonData.rows},
+		data:{primerProducts:primerProducts},
 		success : function(data) {
 			if(data != null){
 				goToPage('views/order/orderList.jsp');
@@ -108,3 +108,87 @@ var getProduct=function(){
 		}
 	});
 }
+
+var getOrderInfo=function(){
+	$.ajax({
+		type : "post",
+		url : "order/query",
+		dataType : "json",
+		data:"orderNo="+orderNo+"",
+		success : function(data) {
+			if(data != null){
+				/*赋值 begin*/
+                $("#code").val(data.customer.code);
+                $("#name").val(data.customer.name);
+                $("#leaderName").val(data.customer.leaderName);
+                $("#invoiceTitle").val(data.customer.invoiceTitle);
+                $("#payWays").val(data.customer.payWays);
+                $("#address").val(data.customer.address);
+                $("#phoneNo").val(data.customer.phoneNo);
+                $("#email").val(data.customer.email);
+                $("#webSite").val(data.customer.webSite);
+                $("#customerUnit").val(data.customer.invoiceTitle);
+                
+                $("#createTime").html("<b>订购日期：</b>"+data.orderPage.content[0].createTime);
+                $("#totalValue").html("<b class='bule'>订单总计：</b>￥ "+data.orderPage.content[0].totalValue);
+                /*赋值 end*/
+        		var total = data.orderPage.content[0].primerProducts.length;
+        		var reSultdata = data.orderPage.content[0].primerProducts;
+        		var jsonsource = {total: total, rows: reSultdata};
+        		$('#bigToSmall').datagrid("loadData",jsonsource);
+			}
+		},
+		error:function(){
+			alert("无法获取信息");
+		}
+	});
+}
+
+jQuery.extend({  
+	  /** * @see 将javascript数据类型转换为json字符串 * @param 待转换对象,支持object,array,string,function,number,boolean,regexp * @return 返回json字符串 */  
+	  toJSON: function(object) {  
+	    var type = typeof object;  
+	    if ('object' == type) {  
+	      if (Array == object.constructor) type = 'array';  
+	      else if (RegExp == object.constructor) type = 'regexp';  
+	      else type = 'object';  
+	    }  
+	    switch (type) {  
+	    case 'undefined':  
+	    case 'unknown':  
+	      return;  
+	      break;  
+	    case 'function':  
+	    case 'boolean':  
+	    case 'regexp':  
+	      return object.toString();  
+	      break;  
+	    case 'number':  
+	      return isFinite(object) ? object.toString() : 'null';  
+	      break;  
+	    case 'string':  
+	      return '"' + object.replace(/(\\|\")/g, "\\$1").replace(/\n|\r|\t/g, function() {  
+	        var a = arguments[0];  
+	        return (a == '\n') ? '\\n': (a == '\r') ? '\\r': (a == '\t') ? '\\t': ""  
+	      }) + '"';  
+	      break;  
+	    case 'object':  
+	      if (object === null) return 'null';  
+	      var results = [];  
+	      for (var property in object) {  
+	        var value = jQuery.toJSON(object[property]);  
+	        if (value !== undefined) results.push(jQuery.toJSON(property) + ':' + value);  
+	      }  
+	      return '{' + results.join(',') + '}';  
+	      break;  
+	    case 'array':  
+	      var results = [];  
+	      for (var i = 0; i < object.length; i++) {  
+	        var value = jQuery.toJSON(object[i]);  
+	        if (value !== undefined) results.push(value);  
+	      }  
+	      return '[' + results.join(',') + ']';  
+	      break;  
+	    }  
+	  }  
+	});

@@ -34,7 +34,7 @@
 		</tr>
 	</table>
 </div>
-<table id="orderList" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true,url: 'datagrid_data2.json'">
+<table id="orderList" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true">
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>
@@ -50,6 +50,9 @@
 		</tr>
 	</thead>
 </table>
-<script src="js/orderList.js" ></script>
+<script src="${ctx}/views/order/js/orderList.js" ></script>
+<script type="text/javascript">
+
+</script>
 </body>
 </html>
