@@ -175,7 +175,7 @@ public class OrderController {
     }
     
     @Post("query")
-    public String query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,@Param("pageNo")Integer pageNo,
+    public Reply query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,@Param("pageNo")Integer pageNo,
                         @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
 
         if(pageNo == null){
@@ -194,11 +194,9 @@ public class OrderController {
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         
         Page<Order> orderPage = orderRepository.findAll(spec,pageable);
-        Page<OrderInfoList> orderListPage = orderService.convertOrderList(orderPage,pageable);
+        Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
         
-    	inv.addModel("page", orderListPage);
-    	inv.addModel("pageSize", pageSize);
-        return "orderInfo";
+        return Replys.with(orderListPage).as(Json.class);
     }
     
     @Get("modify/{orderNo}") 

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
@@ -26,7 +27,7 @@
 			<td><input id="orderNo" class="inp_text" type="text" value="" style="width: 60%" /></td>
 			<td>客户代码:</td>
 			<td><input id="customerCode" class="inp_text" type="text" value="" style="width: 60%" /></td>
-			<td><button type="button" class="btn">查询</button></td>
+			<td><button type="button" class="btn" onclick="getOrderInfo();">查询</button></td>
 			<td align="right">
 				<button type="button" class="btn btn-primary" onclick="goToPage('addOrder.html')">增加订单</button>
 				<button type="button" class="btn btn-primary submit" onclick="DeletdRows('orderList')">批量删除</button>
@@ -38,21 +39,20 @@
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>
-			<th data-options="field:'itemid',width:80,sortable:true">订单号</th>
-			<th data-options="field:'productid',width:80,sortable:true">客户姓名</th>
-			<th data-options="field:'listprice',width:80,sortable:true">生产编号</th>
-			<th data-options="field:'status',width:80,sortable:true">引物名称</th>
-			<th data-options="field:'attr1',width:80,sortable:true">碱基总数</th>
-			<th data-options="field:'unitcost',width:80,sortable:true">状态</th>
-			<th data-options="field:'attr3',width:80,sortable:true">导入时间</th>
-			<th data-options="field:'attr4',width:80,sortable:true">修改时间</th>
+			<th data-options="field:'orderNo',width:80,sortable:true">订单号</th>
+			<th data-options="field:'customerName',width:80,sortable:true">客户姓名</th>
+			<th data-options="field:'productNoMinToMax',width:80,sortable:true">生产编号</th>
+			<th data-options="field:'tbnTotal',width:80,sortable:true">碱基总数</th>
+			<th data-options="field:'status',width:80,sortable:true">状态</th>
+			<th data-options="field:'createTime',width:80,sortable:true">导入时间</th>
+			<th data-options="field:'modifyTime',width:80,sortable:true">修改时间</th>
 			<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>
 		</tr>
 	</thead>
 </table>
 <script src="${ctx}/views/order/js/orderList.js" ></script>
 <script type="text/javascript">
-
+getOrderInfo();
 </script>
 </body>
 </html>

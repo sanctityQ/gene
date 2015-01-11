@@ -109,41 +109,6 @@ var getProduct=function(){
 	});
 }
 
-var getOrderInfo=function(){
-	$.ajax({
-		type : "post",
-		url : "order/query",
-		dataType : "json",
-		data:"orderNo="+orderNo+"",
-		success : function(data) {
-			if(data != null){
-				/*赋值 begin*/
-                $("#code").val(data.customer.code);
-                $("#name").val(data.customer.name);
-                $("#leaderName").val(data.customer.leaderName);
-                $("#invoiceTitle").val(data.customer.invoiceTitle);
-                $("#payWays").val(data.customer.payWays);
-                $("#address").val(data.customer.address);
-                $("#phoneNo").val(data.customer.phoneNo);
-                $("#email").val(data.customer.email);
-                $("#webSite").val(data.customer.webSite);
-                $("#customerUnit").val(data.customer.invoiceTitle);
-                
-                $("#createTime").html("<b>订购日期：</b>"+data.orderPage.content[0].createTime);
-                $("#totalValue").html("<b class='bule'>订单总计：</b>￥ "+data.orderPage.content[0].totalValue);
-                /*赋值 end*/
-        		var total = data.orderPage.content[0].primerProducts.length;
-        		var reSultdata = data.orderPage.content[0].primerProducts;
-        		var jsonsource = {total: total, rows: reSultdata};
-        		$('#bigToSmall').datagrid("loadData",jsonsource);
-			}
-		},
-		error:function(){
-			alert("无法获取信息");
-		}
-	});
-}
-
 jQuery.extend({  
 	  /** * @see 将javascript数据类型转换为json字符串 * @param 待转换对象,支持object,array,string,function,number,boolean,regexp * @return 返回json字符串 */  
 	  toJSON: function(object) {  
