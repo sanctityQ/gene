@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 
 import org.one.gene.domain.entity.Customer;
@@ -28,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
@@ -139,7 +141,7 @@ public class OrderController {
         }
 
         if(pageSize == null){
-            pageSize = 5;
+            pageSize = 10;
         }
 
         Pageable pageable = new PageRequest(pageNo,pageSize);
@@ -168,12 +170,25 @@ public class OrderController {
     }
     
     @Post("save")
-    public String save(@Param("order") String primerProducts,Invocation inv) throws IllegalStateException, IOException {
+    public String save(@Param("primerProducts") String primerProducts,Invocation inv) throws IllegalStateException, IOException {
     	System.out.println(primerProducts);
-
+    	List<Order> orders = JSON.parseArray(primerProducts, Order.class);
+    	for(Order order:orders){
+			orderRepository.save(order);
+		}
         return "";
     }
     
+    /**
+     * 订单查询列表
+     * @param orderNo
+     * @param customerCode
+     * @param pageNo
+     * @param pageSize
+     * @param inv
+     * @return
+     * @throws Exception
+     */
     @Post("query")
     public Reply query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,@Param("pageNo")Integer pageNo,
                         @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
@@ -183,7 +198,7 @@ public class OrderController {
         }
 
         if(pageSize == null){
-            pageSize = 5;
+            pageSize = 10;
         }
 
         Pageable pageable = new PageRequest(pageNo,pageSize);
@@ -197,6 +212,19 @@ public class OrderController {
         Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
         
         return Replys.with(orderListPage).as(Json.class);
+    }
+    
+    /**
+     * 订单删除
+     * @param orderNo
+     * @param inv
+     * @return
+     */
+    @Post("delete") 
+    public Object delete(@Param("orderNo") String orderNo,Invocation inv){
+    	Order order = orderRepository.findByOrderNo(orderNo);
+    	orderRepository.delete(order);
+    	return Replys.with("sucess").as(Text.class);  
     }
     
     @Get("modify/{orderNo}") 

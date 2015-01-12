@@ -7,7 +7,6 @@
 <html>
 <head>
     <title></title>
-    <meta charset="utf-8">
     <link href="${ctx}/static/css/easyui.css" type="text/css" rel="stylesheet"/>
     <link href="${ctx}/static/css/icon.css" type="text/css" rel="stylesheet"/>
     <link href="${ctx}/static/css/perfect-scrollbar.min.css" type="text/css" rel="stylesheet"/>
@@ -21,11 +20,12 @@
     <script src="${ctx}/static/js/perfect-scrollbar.min.js"></script>
     <script src="${ctx}/static/js/ajaxfileupload.js" ></script>
     <script src="${ctx}/static/js/json2.js"></script>
+    <script src="${ctx}/static/js/index.js"></script>
     <script>
         var ctx = '${ctx}';
     </script>
 </head>
-<body class="easyui-layout" data-options="animate:false">
+<body class="easyui-layout">
 <div data-options="region:'north'">
     <div class="header">
         <img src="${ctx}/static/images/logo.png" alt="">
@@ -36,7 +36,7 @@
     </div>
 </div>
 <div data-options="region:'west',split:false" id="westLayout">
-    <%@ include file="/WEB-INF/layouts/leftMenu.jsp"%>
+<%@ include file="/WEB-INF/layouts/leftMenu.jsp"%>
 </div>
 <div id="hideWest" onclick="toggleWest(this);"></div>
 <div data-options="region:'center'" id="layoutCont">
@@ -45,4 +45,3 @@
 </div>
 </body>
 </html>
-<script src="${ctx}/static/js/index.js"></script>

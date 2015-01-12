@@ -89,6 +89,7 @@ var orderNo = ${orderNo};
 				<th data-options="field:'baseVal',width:80,sortable:true,editor:'text'">碱基单价</th>
 				<th data-options="field:'purifyVal',width:80,sortable:true,editor:'text'">纯化价格</th>
 				<th data-options="field:'totalVal',width:80,sortable:true,editor:'text'">总价格</th>
+				<th data-options="field:'fromProductNo',width:80,hidden:true,sortable:true,editor:'text'">来源生产编号</th>
 				<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>
 			</tr>
 		</thead>
@@ -101,7 +102,7 @@ var orderNo = ${orderNo};
 </div>
 <script src="${ctx}/views/order/js/orderInfo.js" ></script>
 <script type="text/javascript">
-getProduct();
+getProduct(${orderNo});
 </script>
 </body>
 </html>
