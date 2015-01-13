@@ -136,7 +136,8 @@ public class PrimerProduct implements java.io.Serializable {
     private BigDecimal nmolTotal;//NUML总量
     private BigDecimal nmolTB;//NUML/TB
     private BigDecimal tbn;//碱基数
-    private String selectFlag;//是否被选择，用于页面选择时使用，不存库
+    private String midi;//修饰
+	private String selectFlag;//是否被选择，用于页面选择时使用，不存库
 
 	public PrimerProduct() {
     }
@@ -445,6 +446,15 @@ public class PrimerProduct implements java.io.Serializable {
 		this.selectFlag = selectFlag;
 	}
 	
+	@Transient
+    public String getMidi() {
+		return midi;
+	}
+
+
+	public void setMidi(String midi) {
+		this.midi = midi;
+	}
 	
     @Override
     public String toString() {

@@ -21,8 +21,8 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 
 	@SQL("select pp.* "
 			+ " from `order` o , `primer_product` pp, `primer_product_value` ppv "
-			+ " where o.`order_no` =  pp.`order_no` and pp.`id` = ppv.`primer_product_id` and ppv.`type` = 'tbn' "
-			+ " and o.`status` = '2' and pp.`operation_type` = 'orderCheckSuccess' "
+			+ " where o.`order_no` =  pp.`order_no` and pp.`id` = ppv.`primer_product_id` and ppv.`type` = 'baseCount' "
+			+ " and o.`status` = '2' and pp.`operation_type` = 'makeBoard' and pp.`board_no` is null "
 			+ "#if(:customer_code != '') { and o.`customer_code` = :customer_code } "
 			+ "#if(:purifytype != '') { and pp.`purify_type` = :purifytype }"
 			+ "#if(:tbn1 != '') { and ppv.`value` >= :tbn1 }"

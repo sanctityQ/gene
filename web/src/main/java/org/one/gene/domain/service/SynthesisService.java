@@ -20,6 +20,7 @@ import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerProductValue;
 import org.one.gene.domain.entity.PrimerType;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
+import org.one.gene.domain.entity.PrimerValueType;
 import org.one.gene.repository.BoardHoleRepository;
 import org.one.gene.repository.BoardRepository;
 import org.one.gene.repository.OrderRepository;
@@ -67,7 +68,7 @@ public class SynthesisService {
 
 //    @Transactional(readOnly = false)
     //安排合成查询
-	public Page<PrimerProduct> makeTableQuery(String customer_code,
+	public Page<PrimerProduct> makeBoardQuery(String customer_code,
 			String modiFlag, String tbn1, String tbn2, String purifytype,
 			Pageable pageable) {
 
@@ -77,21 +78,41 @@ public class SynthesisService {
 		for (PrimerProduct primerProduct : primerProductPage.getContent()) {
 			List<PrimerProductValue> primerProductValues = primerProductValueRepository.selectValueByPrimerProductId(primerProduct.getId());
 			for (PrimerProductValue ppv : primerProductValues) {
-				if (ppv.getType().equals("odTotal")) {
+				if (ppv.getType().equals(PrimerValueType.odTotal)) {
 					primerProduct.setOdTotal(ppv.getValue());
-				} else if (ppv.getType().equals("odTB")) {
+				} else if (ppv.getType().equals(PrimerValueType.odTB)) {
 					primerProduct.setOdTB(ppv.getValue());
-				} else if (ppv.getType().equals("nmolTotal")) {
+				} else if (ppv.getType().equals(PrimerValueType.nmolTotal)) {
 					primerProduct.setNmolTotal(ppv.getValue());
-				} else if (ppv.getType().equals("nmolTB")) {
+				} else if (ppv.getType().equals(PrimerValueType.nmolTB)) {
 					primerProduct.setNmolTB(ppv.getValue());
-				} else if (ppv.getType().equals("tbn")) {
+				} else if (ppv.getType().equals(PrimerValueType.baseCount)) {
 					primerProduct.setTbn(ppv.getValue());
 				}
 			}
 			// 翻译操作类型
 			PrimerStatusType operationType = primerProduct.getOperationType();
             primerProduct.setOperationTypeDesc(operationType.desc());
+            
+			//修饰
+			String midi = "";
+			if (!"".equals(primerProduct.getModiFiveType())) {
+				midi += primerProduct.getModiFiveType()+",";
+			}
+			if (!"".equals(primerProduct.getModiMidType())) {
+				midi += primerProduct.getModiMidType()+",";
+			}
+			if (!"".equals(primerProduct.getModiSpeType())) {
+				midi += primerProduct.getModiSpeType()+",";
+			}
+			if (!"".equals(primerProduct.getModiThreeType())) {
+				midi += primerProduct.getModiThreeType()+",";
+			}
+			if(!"".equals(midi)){
+				midi = "("+midi.substring(0, midi.length()-1)+")";
+				primerProduct.setMidi(midi);
+			}
+			
 		}
 
 		return primerProductPage;

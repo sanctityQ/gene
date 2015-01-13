@@ -75,29 +75,20 @@ public class SynthesisController {
     }
 
     /**
-     * 进入首页面
+     * 进入制板查询页面
      * 
      * */
-    public String first(){
-
-    	return "first";
-    }
-    
-    /**
-     * 进入制表查询页面
-     * 
-     * */
-    @Get("preMakeTableQuery")
-    public String preMakeTableQuery(){
+    @Get("preMakeBoardQuery")
+    public String preMakeBoardQuery(){
     	
-    	return "makeTableQuery";
+    	return "productionData";
     }
     
     
     /**
-     * 制表查询
+     * 制板查询
      * */
-    public String makeTableQuery(@Param("customer_code") String customer_code, 
+    public Reply makeBoardQuery(@Param("customercode") String customercode, 
 					    		 @Param("tbn1") String tbn1,
 					    		 @Param("tbn2") String tbn2,
 					    		 @Param("modiFlag") String modiFlag,
@@ -106,30 +97,20 @@ public class SynthesisController {
 			                     @Param("pageSize") Integer pageSize,
 					    		 Invocation inv){
     	
-    	
-    	modiFlag = modiFlag==null?"0":modiFlag;
+    	modiFlag = "1";
 		
         if(pageNo == null){
             pageNo = 1;
         }
 
         if(pageSize == null){
-            pageSize = 2;
+            pageSize = 10;
         }
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         
-        Page<PrimerProduct> primerProductPage = synthesisService.makeTableQuery(customer_code, modiFlag, tbn1, tbn2, purifytype, pageable);
-    	inv.addModel("page", primerProductPage);
-    	inv.addModel("preRequestPath", inv.getRequestPath().getUri());
-    	inv.addModel("pageSize", pageSize);
+        Page<PrimerProduct> primerProductPage = synthesisService.makeBoardQuery(customercode, modiFlag, tbn1, tbn2, purifytype, pageable);
     	
-    	inv.addModel("customer_code", customer_code);
-    	inv.addModel("tbn1", tbn1);
-    	inv.addModel("tbn2", tbn2);
-    	inv.addModel("modiFlag", modiFlag);
-    	inv.addModel("purifytype", purifytype);
-    	
-    	return "makeTableList";
+    	return Replys.with(primerProductPage).as(Json.class);
     }
     
     /**
