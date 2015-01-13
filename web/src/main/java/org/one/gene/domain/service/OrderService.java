@@ -112,7 +112,7 @@ public class OrderService {
 			orderInfoList.add(orderInfo);
 		}
 		
-		Page<OrderInfo> orderListPage = new PageImpl<OrderInfo>(orderInfoList,pageable,orderPage.getSize());
+		Page<OrderInfo> orderListPage = new PageImpl<OrderInfo>(orderInfoList,pageable,orderPage.getTotalElements());
 		
         return orderListPage;
     }

@@ -37,35 +37,35 @@ var orderNo = ${orderNo};
 			</tr>
 			<tr>
 				<td align="right">客户编号:</td>
-				<td>2015-01-02H001</td>
+				<td><input id="code" name="customer.code" class="inp_text" type="text"  style="width: 80%" /></td>
 				<td align="right">客户姓名:</td>
-				<td>喀交会的</td>
+				<td><input id="name" name="customer.name" class="inp_text" type="text" style="width: 80%" /></td>
 			</tr>
 			<tr>
 				<td align="right">负责人姓名:</td>
-				<td></td>
+				<td><input id="leaderName" name="customer.leaderName" class="inp_text" type="text"  style="width: 80%" /></td>
 				<td align="right">客户单位:</td>
-				<td></td>
+				<td><input id="customerUnit" class="inp_text" type="text" value="" style="width: 80%" /></td>
 			</tr>
 			<tr>
 				<td align="right">发票抬头:</td>
-				<td></td>
+				<td><input id="invoiceTitle" name="customer.invoiceTitle" class="inp_text" type="text"  style="width: 80%" /></td>
 				<td align="right">结账方式:</td>
-				<td></td>
+				<td><input id="payWays" name="customer.payWays" class="inp_text" type="text" style="width: 80%" /></td>
 			</tr>
 			<tr>
 				<td align="right">客户地址:</td>
-				<td colspan="3"></td>
+				<td colspan="3"><input id="address" name="customer.address" class="inp_text" type="text"  style="width: 50%" /></td>
 			</tr>
 			<tr>
 				<td align="right">联系电话:</td>
-				<td></td>
+				<td><input id="phoneNo" name="customer.phoneNo" class="inp_text" type="text"  style="width: 80%" /></td>
 				<td align="right">Email:</td>
-				<td></td>
+				<td><input id="email" name="customer.email" class="inp_text" type="text"  style="width: 80%" /></td>
 			</tr>
 			<tr>
-				<td align="right">办事处:</td>
-				<td colspan="3"></td>
+				<td align="right">网址:</td>
+				<td colspan="3"><input id="webSite" class="" type="text" value="" style="width: 50%" /></td>
 			</tr>
 			<tr>
 				<td colspan="4" height="10"></td>
@@ -73,8 +73,8 @@ var orderNo = ${orderNo};
 		</table>
 	</div>
 	<div class="content_box info margin_btoom">
-		<h2><a href="javascript:;" class="right btn-primary submit" onclick="appendRow()" type="button">添加数据</a>生产数据</h2>
-		<table id="bigToSmall" class="easyui-datagrid" data-options="fitColumns:true,singleSelect: true,iconCls: 'icon-save',url: 'datagrid_data1.json',striped:true,method: 'get',onClickRow: onClickRow">
+		<h2>生产数据</h2>
+		<table id="bigToSmall" class="easyui-datagrid" data-options="fitColumns:true,singleSelect: true,striped:true,method: 'get'">
 		<thead>
 			<tr>
 				<th data-options="field:'productNo',width:80,sortable:true,editor:'text'">生产编号</th>
@@ -91,9 +91,12 @@ var orderNo = ${orderNo};
 	</table>
 	</div>
 	<div class="tools_bar">
-		<button type="" class="btn btn-primary" onclick="goToPage('orderList.html');">确 定</button>
+		<button type="" class="btn btn-primary" onclick="goToPage('views/order/orderList.jsp');">确 定</button>
 	</div>
 </div>
-<script src="${ctx}/views/order/js/orderInfo.js" ></script>
+<script src="${ctx}/views/order/js/orderList.js" ></script>
+<script type="text/javascript">
+orderDetail(${orderNo});
+</script>
 </body>
 </html>

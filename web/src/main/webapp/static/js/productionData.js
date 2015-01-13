@@ -40,14 +40,7 @@ var getProducts=function(){
 			customercode: $("#customercode").val(),
 			tbn1: $("#tbn1").val(),
 			tbn2: $("#tbn2").val(),
-			modiFlag: $(function(){
-				if($('#modiFlag').is(':checked')) {
-					'1'
-				}else{
-					'0'
-				}
-			}),
-			}
+			modiFlag: $("#modiFlag").val(),
 			purifytype: $("#purifytype").val(),
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize

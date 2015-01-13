@@ -18,7 +18,7 @@ function bigendEditing(){
 function appendRow(){
     bigToSmall.datagrid('appendRow',{
         row: {
-            itemid: '新生产编号'
+        	productNo: '新生产编号'
         }
     });
     var ind = $(".datagrid-btable").find('tr:last').attr("datagrid-row-index");
@@ -37,16 +37,15 @@ function onClickRow(index){
 }
 function getChanesSave(){
     var jsonData = bigToSmall.datagrid('getChanges');
-    var primerProducts = $.toJSON(jsonData);//JSON.stringify(jsonData.rows);
-    alert(primerProducts);
+    var primerProducts = JSON.stringify(jsonData);
     $.ajax({
 		type : "post",
-		url : "order/save",
+		url : "/gene/order/save",
 		dataType : "json",
-		data:{primerProducts:primerProducts},
+		data:"primerProducts="+primerProducts,
 		success : function(data) {
 			if(data != null){
-				goToPage('views/order/orderList.jsp');
+				goToPage('/gene/views/order/orderList.jsp');
 			}
 		},
 		error:function(){
@@ -60,12 +59,20 @@ function copyRow(e){
     var id = tr.attr('id');
     var ind = tr.index() + 1;
     var next = $(tr.clone());
+    var row = $('#bigToSmall').datagrid('getData').rows[tr.index()];
     bigToSmall.datagrid('insertRow',{
         index: ind, // index start with 0
         row: {
-        	productNo: '新生产编号',
-        	primeName: 30,
-            geneOrder: 'some messages'
+        	productNo: row.productNo+"1",
+        	primeName: row.primeName,
+        	geneOrder: row.geneOrder,
+        		  tbn: row.tbn,
+           purifyType: row.purifyType,
+            modiPrice: row.modiPrice,
+              baseVal: row.baseVal,
+            purifyVal: row.purifyVal,
+             totalVal: row.totalVal,
+        fromProductNo: row.productNo		
         }
     });
     bigToSmall.datagrid('beginEdit',ind);
@@ -74,10 +81,10 @@ function copyRow(e){
 /**
  * 初始化加载导入订单列表
  */
-var getProduct=function(){
+var getProduct=function(orderNo){
 	$.ajax({
 		type : "post",
-		url : "order/productQuery",
+		url : "/gene/order/productQuery",
 		dataType : "json",
 		data:"orderNo="+orderNo,
 		success : function(data) {

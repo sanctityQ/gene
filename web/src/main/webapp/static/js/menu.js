@@ -37,10 +37,11 @@ function liClick(){
         tab.tabs('select',index);
     }else{
         if(url){
+            var content = '<iframe id="#frameBody" frameborder="0"  src="'+url+'" style="width:100%;height:99%;"></iframe>';
             tab.tabs('add',{
                 id:id,
                 title: text,
-                href:url,
+                content:content,
                 closable: true
             });
         }

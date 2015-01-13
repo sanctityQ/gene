@@ -7,16 +7,16 @@
 	<div title="订单管理" data-options="iconCls:'order'" style="height:200px;">
 		<ul class="sbu_menu">
 			<li url="${ctx}/order/import" id="orderImport"><i class="icon-upload-alt"></i>订单导入</li>
-			<li url="${ctx}/order/orderList" id="orderInfo"><i class="icon-file-text"></i>订单信息</li>
+			<li url="${ctx}/order/orderList" id="orderList"><i class="icon-file-text"></i>订单信息</li>
 			<li url="" id="orderExamine"><i class="icon-thumbs-up-alt"></i>订单审核</li>
 		</ul>
 	</div>
 	<div title="安排合成" data-options="iconCls:'compound'" style="height:200px;">
 		<ul class="sbu_menu">
 			<li url="${ctx}/synthesis/preMakeBoardQuery" id="syntheticPlate"><i class="icon-keyboard"></i>制作合成板</li>
-			<li url="orderImport.html" id="synthesisResults"><i class="icon-edit-sign"></i>合成结果</li>
-			<li url="orderImport.html" id="machineTable"><i class="icon-desktop"></i>导出上机表</li>
-			<li url="orderImport.html" id="packingTable"><i class="icon-dropbox"></i>导出分装表</li>
+			<li url="synthesisResults.html" id="synthesisResults"><i class="icon-edit-sign"></i>合成结果</li>
+			<li url="machineTable.html" id="machineTable"><i class="icon-desktop"></i>导出上机表</li>
+			<li url="packingTable.html" id="packingTable"><i class="icon-dropbox"></i>导出分装表</li>
 		</ul>
 	</div>
 	<div title="修饰与氨解" data-options="iconCls:'adorn'" style="height:200px;">
