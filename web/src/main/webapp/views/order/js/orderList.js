@@ -100,15 +100,3 @@ var deleteOrder=function(id,index){
 	});
 }
 
-$(function(){
-   $('#orderList').datagrid({
-	   
-   });
-   $('#orderList').datagrid('getPager').pagination({
-     onBeforeRefresh:function(pageNumber, pageSize){
-       $(this).pagination('loading');
-       alert('pageNumber:'+pageNumber+',pageSize:'+pageSize);
-       $(this).pagination('loaded');
-     },
-   });
-});

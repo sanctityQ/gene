@@ -29,8 +29,8 @@
 			<td><input id="customerCode" class="inp_text" type="text" value="" style="width: 60%" /></td>
 			<td><button type="button" class="btn" onclick="getOrderInfo();">查询</button></td>
 			<td align="right">
-				<button type="button" class="btn btn-primary" onclick="goToPage('addOrder.html')">增加订单</button>
-				<button type="button" class="btn btn-primary submit" onclick="DeletdRows('orderList')">批量删除</button>
+				<!-- <button type="button" class="btn btn-primary" onclick="goToPage('addOrder.html')">增加订单</button>
+				<button type="button" class="btn btn-primary submit" onclick="DeletdRows('orderList')">批量删除</button> -->
 			</td>
 		</tr>
 	</table>

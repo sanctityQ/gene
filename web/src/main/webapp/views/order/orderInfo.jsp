@@ -40,35 +40,35 @@ var orderNo = ${orderNo};
 			</tr>
 			<tr>
 				<td align="right">客户编号:</td>
-				<td><input id="code" name="customer.code" class="inp_text" type="text" value="${customer.code}" style="width: 80%" /></td>
+				<td><input id="code" name="customer.code" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
 				<td align="right">客户姓名:</td>
-				<td><input id="name" name="customer.name" class="inp_text" type="text" value="${customer.name}" style="width: 80%" /></td>
+				<td><input id="name" name="customer.name" class="readonly_inp" type="text" style="width: 80%" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">负责人姓名:</td>
-				<td><input id="leaderName" name="customer.leaderName" class="inp_text" type="text" value="${customer.leaderName}" style="width: 80%" /></td>
+				<td><input id="leaderName" name="customer.leaderName" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
 				<td align="right">客户单位:</td>
-				<td><input id="customerUnit" class="inp_text" type="text" value="" style="width: 80%" /></td>
+				<td><input id="customerUnit" class="readonly_inp" type="text" value="" style="width: 80%" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">发票抬头:</td>
-				<td><input id="invoiceTitle" name="customer.invoiceTitle" class="inp_text" type="text" value="${customer.invoiceTitle}" style="width: 80%" /></td>
+				<td><input id="invoiceTitle" name="customer.invoiceTitle" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
 				<td align="right">结账方式:</td>
-				<td><input id="payWays" name="customer.payWays" class="inp_text" type="text" value="${customer.payWays}" style="width: 80%" /></td>
+				<td><input id="payWays" name="customer.payWays" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">客户地址:</td>
-				<td colspan="3"><input id="address" name="customer.address" class="inp_text" type="text" value="${customer.address}" style="width: 50%" /></td>
+				<td colspan="3"><input id="address" name="customer.address" class="readonly_inp" type="text"  style="width: 50%" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">联系电话:</td>
-				<td><input id="phoneNo" name="customer.phoneNo" class="inp_text" type="text" value="${customer.phoneNo}" style="width: 80%" /></td>
+				<td><input id="phoneNo" name="customer.phoneNo" class="readonly_inp" type="text" style="width: 80%" disabled/></td>
 				<td align="right">Email:</td>
-				<td><input id="email" name="customer.email" class="inp_text" type="text" value="${customer.email}" style="width: 80%" /></td>
+				<td><input id="email" name="customer.email" class="readonly_inp" type="text" style="width: 80%" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">网址:</td>
-				<td colspan="3"><input id="webSite" class="" type="text" value="" style="width: 50%" /></td>
+				<td colspan="3"><input id="webSite" class="readonly_inp" type="text" value="" style="width: 50%" disabled/></td>
 			</tr>
 			<tr>
 				<td colspan="4" height="10"></td>
