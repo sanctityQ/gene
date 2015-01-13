@@ -1,17 +1,16 @@
 function toggleWest(e){
     var west = $(e);
     if(west.hasClass("hide")){
-        $('body').layout('add', {
-            region:'west',
-            width:200,
-            href:'leftMenu.html',
-            bodyCls:'menu_bg'
-        });
+        var lws = $('body').layout('panel', 'west');
+        lws.panel('expand');
+        var wd = lws.width();
+        $('body').layout('panel', 'center').panel('resize',{'left':wd,'width':$('body').width()-wd});
         $(e).css("left",188).removeClass("hide");
     }else{
-        $('body').layout('remove', 'west');
-        $(e).css("left",0).addClass("hide");
-    };
+        $('body').layout('panel', 'west').panel('collapse');
+        $('body').layout('panel', 'center').panel('resize',{'left':0,'width':$('body').width()});
+        $(e).css("left", 0).addClass("hide");
+    }
 }
 function goToPage(url){
     /*var tab = $('#tabList');
@@ -69,11 +68,11 @@ var ajaxFileUpload=function() {
             	if(data != null){
             		//此处没返回两个不同类型的对象处理。待优化
             		if(data.orderNo!=undefined){
-            			goToPage('/gene/views/order/orderInfo.jsp?orderNo='+data.orderNo);
+            			goToPage(ctx+'/views/order/orderInfo.jsp?orderNo='+data.orderNo);
             			orderNo = data.orderNo;
 	            	}else{
 	            		errors=data;
-	            		goToPage('/gene/views/order/importError.jsp');
+	            		goToPage(ctx+'/views/order/importError.jsp');
 	            	}
             	}
             },

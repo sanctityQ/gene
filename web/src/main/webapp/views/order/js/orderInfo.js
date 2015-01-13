@@ -36,14 +36,14 @@ function onClickRow(index){
   }
 }
 function getChanesSave(){
-    var jsonData = bigToSmall.datagrid('getChanges');
-    var primerProducts = JSON.stringify(jsonData);
-    alert(primerProducts)
+    var primerProducts = bigToSmall.datagrid('getData').rows;
+    console.log(primerProducts);
+
     $.ajax({
 		type : "post",
-		url : "/gene/order/save",
+        url: ctx + "/order/save",
 		dataType : "json",
-		data:"primerProducts="+primerProducts,
+        data: {"primerProducts": primerProducts},
 		success : function(data) {
 			if(data != null){
 				goToPage('/gene/views/order/orderList.jsp');
