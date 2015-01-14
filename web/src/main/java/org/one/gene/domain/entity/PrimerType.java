@@ -125,10 +125,10 @@ public class PrimerType {
                 return "订单检查失败";
             }
         },
-        makeTable {
+        makeBoard {
             @Override
             public String desc() {
-                return "制表";
+                return "制板";
             }
         },
         synthesisSuccess {

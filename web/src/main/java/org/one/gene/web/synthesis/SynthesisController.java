@@ -126,9 +126,6 @@ public class SynthesisController {
 			                   @Param("boardNo") String boardNo,
 			                   @Param("productNoStr") String productNoStr, Invocation inv) throws IOException {
     	
-    	//System.out.println(primerProducts);
-    	//List<PrimerProduct> primerProductList = JSON.parseArray(primerProducts, PrimerProduct.class);
-    	
     	String jsonStr = synthesisService.makeBoard(boardNo, flag, productNoStr, inv);
         
     	return Replys.with(jsonStr).as(Json.class);
@@ -139,18 +136,14 @@ public class SynthesisController {
      * 提交板信息
      * */
     @Post("submitBoard")
-    public String submitBoard(Board board, Invocation inv) {
+	public Reply submitBoard(@Param("holeStr") String holeStr,
+			                 @Param("boardNo") String boardNo,
+			                 @Param("boardType") String boardType, Invocation inv) {
     	
-    	synthesisService.submitBoard(board);
+    	synthesisService.submitBoard(holeStr, boardNo, boardType, inv);
     	
-    	inv.addModel("message", "制表成功！");
-    	
-    	return "returnMessage";
+    	return Replys.with("").as(Json.class);
     }
-    
-    
-    
-    
     
     @Post("queryBoard")
     public Reply queryBoard(@Param("boardNo") String boardNo,Invocation inv) {

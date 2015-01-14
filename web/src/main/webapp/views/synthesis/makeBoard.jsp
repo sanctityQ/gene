@@ -21,7 +21,8 @@
 <body>
 <div class="tools">
 	<table width="100%">
-	    <input class="inp_text" type="hidden" id="productNoArray" name="productNoArray" value="${ary}" style="width: 50%" />
+	    <input class="inp_text" type="hidden" id="productNoArray" name="productNoArray" value="${ary}"/>
+	    <input class="inp_text" type="hidden" id="boardType" name="boardType" value="1"/>
 		<tr>
 			<td align="right" width="100">合成板名称:</td>
 			<td><input class="inp_text" type="text" id="boardNo" name="boardNo" value="" style="width: 50%" /></td>

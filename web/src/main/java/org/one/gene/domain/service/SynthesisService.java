@@ -32,6 +32,7 @@ import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerProductValue;
 import org.one.gene.domain.entity.PrimerType;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
+import org.one.gene.domain.entity.PrimerType.PrimerOperationType;
 import org.one.gene.domain.entity.PrimerValueType;
 import org.one.gene.repository.BoardHoleRepository;
 import org.one.gene.repository.BoardRepository;
@@ -249,106 +250,74 @@ public class SynthesisService {
 		return jsonStr;
 	}
 	
-    //增加新空
-	public Board addNewHole(Board board) {
-		String boardType = board.getType();//板类型:0-横排 1-竖排
-		
-		ArrayList holeNoList = new ArrayList();
-		ArrayList holeList = new ArrayList();
-		holeList.add("A");
-		holeList.add("B");
-		holeList.add("C");
-		holeList.add("D");
-		holeList.add("E");
-		holeList.add("F");
-		holeList.add("G");
-		holeList.add("H");
-		if ("0".equals(boardType)) {
-			
-			for(int i=0 ;i<holeList.size();i++){
-				String hole = (String)holeList.get(i);
-				for (int j=1;j<13;j++){
-					System.out.println("==========板孔初始化 横版="+hole+j);
-					holeNoList.add(hole+j);
-				}
-			}
-
-		} else {
-
-			for (int j=1;j<13;j++){
-				for(int i=0 ;i<holeList.size();i++){
-					String hole = (String)holeList.get(i);
-					System.out.println("==========板孔初始化 竖版="+hole+j);
-					holeNoList.add(hole+j);
-				}
-			}
-		}
-		
-		//数据库的孔号和标准模板两个list进行倒序，如果不存在倒序增加
-		
-		for (BoardHole boardHole : board.getBoardHoles()) {
-			
-		}
-		
-		return board;
-	}
-	
-	
 	//提交制表信息
     @Transactional(readOnly = false)
-	public String submitBoard(Board board) {
-		
-		//组织操作记录表信息
-		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
-		List<PrimerProductOperation> primerProductOperations = new ArrayList<PrimerProductOperation>();
+	public String submitBoard(String holeStr, String boardNo, String boardType, Invocation inv) {
+    	
+    	Board board = boardRepository.findByBoardNo(boardNo);
+    	if( board == null ){
+    		board = new Board();
+    	}else{
+    		for(BoardHole boardHole:board.getBoardHoles()){
+    			boardHoleRepository.delete(boardHole);
+    		}
+    	}
+    	board.setBoardNo(boardNo);
+    	board.setBoardType(boardType);
 		board.setCreateUser(123);//后续需要调整到从session取值
 		board.setCreateTime(new Date());
+    	
+		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
+		List<PrimerProductOperation> primerProductOperations = new ArrayList<PrimerProductOperation>();
 		
-		List<BoardHole> boardHoles =  board.getBoardHoles();
-		BoardHole boardHole = null;
-		for (int i = boardHoles.size() - 1; i >= 0; i--) {
+		//拆分孔号，生产编号字符串
+		List<BoardHole> boardHoles = new ArrayList<BoardHole>();
+		BoardHole boardHole = new BoardHole();
+		PrimerProduct primerProduct = new PrimerProduct();
+		String[] holeStrArray = holeStr.split(";");
+		for (int i = 0; i < holeStrArray.length; i++) {
+			String holeNoStr = holeStrArray[i];
+			String[] holeNoArray = holeNoStr.split(":");
+			System.out.println("===============生产编号="+holeNoArray[1]);
 			
-			boardHole = (BoardHole)boardHoles.get(i);
+			primerProduct = primerProductRepository.findByProductNo(holeNoArray[1]);
 			
+			addNewValue(primerProduct);
+	    	
+			boardHole = new BoardHole();
+			boardHole.setBoard(board);
+			boardHole.setHoleNo(holeNoArray[0]);
+			boardHole.setPrimerProduct(primerProduct);
 			boardHole.setCreateUser(123L);//后续需要调整到从session取值
 			boardHole.setCreateTime(new Date());
-			boardHole.setBoard(board);
 			
-			//如果没填生产编号id，就移除
-			if (boardHole.getPrimerProduct() == null || boardHole.getPrimerProduct().getId() == null){
-				//先手动删除孔号信息
-				if(boardHole.getId()!=null){
-					boardHoleRepository.delete(boardHole);
-				}
-				//然后移除
-				boardHoles.remove(i);
-			}else{
-				primerProductOperation = new PrimerProductOperation();
-				primerProductOperation.setPrimerProduct(boardHole.getPrimerProduct());
-				primerProductOperation.setType(PrimerType.PrimerOperationType.makeTable);
-				primerProductOperation.setTypeDesc("制表成功");
-				primerProductOperation.setUserCode("123");//后续从session取得
-				primerProductOperation.setUserName("张三");//后续从session取得
-				primerProductOperation.setCreateTime(new Date());
-				primerProductOperation.setBackTimes(0);
-				primerProductOperation.setFailReason("成功了");
-				
-				primerProductOperations.add(primerProductOperation);
-				
-				//更新primer_product的操作类型和板号
-				
-				PrimerProduct primerProduct = primerProductRepository.findOne(boardHole.getPrimerProduct().getId());
-				if( primerProduct != null ){
-					primerProduct.setBoardNo(board.getBoardNo());
-					primerProduct.setOperationType(PrimerStatusType.synthesis);//待合成
-					primerProductRepository.save(primerProduct);
-				}
-				
+			boardHoles.add(boardHole);
+			
+			//更新primer_product的操作类型和板号
+			if( primerProduct != null ){
+				primerProduct.setBoardNo(board.getBoardNo());
+				primerProduct.setOperationType(PrimerStatusType.synthesis);//待合成
+				primerProductRepository.save(primerProduct);
 			}
+			
+			//组织操作记录表信息
+			primerProductOperation = new PrimerProductOperation();
+			primerProductOperation.setPrimerProduct(boardHole.getPrimerProduct());
+			primerProductOperation.setType(PrimerOperationType.makeBoard);
+			primerProductOperation.setTypeDesc(PrimerOperationType.makeBoard.desc());
+			primerProductOperation.setUserCode("123");//后续从session取得
+			primerProductOperation.setUserName("张三");//后续从session取得
+			primerProductOperation.setCreateTime(new Date());
+			primerProductOperation.setBackTimes(0);
+			primerProductOperation.setFailReason("");
+			primerProductOperations.add(primerProductOperation);
+			
 		}
 		
+		board.setBoardHoles(boardHoles);
+		
 		//保存操作信息
-//		primerProductOperationRepository.save(primerProductOperations);
+		primerProductOperationRepository.save(primerProductOperations);
 		
 		//保存板孔信息
 		boardRepository.save(board);
@@ -356,6 +325,7 @@ public class SynthesisService {
 		return "";
 	}
     
+
 	//模糊查询板信息 
 	public List<Board> synthesisQuery(String boardNo) {
 		if (!StringUtils.isBlank(boardNo)) {
@@ -481,4 +451,21 @@ public class SynthesisService {
 		
 		return Replys.with(file).as(Raw.class).downloadFileName(fileName);
     }
+	
+	//补充临时字段的值
+	public void addNewValue(PrimerProduct primerProduct) {
+    	//补充4个临时字段的值
+    	for (PrimerProductValue pv : primerProduct.getPrimerProductValues()) {
+    		if(pv.getType().equals(PrimerValueType.odTotal)){
+    			primerProduct.setOdTotal(pv.getValue());
+    		}else if(pv.getType().equals(PrimerValueType.odTB)){
+    			primerProduct.setOdTB(pv.getValue());
+    		}else if(pv.getType().equals(PrimerValueType.nmolTotal)){
+    			primerProduct.setNmolTotal(pv.getValue());
+    		}else if(pv.getType().equals(PrimerValueType.nmolTB)){
+    			primerProduct.setNmolTB(pv.getValue());
+    		}
+    	}
+		
+	}
 }

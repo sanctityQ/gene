@@ -23,7 +23,7 @@ public class Board extends IdEntity implements java.io.Serializable {
     /**
     * 板类型:0-横排 1-竖排.
     */
-    private Boolean boardType;
+    private String boardType;
     /**
     * 类型.
     */
@@ -58,11 +58,11 @@ public class Board extends IdEntity implements java.io.Serializable {
     }
     
     @Column(name="`board_type`")
-    public Boolean getBoardType() {
+    public String getBoardType() {
     return this.boardType;
     }
 
-    public void setBoardType(Boolean boardType) {
+    public void setBoardType(String boardType) {
     this.boardType = boardType;
     }
     
