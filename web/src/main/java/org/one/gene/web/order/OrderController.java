@@ -60,6 +60,11 @@ public class OrderController {
     public String orderList(){
         return "orderList";
     }
+    @Get("orderExamine")
+    public String orderExamine(){
+        return "orderExamine";
+    }
+    
     
     @Post("upload")
     public Reply upload(@Param("customerCode") String customerCode, @Param("file") MultipartFile file, Invocation inv) throws Exception {
