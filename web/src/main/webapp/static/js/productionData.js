@@ -22,25 +22,30 @@ function makeBoard(url){
     var ary = [];
     for(var i = 0; i < rows.length; i++){
         var data = rows[i];
-        ary.push(data);
+        ary.push(data.productNo);
     }
-    alert(ary);
-    goToPage(url);
+    goToPage("/gene/views/synthesis/makeBoard.jsp?ary="+ary);
 }
 
 var getProducts=function(){
 	
 	var gridOpts = $('#productionData').datagrid('getPager').data("pagination").options;
+	var strModifyFlag;
+	if($('#modiFlag').is(':checked')) {
+		strModifyFlag = '1';
+	}else{
+		strModifyFlag = '0';
+	}
 	
 	$.ajax({
 		type : "post",
-		url : "synthesis/makeBoardQuery",
+		url : "/gene/synthesis/makeBoardQuery",
 		dataType : "json",
 		data:{
 			customercode: $("#customercode").val(),
 			tbn1: $("#tbn1").val(),
 			tbn2: $("#tbn2").val(),
-			modiFlag: $("#modiFlag").val(),
+			modiFlag: strModifyFlag,
 			purifytype: $("#purifytype").val(),
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
@@ -57,4 +62,5 @@ var getProducts=function(){
 			alert("无法获取信息");
 		}
 	});
+
 }

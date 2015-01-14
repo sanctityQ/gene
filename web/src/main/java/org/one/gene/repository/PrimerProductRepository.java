@@ -28,7 +28,7 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			+ "#if(:tbn1 != '') { and ppv.`value` >= :tbn1 }"
 			+ "#if(:tbn2 != '') { and ppv.`value` <= :tbn2 }"
 			+ "#if(:modiFlag == '0') { and ( pp.`modi_five_type` is null and pp.`modi_three_type` is null and pp.`modi_mid_type` is null and pp.`modi_spe_type` is null) }"
-			+ "#if(:modiFlag == '') { and ( pp.`modi_five_type` is not null or pp.`modi_three_type` is not null or pp.`modi_mid_type` is not null or pp.`modi_spe_type` is not null) }"
+			+ "#if(:modiFlag == '1') { and ( pp.`modi_five_type` is not null or pp.`modi_three_type` is not null or pp.`modi_mid_type` is not null or pp.`modi_spe_type` is not null) }"
 			+ "")
 	Page<PrimerProduct> selectPrimerProduct(
 			@Param("customer_code") String customer_code,

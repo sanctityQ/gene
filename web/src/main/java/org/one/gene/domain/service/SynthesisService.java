@@ -1,15 +1,27 @@
 package org.one.gene.domain.service;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+
+import com.alibaba.fastjson.JSON;
 import com.sinosoft.one.mvc.web.instruction.reply.transport.Raw;
 
 import org.apache.commons.lang.StringUtils;
@@ -118,26 +130,123 @@ public class SynthesisService {
 		return primerProductPage;
 	}
 
-    //到制表页面
-	public Board makeTable(Board board) {
+    //到制板页面
+	public String makeBoard(String boardNo, String flag, String productNoStr, Invocation inv) throws IOException{
 		
-		//查询孔号信息
-		PrimerProduct primerProduct = new PrimerProduct();
-		List<BoardHole> boardHoles = boardHoleRepository.findByBoard(board);
-		for (BoardHole boardHole : boardHoles) {
-			//根据id去查询生产编号，后续对自动根据 public Board findByBoardNo(String boardNo); 查出：Board，BoardHole和primerProduct
-			primerProduct = new PrimerProduct();
-			primerProduct = primerProductRepository.findOne(boardHole.getId());
-			if (primerProduct != null){
-				boardHole.setPrimerProduct(primerProduct);
+		System.out.println("=====页面选择的生产编号=" + productNoStr);
+		
+		Map<String, String> productNoMap = new HashMap<String, String>();
+		String[] productNoStrArray = productNoStr.split(",");
+		for (int i = 0; i < productNoStrArray.length; i++) {
+			
+			productNoMap.put(productNoStrArray[i], productNoStrArray[i]);
+		}
+		
+		//查询板号信息
+		Map<String, String> boardHoleMap = new HashMap<String, String>();
+		Board board = boardRepository.findByBoardNo(boardNo);
+		if (board != null) {
+			for (BoardHole boardHole : board.getBoardHoles()) {
+				boardHoleMap.put(boardHole.getHoleNo(), boardHole.getPrimerProduct().getProductNo());
 			}
 		}
 		
-		if(boardHoles!=null){
-			board.setBoardHoles(boardHoles);
-		}
+		ArrayList holeNoList = new ArrayList();
+		ArrayList holeList = new ArrayList();
 		
-		return board;
+		holeList.add("A");
+		holeList.add("B");
+		holeList.add("C");
+		holeList.add("D");
+		holeList.add("E");
+		holeList.add("F");
+		holeList.add("G");
+		holeList.add("H");
+		
+		String holeNo = "";
+		String productNo = "";
+		String jsonStr = "{\r";
+		jsonStr += "\"total\":96,\r";
+		jsonStr += "\"rows\":[\r";
+		
+		//竖板
+		if ("1".equals(flag)) {
+			
+			for (int j=1;j<13;j++){
+				
+				jsonStr += "{\"row"+j+"\":[\r";
+				
+				for(int i=0 ;i<holeList.size();i++){
+					String hole = (String)holeList.get(i);
+					holeNo = hole+j;
+					productNo = "";
+					if(boardHoleMap.get(holeNo) != null){
+						productNo = (String)boardHoleMap.get(holeNo);
+					}else{
+						for (String v : productNoMap.values()) {
+							productNo = v;
+							break;
+						}
+						if(!"".equals(productNo)){
+							productNoMap.remove(productNo);
+						}
+					}
+					
+					jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\"}";
+					
+					if (i!=holeList.size()-1){
+						jsonStr += ",\r";
+					}
+				}
+				
+				if(j==12){
+					jsonStr += "]}\r";
+				}else{
+					jsonStr += "]},\r";
+				}
+			}
+			
+		} else {
+			for(int i=0 ;i<holeList.size();i++){
+				
+				jsonStr += "{\"row"+(i+1)+"\":[\r";
+				
+				String hole = (String)holeList.get(i);
+				for (int j=1;j<13;j++){
+					holeNo = hole+j;
+					productNo = "";
+					if(boardHoleMap.get(holeNo) != null){
+						productNo = (String)boardHoleMap.get(holeNo);
+					}else{
+						for (String v : productNoMap.values()) {
+							productNo = v;
+							break;
+						}
+						if(!"".equals(productNo)){
+							productNoMap.remove(productNo);
+						}
+					}
+					jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\"}";
+					
+					if (j!=12){
+						jsonStr += ",\r";
+					}
+				}
+				if(i == holeList.size()-1){
+					jsonStr += "]}\r";
+				}else{
+					jsonStr += "]},\r";
+				}
+			}
+		}
+
+		jsonStr += "]\r}";
+
+		
+		
+		System.out.println("==========拼接的jsonstr=\r"+jsonStr);
+		
+		return jsonStr;
 	}
 	
     //增加新空

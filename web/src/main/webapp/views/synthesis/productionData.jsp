@@ -11,21 +11,19 @@
 <link href="${ctx}/static/css/icon.css" type="text/css" rel="stylesheet" />
 <link href="${ctx}/static/css/perfect-scrollbar.min.css" type="text/css" rel="stylesheet" />
 <link href="${ctx}/static/css/master.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
-<!--[if IE 7]>
-  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
-<![endif]-->
+<link rel="stylesheet" type="text/css" href="${ctx}/static/css/font-awesome.min.css" />
 <script src="${ctx}/static/js/jquery.min.js" ></script>
 <script src="${ctx}/static/js/jquery.easyui.min.js" ></script>
 <script src="${ctx}/static/js/perfect-scrollbar.min.js" ></script>
 <script src="${ctx}/static/js/index.js" ></script>
+<script src="${ctx}/static/js/json2.js"></script>
 </head>
 <body>
 <div class="tools">
 	<table width="100%">
 		<tr>
 			<td align="right">客户代码:</td>
-			<td><input class="inp_text" type="text" id="customercode" name="customercode" value="" style="width: 150%" /></td>
+			<td><input class="inp_text" type="text" id="customercode" name="customercode" value="" style="width: 100%" /></td>
 			<td align="right">碱基数范围:</td>
 			<td class="scope"><input class="easyui-numberbox"  id="tbn1" name="tbn1" value="" style="width: 40px;" data-options="width:40" />
 			                - <input class="easyui-numberbox inp_text"  id="tbn2" name="tbn2" value="" style="width:40px;" /></td>
@@ -42,15 +40,15 @@
 		</tr>
 	</table>
     <div class="btn_group">
-        <button id="makeBoard" class="btn btn-success" disabled onclick="makeBoard('makeBoard.html');">制作合成板</button>
+        <button id="makeBoard" class="btn btn-success" disabled onclick="makeBoard('views/synthesis/makeBoard.jsp');">制作合成板</button>
     </div>
 </div>
 <table id="productionData" class="easyui-datagrid" data-options="striped:true,method:'post',pagination:true,fitColumns:true">
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>
-			<th data-options="field:'productNo',width:80,sortable:true">生产编号</th>
-			<th data-options="field:'geneOrder',width:80,sortable:true">序列</th>
+			<th data-options="field:'productNo',width:50,sortable:true">生产编号</th>
+			<th data-options="field:'geneOrder',width:50,sortable:true">序列</th>
 			<th data-options="field:'odTotal',width:60,sortable:true">OD总量</th>
 			<th data-options="field:'odTB',width:60,sortable:true">OD/TB</th>
 			<th data-options="field:'nmolTotal',width:60,sortable:true">nmol总量</th>

@@ -9,6 +9,7 @@ import java.util.List;
 import javax.servlet.ServletConfig;
 
 
+import com.alibaba.fastjson.JSON;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
 import com.sinosoft.one.mvc.web.annotation.Path;
@@ -23,6 +24,7 @@ import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
 
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
+import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerProductValue;
@@ -88,6 +90,7 @@ public class SynthesisController {
     /**
      * 制板查询
      * */
+    @Post("makeBoardQuery")
     public Reply makeBoardQuery(@Param("customercode") String customercode, 
 					    		 @Param("tbn1") String tbn1,
 					    		 @Param("tbn2") String tbn2,
@@ -97,8 +100,6 @@ public class SynthesisController {
 			                     @Param("pageSize") Integer pageSize,
 					    		 Invocation inv){
     	
-    	modiFlag = "1";
-		
         if(pageNo == null){
             pageNo = 1;
         }
@@ -114,43 +115,23 @@ public class SynthesisController {
     }
     
     /**
-     * 到制表页面
+     * 到制板页面
+     * flag 1 竖排；0 横排
+     * boardNo 板号
+     * productNoStr 已选择的生产编号
+     * @throws IOException 
      * */
-    @Post("makeTableEdit")
-    public String makeTableEdit(@Param("primerProductList") PrimerProductList primerProductList,
-    		                @Param("boardNo") String boardNo,
-    		                Invocation inv) {
+    @Post("makeBoardEdit")
+	public Reply makeBoardEdit(@Param("flag") String flag,
+			                   @Param("boardNo") String boardNo,
+			                   @Param("productNoStr") String productNoStr, Invocation inv) throws IOException {
     	
-        List<PrimerProduct> primerProducts = primerProductList.getPrimerProducts();
-		for (int i = primerProducts.size() - 1; i >= 0; i--) {
-			//如果页面没有选择，则移除
-			if (((PrimerProduct)primerProducts.get(i)).getSelectFlag() == null) {
-				primerProducts.remove(i);
-			}
-		}
+    	//System.out.println(primerProducts);
+    	//List<PrimerProduct> primerProductList = JSON.parseArray(primerProducts, PrimerProduct.class);
+    	
+    	String jsonStr = synthesisService.makeBoard(boardNo, flag, productNoStr, inv);
         
-        //查询板号信息
-		Board board = boardRepository.findByBoardNo(boardNo);
-        
-		String reStr = "";
-		if (board != null) {
-			
-			System.out.println("============修改板号="+boardNo);
-			
-			synthesisService.makeTable(board);
-			
-			inv.addModel("board", board);
-			reStr = "makeTableEditOld";
-			
-		}else{
-			System.out.println("============新增板号="+boardNo);
-			
-			reStr = "makeTableEdit";
-		}
-		
-        inv.addModel("primerProductPages", primerProducts);
-        
-        return reStr;
+    	return Replys.with(jsonStr).as(Json.class);
     }
 
     

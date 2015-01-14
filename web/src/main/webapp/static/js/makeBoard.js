@@ -1,7 +1,9 @@
+var productNoArray = $('#productNoArray').val();
+var boardNo = $('#boardNo').val();
 $(function(){
     $('#boardSequence').on("click","li",sequenceClick);
     setBoardHeight();
-    makeBoard('holeList','board.json');
+    makeBoard('holeList','1');
     $("#holeList").on("click","div.hole_box",holesClick);
 })
 function sequenceClick(){
@@ -11,14 +13,19 @@ function setBoardHeight(){
     var h = $(document).height() - 117;
     $('#board_box').height(h);
 }
-function makeBoard(id,url){
+function makeBoard(id,flag){
     var board = $('#'+id);
     var tBody = '';
     board.empty();
     $.ajax({
-        url: url,
-        type:'GET',
+    	url : "/gene/synthesis/makeBoardEdit",
+        type:'POST',
         dataType:'json',
+		data:{
+			flag: flag,
+			boardNo: $('#boardNo').val(),
+			productNoStr: $('#productNoArray').val()
+        },
         success: function(data){
             var total = data.total;
             var rows = data.rows;
@@ -38,9 +45,40 @@ function makeBoard(id,url){
     });
 }
 function saveBoard(){
-    $.messager.alert('系统提示','合成板数据以保存！','',function(){
-        goToPage('productionData.html');
+	var boardNo = $.trim($('#boardNo').val());
+	
+	if(boardNo == ""){
+	//	alert("请输入板号。");
+		//return;
+	}
+
+	var holeNos = $('#holeList').find('div.hole');
+	var holeTags = $('#holeList').find('div.tag');
+	
+	alert(holeNos);
+	var boardHole= new Array(); 
+
+	boardHole[0]=new Array(holeNos.length); 
+
+	boardHole[1]=new Array(holeNos.length); 
+
+	var index = 0;
+	holeNos.each(function(i){
+        var hole = $(this).text();
+        var tag = $(holeTags.eq(i)).text();
+        if( hole != '' ){
+        	boardHole[0][index].holeNo = hole;
+        	boardHole[1][index].productNo = tag;
+        	index = index+1;
+        }
     });
+	
+	alert(boardHole);
+	
+	
+   // $.messager.alert('系统提示','合成板数据以保存！','',function(){
+     //   goToPage('productionData.jsp');
+   // });
 }
 function holesClick(){
     $(this).toggleClass('selected');
