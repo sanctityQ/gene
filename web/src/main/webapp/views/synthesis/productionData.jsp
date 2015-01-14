@@ -47,7 +47,7 @@
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>
-			<th data-options="field:'productNo',width:50,sortable:true">生产编号</th>
+			<th data-options="field:'productNo',width:65,sortable:true">生产编号</th>
 			<th data-options="field:'geneOrder',width:50,sortable:true">序列</th>
 			<th data-options="field:'odTotal',width:60,sortable:true">OD总量</th>
 			<th data-options="field:'odTB',width:60,sortable:true">OD/TB</th>
@@ -62,6 +62,27 @@
 		</tr>
 	</thead>
 </table>
+<div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
 <script src="${ctx}/static/js/productionData.js" ></script>
+<script type="text/javascript">
+$(function(){
+    var dg = $('#productionData');
+    var opts = dg.datagrid('options');
+    var pager = dg.datagrid('getPager');
+    pager.pagination({
+        pageSize:10,
+        onSelectPage:function(pageNum, pageSize){
+            opts.pageNumber = pageNum;
+            opts.pageSize = pageSize;
+
+            pager.pagination('refresh',{
+                pageNumber:pageNum,
+                pageSize:pageSize
+            });
+            getProducts();
+        }
+    });
+})
+</script>
 </body>
 </html>
