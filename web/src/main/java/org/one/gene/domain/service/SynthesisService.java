@@ -284,6 +284,13 @@ public class SynthesisService {
 			
 			addNewValue(primerProduct);
 	    	
+			//更新primer_product的操作类型和板号
+			if( primerProduct != null ){
+				primerProduct.setBoardNo(board.getBoardNo());
+				primerProduct.setOperationType(PrimerStatusType.synthesis);//待合成
+				primerProductRepository.save(primerProduct);
+			}
+			
 			boardHole = new BoardHole();
 			boardHole.setBoard(board);
 			boardHole.setHoleNo(holeNoArray[0]);
@@ -293,12 +300,6 @@ public class SynthesisService {
 			
 			boardHoles.add(boardHole);
 			
-			//更新primer_product的操作类型和板号
-			if( primerProduct != null ){
-				primerProduct.setBoardNo(board.getBoardNo());
-				primerProduct.setOperationType(PrimerStatusType.synthesis);//待合成
-				primerProductRepository.save(primerProduct);
-			}
 			
 			//组织操作记录表信息
 			primerProductOperation = new PrimerProductOperation();
@@ -415,7 +416,7 @@ public class SynthesisService {
      * 导出上机表文件
      * @throws IOException 
      * */
-	public EntityReply<File> exportPimerProduct(String boardNo, Invocation inv) throws IOException {
+	public EntityReply<File> exportMachineTable(String boardNo, Invocation inv) throws IOException {
 		
 		String tableContext = "";//
 		List<PrimerProduct> PrimerProducts = primerProductRepository.findByBoardNo(boardNo);
@@ -439,7 +440,7 @@ public class SynthesisService {
 		}   
 		
 		//生成文件
-		String fileName = boardNo + "_shangjibiao.txt";
+		String fileName = boardNo + "_shangjibiao.SEQ";
 		FileOutputStream   fos = new FileOutputStream(p.getProperty("sjbPath")+fileName);
 		OutputStreamWriter osw = new OutputStreamWriter(fos);
 		BufferedWriter     bw  = new BufferedWriter(osw);

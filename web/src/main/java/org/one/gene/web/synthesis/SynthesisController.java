@@ -204,20 +204,19 @@ public class SynthesisController {
     /**
      * 进入导出上机表页面
      * */
-    public String preExportPrimerProduct(){
-
-    	return "exportPrimerProduct";
+    public String machineTable(){
+    	return "machineTable";
     }
     
     /**
      * 导出上机表文件
      * */
-    public EntityReply<File> exportPrimerProduct(@Param("boardNo") String boardNo, Invocation inv){
+    @Post("exportMachineTable")
+    public EntityReply<File> exportMachineTable(@Param("boardNo") String boardNo, Invocation inv){
     	EntityReply<File> fileStr = null;
     	try {
-    		fileStr = synthesisService.exportPimerProduct(boardNo, inv);
+    		fileStr = synthesisService.exportMachineTable(boardNo, inv);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	return fileStr;
