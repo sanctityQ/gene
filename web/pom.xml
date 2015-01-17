@@ -267,6 +267,7 @@
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <configuration>
                     <path>/gene</path>
+
                     <useTestClasspath>true</useTestClasspath>
                     <port>9093</port>
                 </configuration>

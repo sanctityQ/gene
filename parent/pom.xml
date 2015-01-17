@@ -835,7 +835,7 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version>2.4</version>
                     <configuration>
-                        <warName>${project.artifactId}</warName>
+                        <warName>${project.build.finalName}</warName>
                     </configuration>
                 </plugin>
 
