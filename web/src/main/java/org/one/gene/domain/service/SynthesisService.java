@@ -1,19 +1,17 @@
 package org.one.gene.domain.service;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,12 +19,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import com.alibaba.fastjson.JSON;
+import javax.servlet.http.HttpServletResponse;
+
 import com.sinosoft.one.mvc.web.instruction.reply.transport.Raw;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
+import org.one.gene.domain.entity.PackTableHoleConfig;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerProductValue;
@@ -426,7 +430,7 @@ public class SynthesisService {
      * 导出上机表文件
      * @throws IOException 
      * */
-	public EntityReply<File> exportMachineTable(String boardNo, Invocation inv) throws IOException {
+	public void exportMachineTable(String boardNo, Invocation inv) throws IOException {
 		
 		String tableContext = "";//
 		List<PrimerProduct> PrimerProducts = primerProductRepository.findByBoardNo(boardNo);
@@ -440,32 +444,201 @@ public class SynthesisService {
 			i++;
 		}
     	
-		//读取上机表文件输出地址
-		InputStream inputStream  =   this .getClass().getClassLoader().getResourceAsStream("application.properties");    
-		Properties p = new  Properties(); 
-		try {
-			p.load(inputStream);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}   
+		//输出文件到客户端
+		String fileName = boardNo + "_MachineTable.SEQ";
+        HttpServletResponse response = inv.getResponse();
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        response.setContentType("application/text");
+        response.getWriter().write(tableContext); 
+        response.flushBuffer();
 		
-		//生成文件
-		String fileName = boardNo + "_shangjibiao.SEQ";
-		FileOutputStream   fos = new FileOutputStream(p.getProperty("sjbPath")+fileName);
-		OutputStreamWriter osw = new OutputStreamWriter(fos);
-		BufferedWriter     bw  = new BufferedWriter(osw);
-		bw.write(tableContext);
-		bw.newLine();
-		bw.close();
-		
-		File file = new File(p.getProperty("sjbPath"), fileName); 
-		
-		return Replys.with(file).as(Raw.class).downloadFileName(fileName);
     }
+
+    /**
+     * 导出分装表文件
+     * @throws IOException 
+     * */
+	public void exportPackTable(String boardNo, Invocation inv) throws IOException {
+		
+		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views\\downLoad\\template\\";
+		String excelFilePath = templatePath+"packTable.xls";
+		String configFilePath = templatePath+"packTableHoleConfig.txt";
+		
+		SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");//设置日期格式
+        String currentTime = df.format(new Date());
+        
+		//读取分装表孔配置信息
+		String encoding="GBK";
+        File fileTxt = new File(configFilePath);
+        InputStreamReader read = new InputStreamReader(new FileInputStream(fileTxt),encoding);//考虑到编码格式
+        BufferedReader bufferedReader = new BufferedReader(read);
+        
+        Map<String, PackTableHoleConfig> pthcMap = new HashMap<String, PackTableHoleConfig>();
+        
+        PackTableHoleConfig pthc = null;
+        String lineTxt = null;
+        while((lineTxt = bufferedReader.readLine()) != null){
+        	String[] configArray = lineTxt.split(",");
+        	pthc = new PackTableHoleConfig();
+        	pthc.setHoleNo(configArray[0]);
+        	pthc.setRow(Integer.parseInt(configArray[1]));
+        	pthc.setColumn(Integer.parseInt(configArray[2]));
+        	pthcMap.put(configArray[0], pthc);
+        	
+        }
+        read.close();
+
+		Board board = boardRepository.findByBoardNo(boardNo);
+        if (board != null){
+        	for(BoardHole boardHole:board.getBoardHoles()){
+        		if (pthcMap.get(boardHole.getHoleNo()) != null) {
+        			pthc = pthcMap.get(boardHole.getHoleNo());
+        			pthc.setPrimerProduct(boardHole.getPrimerProduct());
+        			pthcMap.put(boardHole.getHoleNo(), pthc);
+        		}
+        	}
+        }
+		
+		// 读取分装表模板 形成Excel
+		String strFileName = "packTable"+System.currentTimeMillis()+".xls";
+		
+		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(excelFilePath));
+		HSSFSheet sheet = workbook.getSheetAt(0);
+		FileOutputStream fos = null;
+		HSSFRow row = null;
+		HSSFCell cell = null;
+
+		BigDecimal totalBN= new BigDecimal(0);//总碱基数
+		PrimerProduct pp = null;
+		PrimerProduct ppLast = null;
+		for (Map.Entry<String, PackTableHoleConfig> map : pthcMap.entrySet()) {
+			pthc = map.getValue();
+			
+			pp = pthc.getPrimerProduct();
+			if( pp != null ){
+				
+				addNewValue(pp);
+				
+				totalBN = totalBN.add(pp.getTbn());
+				
+				row = sheet.getRow(pthc.getRow());
+				cell = row.getCell(pthc.getColumn()+1);// 生产编号
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				if(!"".equals(pp.getProductNo())){
+					cell.setCellValue(pp.getProductNo());
+				}else{
+					cell.setCellValue(pp.getOutProductNo());
+				}
+				cell = row.getCell(pthc.getColumn()+2);// 分装
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue(pp.getOdTB()+"OD*"+pp.getTb());
+				cell = row.getCell(pthc.getColumn()+3);// 体积
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue(pp.getOdTotal()+"");
+				
+				ppLast = pp;
+			}
+		}
+
+		
+		//板号
+		row = sheet.getRow(0);
+		cell = row.getCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(boardNo);
+		row = sheet.getRow(27);
+		cell = row.getCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(boardNo);
+		
+		String remark = "备注：  合成柱:    "+currentTime+"       总碱基="+totalBN+"    洗脱体积=       μl";
+		row = sheet.getRow(15);
+		cell = row.getCell(1);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(remark);
+		row = sheet.getRow(44);
+		cell = row.getCell(1);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(remark);
+		
+		
+		//制表
+		row = sheet.getRow(17);
+		cell = row.getCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue("操作员：");
+		cell = row.getCell(1);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue("时间："+currentTime);
+        if (ppLast != null){
+        	
+        	for (PrimerProductOperation ppo : ppLast.getPrimerProductOperations()) {
+				if (ppo.getType().equals(PrimerOperationType.synthesisSuccess)) {
+					//合成
+					cell = row.getCell(2);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("操作员："+ppo.getUserName());
+					cell = row.getCell(3);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
+				}else if (ppo.getType().equals(PrimerOperationType.ammoniaSuccess)) {
+					//氨解
+					cell = row.getCell(4);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("操作员："+ppo.getUserName());
+					cell = row.getCell(5);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
+				}else if (ppo.getType().equals(PrimerOperationType.purifySuccess)) {
+					//纯化
+					cell = row.getCell(6);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("操作员："+ppo.getUserName());
+					cell = row.getCell(7);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
+				}else if (ppo.getType().equals(PrimerOperationType.measureSuccess)) {
+					//测值
+					cell = row.getCell(8);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("操作员："+ppo.getUserName());
+					cell = row.getCell(9);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
+				}else if (ppo.getType().equals(PrimerOperationType.packSuccess)) {
+					//分装
+					cell = row.getCell(10);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("操作员："+ppo.getUserName());
+					cell = row.getCell(11);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
+				}else if (ppo.getType().equals(PrimerOperationType.deliverySuccess)) {
+					//发货
+					cell = row.getCell(12);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("操作员："+ppo.getUserName());
+					cell = row.getCell(13);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
+				}
+        		
+        	}
+        }
+		
+        //输出文件到客户端
+        HttpServletResponse response = inv.getResponse();
+        response.setContentType("application/x-msdownload");
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + strFileName + "\"");
+        OutputStream out=response.getOutputStream();
+        workbook.write(out);
+        out.flush();
+        out.close();
+    }
+
 	
 	//补充临时字段的值
 	public void addNewValue(PrimerProduct primerProduct) {
-    	//补充4个临时字段的值
     	for (PrimerProductValue pv : primerProduct.getPrimerProductValues()) {
     		if(pv.getType().equals(PrimerValueType.odTotal)){
     			primerProduct.setOdTotal(pv.getValue());
@@ -475,6 +648,10 @@ public class SynthesisService {
     			primerProduct.setNmolTotal(pv.getValue());
     		}else if(pv.getType().equals(PrimerValueType.nmolTB)){
     			primerProduct.setNmolTB(pv.getValue());
+    		}else if(pv.getType().equals(PrimerValueType.baseCount)){
+    			primerProduct.setTbn(pv.getValue());
+    		}else if(pv.getType().equals(PrimerValueType.tb)){
+    			primerProduct.setTb(pv.getValue());
     		}
     	}
 		

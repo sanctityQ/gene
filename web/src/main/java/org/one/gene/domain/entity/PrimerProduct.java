@@ -136,7 +136,8 @@ public class PrimerProduct implements java.io.Serializable {
     private BigDecimal nmolTotal;//NUML总量
     private BigDecimal nmolTB;//NUML/TB
     private BigDecimal tbn;//碱基数
-    private String midi;//修饰
+    private BigDecimal tb;//分装管数
+	private String midi;//修饰
 	private String selectFlag;//是否被选择，用于页面选择时使用，不存库
 
 	public PrimerProduct() {
@@ -434,6 +435,16 @@ public class PrimerProduct implements java.io.Serializable {
 
 	public void setTbn(BigDecimal tbn) {
 		this.tbn = tbn;
+	}
+	
+	@Transient
+    public BigDecimal getTb() {
+		return tb;
+	}
+
+
+	public void setTb(BigDecimal tb) {
+		this.tb = tb;
 	}
 	
 	@Transient

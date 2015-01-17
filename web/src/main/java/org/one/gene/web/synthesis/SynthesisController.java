@@ -210,16 +210,27 @@ public class SynthesisController {
     
     /**
      * 导出上机表文件
+     * @throws IOException 
      * */
     @Post("exportMachineTable")
-    public EntityReply<File> exportMachineTable(@Param("boardNo") String boardNo, Invocation inv){
-    	EntityReply<File> fileStr = null;
-    	try {
-    		fileStr = synthesisService.exportMachineTable(boardNo, inv);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    	return fileStr;
+    public void exportMachineTable(@Param("boardNo") String boardNo, Invocation inv) throws IOException{
+    	synthesisService.exportMachineTable(boardNo, inv);
+    }
+
+    /**
+     * 进入导出分装表页面
+     * */
+    public String packTable(){
+    	return "packTable";
+    }
+    
+    /**
+     * 导出分装表文件
+     * @throws IOException 
+     * */
+    @Post("exportPackTable")
+    public void exportPackTable(@Param("boardNo") String boardNo, Invocation inv) throws IOException{
+    	synthesisService.exportPackTable(boardNo, inv);
     }
     
     /**

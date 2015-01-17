@@ -1,4 +1,4 @@
-function exportMachineTable(){
+function exportPackTable(){
 	
 	var boardNo = $.trim($('#boardNo').val());
 	

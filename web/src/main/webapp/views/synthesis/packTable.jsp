@@ -19,7 +19,7 @@
 <script src="${ctx}/static/js/json2.js"></script>
 </head>
 <body>
-<form name="form" action="${ctx}/synthesis/exportMachineTable/" method="post">
+<form name="form" action="${ctx}/synthesis/exportPackTable/" method="post">
 	<div class="page_padding">
 		<div class="content_box">
 			<h2>导出分装表</h2>
