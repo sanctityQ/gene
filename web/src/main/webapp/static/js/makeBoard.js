@@ -79,7 +79,7 @@ function saveBoard(){
 			boardNo: boardNo,
 			boardType: $('#boardType').val()
         },
-		success : function(data) {
+		success:function(data) {
 			    $.messager.alert('系统提示','合成板数据已保存！','',function(){
 		           goToPage('/gene/views/synthesis/productionData.jsp');
 		        });

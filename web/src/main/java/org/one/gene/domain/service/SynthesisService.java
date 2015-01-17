@@ -255,12 +255,9 @@ public class SynthesisService {
 	public String submitBoard(String holeStr, String boardNo, String boardType, Invocation inv) {
     	
     	Board board = boardRepository.findByBoardNo(boardNo);
+    	List<PrimerProductOperation> primerProductOperationList = null;
     	if( board == null ){
     		board = new Board();
-    	}else{
-    		for(BoardHole boardHole:board.getBoardHoles()){
-    			boardHoleRepository.delete(boardHole);
-    		}
     	}
     	board.setBoardNo(boardNo);
     	board.setBoardType(boardType);
@@ -292,6 +289,11 @@ public class SynthesisService {
 			}
 			
 			boardHole = new BoardHole();
+			for(BoardHole boardHoleTemp:board.getBoardHoles()){
+				if(boardHoleTemp.getHoleNo().equals(holeNoArray[0])){
+					boardHole = boardHoleTemp;
+				}
+			}
 			boardHole.setBoard(board);
 			boardHole.setHoleNo(holeNoArray[0]);
 			boardHole.setPrimerProduct(primerProduct);
@@ -302,17 +304,25 @@ public class SynthesisService {
 			
 			
 			//组织操作记录表信息
+			
 			primerProductOperation = new PrimerProductOperation();
 			primerProductOperation.setPrimerProduct(boardHole.getPrimerProduct());
 			primerProductOperation.setType(PrimerOperationType.makeBoard);
 			primerProductOperation.setTypeDesc(PrimerOperationType.makeBoard.desc());
+			primerProductOperation.setBackTimes(0);
+			
+			primerProductOperationList = primerProduct.getPrimerProductOperations();
+			for (PrimerProductOperation ppo : primerProductOperationList) {
+				if (ppo.getPrimerProduct().getId() == primerProduct.getId()
+						&& ppo.getType().equals(primerProductOperation.getType())) {
+					primerProductOperation = ppo;
+				}
+			}
 			primerProductOperation.setUserCode("123");//后续从session取得
 			primerProductOperation.setUserName("张三");//后续从session取得
 			primerProductOperation.setCreateTime(new Date());
-			primerProductOperation.setBackTimes(0);
 			primerProductOperation.setFailReason("");
 			primerProductOperations.add(primerProductOperation);
-			
 		}
 		
 		board.setBoardHoles(boardHoles);

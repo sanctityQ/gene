@@ -17,6 +17,7 @@
 <script src="${ctx}/static/js/jquery.easyui.min.js" ></script>
 <script src="${ctx}/static/js/perfect-scrollbar.min.js" ></script>
 <script src="${ctx}/static/js/index.js" ></script>
+<script src="${ctx}/static/js/json2.js"></script>
 </head>
 <body>
 <div class="tools">
@@ -51,8 +52,5 @@
     <button class="btn btn-primary" onclick="saveBoard();" type="">保 存</button>
 </div>
 <script src="${ctx}/static/js/makeBoard.js" ></script>
-<script type="text/javascript">
-
-</script>
 </body>
 </html>

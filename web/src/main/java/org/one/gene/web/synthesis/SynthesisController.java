@@ -142,7 +142,7 @@ public class SynthesisController {
     	
     	synthesisService.submitBoard(holeStr, boardNo, boardType, inv);
     	
-    	return Replys.with("").as(Json.class);
+    	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
     }
     
     @Post("queryBoard")
