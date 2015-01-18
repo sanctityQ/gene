@@ -174,14 +174,14 @@ public class OrderController {
     }
     
     @Post("save")
-    public String save(@Param("primerProducts") List<Order> primerProducts,Invocation inv) throws IllegalStateException, IOException {
+    public String save(@Param("primerProducts") List<PrimerProduct> primerProducts,Invocation inv) throws IllegalStateException, IOException {
 //    	System.out.println(primerProducts);
     	//List<Order> orders = JSON.parseArray(primerProducts, Order.class);
 //    	for(Order order:orders){
 //			orderRepository.save(order);
 //		}
 
-        //primerProductRepository.save(primerProducts);
+        primerProductRepository.save(primerProducts);
 
         return "";
     }

@@ -41,7 +41,6 @@ function getChanesSave(){
 
     $.ajax({
 		type : "post",
-		contentType: 'application/json',
         url: ctx + "/order/save",
 		dataType : "json",
         data: {"primerProducts": primerProducts},
