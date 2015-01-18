@@ -9,7 +9,7 @@
 <link href="${ctx}/static/css/icon.css" type="text/css" rel="stylesheet" />
 <link href="${ctx}/static/css/perfect-scrollbar.min.css" type="text/css" rel="stylesheet" />
 <link href="${ctx}/static/css/master.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+<link rel="stylesheet" type="text/css" href="${ctx}/static/css/font-awesome.min.css" />
 <!--[if IE 7]>
   <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
 <![endif]-->
@@ -23,30 +23,50 @@
 	<table width="100%">
 		<tr>
 			<td align="right">订单号:</td>
-			<td><input class="inp_text" type="text" value="" style="width: 60%" /></td>
+			<td><input id="orderNo" class="inp_text" type="text" value="" style="width: 60%" /></td>
 			<td align="right">客户代码:</td>
-			<td><input class="inp_text" type="text" value="" style="width: 60%" /></td>
-			<td><button type="button" class="btn">查询</button></td>
+			<td><input id="customerCode" class="inp_text" type="text" value="" style="width: 60%" /></td>
+			<td><button type="button" class="btn" onclick="getExamineInfo()">查询</button></td>
 
 		</tr>
 	</table>
 </div>
-<table id="orderList" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true,url: 'datagrid_data1.json'">
+<table id="orderList" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true">
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>
-			<th data-options="field:'itemid',width:80,sortable:true">订单号</th>
-			<th data-options="field:'productid',width:80,sortable:true">客户姓名</th>
-			<th data-options="field:'listprice',width:80,sortable:true">生产编号</th>
-			<th data-options="field:'status',width:80,sortable:true">引物名称</th>
-			<th data-options="field:'attr1',width:80,sortable:true">碱基总数</th>
-			<th data-options="field:'unitcost',width:80,sortable:true">状态</th>
-			<th data-options="field:'attr3',width:80,sortable:true">导入时间</th>
-			<th data-options="field:'attr4',width:80,sortable:true">修改时间</th>
-			<th data-options="field:'_operate',align:'center',formatter:formatOper">操作</th>
+			<th data-options="field:'orderNo',width:80,sortable:true">订单号</th>
+			<th data-options="field:'customerName',width:80,sortable:true">客户姓名</th>
+			<th data-options="field:'productNoMinToMax',width:80,sortable:true">生产编号</th>
+			<th data-options="field:'tbnTotal',width:80,sortable:true">碱基总数</th>
+			<th data-options="field:'status',width:80,sortable:true">状态</th>
+			<th data-options="field:'createTime',width:80,sortable:true">导入时间</th>
+			<th data-options="field:'modifyTime',width:80,sortable:true">修改时间</th>
+			<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>
 		</tr>
 	</thead>
 </table>
 <script src="${ctx}/views/order/js/orderExamine.js" ></script>
+<script type="text/javascript">
+examineIni();
+$(function(){
+    var dg = $('#orderList');
+    var opts = dg.datagrid('options');
+    var pager = dg.datagrid('getPager');
+    pager.pagination({
+        pageSize:10,
+        onSelectPage:function(pageNum, pageSize){
+            opts.pageNumber = pageNum;
+            opts.pageSize = pageSize;
+
+            pager.pagination('refresh',{
+                pageNumber:pageNum,
+                pageSize:pageSize
+            });
+            getExamineInfo();
+        }
+    });
+})
+</script>
 </body>
 </html>

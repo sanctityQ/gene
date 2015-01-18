@@ -18,7 +18,7 @@ function bigendEditing(){
 function appendRow(){
     bigToSmall.datagrid('appendRow',{
         row: {
-        	productNo: '新生产编号'
+        	productNo: ''
         }
     });
     var ind = $(".datagrid-btable").find('tr:last').attr("datagrid-row-index");
@@ -41,6 +41,7 @@ function getChanesSave(){
 
     $.ajax({
 		type : "post",
+		contentType: 'application/json',
         url: ctx + "/order/save",
 		dataType : "json",
         data: {"primerProducts": primerProducts},

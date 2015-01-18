@@ -68,11 +68,11 @@ var ajaxFileUpload=function() {
             	if(data != null){
             		//此处没返回两个不同类型的对象处理。待优化
             		if(data.orderNo!=undefined){
-            			goToPage(ctx+'/views/order/orderInfo.jsp?orderNo='+data.orderNo);
+            			goToPage('/gene/views/order/orderInfo.jsp?orderNo='+data.orderNo);
             			orderNo = data.orderNo;
 	            	}else{
 	            		errors=data;
-	            		goToPage(ctx+'/views/order/importError.jsp');
+	            		goToPage('/gene/views/order/importError.jsp');
 	            	}
             	}
             },

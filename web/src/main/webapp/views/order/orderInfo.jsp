@@ -22,6 +22,7 @@
 <script src="${ctx}/static/js/json2.js"></script>
 <script type="text/javascript">
 var orderNo = ${orderNo};
+var ctx = '${ctx}';
 </script>
 </head>
 <body>

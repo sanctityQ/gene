@@ -13,7 +13,6 @@ import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerType;
-import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.excel.OrderCaculate;
 import org.one.gene.excel.OrderExcelPase;
 import org.one.gene.repository.CustomerRepository;
@@ -68,7 +67,7 @@ public class OrderService {
     	//外部订单号何处收集,这里不能设置外部订单号！！！
     	order.setOutOrderNo(order.getOrderNo());
     	order.setModifyTime(new Date());
-    	order.setStatus(Byte.parseByte("00"));//初始状态
+    	order.setStatus(Byte.parseByte("0"));//初始状态
         if(order.getCreateTime() == null){
             order.setCreateTime(new Date());
         }
@@ -77,7 +76,7 @@ public class OrderService {
         for (PrimerProduct primerProduct : order.getPrimerProducts()) {
             //后续补充，获取登录操作人员的归属机构。
             primerProduct.setComCode("11000000");
-            primerProduct.setOperationType(PrimerStatusType.orderInit);//!!!是初始状态不是审核通过状态
+            primerProduct.setOperationType(PrimerType.PrimerStatusType.orderInit);//!!!是初始状态不是审核通过状态
             primerProduct.setOrder(order);
             primerProduct.getPrimerProductOperations().add(createPrimerProductOperation(primerProduct));
         }
@@ -169,7 +168,6 @@ public class OrderService {
     	order.setCustomerName(customer.getName());
     	//后续补充，获取登录操作人员的归属机构。
     	order.setComCode("11000000");
-    	order.setStatus(Byte.parseByte("1"));
     	order.setType("00");
     	order.setFileName(fileName);
     	order.setCreateTime(new Date());
@@ -183,7 +181,7 @@ public class OrderService {
     	PrimerProductOperation primerProductOperation = new PrimerProductOperation();
     	primerProductOperation.setPrimerProduct(primerProduct);
     	primerProductOperation.setType(PrimerType.PrimerOperationType.orderInit);
-    	primerProductOperation.setTypeDesc("订单初始化");
+    	primerProductOperation.setTypeDesc(PrimerType.PrimerOperationType.orderInit.desc());
     	primerProductOperation.setBackTimes(0);
     	//默认值，后续调整
     	primerProductOperation.setUserCode("19820833");
@@ -228,4 +226,27 @@ public class OrderService {
     public ArrayList<String> getExcelPaseErrors(String path,int ignoreRows, int sheetIndex) throws FileNotFoundException, IOException{
     	return orderExcelPase.getExcelPaseErrors(path,1,2);
     }
+    
+    /**
+     * 订单审核
+     * @param orderNo
+     */
+    public void examine(String orderNo,String failReason){
+    	Order order = orderRepository.findByOrderNo(orderNo);
+    	for (PrimerProduct primerProduct : order.getPrimerProducts()) {
+    		primerProduct.setOperationType(PrimerType.PrimerStatusType.orderCheck);
+    		for (PrimerProductOperation primerProductOperation : primerProduct.getPrimerProductOperations()) {
+    			if(!"".equals(failReason)){
+    			  primerProductOperation.setType(PrimerType.PrimerOperationType.orderCheckFailure);
+        		  primerProductOperation.setTypeDesc(PrimerType.PrimerOperationType.orderCheckFailure.desc());
+        		  primerProductOperation.setFailReason(failReason);
+    			}else{
+    			  primerProductOperation.setType(PrimerType.PrimerOperationType.orderCheckSuccess);
+    			  primerProductOperation.setTypeDesc(PrimerType.PrimerOperationType.orderCheckSuccess.desc());
+    			}
+    		}
+    	}
+    	orderRepository.save(order);
+    }
+  
 }
