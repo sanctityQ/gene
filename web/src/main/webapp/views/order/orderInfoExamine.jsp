@@ -108,6 +108,10 @@ var orderNo = ${orderNo};
 					text:'确定',
 					handler:function(){
 					    var text = $('#inputCause .inp_text').val();
+					    if(text==''){
+					    	alert('请您录入失败原因!');
+					    	return;
+					    }
 						$('#inputCause').dialog('close');
 						examine(${orderNo},text);
 					}

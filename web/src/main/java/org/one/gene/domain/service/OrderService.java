@@ -233,6 +233,14 @@ public class OrderService {
      */
     public void examine(String orderNo,String failReason){
     	Order order = orderRepository.findByOrderNo(orderNo);
+    	/**
+    	 * 0代表初始 1代表审核通过 2代表审核不通过呗
+    	 */
+    	if(!"".equals(failReason)){
+    		order.setStatus(Byte.parseByte("2"));
+    	}else{
+    		order.setStatus(Byte.parseByte("1"));
+    	}
     	for (PrimerProduct primerProduct : order.getPrimerProducts()) {
     		primerProduct.setOperationType(PrimerType.PrimerStatusType.orderCheck);
     		for (PrimerProductOperation primerProductOperation : primerProduct.getPrimerProductOperations()) {
