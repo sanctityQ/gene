@@ -85,11 +85,11 @@ public class SynthesisService {
 
 //    @Transactional(readOnly = false)
     //安排合成查询
-	public Page<PrimerProduct> makeBoardQuery(String customer_code,
+	public Page<PrimerProduct> makeBoardQuery(String customercode,
 			String modiFlag, String tbn1, String tbn2, String purifytype,
 			Pageable pageable) {
 
-		Page<PrimerProduct> primerProductPage = primerProductRepository.selectPrimerProduct(customer_code, modiFlag, tbn1, tbn2, purifytype, pageable);
+		Page<PrimerProduct> primerProductPage = primerProductRepository.selectPrimerProduct(customercode, modiFlag, tbn1, tbn2, purifytype, pageable);
 		
 		// 查询primer_product_value
 		for (PrimerProduct primerProduct : primerProductPage.getContent()) {
@@ -136,15 +136,16 @@ public class SynthesisService {
 	}
 
     //到制板页面
-	public String makeBoard(String boardNo, String flag, String productNoStr, Invocation inv) throws IOException{
+	public String makeBoard(String boardNo, String flag, String oldFlag,
+			String productNoStr, Invocation inv) throws IOException {
 		
 		System.out.println("=====页面选择的生产编号=" + productNoStr);
-		
+		int totalCount = 0;
 		Map<String, String> productNoMap = new HashMap<String, String>();
 		String[] productNoStrArray = productNoStr.split(",");
 		for (int i = 0; i < productNoStrArray.length; i++) {
-			
 			productNoMap.put(productNoStrArray[i], productNoStrArray[i]);
+			totalCount += 1;
 		}
 		
 		//查询板号信息
@@ -153,9 +154,16 @@ public class SynthesisService {
 		if (board != null) {
 			for (BoardHole boardHole : board.getBoardHoles()) {
 				boardHoleMap.put(boardHole.getHoleNo(), boardHole.getPrimerProduct().getProductNo());
+				totalCount += 1;
+			}
+			if("1".equals(oldFlag)){//模糊查询的板号才使用已有的板类型
+				flag = board.getBoardType();
 			}
 		}
 		
+		if(totalCount>96){
+			totalCount = 96;
+		}
 		ArrayList holeNoList = new ArrayList();
 		ArrayList holeList = new ArrayList();
 		
@@ -171,7 +179,8 @@ public class SynthesisService {
 		String holeNo = "";
 		String productNo = "";
 		String jsonStr = "{\r";
-		jsonStr += "\"total\":96,\r";
+		jsonStr += "\"boardType\":"+flag+",\r";
+		jsonStr += "\"total\":"+totalCount+",\r";
 		jsonStr += "\"rows\":[\r";
 		
 		//竖板
