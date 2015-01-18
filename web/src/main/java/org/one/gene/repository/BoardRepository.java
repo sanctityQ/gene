@@ -20,5 +20,7 @@ public interface BoardRepository extends PagingAndSortingRepository<Board, Long>
 			+ "#if(:boardNo != '') { and a.`board_no` like :boardNo} ")
 	List<Board> selectOrderByNo(@Param("boardNo") String boardNo);
 	
+	@SQL("select * from `board`  where `board_no` like :boardNo ")
+	List<Board> vagueSeachBoard(@Param("boardNo") String boardNo);
 }
 

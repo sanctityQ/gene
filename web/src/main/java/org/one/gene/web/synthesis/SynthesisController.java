@@ -1,33 +1,23 @@
 package org.one.gene.web.synthesis;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import javax.servlet.ServletConfig;
 
-
-import com.alibaba.fastjson.JSON;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
 import com.sinosoft.one.mvc.web.annotation.Path;
 import com.sinosoft.one.mvc.web.annotation.rest.Post;
 
 import com.sinosoft.one.mvc.web.annotation.rest.Get;
-import com.sinosoft.one.mvc.web.instruction.reply.EntityReply;
 import com.sinosoft.one.mvc.web.instruction.reply.Reply;
 import com.sinosoft.one.mvc.web.instruction.reply.Replys;
 import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
 
 
+import org.apache.commons.lang.StringUtils;
 import org.one.gene.domain.entity.Board;
-import org.one.gene.domain.entity.BoardHole;
-import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
-import org.one.gene.domain.entity.PrimerProductOperation;
-import org.one.gene.domain.entity.PrimerProductValue;
 import org.one.gene.domain.service.SynthesisService;
 import org.one.gene.repository.BoardHoleRepository;
 import org.one.gene.repository.BoardRepository;
@@ -35,12 +25,10 @@ import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductOperationRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.repository.PrimerProductValueRepository;
-import org.one.gene.web.order.PrimerProductList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.multipart.MultipartFile;
 
 @Path
 public class SynthesisController {
@@ -100,7 +88,7 @@ public class SynthesisController {
 			                     @Param("pageSize") Integer pageSize,
 					    		 Invocation inv){
     	
-        if(pageNo == null){
+        if(pageNo == null || pageNo ==0){
             pageNo = 1;
         }
 
@@ -123,10 +111,11 @@ public class SynthesisController {
      * */
     @Post("makeBoardEdit")
 	public Reply makeBoardEdit(@Param("flag") String flag,
+			                   @Param("oldFlag") String oldFlag,
 			                   @Param("boardNo") String boardNo,
 			                   @Param("productNoStr") String productNoStr, Invocation inv) throws IOException {
     	
-    	String jsonStr = synthesisService.makeBoard(boardNo, flag, productNoStr, inv);
+    	String jsonStr = synthesisService.makeBoard(boardNo, flag, oldFlag, productNoStr, inv);
         
     	return Replys.with(jsonStr).as(Json.class);
     }
@@ -243,6 +232,18 @@ public class SynthesisController {
     	
     	inv.addModel("primerProduct", primerProduct);
     	return "viewPrimerProduct";
+    }
+    
+    /**
+     * 模糊查询板信息
+     * */
+    @Post("vagueSeachBoard")
+    public Reply vagueSeachBoard(@Param("boardNo") String boardNo, Invocation inv){
+		if (!StringUtils.isBlank(boardNo)) {
+			boardNo = "%" + boardNo + "%";
+        }
+		List<Board> boards = boardRepository.vagueSeachBoard(boardNo);
+    	return Replys.with(boards).as(Json.class);
     }
     
 }

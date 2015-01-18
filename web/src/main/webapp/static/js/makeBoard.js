@@ -3,7 +3,7 @@ var boardNo = $('#boardNo').val();
 $(function(){
     $('#boardSequence').on("click","li",sequenceClick);
     setBoardHeight();
-    makeBoard('holeList','1');
+    makeBoard('holeList','1','0');
     $("#holeList").on("click","div.hole_box",holesClick);
 })
 function sequenceClick(){
@@ -13,10 +13,8 @@ function setBoardHeight(){
     var h = $(document).height() - 117;
     $('#board_box').height(h);
 }
-function makeBoard(id,flag){
+function makeBoard(id,flag,oldFlag){
 	
-	$('#boardType').val(flag);
-    
 	var board = $('#'+id);
     var tBody = '';
     board.empty();
@@ -26,10 +24,12 @@ function makeBoard(id,flag){
         dataType:'json',
 		data:{
 			flag: flag,
+			oldFlag:oldFlag,
 			boardNo: $('#boardNo').val(),
 			productNoStr: $('#productNoArray').val()
         },
         success: function(data){
+            $('#boardType').val(data.boardType);
             var total = data.total;
             var rows = data.rows;
             $('#totals').text(total);
