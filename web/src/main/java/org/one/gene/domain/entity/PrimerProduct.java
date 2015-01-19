@@ -8,22 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
@@ -461,24 +446,39 @@ public class PrimerProduct implements java.io.Serializable {
         return ToStringBuilder.reflectionToString(this);
     }
 
+    @PostLoad
+    public void init(){
+        for (PrimerProductValue primerProductValue : this.getPrimerProductValues()) {
+            this.primerProductValueMap.put(primerProductValue.getType(),primerProductValue);
+        }
+    }
+
+    @Transient
+    public BigDecimal getPrimerRealValue(PrimerValueType type){
+
+        return this.primerProductValueMap.get(type).getValue();
+    }
+
 
     @PrePersist
     @PreUpdate
     public void generatePrimerProductValue(){
 
-
-        //初始化数据
-        for (PrimerValueType type : PrimerValueType.values()) {
-            primerProductValueMap.put(type,type.create(this));
-        }
-
         if (this.getPrimerProductValues().isEmpty()) {
+            //初始化数据
+            for (PrimerValueType type : PrimerValueType.values()) {
+                primerProductValueMap.put(type,type.create(this));
+            }
             //重新设置
             this.setPrimerProductValues(Lists.newArrayList(primerProductValueMap.values()));
 
         } else {
 
             if(this.getOperationType()== PrimerStatusType.orderInit){
+                //初始化数据
+                for (PrimerValueType type : PrimerValueType.values()) {
+                    primerProductValueMap.put(type,type.create(this));
+                }
                 //补ID
                 for (PrimerProductValue pv : this.getPrimerProductValues()) {
                     PrimerProductValue npv = primerProductValueMap.get(pv.getType());
