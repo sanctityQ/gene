@@ -374,6 +374,9 @@ public class PrimerProduct implements java.io.Serializable {
 
 	@Transient
 	public BigDecimal getOdTotal() {
+        if(this.odTotal == null){
+            this.odTotal = this.getPrimerRealValue(PrimerValueType.odTotal);
+        }
 		return odTotal;
 	}
 
@@ -384,6 +387,9 @@ public class PrimerProduct implements java.io.Serializable {
 
 	@Transient
 	public BigDecimal getOdTB() {
+        if(this.odTB == null){
+            this.odTB = this.getPrimerRealValue(PrimerValueType.odTB);
+        }
 		return odTB;
 	}
 
@@ -394,6 +400,9 @@ public class PrimerProduct implements java.io.Serializable {
 
 	@Transient
 	public BigDecimal getNmolTotal() {
+        if(this.nmolTotal == null){
+            this.nmolTotal = this.getPrimerRealValue(PrimerValueType.nmolTotal);
+        }
 		return nmolTotal;
 	}
 
@@ -404,7 +413,10 @@ public class PrimerProduct implements java.io.Serializable {
 
 	@Transient
 	public BigDecimal getNmolTB() {
-		return nmolTB;
+        if (this.nmolTB == null) {
+            this.nmolTB = this.getPrimerRealValue(PrimerValueType.nmolTB);
+        }
+        return nmolTB;
 	}
 
 
@@ -451,11 +463,6 @@ public class PrimerProduct implements java.io.Serializable {
 	public void setMidi(String midi) {
 		this.midi = midi;
 	}
-	
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
 
     @PostLoad
     public void init(){
@@ -466,9 +473,10 @@ public class PrimerProduct implements java.io.Serializable {
 
     @Transient
     public BigDecimal getPrimerRealValue(PrimerValueType type){
-
         return this.primerProductValueMap.get(type).getValue();
     }
+
+
 
 
     @PrePersist
@@ -506,6 +514,7 @@ public class PrimerProduct implements java.io.Serializable {
     }
 
     private Map<PrimerValueType,PrimerProductValue> primerProductValueMap = Maps.newEnumMap(PrimerValueType.class);
+
 }
 
 

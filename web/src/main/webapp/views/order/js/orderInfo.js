@@ -45,7 +45,7 @@ function getChanesSave(){
 		dataType : "html",
         data: {
         	"primerProducts": primerProducts,
-        	orderNo:orderNo
+        	 "orderNo":orderNo
         	},
 		success : function(data) {
 			if(data == "sucess"){
@@ -110,7 +110,7 @@ function copyRow(e){
 var getProduct=function(orderNo){
 	$.ajax({
 		type : "post",
-		url : "/gene/order/productQuery",
+		url : ctx + "/order/productQuery",
 		dataType : "json",
 		data:"orderNo="+orderNo,
 		success : function(data) {

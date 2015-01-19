@@ -50,7 +50,7 @@ public class Order extends IdEntity implements java.io.Serializable {
     /**
      * 订单状态.
      */
-    private Byte status;
+    private Integer status;
     /**
      * 订单类型: 00-合成.
      */
@@ -150,11 +150,11 @@ public class Order extends IdEntity implements java.io.Serializable {
     }
 
     @Column(name = "`status`")
-    public Byte getStatus() {
+    public Integer getStatus() {
         return this.status;
     }
 
-    public void setStatus(Byte status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

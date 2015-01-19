@@ -175,9 +175,9 @@ public class OrderController {
     
     @Post("save")
     public Object save(@Param("primerProducts") List<PrimerProduct> primerProducts,@Param("orderNo") String orderNo,Invocation inv) throws IllegalStateException, IOException {
-
-    	orderService.savePrimerProducts(primerProducts);
-
+        Order order = orderRepository.findByOrderNo(orderNo);
+        order.setPrimerProducts(primerProducts);
+        orderService.save(order);
     	return Replys.with("sucess").as(Text.class);  
     }
     
@@ -240,7 +240,7 @@ public class OrderController {
      */
     @Post("examine")
     public Object examine(@Param("orderNo") String orderNo,@Param("failReason") String failReason,Invocation inv) throws Exception {
-    	orderService.examine(orderNo,failReason);
+        orderService.examine(orderNo,failReason);
     	return Replys.with("sucess").as(Text.class);
     }
     

@@ -8,11 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.one.gene.domain.entity.Customer;
-import org.one.gene.domain.entity.Order;
-import org.one.gene.domain.entity.PrimerProduct;
-import org.one.gene.domain.entity.PrimerProductOperation;
-import org.one.gene.domain.entity.PrimerType;
+import org.one.gene.domain.entity.*;
 import org.one.gene.excel.OrderCaculate;
 import org.one.gene.excel.OrderExcelPase;
 import org.one.gene.repository.CustomerRepository;
@@ -54,7 +50,6 @@ public class OrderService {
 	
 	/**
 	 * 订单入库
-	 * @param customer
 	 * @param order
 	 * @return
 	 * @throws IllegalStateException
@@ -67,22 +62,32 @@ public class OrderService {
     	//外部订单号何处收集,这里不能设置外部订单号！！！
     	order.setOutOrderNo(order.getOrderNo());
     	order.setModifyTime(new Date());
-    	order.setStatus(Byte.parseByte("0"));//初始状态
+    	order.setStatus(0);//初始状态
         if(order.getCreateTime() == null){
             order.setCreateTime(new Date());
         }
     	
     	//存储生产数据
         for (PrimerProduct primerProduct : order.getPrimerProducts()) {
-            //后续补充，获取登录操作人员的归属机构。
-            primerProduct.setComCode("11000000");
-            primerProduct.setOperationType(PrimerType.PrimerStatusType.orderInit);//!!!是初始状态不是审核通过状态
-            primerProduct.setOrder(order);
-            primerProduct.getPrimerProductOperations().add(createPrimerProductOperation(primerProduct));
-        }
-       
-        
-        orderRepository.save(order);
+
+			//后续补充，获取登录操作人员的归属机构。
+			primerProduct.setComCode("11000000");
+			primerProduct.setOperationType(PrimerType.PrimerStatusType.orderInit);//!!!是初始状态不是审核通过状态
+			primerProduct.setOrder(order);
+			if (primerProduct.getPrimerProductOperations().isEmpty()) {
+				primerProduct.getPrimerProductOperations().add(createPrimerProductOperation(primerProduct));
+			}
+
+			for (PrimerProductValue pv : primerProduct.getPrimerProductValues()) {
+				pv.setPrimerProduct(primerProduct);
+			}
+
+			for (PrimerProductOperation po : primerProduct.getPrimerProductOperations()) {
+				po.setPrimerProduct(primerProduct);
+			}
+		}
+
+		orderRepository.save(order);
 
     }
 
@@ -237,9 +242,9 @@ public class OrderService {
     	 * 0代表初始 1代表审核通过 2代表审核不通过呗
     	 */
     	if(!"".equals(failReason)){
-    		order.setStatus(Byte.parseByte("2"));
+    		order.setStatus(2);
     	}else{
-    		order.setStatus(Byte.parseByte("1"));
+    		order.setStatus(1);
     	}
     	for (PrimerProduct primerProduct : order.getPrimerProducts()) {
     		primerProduct.setOperationType(PrimerType.PrimerStatusType.orderCheck);
@@ -256,10 +261,5 @@ public class OrderService {
     	}
     	orderRepository.save(order);
     }
-    
-    @Transactional(readOnly=false)
-    public void savePrimerProducts(List<PrimerProduct> primerProducts){
-    	primerProductRepository.save(primerProducts);
-    }
-  
+
 }
