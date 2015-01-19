@@ -256,5 +256,10 @@ public class OrderService {
     	}
     	orderRepository.save(order);
     }
+    
+    @Transactional(readOnly=false)
+    public void savePrimerProducts(List<PrimerProduct> primerProducts){
+    	primerProductRepository.save(primerProducts);
+    }
   
 }

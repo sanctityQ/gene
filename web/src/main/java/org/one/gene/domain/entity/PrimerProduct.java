@@ -477,19 +477,21 @@ public class PrimerProduct implements java.io.Serializable {
     @PreUpdate
     public void generatePrimerProductValue(){
 
-
-        //初始化数据
-        for (PrimerValueType type : PrimerValueType.values()) {
-            primerProductValueMap.put(type,type.create(this));
-        }
-
-        if (this.getPrimerProductValues().isEmpty()) {
+    	if (this.getPrimerProductValues().isEmpty()) {
+            //初始化数据
+            for (PrimerValueType type : PrimerValueType.values()) {
+                primerProductValueMap.put(type,type.create(this));
+            }
             //重新设置
             this.setPrimerProductValues(Lists.newArrayList(primerProductValueMap.values()));
 
         } else {
 
             if(this.getOperationType()== PrimerStatusType.orderInit){
+                //初始化数据
+                for (PrimerValueType type : PrimerValueType.values()) {
+                    primerProductValueMap.put(type,type.create(this));
+                }
                 //补ID
                 for (PrimerProductValue pv : this.getPrimerProductValues()) {
                     PrimerProductValue npv = primerProductValueMap.get(pv.getType());

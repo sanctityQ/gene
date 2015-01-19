@@ -37,15 +37,18 @@ function onClickRow(index){
 }
 function getChanesSave(){
     var primerProducts = bigToSmall.datagrid('getData').rows;
-    console.log(primerProducts);
+    //console.log(primerProducts);
 
     $.ajax({
 		type : "post",
         url: ctx + "/order/save",
-		dataType : "json",
-        data: {"primerProducts": primerProducts},
+		dataType : "html",
+        data: {
+        	"primerProducts": primerProducts,
+        	orderNo:orderNo
+        	},
 		success : function(data) {
-			if(data != null){
+			if(data == "sucess"){
 				goToPage('/gene/views/order/orderList.jsp');
 			}
 		},
