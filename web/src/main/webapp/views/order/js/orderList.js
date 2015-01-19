@@ -3,18 +3,45 @@ function formatOper(val,row,index){
     return '&nbsp;<a href="javascript:;" onclick="lookOrder('+row.id+','+index+')"><i class="icon-book"></i>查看</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;"  onclick="modifyOrder('+row.id+','+index+')"><i class="icon-pencil"></i>修改</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;" onclick="deleteOrder('+row.id+','+index+')"><i class="icon-trash"></i>删除</a>&nbsp;';
 }
 
-
+/**
+ * 订单列表初始化
+ */
+var orderInfoIni=function(){
+	$.ajax({
+		type : "post",
+		url : "/gene/order/query",
+		dataType : "json",
+		success : function(data) {
+			if(data != null){
+				var total = data.totalElements;
+        		var reSultdata = data.content;
+        		var jsonsource = {total: total, rows: reSultdata};
+        		$('#orderList').datagrid("loadData",jsonsource);
+			}
+		},
+		error:function(){
+			alert("无法获取信息");
+		}
+	});
+}
 /**
  * 获取订单信息
  */
 var getOrderInfo=function(){
+    var gridOpts = $('#orderList').datagrid('getPager').data("pagination").options;
 	var orderNo = $("#orderNo").val();
 	var customerCode = $("#customerCode").val();
 	$.ajax({
 		type : "post",
 		url : "/gene/order/query",
 		dataType : "json",
-		data:"orderNo="+orderNo+"&customerCode="+customerCode,
+		data:
+		{
+			orderNo:orderNo,
+	        customerCode:customerCode,
+			pageNo: gridOpts.pageNumber,
+			pageSize: gridOpts.pageSize
+        },
 		success : function(data) {
 			if(data != null){
 				var total = data.totalElements;

@@ -50,9 +50,28 @@
 		</tr>
 	</thead>
 </table>
+<div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
 <script src="${ctx}/views/order/js/orderList.js" ></script>
 <script type="text/javascript">
-getOrderInfo();
+orderInfoIni();
+$(function(){
+    var dg = $('#orderList');
+    var opts = dg.datagrid('options');
+    var pager = dg.datagrid('getPager');
+    pager.pagination({
+        pageSize:10,
+        onSelectPage:function(pageNum, pageSize){
+            opts.pageNumber = pageNum;
+            opts.pageSize = pageSize;
+
+            pager.pagination('refresh',{
+                pageNumber:pageNum,
+                pageSize:pageSize
+            });
+            getOrderInfo();
+        }
+    });
+})
 </script>
 </body>
 </html>

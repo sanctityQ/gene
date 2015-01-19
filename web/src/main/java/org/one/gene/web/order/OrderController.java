@@ -29,7 +29,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
@@ -175,16 +174,11 @@ public class OrderController {
     }
     
     @Post("save")
-    public String save(@Param("primerProducts") List<PrimerProduct> primerProducts,Invocation inv) throws IllegalStateException, IOException {
-//    	System.out.println(primerProducts);
-    	//List<Order> orders = JSON.parseArray(primerProducts, Order.class);
-//    	for(Order order:orders){
-//			orderRepository.save(order);
-//		}
+    public Object save(@Param("primerProducts") List<PrimerProduct> primerProducts,@Param("orderNo") String orderNo,Invocation inv) throws IllegalStateException, IOException {
 
-        primerProductRepository.save(primerProducts);
+    	orderService.savePrimerProducts(primerProducts);
 
-        return "";
+    	return Replys.with("sucess").as(Text.class);  
     }
     
     /**
@@ -208,11 +202,11 @@ public class OrderController {
         if(pageSize == null){
             pageSize = 10;
         }
-
         Pageable pageable = new PageRequest(pageNo,pageSize);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
         searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
+        searchParams.put(SearchFilter.Operator.EQ+"_status","0");
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         
@@ -235,21 +229,19 @@ public class OrderController {
     	return Replys.with("sucess").as(Text.class);  
     }
     
-    @Get("modify/{orderNo}") 
-    public String modify(@Param("orderNo") String orderNo,Invocation inv){
-    	Order order = orderRepository.findByOrderNo(orderNo);
-    	Customer customer = orderService.findCustomer(order.getCustomerCode());
-    	inv.addModel("customer", customer);
-    	inv.addModel("order", order);
-    	inv.addModel("primerProducts", order.getPrimerProducts());
-    	return "upLoadModify";
-    }
-    
-    @Get("copy/{productNo}") 
-    public String copy(@Param("productNo") String productNo,Invocation inv) throws Exception{
-    	orderService.copy(productNo);
-    	
-    	return "";
+    /**
+     * 订单审核查询
+     * @param orderNo
+     * @param pageNo
+     * @param pageSize
+     * @param inv
+     * @return
+     * @throws Exception
+     */
+    @Post("examine")
+    public Object examine(@Param("orderNo") String orderNo,@Param("failReason") String failReason,Invocation inv) throws Exception {
+    	orderService.examine(orderNo,failReason);
+    	return Replys.with("sucess").as(Text.class);
     }
     
     @Get("downLoad") 

@@ -6,6 +6,7 @@
 <html>
 <head>
 <title></title>
+<meta charset="utf-8">
 <link href="${ctx}/static/css/easyui.css" type="text/css" rel="stylesheet" />
 <link href="${ctx}/static/css/icon.css" type="text/css" rel="stylesheet" />
 <link href="${ctx}/static/css/perfect-scrollbar.min.css" type="text/css" rel="stylesheet" />
@@ -51,7 +52,7 @@ var orderNo = ${orderNo};
 				<td align="right">发票抬头:</td>
 				<td><input id="invoiceTitle" name="customer.invoiceTitle" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
 				<td align="right">结账方式:</td>
-				<td><input id="payWays" name="customer.payWays" class="readonly_inp" type="text" style="width: 80%" disabled/></td>
+				<td><input id="payWays" name="customer.payWays" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">客户地址:</td>
@@ -59,9 +60,9 @@ var orderNo = ${orderNo};
 			</tr>
 			<tr>
 				<td align="right">联系电话:</td>
-				<td><input id="phoneNo" name="customer.phoneNo" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
+				<td><input id="phoneNo" name="customer.phoneNo" class="readonly_inp" type="text" style="width: 80%" disabled/></td>
 				<td align="right">Email:</td>
-				<td><input id="email" name="customer.email" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
+				<td><input id="email" name="customer.email" class="readonly_inp" type="text" style="width: 80%" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">网址:</td>
@@ -86,15 +87,41 @@ var orderNo = ${orderNo};
 				<th data-options="field:'baseVal',width:80,sortable:true,editor:'text'">碱基单价</th>
 				<th data-options="field:'purifyVal',width:80,sortable:true,editor:'text'">纯化价格</th>
 				<th data-options="field:'totalVal',width:80,sortable:true,editor:'text'">总价格</th>
+				<th data-options="field:'fromProductNo',width:80,hidden:true,sortable:true,editor:'text'">来源生产编号</th>
 			</tr>
 		</thead>
 	</table>
 	</div>
 	<div class="tools_bar">
-		<button type="" class="btn btn-primary" onclick="goToPage('/gene/views/order/orderList.jsp');">确 定</button>
+        <button type="" class="btn btn-primary submit" onclick="$('#inputCause').dialog('open');">审核不通过</button>
+		<button type="" class="btn btn-primary" onclick="examine(${orderNo},'');">审核通过</button>
 	</div>
 </div>
+<div id="inputCause" closed="true" class="easyui-dialog" title="请输入不同意原因：" style="width:400px;height:200px;"
+     data-options="
+				buttons: [{
+					text:'取消',
+                    handler:function(){
+                        $('#inputCause').dialog('close');
+                    }
+                 },{
+					text:'确定',
+					handler:function(){
+					    var text = $('#inputCause .inp_text').val();
+					    if(text==''){
+					    	alert('请您录入失败原因!');
+					    	return;
+					    }
+						$('#inputCause').dialog('close');
+						examine(${orderNo},text);
+					}
+				}]
+			">
+    <textarea class="inp_text" style="width: 376px;height: 102px;"></textarea>
+</div>
+<script src="${ctx}/views/order/js/orderInfo.js" ></script>
 <script src="${ctx}/views/order/js/orderList.js" ></script>
+<script src="${ctx}/views/order/js/orderExamine.js" ></script>
 <script type="text/javascript">
 orderDetail(${orderNo});
 </script>

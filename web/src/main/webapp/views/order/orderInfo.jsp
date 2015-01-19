@@ -22,6 +22,7 @@
 <script src="${ctx}/static/js/json2.js"></script>
 <script type="text/javascript">
 var orderNo = ${orderNo};
+var ctx = '${ctx}';
 </script>
 </head>
 <body>
@@ -76,7 +77,7 @@ var orderNo = ${orderNo};
 		</table>
 	</div>
 	<div class="content_box info margin_btoom">
-		<h2><a href="javascript:;" class="right btn-primary submit" onclick="appendRow()" type="button">添加数据</a>生产数据</h2>
+		<h2><!-- <a href="javascript:;" class="right btn-primary submit" onclick="appendRow()" type="button">添加数据</a> -->生产数据</h2>
 		<table id="bigToSmall" class="easyui-datagrid" data-options="fitColumns:true,singleSelect: true,iconCls: 'icon-save',striped:true,method: 'get',onClickRow: onClickRow">
 		<thead>
 			<tr>

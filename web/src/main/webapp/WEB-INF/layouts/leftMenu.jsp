@@ -16,7 +16,7 @@
 			<li url="${ctx}/synthesis/preMakeBoardQuery" id="syntheticPlate"><i class="icon-keyboard"></i>制作合成板</li>
 			<li url="synthesisResults.html" id="synthesisResults"><i class="icon-edit-sign"></i>合成结果</li>
 			<li url="${ctx}/synthesis/machineTable" id="machineTable"><i class="icon-desktop"></i>导出上机表</li>
-			<li url="packingTable.html" id="packingTable"><i class="icon-dropbox"></i>导出分装表</li>
+			<li url="${ctx}/synthesis/packTable" id="packTable"><i class="icon-dropbox"></i>导出分装表</li>
 		</ul>
 	</div>
 	<div title="修饰与氨解" data-options="iconCls:'adorn'" style="height:200px;">

@@ -23,7 +23,10 @@
 	<table width="100%">
 		<tr>
 			<td align="right">客户代码:</td>
-			<td><input class="inp_text" type="text" id="customercode" name="customercode" value="" style="width: 100%" /></td>
+			<td><input class="inp_text" type="text" id="seachCustom" name="customerName" value="" style="width: 150px" />
+			    <input class="inp_text" type="hidden" id="customercode" name="customercode" value=""/>
+			    <ul id="seachCustomList"></ul>
+			</td>
 			<td align="right">碱基数范围:</td>
 			<td class="scope"><input class="easyui-numberbox"  id="tbn1" name="tbn1" value="" style="width: 40px;" data-options="width:40" />
 			                - <input class="easyui-numberbox inp_text"  id="tbn2" name="tbn2" value="" style="width:40px;" /></td>
@@ -64,6 +67,7 @@
 </table>
 <div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
 <script src="${ctx}/static/js/productionData.js" ></script>
+<script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script type="text/javascript">
 $(function(){
     var dg = $('#productionData');
