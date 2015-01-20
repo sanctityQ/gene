@@ -2,7 +2,7 @@ $(function(){
     $('#boardSequence').on("click","li",sequenceClick);
     setBoardHeight();
     $("#holeList").on("click","div.hole_box",holesClick);
-    makeBoard('holeList','board.json');
+    synthesisBoard('holeList');
 })
 function sequenceClick(){
     $(this).addClass('selected').siblings().removeClass('selected');
@@ -25,14 +25,20 @@ function selectAll(e){
     }
 
 }
-function makeBoard(id,url){
+function synthesisBoard(id){
     var board = $('#'+id);
     var tBody = '';
     board.empty();
     $.ajax({
-        url: url,
-        type:'GET',
+    	url : "/gene/synthesis/makeBoardEdit",
+        type:'POST',
         dataType:'json',
+		data:{
+			flag: '',
+			oldFlag:'1',
+			boardNo: $('#boardNo').val(),
+			productNoStr: ''
+        },
         success: function(data){
             var total = data.total;
             var rows = data.rows;
@@ -48,13 +54,79 @@ function makeBoard(id,url){
                 tBody += tr;
             }
             board.append(tBody);
+            //默认都成功
+            //$("#holeList").find('div.hole_box').addClass('selected');
+            //setSucceed(true);
         }
     });
 }
 function saveBoard(){
-    $.messager.alert('系统提示','合成板数据以保存！','',function(){
-        goToPage('synthesisResults.html');
-    });
+	
+    var boardHoles = saveBoardData();
+    //console.log(boardHoles);
+
+    $.ajax({
+    	url : "/gene/synthesis/submitSynthesis",
+    	type : "post",
+        dataType : "json",
+        data: {
+        	"boardHoles":boardHoles,
+        	"boardNo":$('#boardNo').val()
+        },
+		success : function(data) {
+			if(data != null){
+			    $.messager.alert('系统提示','合成板数据以保存！','',function(){
+			        goToPage('/gene/views/synthesis/synthesisResults.jsp');
+			    });
+			}
+		},
+		error:function(){
+			alert("数据保存失败，请重试！");
+		}
+	});
+
+}
+//保存合成板数据方法
+function saveBoardData(){
+    var holeList = $('#holeList').find('div.hole_box');
+    var data = [];
+    holeList.each(function(){
+        var holeBox = $(this);
+        var result = holeBox.attr('class');
+        if(result != 'hole_box' && result != 'hole_box selected'){
+            var holeNo = holeBox.children('div.tag').text();
+            var productNo = holeBox.children('div.hole').text();
+            var ary = '';
+            var failFlag = '';
+            switch (ary){
+                case 'hole_box succeed':
+                    ary = '成功';
+                    failFlag = '0';
+                    break;
+                case 'hole_box lose':
+                    ary = '失败';
+                    failFlag = '1';
+                    break;
+                case 'hole_box compounded':
+                    ary = '重新合成';
+                    failFlag = '2';
+                    break;
+                case 'hole_box regain':
+                    ary = '重新分装';
+                    failFlag = '3';
+                    break;
+            }
+            if(productNo !=''){
+            	alert(holeNo+productNo);
+            	data.push({
+            		"holeNo":holeNo,
+            		"primerProduct.productNo":productNo
+            	});
+            }
+        }
+    })
+alert(data);
+    return data;
 }
 function setSucceed(ok){
     var selects = $('#holeList').find("div.selected");

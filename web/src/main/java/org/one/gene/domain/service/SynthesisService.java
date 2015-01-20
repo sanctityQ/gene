@@ -361,76 +361,82 @@ public class SynthesisService {
 	
 	//提交合成信息
     @Transactional(readOnly = false)
-	public String submitSynthesis(Board board, String failReason) {
+	public String submitSynthesis(String boardNo, List<BoardHole> boardHoleList, String failReason) {
     	
+    	Map<String, String> bhMap = new HashMap<String, String>();
+    	for(BoardHole bh:boardHoleList){
+//    		System.out.println("==================="+bh.getHoleNo()+"="+ bh.getFailFlag());
+//    		bhMap.put(bh.getHoleNo(), bh.getFailFlag());
+    	}
+    	
+    	Board board = boardRepository.findByBoardNo(boardNo);
 		BoardHole boardHole = null;
 		List<BoardHole> boardHoles = board.getBoardHoles();
 		PrimerProduct primerProduct = new PrimerProduct(); 
 		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
 		List<PrimerProductOperation> primerProductOperations = new ArrayList<PrimerProductOperation>();
-		PrimerType.PrimerOperationType type = null;
+		PrimerOperationType type = null;
 		String typeDesc = "";
 		
 		for (int i = board.getBoardHoles().size() - 1; i >= 0; i--) {
 			boardHole = (BoardHole) board.getBoardHoles().get(i);
 			primerProduct = boardHole.getPrimerProduct();
-			String selectFlag = primerProduct.getSelectFlag();
-			
-
-			
-			if ("1".equals(selectFlag)) { // Synthesis success
+			if(bhMap.get(boardHole.getHoleNo())!=null){
 				
-				if (!"".equals(primerProduct.getModiFiveType())
-						|| !"".equals(primerProduct.getModiThreeType())
-						|| !"".equals(primerProduct.getModiMidType())
-						|| !"".equals(primerProduct.getModiSpeType())) { // 需要修饰，到待修饰状态
-					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.modification);
-				} else {//不需要修饰，到待氨解状态
-					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.ammonia);
+				String failFlag = (String)bhMap.get(boardHole.getHoleNo());
+				
+				if ("0".equals(failFlag)) { // Synthesis success
+					
+					if (!"".equals(primerProduct.getModiFiveType())
+							|| !"".equals(primerProduct.getModiThreeType())
+							|| !"".equals(primerProduct.getModiMidType())
+							|| !"".equals(primerProduct.getModiSpeType())) { // 需要修饰，到待修饰状态
+						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.modification);
+					} else {//不需要修饰，到待氨解状态
+						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.ammonia);
+					}
+					
+					type = PrimerOperationType.synthesisSuccess;
+					typeDesc = PrimerOperationType.synthesisSuccess.desc();
+					
+				} else if ("1".equals(failFlag)) { // Synthesis fail
+					
+					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
+					boardHole.getPrimerProduct().setBoardNo("");//清空板号
+					boardHole.getPrimerProduct().setBackTimes(boardHole.getPrimerProduct().getBackTimes()+1);//循环重回次数+1
+					
+					//删除孔信息
+					boardHoleRepository.delete(boardHole);
+					boardHoles.remove(i);
+					
+					type = PrimerOperationType.synthesisFailure;
+					typeDesc = PrimerOperationType.synthesisFailure.desc();
+					
 				}
-
-				type = PrimerType.PrimerOperationType.synthesisSuccess;
-				typeDesc = "合成成功";
 				
-			} else if ("2".equals(selectFlag)) { // Synthesis fail
-
-				boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
-				boardHole.getPrimerProduct().setBoardNo("");//清空板号
-				boardHole.getPrimerProduct().setBackTimes(boardHole.getPrimerProduct().getBackTimes()+1);//循环重回次数+1
-                
-				//删除孔信息
-				boardHoleRepository.delete(boardHole);
-				boardHoles.remove(i);
+				//组装操作信息
+				primerProductOperation = new PrimerProductOperation();
+				primerProductOperation.setPrimerProduct(boardHole.getPrimerProduct());
+				primerProductOperation.setUserCode("123");//后续从session取得
+				primerProductOperation.setUserName("张三");//后续从session取得
+				primerProductOperation.setCreateTime(new Date());
+				primerProductOperation.setType(type);
+				primerProductOperation.setTypeDesc(typeDesc);
+				primerProductOperation.setBackTimes(boardHole.getPrimerProduct().getBackTimes());
+				primerProductOperation.setFailReason("");//需要记录失败原因！！！
 				
-				type = PrimerType.PrimerOperationType.synthesisFailure;
-				typeDesc = "合成失败";
+				primerProductOperations.add(primerProductOperation);
 				
+				
+				//保存primer_product表数据
+				primerProductRepository.save(boardHole.getPrimerProduct());
 			}
-			
-			//组装操作信息
-			primerProductOperation = new PrimerProductOperation();
-			primerProductOperation.setPrimerProduct(boardHole.getPrimerProduct());
-			primerProductOperation.setUserCode("123");//后续从session取得
-			primerProductOperation.setUserName("张三");//后续从session取得
-			primerProductOperation.setCreateTime(new Date());
-			primerProductOperation.setType(type);
-			primerProductOperation.setTypeDesc(typeDesc);
-			primerProductOperation.setBackTimes(boardHole.getPrimerProduct().getBackTimes());
-			primerProductOperation.setFailReason("");//需要记录失败原因！！！
-			
-			primerProductOperations.add(primerProductOperation);
-			
 			//更新操作信息
-			//primer_product_operation
-//			primerProductOperationRepository.save(primerProductOperations);
-			
-			//保存primer_product表数据
-			primerProductRepository.save(boardHole.getPrimerProduct());
+			primerProductOperationRepository.save(primerProductOperations);
 			
     	}
     	
 		boardRepository.save(board);
-		
     	
     	return "";
     }

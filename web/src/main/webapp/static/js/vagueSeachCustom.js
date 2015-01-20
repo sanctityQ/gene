@@ -13,7 +13,12 @@ function seachCustomChange(){
     var list = $("#seachCustomList");
     list.css({'left':left,'top':top});
     list.on("click",'li',seachLiSelect);
-    seach.bind('input propertychange', function() {
+    seach.bind('input',function(){
+        ajaxSeach();
+    }).bind('keyup',function(){
+        ajaxSeach();
+    });
+    function ajaxSeach(){
         setTimeout(function(){
             if(seach.val() != ''){
                 $.ajax({
@@ -41,7 +46,7 @@ function seachCustomChange(){
                 list.hide(100);
             }
         },500)
-    });
+    }
 }
 function seachLiSelect(){
     var seach = $("#seachCustom");

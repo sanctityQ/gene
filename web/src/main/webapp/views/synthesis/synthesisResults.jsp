@@ -19,52 +19,32 @@
 <script src="${ctx}/static/js/json2.js"></script>
 </head>
 <body>
-<div class="tools">
-	<table width="100%">
-		<tr>
-			<td align="right">板号:</td>
-			<td><input class="inp_text" type="text" value="" style="width: 60%" /></td>
-			<td align="right">碱基数范围:</td>
-			<td class="scope"><input class="easyui-numberbox" value="" style="width: 30px;" data-options="width:30" /> - <input class="easyui-numberbox inp_text" value="" style="width:40px;" /></td>
-            <td><input type="checkbox" checked /> <label>有/无修饰过滤</label></td>
-            <td align="right">纯化方式:</td>
-            <td>
-                <select id="state" name="state" class="my_select" style="width: 80px;">
-                    <option>OPC</option>
-                    <option>PAGE</option>
-                    <option>HPLC</option>
-                </select>
-            </td>
-            <td><button type="button" class="btn">查询</button></td>
-		</tr>
-        <tr>
-            <td colspan="8" height="10"></td>
-        </tr>
-	</table>
-    <div class="btn_group">
-        <button id="makeBoard" class="btn btn-success" disabled onclick="makeBoard('synthesisResultsBoard.html');">合成结果</button>
-    </div>
+<div class="page_padding">
+	<div class="content_box">
+		<h2>录入合成结果</h2>
+		<div class="import_box">
+			<i class="icon-pencil"></i>请输入板号，点击“合成结果”按钮，进入结果录入页面。
+			<br />
+			<input class="inp_text" type="text" id="boardNo" name="boardNo" value="" style="width: 300px" />
+			<ul id="seachBoardList"></ul>
+		</div>
+
+		<div class="import_box" style="padding-bottom: 50px;">
+			<button class="btn-primary submit" type="button" onclick="goToResultsBoard()">合成结果</button>
+		</div>
+	</div>
 </div>
-<table id="productionData" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true,url: 'datagrid_data4.json'">
-	<thead>
-		<tr>
-			<th data-options="field:'ck',checkbox:true"></th>
-			<th data-options="field:'productNo',width:65,sortable:true">生产编号</th>
-			<th data-options="field:'geneOrder',width:50,sortable:true">序列</th>
-			<th data-options="field:'odTotal',width:60,sortable:true">OD总量</th>
-			<th data-options="field:'odTB',width:60,sortable:true">OD/TB</th>
-			<th data-options="field:'nmolTotal',width:60,sortable:true">nmol总量</th>
-			<th data-options="field:'nmolTB',width:60,sortable:true">nmol/TB</th>
-			<th data-options="field:'tbn',width:60,sortable:true">碱基数</th>
-            <th data-options="field:'purifyType',width:60,sortable:true">纯化方式</th>
-            <th data-options="field:'midi',width:120,sortable:true">修饰</th>
-            <th data-options="field:'operationTypeDesc',width:80,sortable:true">状态</th>
-            <th data-options="field:'backTimes',width:80,sortable:true">重回次数</th>
-            <th data-options="field:'attr9',width:80,sortable:true">操作时间</th>
-		</tr>
-	</thead>
-</table>
-<div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
-<script src="${ctx}/static/js/productionData.js" ></script>
+<script src="${ctx}/static/js/vagueSeachBoard.js" ></script>
+<script type="text/javascript">
+function goToResultsBoard(){
+	var boardNo = $.trim($('#boardNo').val());
+	
+	if(boardNo == ""){
+		alert("请输入板号。");
+		return;
+	}
+    goToPage("/gene/views/synthesis/synthesisResultsBoard.jsp?boardNo="+boardNo);
+}
+</script>
 </body>
 </html>

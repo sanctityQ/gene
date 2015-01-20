@@ -55,5 +55,16 @@
 </div>
 <script src="${ctx}/static/js/makeBoard.js" ></script>
 <script src="${ctx}/static/js/vagueSeachBoard.js" ></script>
+<script type="text/javascript">
+function goToResultsBoard(){
+	var boardNo = $.trim($('#boardNo').val());
+	
+	if(boardNo == ""){
+		alert("请输入板号。");
+		return;
+	}
+    goToPage("/gene/views/synthesis/synthesisResultsBoard.jsp?boardNo="+boardNo);
+}
+</script>
 </body>
 </html>

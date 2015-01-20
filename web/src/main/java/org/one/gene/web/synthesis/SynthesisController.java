@@ -17,6 +17,7 @@ import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
 
 import org.apache.commons.lang.StringUtils;
 import org.one.gene.domain.entity.Board;
+import org.one.gene.domain.entity.BoardHole;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.service.SynthesisService;
 import org.one.gene.repository.BoardHoleRepository;
@@ -74,6 +75,15 @@ public class SynthesisController {
     	return "productionData";
     }
     
+    /**
+     * 进入合成结果查询页面
+     * 
+     * */
+    @Get("synthesisResults")
+    public String synthesisResults(){
+    	
+    	return "synthesisResults";
+    }
     
     /**
      * 制板查询
@@ -179,15 +189,14 @@ public class SynthesisController {
      * 提交合成信息
      * */
     @Post("submitSynthesis")
-	public String submitSynthesis(Board board,
+	public Reply submitSynthesis(
+			@Param("boardHoles") List<BoardHole> boardHoles,
+			@Param("boardNo") String boardNo,
 			@Param("failReason") String failReason, Invocation inv) {
     	
+    	//synthesisService.submitSynthesis(boardNo, boardHoles, failReason);
     	
-    	synthesisService.submitSynthesis(board, failReason);
-    	
-    	inv.addModel("message", "完成合成提交！");
-    	
-    	return "returnMessage";
+    	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
     }
     
     /**
