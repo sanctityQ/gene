@@ -36,7 +36,25 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			@Param("tbn2") String tbn2,
 			@Param("purifytype") String purifytype, Pageable pageable);
     
-    
+	@SQL("select pp.* from `primer_product` pp where pp.`operation_type` = 'modification' "
+			+ "#if(:boardNo != '') { and pp.`board_no` = :boardNo }"
+			+ "#if(:modiFiveType == '1') { and pp.`modi_five_type` is not null }"
+			+ "#if(:modiFiveType == '0') { and pp.`modi_five_type` is null }"
+			+ "#if(:modiThreeType == '1') { and pp.`modi_three_type` is not null }"
+			+ "#if(:modiThreeType == '0') { and pp.`modi_three_type` is null }"
+			+ "#if(:modiMidType == '1') { and pp.`modi_mid_type` is not null }"
+			+ "#if(:modiMidType == '0') { and pp.`modi_mid_type` is null }"
+			+ "#if(:modiSpeType == '1') { and pp.`modi_spe_type` is not null }"
+			+ "#if(:modiSpeType == '0') { and pp.`modi_spe_type` is null }"
+			+ "")
+	Page<PrimerProduct> selectDecorateProducts(
+			@Param("boardNo") String boardNo,
+			@Param("modiFiveType") String modiFiveType,
+			@Param("modiThreeType") String modiThreeType,
+			@Param("modiMidType") String modiMidType,
+			@Param("modiSpeType") String modiSpeType, Pageable pageable);
+	
+	
     
     PrimerProduct findByProductNo(String productNo);
     

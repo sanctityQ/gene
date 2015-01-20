@@ -21,6 +21,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.sinosoft.one.mvc.web.annotation.Param;
 import com.sinosoft.one.mvc.web.instruction.reply.transport.Raw;
 
 import org.apache.commons.lang.StringUtils;
@@ -676,4 +677,130 @@ public class SynthesisService {
     	}
 		
 	}
+	
+	
+	
+	    //修饰查询
+	public Page<PrimerProduct> decorateQuery(String boardNo,
+			String modiFiveType, String modiThreeType, String modiMidType,
+			String modiSpeType, Pageable pageable) {
+
+			Page<PrimerProduct> primerProductPage = primerProductRepository.selectDecorateProducts(boardNo, modiFiveType, modiThreeType, modiMidType, modiSpeType, pageable);
+			
+			// 查询primer_product_value
+			for (PrimerProduct primerProduct : primerProductPage.getContent()) {
+				List<PrimerProductValue> primerProductValues = primerProductValueRepository.selectValueByPrimerProductId(primerProduct.getId());
+				for (PrimerProductValue ppv : primerProductValues) {
+					if (ppv.getType().equals(PrimerValueType.odTotal)) {
+						primerProduct.setOdTotal(ppv.getValue());
+					} else if (ppv.getType().equals(PrimerValueType.odTB)) {
+						primerProduct.setOdTB(ppv.getValue());
+					} else if (ppv.getType().equals(PrimerValueType.nmolTotal)) {
+						primerProduct.setNmolTotal(ppv.getValue());
+					} else if (ppv.getType().equals(PrimerValueType.nmolTB)) {
+						primerProduct.setNmolTB(ppv.getValue());
+					} else if (ppv.getType().equals(PrimerValueType.baseCount)) {
+						primerProduct.setTbn(ppv.getValue());
+					}
+				}
+				// 翻译操作类型
+				PrimerStatusType operationType = primerProduct.getOperationType();
+	            primerProduct.setOperationTypeDesc(operationType.desc());
+	            
+				//修饰
+				String midi = "";
+				if (!"".equals(primerProduct.getModiFiveType())) {
+					midi += primerProduct.getModiFiveType()+",";
+				}
+				if (!"".equals(primerProduct.getModiMidType())) {
+					midi += primerProduct.getModiMidType()+",";
+				}
+				if (!"".equals(primerProduct.getModiSpeType())) {
+					midi += primerProduct.getModiSpeType()+",";
+				}
+				if (!"".equals(primerProduct.getModiThreeType())) {
+					midi += primerProduct.getModiThreeType()+",";
+				}
+				if(!"".equals(midi)){
+					midi = "("+midi.substring(0, midi.length()-1)+")";
+					primerProduct.setMidi(midi);
+				}
+				
+			}
+
+			return primerProductPage;
+		}
+		
+		
+	//提交修饰信息
+    @Transactional(readOnly = false)
+	public String submitDecorate(List<PrimerProduct> primerProducts,
+			String successFlag, String failReason) {
+    	
+		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
+		PrimerOperationType type = null;
+		String typeDesc = "";
+		
+		for (PrimerProduct pp:primerProducts) {
+			
+			PrimerProduct primerProduct = primerProductRepository.findOne(pp.getId());
+			type = null;
+			
+			if ("1".equals(successFlag)) { // decorate success
+				
+				primerProduct.setOperationType(PrimerStatusType.purify);
+				type = PrimerOperationType.modiSuccess;
+				typeDesc = PrimerOperationType.modiSuccess.desc();
+				
+			} else if ("0".equals(successFlag)) { // decorate fail
+				
+				primerProduct.setOperationType(PrimerStatusType.synthesis);//回到待合成
+				primerProduct.setBoardNo("");//清空板号
+				if (primerProduct.getBackTimes() != null) {
+					primerProduct.setBackTimes(primerProduct.getBackTimes()+1);//循环重回次数+1
+				}else{
+					primerProduct.setBackTimes(1);
+				}
+				
+				//删除孔信息
+				BoardHole boardHole = boardHoleRepository.findByPrimerProduct(primerProduct);
+				if (boardHole != null) {
+					boardHoleRepository.delete(boardHole);
+				}
+				
+				type = PrimerOperationType.modiFailure;
+				typeDesc = PrimerOperationType.modiFailure.desc();
+			}
+			
+			//组装操作信息
+			primerProductOperation = new PrimerProductOperation();
+			primerProductOperation.setPrimerProduct(primerProduct);
+			primerProductOperation.setUserCode("123");//后续从session取得
+			primerProductOperation.setUserName("张三");//后续从session取得
+			primerProductOperation.setCreateTime(new Date());
+			primerProductOperation.setType(type);
+			primerProductOperation.setTypeDesc(typeDesc);
+			primerProductOperation.setBackTimes(primerProduct.getBackTimes());
+			primerProductOperation.setFailReason(failReason);
+			
+			primerProduct.getPrimerProductOperations().add(primerProductOperation);
+			//保存primer_product表数据
+			primerProductRepository.save(primerProduct);
+    	}
+    	
+    	return "";
+    }
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 }

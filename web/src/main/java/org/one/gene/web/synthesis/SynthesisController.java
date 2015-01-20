@@ -255,4 +255,61 @@ public class SynthesisController {
     	return Replys.with(boards).as(Json.class);
     }
     
+    /**
+     * 进入修饰查询页面
+     * 
+     * */
+    @Get("preDecorateQuery")
+    public String preDecorateQuery(){
+    	
+    	return "decorate";
+    }
+    
+    /**
+     * 修饰查询
+     * */
+    @Post("decorateQuery")
+    public Reply decorateQuery(@Param("boardNo") String boardNo, 
+					    		 @Param("modiFiveType") String modiFiveType,
+					    		 @Param("modiThreeType") String modiThreeType,
+					    		 @Param("modiMidType") String modiMidType,
+					    		 @Param("modiSpeType") String modiSpeType,
+					    		 @Param("pageNo") Integer pageNo,
+			                     @Param("pageSize") Integer pageSize,
+					    		 Invocation inv){
+    	
+        if(pageNo == null || pageNo ==0){
+            pageNo = 1;
+        }
+
+        if(pageSize == null){
+            pageSize = 10;
+        }
+        Pageable pageable = new PageRequest(pageNo-1,pageSize);
+        
+        Page<PrimerProduct> primerProductPage = synthesisService.decorateQuery(boardNo, modiFiveType, modiThreeType, modiMidType, modiSpeType, pageable);
+    	
+    	return Replys.with(primerProductPage).as(Json.class);
+    }
+    
+    /**
+     * 修饰提交
+     * */
+    @Post("submitDecorate")
+	public Reply submitDecorate(
+			@Param("primerProducts") List<PrimerProduct> primerProducts,
+			@Param("successFlag") String successFlag,
+			@Param("failReason") String failReason, Invocation inv) {
+    	
+//            synthesisService.submitDecorate(primerProducts, successFlag, failReason);
+    	
+    	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
+    }
+    
+    
+    
+    
+    
+    
+    
 }

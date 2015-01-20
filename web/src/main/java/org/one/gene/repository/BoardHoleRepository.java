@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
+import org.one.gene.domain.entity.PrimerProduct;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Repository;
 public interface BoardHoleRepository extends PagingAndSortingRepository<BoardHole, Integer> {
 	
 	List<BoardHole> findByBoard(Board board);
+	
+	BoardHole findByPrimerProduct(PrimerProduct primerProduct);
 	
 }
 

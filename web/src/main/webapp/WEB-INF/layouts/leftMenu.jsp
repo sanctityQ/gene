@@ -21,8 +21,8 @@
 	</div>
 	<div title="修饰与氨解" data-options="iconCls:'adorn'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li><i class="icon-star-half-full"></i>修饰</li>
-			<li><i class="icon-th-large"></i>氨解</li>
+			<li url="${ctx}/synthesis/preDecorateQuery" id="decorate"><i class="icon-star-half-full"></i>修饰</li>
+			<li url="aminolysis.html" id="aminolysis"><i class="icon-th-large"></i>氨解</li>
 		</ul>
 	</div>
 	<div title="纯化" data-options="iconCls:'purifying'" style="height:200px;">
