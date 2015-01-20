@@ -194,7 +194,7 @@ public class SynthesisController {
 			@Param("boardNo") String boardNo,
 			@Param("failReason") String failReason, Invocation inv) {
     	
-    	//synthesisService.submitSynthesis(boardNo, boardHoles, failReason);
+    	synthesisService.submitSynthesis(boardNo, boardHoles, failReason);
     	
     	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
     }

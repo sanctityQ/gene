@@ -365,8 +365,8 @@ public class SynthesisService {
     	
     	Map<String, String> bhMap = new HashMap<String, String>();
     	for(BoardHole bh:boardHoleList){
-//    		System.out.println("==================="+bh.getHoleNo()+"="+ bh.getFailFlag());
-//    		bhMap.put(bh.getHoleNo(), bh.getFailFlag());
+    		System.out.println("=========页面的选择合成结果="+bh.getHoleNo()+"="+ bh.getFailFlag());
+    		bhMap.put(bh.getHoleNo(), bh.getFailFlag());
     	}
     	
     	Board board = boardRepository.findByBoardNo(boardNo);
@@ -384,6 +384,7 @@ public class SynthesisService {
 			if(bhMap.get(boardHole.getHoleNo())!=null){
 				
 				String failFlag = (String)bhMap.get(boardHole.getHoleNo());
+				type = null;
 				
 				if ("0".equals(failFlag)) { // Synthesis success
 					
@@ -403,7 +404,11 @@ public class SynthesisService {
 					
 					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
 					boardHole.getPrimerProduct().setBoardNo("");//清空板号
-					boardHole.getPrimerProduct().setBackTimes(boardHole.getPrimerProduct().getBackTimes()+1);//循环重回次数+1
+					if (boardHole.getPrimerProduct().getBackTimes() != null) {
+						boardHole.getPrimerProduct().setBackTimes(boardHole.getPrimerProduct().getBackTimes()+1);//循环重回次数+1
+					}else{
+						boardHole.getPrimerProduct().setBackTimes(1);
+					}
 					
 					//删除孔信息
 					boardHoleRepository.delete(boardHole);

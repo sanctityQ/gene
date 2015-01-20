@@ -98,52 +98,64 @@ function saveBoardData(){
             var productNo = holeBox.children('div.hole').text();
             var ary = '';
             var failFlag = '';
-            switch (ary){
+            switch (result){
                 case 'hole_box succeed':
+                	failFlag = '0';
                     ary = '成功';
-                    failFlag = '0';
                     break;
                 case 'hole_box lose':
+                	failFlag = '1';
                     ary = '失败';
-                    failFlag = '1';
                     break;
                 case 'hole_box compounded':
+                	failFlag = '2';
                     ary = '重新合成';
-                    failFlag = '2';
                     break;
                 case 'hole_box regain':
+                	failFlag = '3';
                     ary = '重新分装';
-                    failFlag = '3';
                     break;
             }
             if(productNo !=''){
-            	alert(holeNo+productNo);
+            	//alert(holeNo+"  "+productNo+"  "+failFlag);
             	data.push({
             		"holeNo":holeNo,
-            		"primerProduct.productNo":productNo
+            		"primerProduct.productNo":productNo,
+            		"failFlag":failFlag
             	});
             }
         }
     })
-alert(data);
+     //alert(data);
     return data;
 }
 function setSucceed(ok){
     var selects = $('#holeList').find("div.selected");
-    var result = '';
+    var result = '',icon = '';
     if(ok){
         result = 'succeed';
+        icon = '<i class="icon-ok"></i>';
     }else{
         result = 'lose';
+        icon = '<i class="icon-remove"></i>';
     }
     if(selects.length){
+        var content = '<ul class="failure_reason" id="failureReason">';
+        var textarea = '<textarea class="inp_text" style="width: 358px;height: 42px;"></textarea>';
+        selects.each(function(){
+            var text = $(this).children('div.hole').text();
+            content += '<li>'+text+'</li>'
+            content +=  '<li>' +  textarea + '</li>';
+        })
+        content += '</ul>'
         if(!ok){
             $('#inputCause').dialog({
                 title: '请输入失败原因',
                 width: 400,
-                height: 200,
+                height: 400,
                 closed: false,
                 cache: false,
+                content:content,
                 modal: true,
                 buttons:[{
                     text:'取 消',
@@ -154,28 +166,46 @@ function setSucceed(ok){
                 },{
                     text:'确 定',
                     handler:function(){
-                        var text = $('#inputCause .inp_text').val();
-                        alert(text);
+                        var data = [];
+                        var lis = $('#failureReason').children('li');
+                        var No = '',ary = '';
+                        lis.each(function(i){
+                            No = $(this).text();
+                            if(i%2){
+                                ary = $(this).children('textarea').val();
+                                data.push({
+                                    No:No,
+                                    cause:ary
+                                });
+                            }
+                        });
+                        alert(data);
+
                         $('#inputCause').dialog('close');
                         selects.each(function(){
                             var status = $(this);
+                            var tag = status.children('div.tag');
                             if(!status.hasClass(result)){
                                 status.removeClass().addClass('hole_box ' + result);
                             }else{
                                 status.removeClass('selected');
                             };
+                            tag.prepend(icon);
                         })
+
                     }
                 }]
             });
         }else{
             selects.each(function(){
                 var status = $(this);
+                var tag = status.children('div.tag');
                 if(!status.hasClass(result)){
                     status.removeClass().addClass('hole_box ' + result);
                 }else{
                     status.removeClass('selected');
                 };
+                tag.prepend(icon);
             })
         };
     }else{

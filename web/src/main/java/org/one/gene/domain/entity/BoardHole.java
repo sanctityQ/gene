@@ -38,7 +38,7 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
     * 创建user.
     */
     private Long createUser;
-    //private String failFlag;//临时字段 成功失败标志:  0 成功; 1 失败; 2 重新合成; 3 重新分装
+    private String failFlag;//临时字段 成功失败标志:  0 成功; 1 失败; 2 重新合成; 3 重新分装
     
     public BoardHole() {
     }
@@ -105,15 +105,15 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
 		return ToStringBuilder.reflectionToString(this);
 	}
 	
-//	@Transient
-//	public String getFailFlag() {
-//		return failFlag;
-//	}
-//
-//
-//	public void setFailFlag(String failFlag) {
-//		this.failFlag = failFlag;
-//	}
+	@Transient
+	public String getFailFlag() {
+		return failFlag;
+	}
+
+
+	public void setFailFlag(String failFlag) {
+		this.failFlag = failFlag;
+	}
 
 
 }
