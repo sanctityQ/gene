@@ -794,9 +794,190 @@ public class SynthesisService {
     }
 		
 		
+    //组织板页面信息
+	public String boardEdit(String boardNo, PrimerStatusType operationType, Invocation inv) throws IOException {
 		
+		int totalCount = 0;
+		String flag = "";
+		String typeFlag = "1";//生产数据是否复合查询类型 ：1 复合， 0 不复合
+		//查询板号信息
+		Map<String, String> boardHoleMap = new HashMap<String, String>();
+		Board board = boardRepository.findByBoardNo(boardNo);
+		if (board != null) {
+			flag = board.getBoardType();
+			for (BoardHole boardHole : board.getBoardHoles()) {
+				boardHoleMap.put(boardHole.getHoleNo(), boardHole.getPrimerProduct().getProductNo());
+				totalCount += 1;
+				if (!boardHole.getPrimerProduct().getOperationType().equals(operationType)) {
+					typeFlag = "0";
+				}
+			}
+		}
+
+		ArrayList holeNoList = new ArrayList();
+		ArrayList holeList = new ArrayList();
 		
+		holeList.add("A");
+		holeList.add("B");
+		holeList.add("C");
+		holeList.add("D");
+		holeList.add("E");
+		holeList.add("F");
+		holeList.add("G");
+		holeList.add("H");
 		
+		String holeNo = "";
+		String productNo = "";
+		String jsonStr = "{\r";
+		jsonStr += "\"typeFlag\":"+typeFlag+",\r";
+		jsonStr += "\"typeDesc\":\""+operationType.desc()+"\",\r";
+		jsonStr += "\"total\":"+totalCount+",\r";
+		jsonStr += "\"rows\":[\r";
+		
+		//竖板
+		if ("1".equals(flag)) {
+			
+			for (int j=1;j<13;j++){
+				
+				jsonStr += "{\"row"+j+"\":[\r";
+				
+				for(int i=0 ;i<holeList.size();i++){
+					String hole = (String)holeList.get(i);
+					holeNo = hole+j;
+					productNo = "";
+					if(boardHoleMap.get(holeNo) != null){
+						productNo = (String)boardHoleMap.get(holeNo);
+					}
+					
+					jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\"}";
+					
+					if (i!=holeList.size()-1){
+						jsonStr += ",\r";
+					}
+				}
+				
+				if(j==12){
+					jsonStr += "]}\r";
+				}else{
+					jsonStr += "]},\r";
+				}
+			}
+			
+		} else {
+			for(int i=0 ;i<holeList.size();i++){
+				
+				jsonStr += "{\"row"+(i+1)+"\":[\r";
+				
+				String hole = (String)holeList.get(i);
+				for (int j=1;j<13;j++){
+					holeNo = hole+j;
+					productNo = "";
+					if(boardHoleMap.get(holeNo) != null){
+						productNo = (String)boardHoleMap.get(holeNo);
+					}
+					jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\"}";
+					
+					if (j!=12){
+						jsonStr += ",\r";
+					}
+				}
+				if(i == holeList.size()-1){
+					jsonStr += "]}\r";
+				}else{
+					jsonStr += "]},\r";
+				}
+			}
+		}
+
+		jsonStr += "]\r}";
+		
+		System.out.println("==========拼接的jsonstr=\r"+jsonStr);
+		
+		return jsonStr;
+	}	
+		
+	//提交板編輯信息
+    @Transactional(readOnly = false)
+	public String submitBoardEdit(String boardNo,
+			List<BoardHole> boardHoleList, PrimerStatusType operationType,
+			String failReason) {
+    	
+    	Map<String, String> bhMap = new HashMap<String, String>();
+    	for(BoardHole bh:boardHoleList){
+    		bhMap.put(bh.getHoleNo(), bh.getFailFlag());
+    	}
+    	
+    	Board board = boardRepository.findByBoardNo(boardNo);
+		BoardHole boardHole = null;
+		List<BoardHole> boardHoles = board.getBoardHoles();
+		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
+		List<PrimerProductOperation> primerProductOperations = new ArrayList<PrimerProductOperation>();
+		PrimerOperationType type = null;
+		String typeDesc = "";
+		
+		for (int i = board.getBoardHoles().size() - 1; i >= 0; i--) {
+			boardHole = (BoardHole) board.getBoardHoles().get(i);
+			if(bhMap.get(boardHole.getHoleNo())!=null){
+				
+				String failFlag = (String)bhMap.get(boardHole.getHoleNo());
+				type = null;
+				
+				if ("0".equals(failFlag)) { // success
+					
+					if (operationType.equals(PrimerStatusType.ammonia)) {
+						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.purify);
+						type = PrimerOperationType.ammoniaSuccess;
+						typeDesc = PrimerOperationType.ammoniaSuccess.desc();
+					}
+                    	
+					
+				} else if ("1".equals(failFlag)) { // fail
+					
+					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
+					boardHole.getPrimerProduct().setBoardNo("");//清空板号
+					if (boardHole.getPrimerProduct().getBackTimes() != null) {
+						boardHole.getPrimerProduct().setBackTimes(boardHole.getPrimerProduct().getBackTimes()+1);//循环重回次数+1
+					}else{
+						boardHole.getPrimerProduct().setBackTimes(1);
+					}
+					
+					//删除孔信息
+					boardHoleRepository.delete(boardHole);
+					boardHoles.remove(i);
+					
+					if (operationType.equals(PrimerStatusType.ammonia)) {
+						type = PrimerOperationType.ammoniaFailure;
+						typeDesc = PrimerOperationType.ammoniaFailure.desc();
+					}
+					
+				}
+				
+				//组装操作信息
+				primerProductOperation = new PrimerProductOperation();
+				primerProductOperation.setPrimerProduct(boardHole.getPrimerProduct());
+				primerProductOperation.setUserCode("123");//后续从session取得
+				primerProductOperation.setUserName("张三");//后续从session取得
+				primerProductOperation.setCreateTime(new Date());
+				primerProductOperation.setType(type);
+				primerProductOperation.setTypeDesc(typeDesc);
+				primerProductOperation.setBackTimes(boardHole.getPrimerProduct().getBackTimes());
+				primerProductOperation.setFailReason("");//需要记录失败原因！！！
+				
+				primerProductOperations.add(primerProductOperation);
+				
+				
+				//保存primer_product表数据
+				primerProductRepository.save(boardHole.getPrimerProduct());
+			}
+			//更新操作信息
+			primerProductOperationRepository.save(primerProductOperations);
+			
+    	}
+    	
+		boardRepository.save(board);
+    	
+    	return "";
+    }	
 		
 		
 		

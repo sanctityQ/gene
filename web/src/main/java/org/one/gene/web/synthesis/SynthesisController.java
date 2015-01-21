@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
 import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.service.SynthesisService;
 import org.one.gene.repository.BoardHoleRepository;
 import org.one.gene.repository.BoardRepository;
@@ -307,9 +308,45 @@ public class SynthesisController {
     }
     
     
+    /**
+     * 进入氨解结果查询页面
+     * 
+     * */
+    @Get("ammoniaResults")
+    public String ammoniaResults(){
+    	
+    	return "ammoniaResults";
+    }
     
+    /**
+     * 到板编辑页面
+     * boardNo 板号
+     * operationType 类型
+     * @throws IOException 
+     * */
+    @Post("boardEdit")
+	public Reply boardEdit(
+			@Param("operationType") PrimerStatusType operationType,
+			@Param("boardNo") String boardNo, Invocation inv)
+			throws IOException {
+    	
+    	String jsonStr = synthesisService.boardEdit(boardNo, operationType, inv);
+        
+    	return Replys.with(jsonStr).as(Json.class);
+    }
     
-    
-    
+    /**
+     * 提交编辑板信息
+     * */
+    @Post("submitBoardEdit")
+	public Reply submitBoardEdit(@Param("operationType") PrimerStatusType operationType,
+			                     @Param("boardHoles") List<BoardHole> boardHoles,
+			                     @Param("boardNo") String boardNo,
+			                     @Param("failReason") String failReason, Invocation inv) {
+    	
+    	synthesisService.submitBoardEdit(boardNo, boardHoles, operationType, failReason);
+    	
+    	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
+    }
     
 }

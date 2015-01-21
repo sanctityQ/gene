@@ -1,9 +1,3 @@
-$(function(){
-    $('#boardSequence').on("click","li",sequenceClick);
-    setBoardHeight();
-    $("#holeList").on("click","div.hole_box",holesClick);
-    synthesisBoard('holeList');
-})
 function sequenceClick(){
     $(this).addClass('selected').siblings().removeClass('selected');
 }
@@ -25,24 +19,24 @@ function selectAll(e){
     }
 
 }
-function synthesisBoard(id){
+function boardEdit(id,operationType){
     var board = $('#'+id);
     var tBody = '';
     board.empty();
     $.ajax({
-    	url : "/gene/synthesis/makeBoardEdit",
+    	url : "/gene/synthesis/boardEdit",
         type:'POST',
         dataType:'json',
 		data:{
-			flag: '',
-			oldFlag:'1',
-			boardNo: $('#boardNo').val(),
-			productNoStr: ''
+			operationType:operationType,
+			boardNo: $('#boardNo').val()
         },
-        success: function(data){
+        success:function(data){
+        	var typeFlag = data.typeFlag;
+        	var typeDesc = data.typeDesc;
             var total = data.total;
             var rows = data.rows;
-            $('#totals').text(total);
+            //$('#totals').text(total);
             for(var i = 0; i < rows.length; i++){
                 var row = 'row' + (i+1);
                 var hole = rows[i][row];
@@ -53,30 +47,37 @@ function synthesisBoard(id){
                 tr += '</tr>';
                 tBody += tr;
             }
-            board.append(tBody);
+            if(typeFlag == '1'){
+            	board.append(tBody);
+            }else{
+            	$.messager.alert("系统提示", "所选择板号有不符合可"+typeDesc+"状态的生产数据，请确认！");
+            }
             //默认都成功
             //$("#holeList").find('div.hole_box').addClass('selected');
             //setSucceed(true);
-        }
+        },
+		error:function(){
+			alert("查询数据失败，请重试！");
+		}
     });
 }
-function saveBoard(){
+function saveBoard(operationType){
 	
     var boardHoles = saveBoardData();
-    //console.log(boardHoles);
 
     $.ajax({
-    	url : "/gene/synthesis/submitSynthesis",
+    	url : "/gene/synthesis/submitBoardEdit",
     	type : "post",
         dataType : "json",
         data: {
+        	"operationType":operationType,
         	"boardHoles":boardHoles,
         	"boardNo":$('#boardNo').val()
         },
 		success : function(data) {
 			if(data != null){
 			    $.messager.alert('系统提示','合成板数据已保存！','',function(){
-			        goToPage('/gene/views/synthesis/synthesisResults.jsp');
+			        goToPage('/gene/views/synthesis/'+operationType+'Results.jsp');
 			    });
 			}
 		},
