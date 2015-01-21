@@ -301,7 +301,7 @@ public class SynthesisController {
 			@Param("successFlag") String successFlag,
 			@Param("failReason") String failReason, Invocation inv) {
     	
-//            synthesisService.submitDecorate(primerProducts, successFlag, failReason);
+            synthesisService.submitDecorate(primerProducts, successFlag, failReason);
     	
     	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
     }

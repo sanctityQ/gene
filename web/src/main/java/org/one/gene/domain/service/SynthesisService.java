@@ -783,7 +783,9 @@ public class SynthesisService {
 			primerProductOperation.setBackTimes(primerProduct.getBackTimes());
 			primerProductOperation.setFailReason(failReason);
 			
-			primerProduct.getPrimerProductOperations().add(primerProductOperation);
+			System.out.println("================"+primerProductOperation.getPrimerProduct().getId()+"=="+primerProductOperation.getType()+"==="+primerProductOperation.getBackTimes());
+			primerProductOperationRepository.save(primerProductOperation);
+//			primerProduct.getPrimerProductOperations().add(primerProductOperation);
 			//保存primer_product表数据
 			primerProductRepository.save(primerProduct);
     	}

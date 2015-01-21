@@ -41,8 +41,10 @@ function setResult(toggal){
             		}
             	});
             	
-                table.datagrid('reload');
+                //table.datagrid('reload');
                 decorate.menubutton('disable');
+                table.datagrid('loadData', { total: 0, rows: [] });//清空数据
+                getDecorateProducts();
             }
         });
     }else{
@@ -62,7 +64,7 @@ function setResult(toggal){
             },{
                 text:'确 定',
                 handler:function(){
-                    var text = $('#inputCause .inp_text').val();
+                    var text = $('#inputCause.inp_text').val();
 	               $.ajax({
 	            		type : "post",
 	            		url : "/gene/synthesis/submitDecorate",
@@ -81,7 +83,9 @@ function setResult(toggal){
                     
                     $('#inputCause').dialog('close');
                     decorate.menubutton('disable');
-                    table.datagrid('reload');
+                    //table.datagrid('reload');
+                    table.datagrid('loadData', { total: 0, rows: [] });//清空数据
+                    getDecorateProducts();
                 }
             }]
         });

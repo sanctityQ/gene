@@ -139,7 +139,7 @@ CREATE TABLE `primer_product_operation` (
   `user_code`   VARCHAR(15) NOT NULL COMMENT '用户代码',
   `user_name`   VARCHAR(31) NOT NULL COMMENT '用户名称',
   `create_time`   DATETIME NOT NULL COMMENT '操作时间',
-  `fail_reason` VARCHAR(511) NOT NULL DEFAULT '' comment '失败原因',
+  `fail_reason` VARCHAR(511) DEFAULT '' comment '失败原因',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_ppid_tc_bt` (`primer_product_id`,`type`,`back_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='引物生产数据操作记录表';
