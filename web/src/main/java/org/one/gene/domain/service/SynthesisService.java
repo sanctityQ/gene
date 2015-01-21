@@ -945,6 +945,10 @@ public class SynthesisService {
 						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.measure);
 						type = PrimerOperationType.purifySuccess;
 						typeDesc = PrimerOperationType.purifySuccess.desc();
+					}else if (operationType.equals(PrimerStatusType.pack)) {
+						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.bake);
+						type = PrimerOperationType.packSuccess;
+						typeDesc = PrimerOperationType.packSuccess.desc();
 					}
                     	
 					
@@ -968,6 +972,9 @@ public class SynthesisService {
 					}else if (operationType.equals(PrimerStatusType.purify)) {
 						type = PrimerOperationType.purifyFailure;
 						typeDesc = PrimerOperationType.purifyFailure.desc();
+					}else if (operationType.equals(PrimerStatusType.pack)) {
+						type = PrimerOperationType.packFailure;
+						typeDesc = PrimerOperationType.packFailure.desc();
 					}
 					
 				}

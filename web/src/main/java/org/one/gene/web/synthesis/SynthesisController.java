@@ -359,7 +359,15 @@ public class SynthesisController {
     	
     	return "purifyResults";
     }
-    
+    /**
+     * 进入分装结果查询页面
+     * 
+     * */
+    @Get("packResults")
+    public String packResults(){
+    	
+    	return "packResults";
+    }  
     
     
     

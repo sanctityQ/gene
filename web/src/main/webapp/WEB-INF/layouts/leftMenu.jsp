@@ -37,7 +37,7 @@
 	</div>
 	<div title="分装" data-options="iconCls:'packing'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li><i class="icon-pencil"></i>分装结果</li>
+			<li url="${ctx}/synthesis/packResults" id="aminolysis2"><i class="icon-pencil"></i>分装结果</li>
 		</ul>
 	</div>
 	<div title="烘干" data-options="iconCls:'dry'" style="height:200px;">
