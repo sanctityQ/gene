@@ -185,7 +185,7 @@ function setSucceed(ok){
                                 });
                             }
                         });
-                        alert(data);
+                        //alert(data);
 
                         $('#inputCause').dialog('close');
                         selects.each(function(){
@@ -199,6 +199,76 @@ function setSucceed(ok){
                             tag.prepend(icon);
                         })
 
+                    }
+                }]
+            });
+        }else{
+            selects.each(function(){
+                var status = $(this);
+                var tag = status.children('div.tag');
+                if(!status.hasClass(result)){
+                    status.removeClass().addClass('hole_box ' + result);
+                }else{
+                    status.removeClass('selected');
+                };
+                tag.prepend(icon);
+            })
+        };
+    }else{
+        $.messager.alert('系统提示','您没有选中任何孔号，请选择相应的孔号。')
+    };
+    $('#selectAll').text('全选');
+}
+
+function setSucceedDouble(ok,lose){
+    var selects = $('#holeList').find("div.selected");
+    var result = '',icon = '',identifying = null;
+    if(ok){
+        result = 'succeed';
+        icon = '<i class="icon-ok"></i>';
+    }else{
+
+        icon = '<i class="icon-remove"></i>';
+        if(lose == 'compose'){
+            result = 'compounded';
+            identifying = '<div class="compound icon-mail-reply-all"></div>';
+        }else{
+            result = 'regain';
+            identifying = '<div class="compound icon-dropbox"></div>';
+        }
+    }
+    if(selects.length){
+        if(!ok){
+            $('#inputCause').dialog({
+                title: '请输入失败原因',
+                width: 400,
+                height: 200,
+                closed: false,
+                cache: false,
+                modal: true,
+                buttons:[{
+                    text:'取 消',
+                    handler:function(){
+                        $('#inputCause').dialog('close');
+                        return false;
+                    }
+                },{
+                    text:'确 定',
+                    handler:function(){
+                        var text = $('#inputCause .inp_text').val();
+                        alert(text);
+                        $('#inputCause').dialog('close');
+                        selects.each(function(){
+                            var status = $(this);
+                            var tag = status.children('div.tag');
+                            if(!status.hasClass(result)){
+                                status.removeClass().addClass('hole_box ' + result);
+                            }else{
+                                status.removeClass('selected');
+                            };
+                            $(this).append(identifying);
+                            tag.prepend(icon);
+                        })
                     }
                 }]
             });

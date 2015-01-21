@@ -42,7 +42,7 @@
 	</div>
 	<div title="烘干" data-options="iconCls:'dry'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li><i class="icon-pencil"></i>烘干结果</li>
+			<li url="${ctx}/synthesis/bakeResults" id="aminolysis3"><i class="icon-pencil"></i>烘干结果</li>
 		</ul>
 	</div>
 	<div title="检测" data-options="iconCls:'test'" style="height:200px;">

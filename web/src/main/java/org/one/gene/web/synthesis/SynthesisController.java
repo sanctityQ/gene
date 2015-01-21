@@ -368,7 +368,15 @@ public class SynthesisController {
     	
     	return "packResults";
     }  
-    
+    /**
+     * 进入烘干结果查询页面
+     * 
+     * */
+    @Get("bakeResults")
+    public String bakeResults(){
+    	
+    	return "bakeResults";
+    }  
     
     
 }

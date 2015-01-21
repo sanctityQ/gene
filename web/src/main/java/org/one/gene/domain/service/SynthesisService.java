@@ -949,13 +949,21 @@ public class SynthesisService {
 						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.bake);
 						type = PrimerOperationType.packSuccess;
 						typeDesc = PrimerOperationType.packSuccess.desc();
+					}else if (operationType.equals(PrimerStatusType.bake)) {
+						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.detect);
+						type = PrimerOperationType.bakeSuccess;
+						typeDesc = PrimerOperationType.bakeSuccess.desc();
 					}
                     	
 					
-				} else if ("1".equals(failFlag)) { // fail
+				} else if ("1".equals(failFlag) || "2".equals(failFlag) || "3".equals(failFlag)) { // fail
 					
-					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
-					boardHole.getPrimerProduct().setBoardNo("");//清空板号
+					if ("3".equals(failFlag)) {
+						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到分装
+					}else{
+						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
+						boardHole.getPrimerProduct().setBoardNo("");//清空板号
+					}
 					if (boardHole.getPrimerProduct().getBackTimes() != null) {
 						boardHole.getPrimerProduct().setBackTimes(boardHole.getPrimerProduct().getBackTimes()+1);//循环重回次数+1
 					}else{
@@ -975,6 +983,9 @@ public class SynthesisService {
 					}else if (operationType.equals(PrimerStatusType.pack)) {
 						type = PrimerOperationType.packFailure;
 						typeDesc = PrimerOperationType.packFailure.desc();
+					}else if (operationType.equals(PrimerStatusType.bake)) {
+						type = PrimerOperationType.bakeFailure;
+						typeDesc = PrimerOperationType.bakeFailure.desc();
 					}
 					
 				}
