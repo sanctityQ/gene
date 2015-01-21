@@ -27,7 +27,7 @@
 				<i class="icon-list-alt"></i>请选择板号后导出相应上机表。
 				<br />
 				<input class="inp_text" id="boardNo" type="text" name="boardNo" value="" style="width: 300px" />
-				<ul id="seachList"></ul>
+				<ul id="seachBoardList"></ul>
 			</div>
 	
 			<div class="import_box" style="padding-bottom: 50px;">
@@ -37,5 +37,6 @@
 	</div>
 </form>
 <script src="${ctx}/static/js/machineTable.js" ></script>
+<script src="${ctx}/static/js/vagueSeachBoard.js"></script>
 </body>
 </html>

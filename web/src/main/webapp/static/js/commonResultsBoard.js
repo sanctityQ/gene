@@ -42,7 +42,12 @@ function boardEdit(id,operationType){
                 var hole = rows[i][row];
                 var tr = '<tr>';
                 for(var j = 0; j < hole.length; j++){
-                    tr += '<td><div class="hole_box"><div class="hole">'+hole[j].No+'</div><div class="tag"><i class="icon-ok"></i>'+hole[j].tag+'</div></div></td>';
+                    var identifying = hole[j].identifying;
+                    if(identifying != ''){
+                        tr += '<td><div class="hole_box"><div class="hole">'+hole[j].No+'</div><div class="identifying">'+hole[j].identifying+'</div><div class="tag">'+hole[j].tag+'</div></div></td>';
+                    }else{
+                        tr += '<td><div class="hole_box"><div class="hole">'+hole[j].No+'</div><div class="tag"><i class="icon-ok"></i>'+hole[j].tag+'</div></div></td>';
+                    }
                 }
                 tr += '</tr>';
                 tBody += tr;

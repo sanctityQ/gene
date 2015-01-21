@@ -23,7 +23,10 @@
 	<table width="100%">
 		<tr>
 			<td align="right">板号:</td>
-			<td><input class="inp_text" type="text" id="boardNo" name="boardNo" value="" style="width: 80%" /></td>
+			<td><input class="inp_text" type="text" id="boardNo" name="boardNo" value="" style="width: 80%" />
+			    <ul id="seachBoardList"></ul>
+			</td>
+			
             <td>
                 <label><input type="checkbox" id="modiFiveType" name="modiFiveType" checked /> 5'修饰</label>
                 <label><input type="checkbox" id="modiThreeType" name="modiThreeType" checked /> 3'修饰</label>
@@ -63,6 +66,7 @@
 </table>
 <div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
 <script src="${ctx}/static/js/decorate.js" ></script>
+<script src="${ctx}/static/js/vagueSeachBoard.js"></script>
 <script type="text/javascript">
 $(function(){
     var dg = $('#productionData');

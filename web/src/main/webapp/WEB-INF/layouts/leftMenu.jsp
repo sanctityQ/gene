@@ -27,7 +27,7 @@
 	</div>
 	<div title="纯化" data-options="iconCls:'purifying'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li><i class="icon-pencil"></i>纯化结果</li>
+			<li url="${ctx}/synthesis/purifyResults" id="aminolysis1"><i class="icon-pencil"></i>纯化结果</li>
 		</ul>
 	</div>
 	<div title="测值" data-options="iconCls:'observed'" style="height:200px;">

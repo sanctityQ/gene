@@ -50,8 +50,8 @@ var boardNo = ${boardNo};
     </div>
 </div>
 <div class="tools_bar tabbing">
-    <button class="btn" onclick="goToPage('views/synthesis/ammoniaResults.jsp');" type="">取 消</button>
-    <button class="btn btn-primary" onclick="saveBoard('ammonia');" type="">保 存</button>
+    <button class="btn" onclick="goToPage('views/synthesis/purifyResults.jsp');" type="">取 消</button>
+    <button class="btn btn-primary" onclick="saveBoard('purify');" type="">保 存</button>
 </div>
 <div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
 <script src="${ctx}/static/js/commonResultsBoard.js"></script>
@@ -60,7 +60,7 @@ $(function(){
     $('#boardSequence').on("click","li",sequenceClick);
     setBoardHeight();
     $("#holeList").on("click","div.hole_box",holesClick);
-    boardEdit('holeList','ammonia');
+    boardEdit('holeList','purify');
 })
 </script>
 </body>

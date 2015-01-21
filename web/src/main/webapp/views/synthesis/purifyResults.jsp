@@ -19,24 +19,32 @@
 <script src="${ctx}/static/js/json2.js"></script>
 </head>
 <body>
-<form name="form" action="${ctx}/synthesis/exportPackTable/" method="post">
-	<div class="page_padding">
-		<div class="content_box">
-			<h2>导出分装表</h2>
-			<div class="import_box">
-				<i class="icon-inbox"></i>请选择板号后导出相应分装表。
-				<br />
-				<input class="inp_text" id="boardNo" type="text" name="boardNo" value="" style="width: 300px" />
-				<ul id="seachBoardList"></ul>
-			</div>
-	
-			<div class="import_box" style="padding-bottom: 50px;">
-				<button class="btn-primary submit" type="button" onclick="exportPackTable()">导出分装表</button>
-			</div>
+<div class="page_padding">
+	<div class="content_box">
+		<h2>录入纯化结果</h2>
+		<div class="import_box">
+			<i class="icon-pencil"></i>请输入板号，点击“纯化结果”按钮，进入结果录入页面。
+			<br />
+			<input class="inp_text" type="text" id="boardNo" name="boardNo" value="" style="width: 300px" />
+			<ul id="seachBoardList"></ul>
+		</div>
+
+		<div class="import_box" style="padding-bottom: 50px;">
+			<button class="btn-primary submit" type="button" onclick="goToResultsBoard()">纯化结果</button>
 		</div>
 	</div>
-</form>
-<script src="${ctx}/static/js/packTable.js" ></script>
+</div>
 <script src="${ctx}/static/js/vagueSeachBoard.js"></script>
+<script type="text/javascript">
+function goToResultsBoard(){
+	var boardNo = $.trim($('#boardNo').val());
+	
+	if(boardNo == ""){
+		alert("请输入板号。");
+		return;
+	}
+    goToPage("/gene/views/synthesis/purifyResultsBoard.jsp?boardNo="+boardNo);
+}
+</script>
 </body>
 </html>

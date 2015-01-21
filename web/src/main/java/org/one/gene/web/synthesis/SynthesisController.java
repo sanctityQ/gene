@@ -349,4 +349,18 @@ public class SynthesisController {
     	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
     }
     
+    
+    /**
+     * 进入纯化结果查询页面
+     * 
+     * */
+    @Get("purifyResults")
+    public String purifyResults(){
+    	
+    	return "purifyResults";
+    }
+    
+    
+    
+    
 }

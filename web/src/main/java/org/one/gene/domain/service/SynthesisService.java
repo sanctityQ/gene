@@ -481,7 +481,7 @@ public class SynthesisService {
      * */
 	public void exportPackTable(String boardNo, Invocation inv) throws IOException {
 		
-		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views\\downLoad\\template\\";
+		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+"";
 		String excelFilePath = templatePath+"packTable.xls";
 		String configFilePath = templatePath+"packTableHoleConfig.txt";
 		
@@ -801,12 +801,12 @@ public class SynthesisService {
 		String flag = "";
 		String typeFlag = "1";//生产数据是否复合查询类型 ：1 复合， 0 不复合
 		//查询板号信息
-		Map<String, String> boardHoleMap = new HashMap<String, String>();
+		Map<String, PrimerProduct> boardHoleMap = new HashMap<String, PrimerProduct>();
 		Board board = boardRepository.findByBoardNo(boardNo);
 		if (board != null) {
 			flag = board.getBoardType();
 			for (BoardHole boardHole : board.getBoardHoles()) {
-				boardHoleMap.put(boardHole.getHoleNo(), boardHole.getPrimerProduct().getProductNo());
+				boardHoleMap.put(boardHole.getHoleNo(), boardHole.getPrimerProduct());
 				totalCount += 1;
 				if (!boardHole.getPrimerProduct().getOperationType().equals(operationType)) {
 					typeFlag = "0";
@@ -816,7 +816,7 @@ public class SynthesisService {
 
 		ArrayList holeNoList = new ArrayList();
 		ArrayList holeList = new ArrayList();
-		
+		PrimerProduct primerProduct = null;
 		holeList.add("A");
 		holeList.add("B");
 		holeList.add("C");
@@ -828,6 +828,7 @@ public class SynthesisService {
 		
 		String holeNo = "";
 		String productNo = "";
+		String purifyType = "";
 		String jsonStr = "{\r";
 		jsonStr += "\"typeFlag\":"+typeFlag+",\r";
 		jsonStr += "\"typeDesc\":\""+operationType.desc()+"\",\r";
@@ -845,11 +846,17 @@ public class SynthesisService {
 					String hole = (String)holeList.get(i);
 					holeNo = hole+j;
 					productNo = "";
+					purifyType = "";
 					if(boardHoleMap.get(holeNo) != null){
-						productNo = (String)boardHoleMap.get(holeNo);
+						primerProduct = (PrimerProduct)boardHoleMap.get(holeNo);
+						productNo = primerProduct.getProductNo();
+						if (!"OPC".equals(primerProduct.getPurifyType())
+								&& operationType.equals(PrimerStatusType.purify)) {
+							purifyType = primerProduct.getPurifyType();
+						}
 					}
 					
-					jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\"}";
+					jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\",\"identifying\":\""+purifyType+"\"}";
 					
 					if (i!=holeList.size()-1){
 						jsonStr += ",\r";
@@ -872,10 +879,16 @@ public class SynthesisService {
 				for (int j=1;j<13;j++){
 					holeNo = hole+j;
 					productNo = "";
+					purifyType = "";
 					if(boardHoleMap.get(holeNo) != null){
-						productNo = (String)boardHoleMap.get(holeNo);
+						primerProduct = (PrimerProduct)boardHoleMap.get(holeNo);
+						productNo = primerProduct.getProductNo();
+						if (!"OPC".equals(primerProduct.getPurifyType())
+								&& operationType.equals(PrimerStatusType.purify)) {
+							purifyType = primerProduct.getPurifyType();
+						}
 					}
-					jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\"}";
+					jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\",\"identifying\":\""+purifyType+"\"}";
 					
 					if (j!=12){
 						jsonStr += ",\r";
@@ -928,6 +941,10 @@ public class SynthesisService {
 						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.purify);
 						type = PrimerOperationType.ammoniaSuccess;
 						typeDesc = PrimerOperationType.ammoniaSuccess.desc();
+					}else if (operationType.equals(PrimerStatusType.purify)) {
+						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.measure);
+						type = PrimerOperationType.purifySuccess;
+						typeDesc = PrimerOperationType.purifySuccess.desc();
 					}
                     	
 					
@@ -948,6 +965,9 @@ public class SynthesisService {
 					if (operationType.equals(PrimerStatusType.ammonia)) {
 						type = PrimerOperationType.ammoniaFailure;
 						typeDesc = PrimerOperationType.ammoniaFailure.desc();
+					}else if (operationType.equals(PrimerStatusType.purify)) {
+						type = PrimerOperationType.purifyFailure;
+						typeDesc = PrimerOperationType.purifyFailure.desc();
 					}
 					
 				}
