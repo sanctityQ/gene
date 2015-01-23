@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.List;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
 import com.sinosoft.one.mvc.web.annotation.Path;
@@ -403,14 +404,19 @@ public class SynthesisController {
     	return "measureResults";
     }    
     
-    @Post("upload")
-	public Reply upload(@Param("boardNo") String boardNo,
+    @Post("uploadMeasure")
+	public String uploadMeasure(@Param("boardNo") String boardNo,
 			@Param("operationType") PrimerStatusType operationType,
 			@Param("file") MultipartFile file, Invocation inv) throws Exception {
 
     	String jsonStr = synthesisService.boardEdit(boardNo, operationType, file, inv);
      
-    	return Replys.with(jsonStr).as(Json.class);
+		System.out.println(JSONObject.toJSONString(jsonStr));
+		
+		inv.addModel("boardNo", boardNo);
+		inv.addModel("measuredata", JSONObject.toJSONString(jsonStr));
+		
+    	return "measureResultsBoard";
     }
     
 }

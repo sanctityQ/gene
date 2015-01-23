@@ -3,8 +3,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="msg" uri="http://mvc.one.sinosoft.com/validation/msg" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
-<c:set var="boardNo" value="${param.boardNo}"/>
-<c:set var="object" value="${param.object}"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,7 +19,6 @@
 <script src="${ctx}/static/js/json2.js"></script>
 <script type="text/javascript">
 var boardNo = ${boardNo};
-var object = ${object};
 </script>
 </head>
 <body>
@@ -62,21 +59,18 @@ $(function(){
     $('#boardSequence').on("click","li",sequenceClick);
     setBoardHeight();
     $("#holeList").on("click","div.hole_box",holesClick);
-    alert(${boardNo});
-    alert("00000");
-    boardEditll(${object});
+    boardEditMeasure(${measuredata});
 })
 
-function boardEditll(data){
-	alert(data);
+function boardEditMeasure(data){
+ 
+	data = $.parseJSON(data);//String to json
     var board = $('#holeList');
     var tBody = '';
-    board.empty();
 	var typeFlag = data.typeFlag;
 	var typeDesc = data.typeDesc;
     var total = data.total;
     var rows = data.rows;
-    alert("11111");
     //$('#totals').text(total);
     for(var i = 0; i < rows.length; i++){
         var row = 'row' + (i+1);

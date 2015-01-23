@@ -18,6 +18,7 @@
 <script src="${ctx}/static/js/index.js" ></script>
 </head>
 <body>
+<form name="form" modelAttribute="user" action="${ctx}/synthesis/uploadMeasure" method="post" enctype="multipart/form-data" class="form-horizontal">
 <div class="page_padding">
 	<div class="content_box">
 		<h2>测值结果</h2>
@@ -43,6 +44,8 @@
 		</div>
 	</div>
 </div>
+<input type="hidden" id="operationType" name="operationType" value="measure"/>
+</form>
 <script src="${ctx}/static/js/vagueSeachBoard.js"></script>
 <script type="text/javascript">
 function goToResultsBoard(){
@@ -58,31 +61,7 @@ function goToResultsBoard(){
 		return;
 	}
 	
-	ajaxFileUploade();
-}
-
-var ajaxFileUploade=function() {
-
-	$.ajaxFileUpload({
-            url: "/gene/synthesis/upload", //用于文件上传的服务器端请求地址
-            secureuri: false, //是否需要安全协议，一般设置为false
-            data: {
-            	"boardNo": $("#boardNo").val(),
-            	"operationType": "measure"
-            },
-            fileElementId:"upload",
-            dataType: 'JSON', //返回值类型 一般设置为JSON
-            success: function (data,status)  //服务器成功响应处理函数
-            {
-            	if(data != null){
-            		goToPage("/gene/views/synthesis/measureResultsBoard.jsp?boardNo="+$("#boardNo").val()+"&object="+data);
-            	}
-            },
-            error: function (data, status, e)//服务器响应失败处理函数
-            {
-            	alert("无法获取数据信息!");
-            }
-        });
+	document.form.submit();
 }
 </script>
 </body>

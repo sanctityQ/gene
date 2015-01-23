@@ -805,7 +805,7 @@ public class SynthesisService {
 		
 		Map<String, BigDecimal> measureMap = new HashMap<String, BigDecimal>();
 		if(operationType.equals(PrimerStatusType.measure) && file!=null){
-			measureMap = this.measureMessage(file);
+			measureMap = this.measureData(file);
 		}
 		
 		int totalCount = 0;
@@ -980,6 +980,10 @@ public class SynthesisService {
 						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.detect);
 						type = PrimerOperationType.bakeSuccess;
 						typeDesc = PrimerOperationType.bakeSuccess.desc();
+					}else if (operationType.equals(PrimerStatusType.measure)) {
+						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.pack);
+						type = PrimerOperationType.measureSuccess;
+						typeDesc = PrimerOperationType.measureSuccess.desc();
 					}
                     	
 					
@@ -1013,6 +1017,9 @@ public class SynthesisService {
 					}else if (operationType.equals(PrimerStatusType.bake)) {
 						type = PrimerOperationType.bakeFailure;
 						typeDesc = PrimerOperationType.bakeFailure.desc();
+					}else if (operationType.equals(PrimerStatusType.measure)) {
+						type = PrimerOperationType.measureFailure;
+						typeDesc = PrimerOperationType.measureFailure.desc();
 					}
 					
 				}
@@ -1045,7 +1052,7 @@ public class SynthesisService {
     }	
 		
     //组织测值信息
-   	public Map<String, BigDecimal> measureMessage(MultipartFile file) throws IOException {
+   	public Map<String, BigDecimal> measureData(MultipartFile file) throws IOException {
    		
    		
    		Map<String, BigDecimal> measureMap = new HashMap<String, BigDecimal>();

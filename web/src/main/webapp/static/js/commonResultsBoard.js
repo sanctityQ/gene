@@ -82,7 +82,11 @@ function saveBoard(operationType){
 		success : function(data) {
 			if(data != null){
 			    $.messager.alert('系统提示','合成板数据已保存！','',function(){
-			        goToPage('/gene/views/synthesis/'+operationType+'Results.jsp');
+			    	if(operationType == 'measure'){
+			    		goToPage('/gene/synthesis/measureResults');
+			    	}else{
+			    		goToPage('/gene/views/synthesis/'+operationType+'Results.jsp');
+			    	}
 			    });
 			}
 		},
