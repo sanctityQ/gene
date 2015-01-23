@@ -1,12 +1,7 @@
 package org.one.gene.web.order;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +24,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.common.collect.Maps;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
@@ -52,10 +49,15 @@ public class OrderController {
 
 
     @Get("import")
-    public String orderImport(){
+    public String orderImport(Invocation inv){
+    	//输出模版下载地址
+    	String fileName = "orderTemplate.xls";
+		String templateFilePath= File.separator+"gene"+File.separator+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+fileName;
+		inv.addModel("templateFilePath", templateFilePath);
         return "orderImport";
     }
     @Get("orderList")
+    @Post("orderList")
     public String orderList(){
         return "orderList";
     }
@@ -66,7 +68,7 @@ public class OrderController {
     
     
     @Post("upload")
-    public Reply upload(@Param("customerCode") String customerCode, @Param("file") MultipartFile file, Invocation inv) throws Exception {
+    public String upload(@Param("customerCode") String customerCode, @Param("file") MultipartFile file, Invocation inv) throws Exception {
 
     	ArrayList<String> errors = new ArrayList<String>();
     	
@@ -108,7 +110,8 @@ public class OrderController {
 	        }
     	}
         if(errors.size()>0){
-        	return Replys.with(errors).as(Json.class);
+        	inv.addModel("errors", errors);
+        	return "importError";//Replys.with(errors).as(Json.class);
         }else{
         	//获取客户信息
         	Customer customer = orderService.findCustomer(customerCode);
@@ -122,9 +125,17 @@ public class OrderController {
         	//保存订单信息
         	orderService.save(order);
         	inv.getResponse().setContentType("text/html");
-        	Order orderRe = new Order();
-        	orderRe.setOrderNo(order.getOrderNo());
-            return Replys.with(orderRe).as(Json.class);
+    		inv.addModel("customer", customer);
+    		inv.addModel("order", order);
+    		inv.addModel("total", order.getPrimerProducts().size());
+    		for(PrimerProduct primerProduct:order.getPrimerProducts()){
+    			primerProduct.setOrder(null);
+    			primerProduct.setPrimerProductOperations(null);
+    			primerProduct.setPrimerProductValues(null);
+    		}
+    		System.out.println(JSONObject.toJSONString(order.getPrimerProducts()));
+    		inv.addModel("reSultdata", JSONObject.toJSONString(order.getPrimerProducts()));
+        	return "orderInfo";
         }
         
     }
@@ -137,40 +148,24 @@ public class OrderController {
      * @throws Exception
      */
     @Post("productQuery")
-    public Reply productQuery(@Param("orderNo") String orderNo,@Param("pageNo")Integer pageNo,
-            @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
+    public Reply productQuery(@Param("orderNo") String orderNo,Invocation inv) throws Exception {
         
-    	if(pageNo == null){
-            pageNo = 0;
-        }
-
-        if(pageSize == null){
-            pageSize = 10;
-        }
-
-        Pageable pageable = new PageRequest(pageNo,pageSize);
-        Map<String,Object> searchParams = Maps.newHashMap();
-        searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
-        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
-        Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
-        
-        Page<Order> orderPage = orderRepository.findAll(spec,pageable);
+        Order order = orderRepository.findByOrderNo(orderNo);
         
         BigDecimal orderTotalValue = new BigDecimal("0");
         String coustomerCode = "";
-        for(Order order:orderPage.getContent()){
-        	coustomerCode = order.getCustomerCode();
-        	for(PrimerProduct product:order.getPrimerProducts()){
-        		product.setTbn(new BigDecimal(product.getGeneOrder().length()));
-        		orderTotalValue = orderTotalValue.add(product.getTotalVal());
-        	}
-        	order.setTotalValue(orderTotalValue);
-		}
+    	coustomerCode = order.getCustomerCode();
+    	for(PrimerProduct product:order.getPrimerProducts()){
+    		product.setTbn(new BigDecimal(product.getGeneOrder().length()));
+    		orderTotalValue = orderTotalValue.add(product.getTotalVal());
+    	}
+    	order.setTotalValue(orderTotalValue);
+    	
         Customer customer = orderService.findCustomer(coustomerCode);
-        OrderInfo orderInfo = new OrderInfo();
-        orderInfo.setCustomer(customer);
-        orderInfo.setOrderPage(orderPage);
-        return Replys.with(orderInfo).as(Json.class);
+        
+        inv.addModel("customer", customer);
+        
+        return Replys.with(order).as(Json.class);
     }
     
     @Post("save")
@@ -244,38 +239,12 @@ public class OrderController {
     	return Replys.with("sucess").as(Text.class);
     }
     
-    @Get("downLoad") 
-    @Post("downLoad") 
-    public String downLoad(Invocation inv) throws Exception{
-		String fileName = "订购表模版.xls";
-		String filePath = inv.getRequest().getSession().getServletContext().getRealPath("/");
-		filePath = filePath+"views\\downLoad\\template\\"+fileName;
-		System.out.println("文件下载路径filePath::::::"+filePath);
-		
-        File file=new File(filePath);
-        
-        InputStream is=new FileInputStream(file);
-        OutputStream os=inv.getResponse().getOutputStream();
-        BufferedInputStream bis = new BufferedInputStream(is);
-        BufferedOutputStream bos = new BufferedOutputStream(os);
-        
-        fileName = java.net.URLEncoder.encode(fileName, "UTF-8");// 处理中文文件名的问题
-        fileName = new String(fileName.getBytes("UTF-8"), "GBK");// 处理中文文件名的问题
-        inv.getResponse().reset();
-        inv.getResponse().setContentType("application/x-msdownload");// 不同类型的文件对应不同的MIME类型
-        inv.getResponse().setHeader("Content-Disposition", "attachment; filename="+fileName);
-        int bytesRead = 0;
-        byte[] buffer = new byte[1024];
-        while ((bytesRead = bis.read(buffer)) != -1){
-            bos.write(buffer, 0, bytesRead);// 将文件发送到客户端
-        }
-        bos.flush();
-        bis.close();
-        bos.close();
-        is.close();
-        os.close();
-        return null;
+    @Post("vagueSeachCustomer") 
+    public Reply vagueSeachCustomer( @Param("seachCustom") String customerCode,Invocation inv){
+    	List<Customer> customers = orderService.vagueSeachCustomer(customerCode);
+    	return Replys.with(customers).as(Json.class);
     }
+    
 
     public Reply test(){
         Order order = orderRepository.findOne(1l);

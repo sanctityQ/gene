@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%> 
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
-<c:set var="orderNo" value="${param.orderNo}" />
+<c:set var="orderNo" value="${order.orderNo}" />
 <!DOCTYPE html>
 <html>
 <head>
@@ -29,9 +29,10 @@ var ctx = '${ctx}';
 <%-- <form id="inputForm" modelAttribute="user" action="${ctx}/order/save" method="post"> --%>
 <div class="page_padding">
 	<div class="content_box totle margin_btoom">
-		<b>订单号：</b>${orderNo}<br />
-		<div id="createTime"></div>
-		<div id="totalValue"></div>
+		<b>订单号：</b>${order.orderNo}<br />
+		<b>订购日期：</b><fmt:formatDate value="${order.createTime}" pattern="yyyy-MM-dd HH:mm:ss" /><br />
+		<b class="bule">订单总计：</b>￥ ${order.totalValue}<br />
+		<b>订单类型：</b>${order.orderUpType} 类型
 	</div>
 	<div class="content_box info margin_btoom">
 		<h2>客户信息</h2>
@@ -41,35 +42,35 @@ var ctx = '${ctx}';
 			</tr>
 			<tr>
 				<td align="right">客户编号:</td>
-				<td><input id="code" name="customer.code" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
+				<td><input id="code" name="customer.code" class="readonly_inp" type="text"  style="width: 80%" value="${customer.code}" disabled/></td>
 				<td align="right">客户姓名:</td>
-				<td><input id="name" name="customer.name" class="readonly_inp" type="text" style="width: 80%" disabled/></td>
+				<td><input id="name" name="customer.name" class="readonly_inp" type="text" style="width: 80%" value="${customer.name}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">负责人姓名:</td>
-				<td><input id="leaderName" name="customer.leaderName" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
+				<td><input id="leaderName" name="customer.leaderName" class="readonly_inp" type="text"  style="width: 80%" value="${customer.leaderName}" disabled/></td>
 				<td align="right">客户单位:</td>
-				<td><input id="customerUnit" class="readonly_inp" type="text" value="" style="width: 80%" disabled/></td>
+				<td><input id="customerUnit" class="readonly_inp" type="text" style="width: 80%" value="${customer.invoiceTitle}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">发票抬头:</td>
-				<td><input id="invoiceTitle" name="customer.invoiceTitle" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
+				<td><input id="invoiceTitle" name="customer.invoiceTitle" class="readonly_inp" type="text"  style="width: 80%" value="${customer.invoiceTitle}" disabled/></td>
 				<td align="right">结账方式:</td>
-				<td><input id="payWays" name="customer.payWays" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
+				<td><input id="payWays" name="customer.payWays" class="readonly_inp" type="text"  style="width: 80%" value="${customer.payWays}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">客户地址:</td>
-				<td colspan="3"><input id="address" name="customer.address" class="readonly_inp" type="text"  style="width: 50%" disabled/></td>
+				<td colspan="3"><input id="address" name="customer.address" class="readonly_inp" type="text"  style="width: 50%" value="${customer.address}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">联系电话:</td>
-				<td><input id="phoneNo" name="customer.phoneNo" class="readonly_inp" type="text" style="width: 80%" disabled/></td>
+				<td><input id="phoneNo" name="customer.phoneNo" class="readonly_inp" type="text" style="width: 80%" value="${customer.phoneNo}" disabled/></td>
 				<td align="right">Email:</td>
-				<td><input id="email" name="customer.email" class="readonly_inp" type="text" style="width: 80%" disabled/></td>
+				<td><input id="email" name="customer.email" class="readonly_inp" type="text" style="width: 80%" value="${customer.email}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">网址:</td>
-				<td colspan="3"><input id="webSite" class="readonly_inp" type="text" value="" style="width: 50%" disabled/></td>
+				<td colspan="3"><input id="webSite" class="readonly_inp" type="text" style="width: 50%" value="${customer.webSite}" disabled/></td>
 			</tr>
 			<tr>
 				<td colspan="4" height="10"></td>
@@ -85,6 +86,10 @@ var ctx = '${ctx}';
 				<th data-options="field:'primeName',width:80,sortable:true,editor:'text'">引物名称</th>
 				<th data-options="field:'geneOrder',width:80,sortable:true,editor:'text'">序列</th>
 				<th data-options="field:'tbn',width:80,sortable:true,editor:'text'">碱基数</th>
+				<th data-options="field:'nmolTotal',width:80,sortable:true,editor:'text'">nmol总量</th>
+				<th data-options="field:'nmolTB',width:80,sortable:true,editor:'text'">nmol/tube</th>
+				<th data-options="field:'odTotal',width:80,sortable:true,editor:'text'">OD总量</th>
+				<th data-options="field:'odTB',width:80,sortable:true,editor:'text'">OD/tube</th>
 				<th data-options="field:'purifyType',width:80,sortable:true,editor:'text'">纯化方式</th>
 				<th data-options="field:'modiPrice',width:80,sortable:true,editor:'text'">修饰价格</th>
 				<th data-options="field:'baseVal',width:80,sortable:true,editor:'text'">碱基单价</th>
@@ -103,7 +108,7 @@ var ctx = '${ctx}';
 </div>
 <script src="${ctx}/views/order/js/orderInfo.js" ></script>
 <script type="text/javascript">
-getProduct(${orderNo});
+getProduct(${total},${reSultdata});
 </script>
 </body>
 </html>

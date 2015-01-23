@@ -3,11 +3,13 @@ package org.one.gene.domain.service;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.one.gene.domain.entity.*;
 import org.one.gene.excel.OrderCaculate;
 import org.one.gene.excel.OrderExcelPase;
@@ -85,20 +87,38 @@ public class OrderService {
 			for (PrimerProductOperation po : primerProduct.getPrimerProductOperations()) {
 				po.setPrimerProduct(primerProduct);
 			}
+			
+			if("od".equals(order.getOrderUpType())){
+			  //通过od值计算  1000 * 'OD总量' / 'OD/μmol'
+			  primerProduct.setNmolTotal(new BigDecimal(1000).multiply(primerProduct.getOdTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
+			  //1000 * 'OD/tube' / 'OD/μmol'
+			  primerProduct.setNmolTB(new BigDecimal(1000).multiply(primerProduct.getOdTB()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
+			}
+			if("nmol".equals(order.getOrderUpType())){
+			  //（'nmol/tube' * 'OD/μmol'）/ 1000
+			  primerProduct.setOdTB(new BigDecimal(1000).multiply(primerProduct.getNmolTB()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
+			  //（'nmol总量' * 'OD/μmol'）/ 1000
+			  primerProduct.setOdTotal(new BigDecimal(1000).multiply(primerProduct.getNmolTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
+			}
 		}
 
 		orderRepository.save(order);
 
     }
 
+	public List<Customer> vagueSeachCustomer(String customerCode){
+    	String sql="";
+    	if (!StringUtils.isBlank(customerCode)) {
+    	  sql = "%" + customerCode + "%";
+        }
+		List<Customer> customers = customerRepository.vagueSeachCustomer(sql);
+		return customers;
+	}
 	
 	public Customer findCustomer(String customerCode){
 		Customer customer = new Customer();
-    	//解析数据展示列表,第一个sheet客户信息不解析获取
-    	//orderExcelPase.ReadExcel(customerCode,path, 0, "4-",new String[] {"b","i"});
-    	//excel验证通过，根据客户ID查询客户信息，并解析订单数据存储
     	if(orderExcelPase.isIncludedChinese(customerCode)) {
-    		customer = customerRepository.findByNameLike(customerCode);
+    		customer = customerRepository.findByName(customerCode);
     	}else{
     		customer = customerRepository.findByCode(customerCode);
     	}

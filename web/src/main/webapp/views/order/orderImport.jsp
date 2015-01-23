@@ -1,10 +1,11 @@
-<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
 <link href="${ctx}/static/css/easyui.css" type="text/css" rel="stylesheet" />
 <link href="${ctx}/static/css/icon.css" type="text/css" rel="stylesheet" />
 <link href="${ctx}/static/css/perfect-scrollbar.min.css" type="text/css" rel="stylesheet" />
@@ -17,21 +18,27 @@
 <script src="${ctx}/static/js/ajaxfileupload.js" ></script>
 <script src="${ctx}/static/js/index.js" ></script>
 <title>订单导入</title>
+<script type="text/javascript">
+ var ctx = '${ctx}';
+</script>
 </head>
 <body>
+<form id="inputForm" modelAttribute="user" action="${ctx}/order/upload" method="post" enctype="multipart/form-data"
+	class="form-horizontal">
 <div class="page_padding">
 	<div class="content_box">
 		<h2>导入单订信息</h2>
 		<div class="import_box">
 			<i class="icon-group"></i>请输入客户姓名或客户代码。
 			<br />
-			<input class="inp_text" id="customerCode" type="text" name="customerCode" value="" style="width: 300px" />
+			<input class="inp_text" type="text" id="seachCustom" name="customerName" value="" style="width: 300px" />
+			<input class="inp_text" id="customerCode" type="hidden" name="customerCode" value=""/>
 			<ul id="seachList"></ul>
 		</div>
 		<div class="import_box" style="line-height: 16px;">
 			<i class="icon-upload-alt"></i>上传您的excel模板，系统将根据您导入的信息生成订单。
 			<br />
-			<a href="${ctx}/order/downLoad" class="down_excel">下载excel模板文件…</a>
+			<a href="${templateFilePath}" class="down_excel">下载excel模板文件…</a>
 			<br /><br />
 			<div class="file_box">
 				<input name="file" type="file" onchange="document.getElementById('viewfile').value=this.value;" class="file" id="upload" /> 
@@ -40,10 +47,11 @@
 			</div>
 		</div>
 		<div class="import_box" style="padding-bottom: 50px;">
-			<button class="btn-primary submit" type="" onclick="ajaxFileUpload();">生成订单</button>
+			<button class="btn-primary submit" type="submit" >生成订单</button>
 		</div>
 	</div>
 </div>
+</form>
 <script src="${ctx}/static/js/vagueSeach.js" ></script>
 </body>
 </html>

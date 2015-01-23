@@ -104,6 +104,7 @@ public class OrderExcelPase {
 				  case 4:	
 					  if(!"".equals(v)){
 					    primerProduct.setNmolTotal(new BigDecimal(v));
+					    order.setOrderUpType("nmol");
 					  }
 					break;
 				  case 5:	
@@ -114,6 +115,7 @@ public class OrderExcelPase {
 				  case 6:	
 					  if(!"".equals(v)){
 					    primerProduct.setOdTotal(new BigDecimal(v));
+					    order.setOrderUpType("od");
 					  }
 					break;
 				  case 7:	
@@ -151,20 +153,7 @@ public class OrderExcelPase {
 					  BigDecimal totalVal = primerProduct.getModiPrice().add(primerProduct.getBaseVal().multiply(new BigDecimal(tbnStr))).add(primerProduct.getPurifyVal());
 					  primerProduct.setTotalVal(totalVal);
 					  orderTotalValue = orderTotalValue.add(primerProduct.getTotalVal());
-					  if(primerProduct.getNmolTotal()==null&&primerProduct.getNmolTB()==null){
-						  order.setOrderUpType("od");
-						//通过od值计算  1000 * 'OD总量' / 'OD/μmol'
-						primerProduct.setNmolTotal(new BigDecimal(1000).multiply(primerProduct.getOdTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
-						//1000 * 'OD/tube' / 'OD/μmol'
-						primerProduct.setNmolTB(new BigDecimal(1000).multiply(primerProduct.getOdTB()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
-					  }
-					  if(primerProduct.getOdTB()==null&&primerProduct.getOdTotal()==null){
-						  order.setOrderUpType("nmol");
-						//（'nmol/tube' * 'OD/μmol'）/ 1000
-						primerProduct.setOdTB(new BigDecimal(1000).multiply(primerProduct.getNmolTB()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
-						//（'nmol总量' * 'OD/μmol'）/ 1000
-						primerProduct.setOdTotal(new BigDecimal(1000).multiply(primerProduct.getNmolTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
-					  }
+					  
 					  break;
 				  case 16:	
 					  primerProduct.setRemark(v);
