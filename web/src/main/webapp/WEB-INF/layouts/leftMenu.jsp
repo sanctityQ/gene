@@ -32,7 +32,7 @@
 	</div>
 	<div title="测值" data-options="iconCls:'observed'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li><i class="icon-pencil"></i>测值结果</li>
+			<li url="${ctx}/synthesis/measureResults" id="measuredValue"><i class="icon-pencil"></i>测值结果</li>
 		</ul>
 	</div>
 	<div title="分装" data-options="iconCls:'packing'" style="height:200px;">

@@ -1,6 +1,12 @@
 package org.one.gene.web.synthesis;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -16,8 +22,14 @@ import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
 
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
+import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.service.SynthesisService;
@@ -31,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 @Path
 public class SynthesisController {
@@ -195,7 +208,7 @@ public class SynthesisController {
 			@Param("boardNo") String boardNo,
 			@Param("failReason") String failReason, Invocation inv) {
     	
-    	synthesisService.submitSynthesis(boardNo, boardHoles, failReason);
+    	synthesisService.submitSynthesis(boardNo, boardHoles);
     	
     	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
     }
@@ -330,7 +343,7 @@ public class SynthesisController {
 			@Param("boardNo") String boardNo, Invocation inv)
 			throws IOException {
     	
-    	String jsonStr = synthesisService.boardEdit(boardNo, operationType, inv);
+    	String jsonStr = synthesisService.boardEdit(boardNo, operationType, null, inv);
         
     	return Replys.with(jsonStr).as(Json.class);
     }
@@ -342,9 +355,9 @@ public class SynthesisController {
 	public Reply submitBoardEdit(@Param("operationType") PrimerStatusType operationType,
 			                     @Param("boardHoles") List<BoardHole> boardHoles,
 			                     @Param("boardNo") String boardNo,
-			                     @Param("failReason") String failReason, Invocation inv) {
+			                     Invocation inv) {
     	
-    	synthesisService.submitBoardEdit(boardNo, boardHoles, operationType, failReason);
+    	synthesisService.submitBoardEdit(boardNo, boardHoles, operationType);
     	
     	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
     }
@@ -377,6 +390,27 @@ public class SynthesisController {
     	
     	return "bakeResults";
     }  
+    /**
+     * 进入测值结果查询页面
+     * 
+     * */
+    @Get("measureResults")
+    public String measureResults(Invocation inv){
+    	
+    	String templateFilePath= File.separator+"gene"+File.separator+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+"measure.xls";
+    	System.out.println("进入测值结果查询页面，下载模板文件的路径templateFilePath="+templateFilePath);
+    	inv.addModel("templateFilePath",templateFilePath);
+    	return "measureResults";
+    }    
     
+    @Post("upload")
+	public Reply upload(@Param("boardNo") String boardNo,
+			@Param("operationType") PrimerStatusType operationType,
+			@Param("file") MultipartFile file, Invocation inv) throws Exception {
+
+    	String jsonStr = synthesisService.boardEdit(boardNo, operationType, file, inv);
+     
+    	return Replys.with(jsonStr).as(Json.class);
+    }
     
 }

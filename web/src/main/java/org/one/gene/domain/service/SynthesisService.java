@@ -52,6 +52,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.instruction.reply.EntityReply;
@@ -362,16 +363,17 @@ public class SynthesisService {
 	
 	//提交合成信息
     @Transactional(readOnly = false)
-	public String submitSynthesis(String boardNo, List<BoardHole> boardHoleList, String failReason) {
+	public String submitSynthesis(String boardNo, List<BoardHole> boardHoleList) {
     	
-    	Map<String, String> bhMap = new HashMap<String, String>();
+    	Map<String, BoardHole> bhMap = new HashMap<String, BoardHole>();
     	for(BoardHole bh:boardHoleList){
-    		System.out.println("=========页面的选择合成结果="+bh.getHoleNo()+"="+ bh.getFailFlag());
-    		bhMap.put(bh.getHoleNo(), bh.getFailFlag());
+    		System.out.println("=========页面的选择合成结果="+bh.getHoleNo()+"="+ bh.getFailFlag()+"="+ bh.getRemark());
+    		bhMap.put(bh.getHoleNo(), bh);
     	}
     	
     	Board board = boardRepository.findByBoardNo(boardNo);
 		BoardHole boardHole = null;
+		BoardHole boardHoleTemp = null;//页面取得的孔信息
 		List<BoardHole> boardHoles = board.getBoardHoles();
 		PrimerProduct primerProduct = new PrimerProduct(); 
 		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
@@ -383,11 +385,14 @@ public class SynthesisService {
 			boardHole = (BoardHole) board.getBoardHoles().get(i);
 			primerProduct = boardHole.getPrimerProduct();
 			if(bhMap.get(boardHole.getHoleNo())!=null){
+				boardHoleTemp = (BoardHole)bhMap.get(boardHole.getHoleNo());
+				String failFlag = boardHoleTemp.getFailFlag();//是否失败标志
+				String failReason = boardHoleTemp.getRemark();//失败原因
 				
-				String failFlag = (String)bhMap.get(boardHole.getHoleNo());
 				type = null;
 				
 				if ("0".equals(failFlag)) { // Synthesis success
+					failReason = "";
 					
 					if (!"".equals(primerProduct.getModiFiveType())
 							|| !"".equals(primerProduct.getModiThreeType())
@@ -429,7 +434,7 @@ public class SynthesisService {
 				primerProductOperation.setType(type);
 				primerProductOperation.setTypeDesc(typeDesc);
 				primerProductOperation.setBackTimes(boardHole.getPrimerProduct().getBackTimes());
-				primerProductOperation.setFailReason("");//需要记录失败原因！！！
+				primerProductOperation.setFailReason(failReason);
 				
 				primerProductOperations.add(primerProductOperation);
 				
@@ -795,7 +800,13 @@ public class SynthesisService {
 		
 		
     //组织板页面信息
-	public String boardEdit(String boardNo, PrimerStatusType operationType, Invocation inv) throws IOException {
+	public String boardEdit(String boardNo, PrimerStatusType operationType, MultipartFile file, Invocation inv) throws IOException {
+		
+		
+		Map<String, BigDecimal> measureMap = new HashMap<String, BigDecimal>();
+		if(operationType.equals(PrimerStatusType.measure) && file!=null){
+			measureMap = this.measureMessage(file);
+		}
 		
 		int totalCount = 0;
 		String flag = "";
@@ -806,8 +817,13 @@ public class SynthesisService {
 		if (board != null) {
 			flag = board.getBoardType();
 			for (BoardHole boardHole : board.getBoardHoles()) {
-				boardHoleMap.put(boardHole.getHoleNo(), boardHole.getPrimerProduct());
+				PrimerProduct primerProduct = boardHole.getPrimerProduct();
+				
+				this.addNewValue(primerProduct);
+				
+				boardHoleMap.put(boardHole.getHoleNo(), primerProduct);
 				totalCount += 1;
+				
 				if (!boardHole.getPrimerProduct().getOperationType().equals(operationType)) {
 					typeFlag = "0";
 				}
@@ -854,6 +870,10 @@ public class SynthesisService {
 								&& operationType.equals(PrimerStatusType.purify)) {
 							purifyType = primerProduct.getPurifyType();
 						}
+						if (operationType.equals(PrimerStatusType.measure) && measureMap.get(holeNo) != null) {
+							BigDecimal measure = (BigDecimal)measureMap.get(holeNo);
+							productNo = new BigDecimal(1.2).multiply(primerProduct.getOdTotal()).divide(measure.multiply(new BigDecimal(20)),0, BigDecimal.ROUND_UP)+"";
+						}
 					}
 					
 					jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\",\"identifying\":\""+purifyType+"\"}";
@@ -887,7 +907,12 @@ public class SynthesisService {
 								&& operationType.equals(PrimerStatusType.purify)) {
 							purifyType = primerProduct.getPurifyType();
 						}
+						if (operationType.equals(PrimerStatusType.measure) && measureMap.get(holeNo) != null) {
+							BigDecimal measure = (BigDecimal)measureMap.get(holeNo);
+							productNo = new BigDecimal(1.2).multiply(primerProduct.getOdTotal()).divide(measure.multiply(new BigDecimal(20)),0, BigDecimal.ROUND_UP)+"";
+						}
 					}
+					
 					jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\",\"identifying\":\""+purifyType+"\"}";
 					
 					if (j!=12){
@@ -912,16 +937,16 @@ public class SynthesisService {
 	//提交板編輯信息
     @Transactional(readOnly = false)
 	public String submitBoardEdit(String boardNo,
-			List<BoardHole> boardHoleList, PrimerStatusType operationType,
-			String failReason) {
+			List<BoardHole> boardHoleList, PrimerStatusType operationType) {
     	
-    	Map<String, String> bhMap = new HashMap<String, String>();
+    	Map<String, BoardHole> bhMap = new HashMap<String, BoardHole>();
     	for(BoardHole bh:boardHoleList){
-    		bhMap.put(bh.getHoleNo(), bh.getFailFlag());
+    		bhMap.put(bh.getHoleNo(), bh);
     	}
     	
     	Board board = boardRepository.findByBoardNo(boardNo);
 		BoardHole boardHole = null;
+		BoardHole boardHoleTemp = null;
 		List<BoardHole> boardHoles = board.getBoardHoles();
 		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
 		List<PrimerProductOperation> primerProductOperations = new ArrayList<PrimerProductOperation>();
@@ -931,11 +956,13 @@ public class SynthesisService {
 		for (int i = board.getBoardHoles().size() - 1; i >= 0; i--) {
 			boardHole = (BoardHole) board.getBoardHoles().get(i);
 			if(bhMap.get(boardHole.getHoleNo())!=null){
-				
-				String failFlag = (String)bhMap.get(boardHole.getHoleNo());
+				boardHoleTemp = (BoardHole)bhMap.get(boardHole.getHoleNo());
+				String failFlag = boardHoleTemp.getFailFlag();
+				String failReason = boardHoleTemp.getRemark();
 				type = null;
 				
 				if ("0".equals(failFlag)) { // success
+					failReason = "";
 					
 					if (operationType.equals(PrimerStatusType.ammonia)) {
 						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.purify);
@@ -999,7 +1026,7 @@ public class SynthesisService {
 				primerProductOperation.setType(type);
 				primerProductOperation.setTypeDesc(typeDesc);
 				primerProductOperation.setBackTimes(boardHole.getPrimerProduct().getBackTimes());
-				primerProductOperation.setFailReason("");//需要记录失败原因！！！
+				primerProductOperation.setFailReason(failReason);//
 				
 				primerProductOperations.add(primerProductOperation);
 				
@@ -1017,7 +1044,56 @@ public class SynthesisService {
     	return "";
     }	
 		
+    //组织测值信息
+   	public Map<String, BigDecimal> measureMessage(MultipartFile file) throws IOException {
+   		
+   		
+   		Map<String, BigDecimal> measureMap = new HashMap<String, BigDecimal>();
+   		
+		// 读取上传文件
+		HSSFWorkbook workbook = new HSSFWorkbook(file.getInputStream());
+		HSSFSheet sheet = workbook.getSheetAt(0);
+		HSSFRow row = null;
+		HSSFCell cell = null;
 		
+		ArrayList holeList = new ArrayList();
+		holeList.add("A");
+		holeList.add("B");
+		holeList.add("C");
+		holeList.add("D");
+		holeList.add("E");
+		holeList.add("F");
+		holeList.add("G");
+		holeList.add("H");
+		
+		BigDecimal measure = new BigDecimal(0);
+		String holeNo = "";
+		for (int i = 0; i < holeList.size(); i++) {
+			String hole = (String)holeList.get(i);
+			row = sheet.getRow(i+1);
+			
+			for (int j=1;j<13;j++){
+				holeNo = hole+j;
+				cell = row.getCell(j);
+				if(cell!=null){
+					if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+						measure =  new BigDecimal(cell.getNumericCellValue());
+						measureMap.put(holeNo, measure);
+					}
+				}
+			}
+		}
+		
+		System.out.println("====上传excel中测值="+measureMap.toString());
+		
+		
+   		return measureMap;
+   	}
+   	
+   	
+   	
+   	
+   	
 		
 		
 		
