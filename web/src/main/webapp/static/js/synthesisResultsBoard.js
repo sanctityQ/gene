@@ -48,7 +48,7 @@ function synthesisBoard(id){
                 var hole = rows[i][row];
                 var tr = '<tr>';
                 for(var j = 0; j < hole.length; j++){
-                    tr += '<td><div class="hole_box"><div class="hole">'+hole[j].No+'</div><div class="tag"><i class="icon-ok"></i>'+hole[j].tag+'</div></div></td>';
+                    tr += '<td><div class="hole_box"><div class="hole">'+hole[j].No+'</div><div class="tag">'+hole[j].tag+'</div><div class="reason" style="display:none"></div></div></td>';
                 }
                 tr += '</tr>';
                 tBody += tr;
@@ -96,6 +96,7 @@ function saveBoardData(){
         if(result != 'hole_box' && result != 'hole_box selected'){
             var holeNo = holeBox.children('div.tag').text();
             var productNo = holeBox.children('div.hole').text();
+            var reason = holeBox.children('div.reason').text();
             var ary = '';
             var failFlag = '';
             switch (result){
@@ -117,11 +118,12 @@ function saveBoardData(){
                     break;
             }
             if(productNo !=''){
-            	//alert(holeNo+"  "+productNo+"  "+failFlag);
+            	//alert(holeNo+"  "+productNo+"  "+failFlag+"  "+reason);
             	data.push({
             		"holeNo":holeNo,
             		"primerProduct.productNo":productNo,
-            		"failFlag":failFlag
+            		"failFlag":failFlag,
+            		"remark":reason
             	});
             }
         }
@@ -140,22 +142,13 @@ function setSucceed(ok){
         icon = '<i class="icon-remove"></i>';
     }
     if(selects.length){
-        var content = '<ul class="failure_reason" id="failureReason">';
-        var textarea = '<textarea class="inp_text" style="width: 358px;height: 42px;"></textarea>';
-        selects.each(function(){
-            var text = $(this).children('div.hole').text();
-            content += '<li>'+text+'</li>'
-            content +=  '<li>' +  textarea + '</li>';
-        })
-        content += '</ul>'
         if(!ok){
             $('#inputCause').dialog({
                 title: '请输入失败原因',
                 width: 400,
-                height: 400,
+                height: 200,
                 closed: false,
                 cache: false,
-                content:content,
                 modal: true,
                 buttons:[{
                     text:'取 消',
@@ -166,33 +159,23 @@ function setSucceed(ok){
                 },{
                     text:'确 定',
                     handler:function(){
-                        var data = [];
-                        var lis = $('#failureReason').children('li');
-                        var No = '',ary = '';
-                        lis.each(function(i){
-                            No = $(this).text();
-                            if(i%2){
-                                ary = $(this).children('textarea').val();
-                                data.push({
-                                    No:No,
-                                    cause:ary
-                                });
-                            }
-                        });
-                        alert(data);
-
+                        var ary = [];
+                        var text = $('#inputCause .inp_text').val();
                         $('#inputCause').dialog('close');
                         selects.each(function(){
                             var status = $(this);
                             var tag = status.children('div.tag');
+                            var No = status.children('div.hole').text();
                             if(!status.hasClass(result)){
                                 status.removeClass().addClass('hole_box ' + result);
                             }else{
                                 status.removeClass('selected');
                             };
+                            status.children('div.reason').text(text);
                             tag.prepend(icon);
-                        })
-
+                            ary.push(No);
+                        });
+                        //alert('选中:'+ary+"\n原因:"+text)
                     }
                 }]
             });

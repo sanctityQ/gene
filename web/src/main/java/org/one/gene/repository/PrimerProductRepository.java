@@ -11,6 +11,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -36,8 +37,9 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			@Param("tbn2") String tbn2,
 			@Param("purifytype") String purifytype, Pageable pageable);
     
-	@SQL("select pp.* from `primer_product` pp where pp.`operation_type` = 'modification' "
+	@SQL("select pp.* from `primer_product` pp where pp.`operation_type` = :operationType "
 			+ "#if(:boardNo != '') { and pp.`board_no` = :boardNo }"
+			+ "#if(:productNo != '') { and (pp.`product_no` = :productNo or pp.`out_product_no` = :productNo) }"
 			+ "#if(:modiFiveType == '1') { and pp.`modi_five_type` is not null }"
 			+ "#if(:modiFiveType == '0') { and pp.`modi_five_type` is null }"
 			+ "#if(:modiThreeType == '1') { and pp.`modi_three_type` is not null }"
@@ -46,13 +48,18 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			+ "#if(:modiMidType == '0') { and pp.`modi_mid_type` is null }"
 			+ "#if(:modiSpeType == '1') { and pp.`modi_spe_type` is not null }"
 			+ "#if(:modiSpeType == '0') { and pp.`modi_spe_type` is null }"
+			+ "#if(:purifyType != '') { and pp.`purify_type` = :purifyType }"
 			+ "")
-	Page<PrimerProduct> selectDecorateProducts(
+	Page<PrimerProduct> resultsSelectQuery(
 			@Param("boardNo") String boardNo,
+			@Param("productNo") String productNo,
+			@Param("operationType") String operationType,
 			@Param("modiFiveType") String modiFiveType,
 			@Param("modiThreeType") String modiThreeType,
 			@Param("modiMidType") String modiMidType,
-			@Param("modiSpeType") String modiSpeType, Pageable pageable);
+			@Param("modiSpeType") String modiSpeType,
+			@Param("purifyType") String purifyType,
+			Pageable pageable);
 	
 	
     

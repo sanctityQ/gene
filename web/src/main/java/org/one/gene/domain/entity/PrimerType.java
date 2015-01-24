@@ -182,13 +182,13 @@ public class PrimerType {
         measureSuccess {
             @Override
             public String desc() {
-                return "测试成功";
+                return "测值成功";
             }
         },
         measureFailure {
             @Override
             public String desc() {
-                return "测试失败";
+                return "测值失败";
             }
         },
         packSuccess {

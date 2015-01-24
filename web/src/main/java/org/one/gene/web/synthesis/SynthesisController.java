@@ -1,9 +1,16 @@
 package org.one.gene.web.synthesis;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
 import com.sinosoft.one.mvc.web.annotation.Path;
@@ -16,8 +23,14 @@ import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
 
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
+import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.service.SynthesisService;
@@ -31,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 @Path
 public class SynthesisController {
@@ -195,7 +209,7 @@ public class SynthesisController {
 			@Param("boardNo") String boardNo,
 			@Param("failReason") String failReason, Invocation inv) {
     	
-    	synthesisService.submitSynthesis(boardNo, boardHoles, failReason);
+    	synthesisService.submitSynthesis(boardNo, boardHoles);
     	
     	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
     }
@@ -267,17 +281,19 @@ public class SynthesisController {
     }
     
     /**
-     * 修饰查询
+     * 查询结果列表
      * */
-    @Post("decorateQuery")
-    public Reply decorateQuery(@Param("boardNo") String boardNo, 
-					    		 @Param("modiFiveType") String modiFiveType,
-					    		 @Param("modiThreeType") String modiThreeType,
-					    		 @Param("modiMidType") String modiMidType,
-					    		 @Param("modiSpeType") String modiSpeType,
-					    		 @Param("pageNo") Integer pageNo,
-			                     @Param("pageSize") Integer pageSize,
-					    		 Invocation inv){
+    @Post("resultsSelectQuery")
+	public Reply resultsSelectQuery(@Param("boardNo") String boardNo,
+			@Param("productNo") String productNo,
+			@Param("operationType") PrimerStatusType operationType,
+			@Param("modiFiveType") String modiFiveType,
+			@Param("modiThreeType") String modiThreeType,
+			@Param("modiMidType") String modiMidType,
+			@Param("modiSpeType") String modiSpeType,
+			@Param("purifyType") String purifyType,
+			@Param("pageNo") Integer pageNo,
+			@Param("pageSize") Integer pageSize, Invocation inv) {
     	
         if(pageNo == null || pageNo ==0){
             pageNo = 1;
@@ -288,21 +304,22 @@ public class SynthesisController {
         }
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         
-        Page<PrimerProduct> primerProductPage = synthesisService.decorateQuery(boardNo, modiFiveType, modiThreeType, modiMidType, modiSpeType, pageable);
+        Page<PrimerProduct> primerProductPage = synthesisService.resultsSelectQuery(boardNo,productNo,operationType, modiFiveType, modiThreeType, modiMidType, modiSpeType,purifyType, pageable);
     	
     	return Replys.with(primerProductPage).as(Json.class);
     }
     
     /**
-     * 修饰提交
+     * 提交修饰，检测等在结果页面选择成功失败的数据
      * */
-    @Post("submitDecorate")
-	public Reply submitDecorate(
+    @Post("resultsSelectSubmit")
+	public Reply resultsSelectSubmit(
 			@Param("primerProducts") List<PrimerProduct> primerProducts,
 			@Param("successFlag") String successFlag,
+			@Param("operationType") PrimerStatusType operationType,
 			@Param("failReason") String failReason, Invocation inv) {
     	
-            synthesisService.submitDecorate(primerProducts, successFlag, failReason);
+            synthesisService.resultsSelectSubmit(primerProducts, successFlag, operationType, failReason);
     	
     	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
     }
@@ -330,7 +347,7 @@ public class SynthesisController {
 			@Param("boardNo") String boardNo, Invocation inv)
 			throws IOException {
     	
-    	String jsonStr = synthesisService.boardEdit(boardNo, operationType, inv);
+    	String jsonStr = synthesisService.boardEdit(boardNo, operationType, null, inv);
         
     	return Replys.with(jsonStr).as(Json.class);
     }
@@ -342,9 +359,9 @@ public class SynthesisController {
 	public Reply submitBoardEdit(@Param("operationType") PrimerStatusType operationType,
 			                     @Param("boardHoles") List<BoardHole> boardHoles,
 			                     @Param("boardNo") String boardNo,
-			                     @Param("failReason") String failReason, Invocation inv) {
+			                     Invocation inv) {
     	
-    	synthesisService.submitBoardEdit(boardNo, boardHoles, operationType, failReason);
+    	synthesisService.submitBoardEdit(boardNo, boardHoles, operationType);
     	
     	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
     }
@@ -377,6 +394,64 @@ public class SynthesisController {
     	
     	return "bakeResults";
     }  
+    /**
+     * 进入测值结果查询页面
+     * 
+     * */
+    @Get("measureResults")
+    public String measureResults(Invocation inv){
+    	
+    	String templateFilePath= File.separator+"gene"+File.separator+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+"measure.xls";
+    	System.out.println("进入测值结果查询页面，下载模板文件的路径templateFilePath="+templateFilePath);
+    	inv.addModel("templateFilePath",templateFilePath);
+    	return "measureResults";
+    }    
     
+    //上传测值文件
+    @Post("uploadMeasure")
+	public String uploadMeasure(@Param("boardNo") String boardNo,
+			@Param("operationType") PrimerStatusType operationType,
+			@Param("file") MultipartFile file, Invocation inv) throws Exception {
+
+    	String jsonStr = synthesisService.boardEdit(boardNo, operationType, file, inv);
+     
+		System.out.println(JSONObject.toJSONString(jsonStr));
+		
+		inv.addModel("boardNo", boardNo);
+		inv.addModel("measuredata", JSONObject.toJSONString(jsonStr));
+		
+    	return "measureResultsBoard";
+    }
+   
+    /**
+     * 进入检测上传文件页面
+     * 
+     * */
+    @Get("detectResults")
+    public String detectResults(Invocation inv){
+    	return "detectResults";
+    }
+    
+    //上传检测文件
+    @Post("uploadDetect")
+	public String uploadDetect(@Param("file") MultipartFile file, Invocation inv) throws Exception {
+
+    	List<PrimerProduct> primerProducts = synthesisService.uploadDetect(file, inv);
+     
+    	inv.getResponse().setContentType("text/html");
+		inv.addModel("total", primerProducts.size());
+		System.out.println("上传检测文件  返回json="+JSONObject.toJSONString(primerProducts));
+		inv.addModel("reSultdata", JSONObject.toJSONString(primerProducts));
+    	return "detectResultsBoard";
+    }
+    
+    /**
+     * 进入检测结果页面
+     * 
+     * */
+    @Get("detectResultsBoard")
+    public String detectResultsBoard(Invocation inv){
+    	return "detectResultsBoard";
+    }
     
 }

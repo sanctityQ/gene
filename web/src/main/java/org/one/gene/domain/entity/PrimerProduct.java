@@ -122,6 +122,7 @@ public class PrimerProduct implements java.io.Serializable {
     private BigDecimal nmolTB;//NUML/TB
     private BigDecimal tbn;//碱基数
     private BigDecimal tb;//分装管数
+    private BigDecimal mw;//分子量
 	private String midi;//修饰
 	private String selectFlag;//是否被选择，用于页面选择时使用，不存库
 
@@ -463,7 +464,18 @@ public class PrimerProduct implements java.io.Serializable {
 	public void setMidi(String midi) {
 		this.midi = midi;
 	}
+    
+	@Transient
+	public BigDecimal getMw() {
+		return mw;
+	}
 
+
+	public void setMw(BigDecimal mw) {
+		this.mw = mw;
+	}
+	
+	
     @PostLoad
     public void init(){
         for (PrimerProductValue primerProductValue : this.getPrimerProductValues()) {
