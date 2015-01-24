@@ -464,7 +464,7 @@ public class PrimerProduct implements java.io.Serializable {
 	public void setMidi(String midi) {
 		this.midi = midi;
 	}
-    
+
 	@Transient
 	public BigDecimal getMw() {
 		return mw;
@@ -475,9 +475,9 @@ public class PrimerProduct implements java.io.Serializable {
 		this.mw = mw;
 	}
 	
-	
     @PostLoad
     public void init(){
+    	System.out.println("this.getPrimerProductValues()=="+this.getPrimerProductValues().size());
         for (PrimerProductValue primerProductValue : this.getPrimerProductValues()) {
             this.primerProductValueMap.put(primerProductValue.getType(),primerProductValue);
         }
@@ -526,6 +526,7 @@ public class PrimerProduct implements java.io.Serializable {
     }
 
     private Map<PrimerValueType,PrimerProductValue> primerProductValueMap = Maps.newEnumMap(PrimerValueType.class);
+
 }
 
 

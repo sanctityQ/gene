@@ -108,7 +108,7 @@ var ctx = '${ctx}';
 	</table>
 	</div>
 	<div class="tools_bar">
-		<button type="" class="btn" onclick="goToPage('views/order/orderImport.jsp');">取 消</button>
+		<button type="" class="btn" onclick="goToPage(${ctx}'/order/import');">取 消</button>
 		<button type="" class="btn btn-primary" onclick="getChanesSave();">保 存</button>
 	</div>
 </div>

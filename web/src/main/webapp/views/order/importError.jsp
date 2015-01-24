@@ -31,7 +31,7 @@
 		</div>
 	</div>	
 	<div class="tools">
-		<button type="submit" class="btn" onclick="goToPage('/gene/order/import');">重新导入</button>
+		<button type="submit" class="btn" onclick="goToPage(${ctx}'/order/import');">重新导入</button>
 	</div>
 </div>
 <script type="text/javascript">

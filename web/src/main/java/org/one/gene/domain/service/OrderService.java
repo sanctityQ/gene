@@ -8,7 +8,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.one.gene.domain.entity.Customer;
@@ -32,9 +31,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 @Component
 public class OrderService {
@@ -81,7 +77,7 @@ public class OrderService {
         BigDecimal orderTotalValue = new BigDecimal("0");
     	//存储生产数据
         for (PrimerProduct primerProduct : order.getPrimerProducts()) {
-        	primerProduct.getPrimerProductValues().removeAll(primerProduct.getPrimerProductValues());
+        	//primerProduct.getPrimerProductValues().removeAll(primerProduct.getPrimerProductValues());
 			//后续补充，获取登录操作人员的归属机构。
 			primerProduct.setComCode("11000000");
 			primerProduct.setOperationType(PrimerType.PrimerStatusType.orderInit);//!!!是初始状态不是审核通过状态
@@ -110,15 +106,17 @@ public class OrderService {
 			}
 			
 			//初始化数据 先实现功能后续优化
-			/*Map<PrimerValueType,PrimerProductValue> primerProductValueMap = Maps.newEnumMap(PrimerValueType.class);
+			List<PrimerProductValue> primerProductValueList = new ArrayList<PrimerProductValue>();
             for (PrimerValueType type : PrimerValueType.values()) {
-                primerProductValueMap.put(type,type.create(primerProduct));
-                primerProduct.setPrimerProductValues(Lists.newArrayList(primerProductValueMap.values()));
-            }*/
-			
-			for (PrimerProductValue pv : primerProduct.getPrimerProductValues()) {
-				pv.setPrimerProduct(primerProduct);
-			}
+            	 PrimerProductValue primerProductValue = type.create(primerProduct);
+            	 for(PrimerProductValue pv:primerProduct.getPrimerProductValues()){
+            	   if(pv.getType().equals(type)){
+            	     primerProductValue.setId(pv.getId());
+            	   }
+            	 }
+            	 primerProductValueList.add(primerProductValue);
+            }
+            primerProduct.setPrimerProductValues(primerProductValueList);
 
 			for (PrimerProductOperation po : primerProduct.getPrimerProductOperations()) {
 				po.setPrimerProduct(primerProduct);
@@ -307,4 +305,26 @@ public class OrderService {
     	orderRepository.save(order);
     }
 
+  //补充临时字段的值
+  	public void addNewValue(PrimerProduct primerProduct) {
+      	for (PrimerProductValue pv : primerProduct.getPrimerProductValues()) {
+      		if(pv.getType().equals(PrimerValueType.odTotal)){
+      			primerProduct.setOdTotal(pv.getValue());
+      		}else if(pv.getType().equals(PrimerValueType.odTB)){
+      			primerProduct.setOdTB(pv.getValue());
+      		}else if(pv.getType().equals(PrimerValueType.nmolTotal)){
+      			primerProduct.setNmolTotal(pv.getValue());
+      		}else if(pv.getType().equals(PrimerValueType.nmolTB)){
+      			primerProduct.setNmolTB(pv.getValue());
+      		}else if(pv.getType().equals(PrimerValueType.baseCount)){
+      			primerProduct.setTbn(pv.getValue());
+      		}else if(pv.getType().equals(PrimerValueType.tb)){
+      			primerProduct.setTb(pv.getValue());
+      		}else if(pv.getType().equals(PrimerValueType.MW)){
+      			primerProduct.setMw(pv.getValue());
+      		}
+      	}
+  		
+  	}
+  	
 }

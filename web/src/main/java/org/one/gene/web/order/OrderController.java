@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -175,6 +174,11 @@ public class OrderController {
     	order.setTotalValue(orderTotalValue);
     	
 	    Customer customer = orderService.findCustomer(coustomerCode);
+	    
+    	 for(PrimerProduct primerProduct:order.getPrimerProducts()){
+    		orderService.addNewValue(primerProduct);
+    	 }
+
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setCustomer(customer);
         orderInfo.setOrder(order);
@@ -184,22 +188,9 @@ public class OrderController {
     
     @Post("save")
     public Object save(@Param("primerProducts") List<PrimerProduct> primerProducts,@Param("orderNo") String orderNo,Invocation inv) throws IllegalStateException, IOException {
-        Order order = orderRepository.findByOrderNo(orderNo);
-        Order orderTemp = new Order();
-        
-        orderTemp.setOrderNo(orderNo);
-        orderTemp.setId(order.getId());
-        orderTemp.setCustomerCode(order.getCustomerCode());
-        orderTemp.setCustomerName(order.getCustomerName());
-    	//后续补充，获取登录操作人员的归属机构。
-        orderTemp.setComCode(order.getComCode());
-        orderTemp.setType(order.getType());
-        orderTemp.setFileName(order.getFileName());
-        orderTemp.setCreateTime(new Date());
-        orderTemp.setValidate(true);
-        
-        orderTemp.setPrimerProducts(primerProducts);
-        orderService.save(orderTemp);
+    	Order order = orderRepository.findByOrderNo(orderNo);
+        order.setPrimerProducts(primerProducts);
+        orderService.save(order);
     	return Replys.with("sucess").as(Text.class);  
     }
     

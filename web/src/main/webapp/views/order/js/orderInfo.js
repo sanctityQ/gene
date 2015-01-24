@@ -41,7 +41,7 @@ function onClickRow(index){
     var ed = bigToSmall.datagrid('getEditor', {index:index,field:'modiPrice'});
     var inp = $(ed.target).parent().find('input.textbox-text');
     inp.on('input',function(){
-        alert(this.value)
+        //alert(this.value)
     });
 }
 function getChanesSave(){
