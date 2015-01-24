@@ -1,5 +1,7 @@
 package org.one.gene.domain.service;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -678,6 +682,8 @@ public class SynthesisService {
     			primerProduct.setTbn(pv.getValue());
     		}else if(pv.getType().equals(PrimerValueType.tb)){
     			primerProduct.setTb(pv.getValue());
+    		}else if(pv.getType().equals(PrimerValueType.MW)){
+    			primerProduct.setMw(pv.getValue());
     		}
     	}
 		
@@ -685,12 +691,13 @@ public class SynthesisService {
 	
 	
 	
-	    //修饰查询
-	public Page<PrimerProduct> decorateQuery(String boardNo,
+	    //根据operationType等条件查询生产数据列表
+	public Page<PrimerProduct> resultsSelectQuery(String boardNo,
+			String productNo, PrimerStatusType operationType,
 			String modiFiveType, String modiThreeType, String modiMidType,
-			String modiSpeType, Pageable pageable) {
+			String modiSpeType, String purifyType, Pageable pageable) {
 
-			Page<PrimerProduct> primerProductPage = primerProductRepository.selectDecorateProducts(boardNo, modiFiveType, modiThreeType, modiMidType, modiSpeType, pageable);
+			Page<PrimerProduct> primerProductPage = primerProductRepository.resultsSelectQuery(boardNo,productNo,operationType.toString(), modiFiveType, modiThreeType, modiMidType, modiSpeType,purifyType, pageable);
 			
 			// 查询primer_product_value
 			for (PrimerProduct primerProduct : primerProductPage.getContent()) {
@@ -706,10 +713,11 @@ public class SynthesisService {
 						primerProduct.setNmolTB(ppv.getValue());
 					} else if (ppv.getType().equals(PrimerValueType.baseCount)) {
 						primerProduct.setTbn(ppv.getValue());
-					}
+					}else if(ppv.getType().equals(PrimerValueType.MW)){
+		    			primerProduct.setMw(ppv.getValue());
+		    		}
 				}
 				// 翻译操作类型
-				PrimerStatusType operationType = primerProduct.getOperationType();
 	            primerProduct.setOperationTypeDesc(operationType.desc());
 	            
 				//修饰
@@ -731,16 +739,22 @@ public class SynthesisService {
 					primerProduct.setMidi(midi);
 				}
 				
+				//文件超连接
+			   if (!"".equals(primerProduct.getReviewFileName())) {
+				   String templateFilePath= File.separator+"gene"+File.separator+"upExcel"+File.separator+"detect"+File.separator+primerProduct.getReviewFileName();
+				   System.out.println("检测结果查询页面，下载附件文件的路径templateFilePath="+templateFilePath);
+				   primerProduct.setReviewFileName("<a href='"+templateFilePath+"' target='_blank'>"+primerProduct.getReviewFileName()+"</a>");
+				}
 			}
 
 			return primerProductPage;
 		}
 		
 		
-	//提交修饰信息
+	//提交修饰,检测等选择的信息
     @Transactional(readOnly = false)
-	public String submitDecorate(List<PrimerProduct> primerProducts,
-			String successFlag, String failReason) {
+	public String resultsSelectSubmit(List<PrimerProduct> primerProducts,
+			String successFlag,PrimerStatusType operationType, String failReason) {
     	
 		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
 		PrimerOperationType type = null;
@@ -751,13 +765,19 @@ public class SynthesisService {
 			PrimerProduct primerProduct = primerProductRepository.findOne(pp.getId());
 			type = null;
 			
-			if ("1".equals(successFlag)) { // decorate success
+			if ("1".equals(successFlag)) { // success
 				
-				primerProduct.setOperationType(PrimerStatusType.purify);
-				type = PrimerOperationType.modiSuccess;
-				typeDesc = PrimerOperationType.modiSuccess.desc();
+				if (operationType.equals(PrimerStatusType.modification)) {
+					primerProduct.setOperationType(PrimerStatusType.purify);
+					type = PrimerOperationType.modiSuccess;
+					typeDesc = PrimerOperationType.modiSuccess.desc();
+				}else if (operationType.equals(PrimerStatusType.detect)) {
+					primerProduct.setOperationType(PrimerStatusType.delivery);
+					type = PrimerOperationType.detectSuccess;
+					typeDesc = PrimerOperationType.detectSuccess.desc();
+				}
 				
-			} else if ("0".equals(successFlag)) { // decorate fail
+			} else if ("0".equals(successFlag)) { // fail
 				
 				primerProduct.setOperationType(PrimerStatusType.synthesis);//回到待合成
 				primerProduct.setBoardNo("");//清空板号
@@ -773,8 +793,14 @@ public class SynthesisService {
 					boardHoleRepository.delete(boardHole);
 				}
 				
-				type = PrimerOperationType.modiFailure;
-				typeDesc = PrimerOperationType.modiFailure.desc();
+				if (operationType.equals(PrimerStatusType.modification)) {
+					type = PrimerOperationType.modiFailure;
+					typeDesc = PrimerOperationType.modiFailure.desc();
+				}else if (operationType.equals(PrimerStatusType.detect)) {
+					type = PrimerOperationType.detectFailure;
+					typeDesc = PrimerOperationType.detectFailure.desc();
+				}
+
 			}
 			
 			//组装操作信息
@@ -790,7 +816,7 @@ public class SynthesisService {
 			
 			System.out.println("================"+primerProductOperation.getPrimerProduct().getId()+"=="+primerProductOperation.getType()+"==="+primerProductOperation.getBackTimes());
 			primerProductOperationRepository.save(primerProductOperation);
-//			primerProduct.getPrimerProductOperations().add(primerProductOperation);
+
 			//保存primer_product表数据
 			primerProductRepository.save(primerProduct);
     	}
@@ -1097,13 +1123,134 @@ public class SynthesisService {
    		return measureMap;
    	}
    	
-   	
-   	
-   	
-   	
+    //上传检测文件
+   	@Transactional(readOnly = false)
+	public List<PrimerProduct> uploadDetect(MultipartFile file, Invocation inv) throws Exception {
+		
+   		List<PrimerProduct> primerProducts = new ArrayList<PrimerProduct>();
+		String realpathdir = "";
+    	String path="";
+    	String originalFilename = "";
+    	if (!file.isEmpty()) {
+    		originalFilename = file.getOriginalFilename();
+        	realpathdir = inv.getServletContext().getRealPath("/")+"upExcel"+File.separator+"detect"+File.separator;
+        	path = realpathdir+originalFilename;
+        	
+        	Map<String, String> productNoMap = new HashMap<String, String>();
+        	
+        	//压缩文件
+        	if(originalFilename.toLowerCase().endsWith("rar") || originalFilename.toLowerCase().endsWith("zip")){
+        		
+        		this.zipDecompress(file, realpathdir);
+        		
+        	}else{
+        		String[] productNoStrArray = originalFilename.split("-");
+        		if(productNoStrArray.length>1){
+        			productNoMap.put(productNoStrArray[0], originalFilename);
+        		}
+        		
+        		System.out.println("========================上传文件="+productNoMap.toString());
+        		System.out.println("========================上传文件 path="+path);
+        		file.transferTo(new File(path));
+        	}
+
+        	for (Map.Entry<String, String> map : productNoMap.entrySet()) {
+        		PrimerProduct primerProduct = primerProductRepository.findByProductNoOrOutProductNo(map.getKey(), map.getKey());
+				if (primerProduct != null) {
+					this.addNewValue(primerProduct);
+					primerProduct.setReviewFileName(map.getValue());
+					primerProductRepository.save(primerProduct);
+					primerProducts.add(primerProduct);
+        		}
+        	}
+    	}
 		
 		
+		return primerProducts;
+	}
+   	
+
+	
+	public static void zipDecompress(MultipartFile zipfile, String destDir)
+			throws IOException
+	{
+		BufferedInputStream bin = new BufferedInputStream(zipfile.getInputStream());
+		ZipInputStream zin = null;
+		BufferedOutputStream dest = null;
+		try
+		{
+			File fdir = new File(destDir);
+			fdir.mkdirs();
+			zin = new ZipInputStream(bin);
+			ZipEntry entry;
+			
+			while ((entry = zin.getNextEntry()) != null)
+			{
+				System.out.println("=========================="+entry.getName());
+				
+				String name = entry.getName();
+			if (entry.isDirectory())
+				{
+					String dir = destDir + File.separator + name;
+					fdir = new File(dir);
+					fdir.mkdirs();
+					continue;
+				} else {
+					byte data[] = new byte[2048];
+	                FileOutputStream fos = new FileOutputStream((new StringBuffer()).append(destDir).append(entry.getName()).toString());
+	                dest = new BufferedOutputStream(fos, 2048);
+	                int count;
+	                while((count = zin.read(data, 0, 2048)) != -1) {
+	                	dest.write(data, 0, count);
+	                }
+	                dest.flush();
+	                dest.close();
+				}
+				zin.closeEntry();
+			}
+		} finally {
+			try	{
+				if (zin != null)
+					zin.close();
+				zin = null;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	
+	
+	 
+       /** 解压	 
+        *  @param root 输出目标	 
+        *  @param zipfile zip文件	 
+        * */
+	protected void unzip(File root, MultipartFile zipfile) throws Exception { 
 		
+		ZipInputStream zin = new ZipInputStream(zipfile.getInputStream());
+		ZipEntry entry;
+		while ((entry = zin.getNextEntry()) != null) {//
+			
+			System.out.println("=========================="+entry.getName());
+			
+			File tmpFile = new File(root, entry.getName());
+			if (entry.isDirectory()) {
+				tmpFile.mkdirs();
+			} else {
+				byte[] buff = new byte[4096];
+				int len = 0;
+				tmpFile.getParentFile().mkdirs();
+				FileOutputStream fout = new FileOutputStream(tmpFile);
+				while ((len = zin.read(buff)) != -1) {
+					fout.write(buff, 0, len);
+				}
+				zin.closeEntry();
+				fout.close();
+			}
+		}
+
+	}
 		
 		
 		

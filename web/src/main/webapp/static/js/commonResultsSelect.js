@@ -20,18 +20,19 @@ function gridUnCheck(rowIndex,rowData){
 function setResult(toggal){
     var table = $('#productionData');
     var primerProducts = table.datagrid('getSelections');
-    var decorate = $('#decorate')
+    var decorate = $('#decorate');
     if(toggal){
-        $.messager.confirm('系统消息','确定将选中数据的修饰结果设置为“成功”吗?',function(ok){
+        $.messager.confirm('系统消息','确定将选中数据的结果设置为“成功”吗?',function(ok){
             if(ok){
 
             	$.ajax({
             		type : "post",
-            		url : "/gene/synthesis/submitDecorate",
+            		url : "/gene/synthesis/resultsSelectSubmit",
             		dataType : "json",
             		data:{
             			primerProducts: primerProducts,
             			successFlag: '1',
+            			operationType: $("#operationType").val(),
             			failReason: ''
                     },
             		success : function(data) {
@@ -44,7 +45,7 @@ function setResult(toggal){
                 //table.datagrid('reload');
                 decorate.menubutton('disable');
                 table.datagrid('loadData', { total: 0, rows: [] });//清空数据
-                getDecorateProducts();
+                //getResultProducts();
             }
         });
     }else{
@@ -67,11 +68,12 @@ function setResult(toggal){
                     var text = $('#inputCause.inp_text').val();
 	               $.ajax({
 	            		type : "post",
-	            		url : "/gene/synthesis/submitDecorate",
+	            		url : "/gene/synthesis/resultsSelectSubmit",
 	            		dataType : "json",
 	            		data:{
 	            			primerProducts: primerProducts,
 	            			successFlag: '0',
+	            			operationType: $("#operationType").val(),
 	            			failReason: text
 	                    },
 	            		success : function(data) {
@@ -85,7 +87,7 @@ function setResult(toggal){
                     decorate.menubutton('disable');
                     //table.datagrid('reload');
                     table.datagrid('loadData', { total: 0, rows: [] });//清空数据
-                    getDecorateProducts();
+                    //getResultProducts();
                 }
             }]
         });
@@ -93,8 +95,8 @@ function setResult(toggal){
 
 }
 
-//查询修饰信息
-var getDecorateProducts=function(){
+//查询需要选择成功失败的信息
+var getResultProducts=function(){
 	
 	var gridOpts = $('#productionData').datagrid('getPager').data("pagination").options;
 	var modiFiveType;
@@ -122,20 +124,39 @@ var getDecorateProducts=function(){
 		modiSpeType = '0';
 	}
 	
+    var purifyType=$('input:radio[name="purifyType"]:checked').val();
+    if(purifyType==null){
+    	purifyType = "";
+    }
+	
 	var boardNo = '';
+	var productNo = '';
 	if($("#boardNo").val() != ''){
 		boardNo = $("#boardNo").val();
 	}
+    if(boardNo==null){
+    	boardNo = "";
+    }
+	if($("#productNo").val() != ''){
+		productNo = $("#productNo").val();
+	}
+    if(productNo==null){
+    	productNo = "";
+    }
+    
 	$.ajax({
 		type : "post",
-		url : "/gene/synthesis/decorateQuery",
+		url : "/gene/synthesis/resultsSelectQuery",
 		dataType : "json",
 		data:{
 			boardNo: boardNo,
+			productNo: productNo,
+			operationType: $("#operationType").val(),
 			modiFiveType: modiFiveType,
 			modiThreeType: modiThreeType,
 			modiMidType: modiMidType,
 			modiSpeType: modiSpeType,
+			purifyType: purifyType,
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
         },

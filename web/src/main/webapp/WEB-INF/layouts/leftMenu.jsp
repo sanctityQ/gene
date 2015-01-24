@@ -47,8 +47,8 @@
 	</div>
 	<div title="检测" data-options="iconCls:'test'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li><i class="icon-upload-alt"></i>上传检测文件</li>
-			<li><i class="icon-pencil"></i>检测结果</li>
+			<li url="${ctx}/synthesis/detectResults" id="aminolysis4"><i class="icon-upload-alt"></i>上传检测文件</li>
+			<li url="${ctx}/synthesis/detectResultsBoard" id="detectionResult"><i class="icon-pencil"></i>检测结果</li>
 		</ul>
 	</div>
 	<div title="发货" data-options="iconCls:'delivery'" style="height:200px;">
