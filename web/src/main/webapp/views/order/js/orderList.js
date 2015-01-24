@@ -85,11 +85,12 @@ var orderDetail=function(orderNo){
                 $("#webSite").val(data.customer.webSite);
                 $("#customerUnit").val(data.customer.invoiceTitle);
                 
-                $("#createTime").html("<b>订购日期：</b>"+data.orderPage.content[0].createTime);
-                $("#totalValue").html("<b class='bule'>订单总计：</b>￥ "+data.orderPage.content[0].totalValue);
+                $("#createTime").html("<b>订购日期：</b>"+data.order.createTime);
+                $("#totalValue").html("<b class='bule'>订单总计：</b>￥ "+data.order.totalValue);
+                $("#totalValue").html("<b>订单类型：</b>￥ "+data.order.orderUpType+"类型");
                 /*赋值 end*/
-        		var total = data.orderPage.content[0].primerProducts.length;
-        		var reSultdata = data.orderPage.content[0].primerProducts;
+        		var total = data.order.primerProducts.length;
+        		var reSultdata = data.order.primerProducts;
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#bigToSmall').datagrid("loadData",jsonsource);
 			}
@@ -103,7 +104,9 @@ var orderDetail=function(orderNo){
 //修改
 var modifyOrder=function(id,index){
 	var row = $('#orderList').datagrid('getData').rows[index];
-	goToPage('/gene/views/order/orderInfo.jsp?orderNo='+row.orderNo);
+	 var path = ctx+'/order/modifyQuery?orderNo='+row.orderNo;  
+	 //$('#queryForm').attr("action", path).submit();
+	 window.location.href = path;
 }
 
 //删除
@@ -112,7 +115,7 @@ var deleteOrder=function(id,index){
 	var orderNo = row.orderNo;
 	$.ajax({
 		type : "post",
-		url : "/gene/order/delete",
+		url : ctx+"/order/delete",
 		dataType : "html",
 		data:"orderNo="+orderNo,
 		success : function(data) {

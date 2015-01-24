@@ -78,7 +78,6 @@ public class OrderExcelPase {
 		// 获取Excel文件的第1个sheet的内容
 		ArrayList<ArrayList<String>> lists = excelResolver.ReadExcel(path, 1,"2-");
 //		ArrayList<PrimerProduct>  primerProducts = new ArrayList<PrimerProduct>();
-		BigDecimal orderTotalValue = new BigDecimal("0");
     	//输出单元格数据
 		for(ArrayList<String> data : lists) {
 			if(data==null){continue;}
@@ -146,14 +145,6 @@ public class OrderExcelPase {
 					  break;
 				  case 15:	
 					  primerProduct.setPurifyVal(new BigDecimal(v));
-				  
-					  //获取碱基数
-					  String tbnStr = orderCaculate.getAnJiShu(primerProduct.getGeneOrder());
-					  //总价格:修饰单价+碱基单价*碱基数+纯化价格(9+10*碱基数+11)
-					  BigDecimal totalVal = primerProduct.getModiPrice().add(primerProduct.getBaseVal().multiply(new BigDecimal(tbnStr))).add(primerProduct.getPurifyVal());
-					  primerProduct.setTotalVal(totalVal);
-					  orderTotalValue = orderTotalValue.add(primerProduct.getTotalVal());
-					  
 					  break;
 				  case 16:	
 					  primerProduct.setRemark(v);
@@ -165,7 +156,6 @@ public class OrderExcelPase {
 				index ++;
 			}
 			order.getPrimerProducts().add(primerProduct);
-			order.setTotalValue(orderTotalValue);
 		}
 		return order;
 	}

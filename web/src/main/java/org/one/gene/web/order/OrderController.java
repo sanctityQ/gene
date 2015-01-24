@@ -1,11 +1,17 @@
 package org.one.gene.web.order;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +31,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.common.collect.Maps;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
@@ -92,7 +97,7 @@ public class OrderController {
     	String filename = "";
     	if (!file.isEmpty()) { 
         	filename = file.getOriginalFilename();
-        	realpathdir = inv.getServletContext().getRealPath("/")+"upExcel/"+dateString+"/";
+        	realpathdir = inv.getServletContext().getRealPath("/")+"upExcel"+File.separator+dateString+File.separator;
         	path = realpathdir+filename;
         	
     	    // 创建文件目录
@@ -111,7 +116,7 @@ public class OrderController {
     	}
         if(errors.size()>0){
         	inv.addModel("errors", errors);
-        	return "importError";//Replys.with(errors).as(Json.class);
+        	return "importError";
         }else{
         	//获取客户信息
         	Customer customer = orderService.findCustomer(customerCode);
@@ -127,18 +132,26 @@ public class OrderController {
         	inv.getResponse().setContentType("text/html");
     		inv.addModel("customer", customer);
     		inv.addModel("order", order);
+    		//jsp获取未生效生成datagrid表格，后续优化
     		inv.addModel("total", order.getPrimerProducts().size());
-    		for(PrimerProduct primerProduct:order.getPrimerProducts()){
-    			primerProduct.setOrder(null);
-    			primerProduct.setPrimerProductOperations(null);
-    			primerProduct.setPrimerProductValues(null);
-    		}
-    		System.out.println(JSONObject.toJSONString(order.getPrimerProducts()));
     		inv.addModel("reSultdata", JSONObject.toJSONString(order.getPrimerProducts()));
         	return "orderInfo";
         }
         
     }
+    
+    @Post("modifyQuery")
+    @Get("modifyQuery")
+    public String modifyQuery(@Param("orderNo") String orderNo, Invocation inv) throws Exception {
+    	 Order order = orderRepository.findByOrderNo(orderNo);
+    	 String coustomerCode = "";
+     	 coustomerCode = order.getCustomerCode();
+     	 Customer customer = orderService.findCustomer(coustomerCode);
+     	 inv.addModel("customer", customer);
+		 inv.addModel("order", order);
+    	 return "orderInfo";
+    }
+
     
     /**
      * 订单导入列表展示
@@ -161,18 +174,32 @@ public class OrderController {
     	}
     	order.setTotalValue(orderTotalValue);
     	
-        Customer customer = orderService.findCustomer(coustomerCode);
-        
-        inv.addModel("customer", customer);
-        
-        return Replys.with(order).as(Json.class);
+	    Customer customer = orderService.findCustomer(coustomerCode);
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setCustomer(customer);
+        orderInfo.setOrder(order);
+        return Replys.with(orderInfo).as(Json.class);
     }
+    
     
     @Post("save")
     public Object save(@Param("primerProducts") List<PrimerProduct> primerProducts,@Param("orderNo") String orderNo,Invocation inv) throws IllegalStateException, IOException {
         Order order = orderRepository.findByOrderNo(orderNo);
-        order.setPrimerProducts(primerProducts);
-        orderService.save(order);
+        Order orderTemp = new Order();
+        
+        orderTemp.setOrderNo(orderNo);
+        orderTemp.setId(order.getId());
+        orderTemp.setCustomerCode(order.getCustomerCode());
+        orderTemp.setCustomerName(order.getCustomerName());
+    	//后续补充，获取登录操作人员的归属机构。
+        orderTemp.setComCode(order.getComCode());
+        orderTemp.setType(order.getType());
+        orderTemp.setFileName(order.getFileName());
+        orderTemp.setCreateTime(new Date());
+        orderTemp.setValidate(true);
+        
+        orderTemp.setPrimerProducts(primerProducts);
+        orderService.save(orderTemp);
     	return Replys.with("sucess").as(Text.class);  
     }
     
@@ -187,11 +214,11 @@ public class OrderController {
      * @throws Exception
      */
     @Post("query")
-    public Reply query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,@Param("pageNo")Integer pageNo,
+    public Reply query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,@Param("status") String status,@Param("pageNo")Integer pageNo,
                         @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
 
-        if(pageNo == null){
-            pageNo = 0;
+        if(pageNo == null || pageNo ==0){
+            pageNo = 1;
         }
 
         if(pageSize == null){
@@ -201,7 +228,7 @@ public class OrderController {
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
         searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
-        searchParams.put(SearchFilter.Operator.EQ+"_status","0");
+        searchParams.put(SearchFilter.Operator.EQ+"_status",status);
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         
@@ -245,6 +272,40 @@ public class OrderController {
     	return Replys.with(customers).as(Json.class);
     }
     
+    
+    @Get("downLoad") 
+    @Post("downLoad") 
+    public String downLoad(Invocation inv) throws Exception{
+    	
+		String fileName = "views"+File.separator+"downLoad"+File.separator+"template"+File.separator+"orderTemplate.xls";
+		String filePath = inv.getServletContext().getRealPath("/")+fileName;
+		
+		System.out.println("文件下载路径filePath::::::"+filePath);
+		
+        File file=new File(filePath);
+        
+        InputStream is=new FileInputStream(file);
+        OutputStream os=inv.getResponse().getOutputStream();
+        BufferedInputStream bis = new BufferedInputStream(is);
+        BufferedOutputStream bos = new BufferedOutputStream(os);
+        
+        fileName = java.net.URLEncoder.encode(fileName, "UTF-8");// 处理中文文件名的问题
+        fileName = new String(fileName.getBytes("UTF-8"), "GBK");// 处理中文文件名的问题
+        inv.getResponse().reset();
+        inv.getResponse().setContentType("application/x-msdownload");// 不同类型的文件对应不同的MIME类型
+        inv.getResponse().setHeader("Content-Disposition", "attachment; filename="+fileName);
+        int bytesRead = 0;
+        byte[] buffer = new byte[1024];
+        while ((bytesRead = bis.read(buffer)) != -1){
+            bos.write(buffer, 0, bytesRead);// 将文件发送到客户端
+        }
+        bos.flush();
+        bis.close();
+        bos.close();
+        is.close();
+        os.close();
+        return null;
+    }
 
     public Reply test(){
         Order order = orderRepository.findOne(1l);

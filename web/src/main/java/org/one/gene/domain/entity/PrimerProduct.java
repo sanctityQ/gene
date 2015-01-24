@@ -514,7 +514,6 @@ public class PrimerProduct implements java.io.Serializable {
     }
 
     private Map<PrimerValueType,PrimerProductValue> primerProductValueMap = Maps.newEnumMap(PrimerValueType.class);
-
 }
 
 

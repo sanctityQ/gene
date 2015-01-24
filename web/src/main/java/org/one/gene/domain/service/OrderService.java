@@ -8,9 +8,16 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.one.gene.domain.entity.*;
+import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.Order;
+import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.entity.PrimerProductOperation;
+import org.one.gene.domain.entity.PrimerProductValue;
+import org.one.gene.domain.entity.PrimerType;
+import org.one.gene.domain.entity.PrimerValueType;
 import org.one.gene.excel.OrderCaculate;
 import org.one.gene.excel.OrderExcelPase;
 import org.one.gene.repository.CustomerRepository;
@@ -25,6 +32,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Component
 public class OrderService {
@@ -68,10 +78,10 @@ public class OrderService {
         if(order.getCreateTime() == null){
             order.setCreateTime(new Date());
         }
-    	
+        BigDecimal orderTotalValue = new BigDecimal("0");
     	//存储生产数据
         for (PrimerProduct primerProduct : order.getPrimerProducts()) {
-
+        	primerProduct.getPrimerProductValues().removeAll(primerProduct.getPrimerProductValues());
 			//后续补充，获取登录操作人员的归属机构。
 			primerProduct.setComCode("11000000");
 			primerProduct.setOperationType(PrimerType.PrimerStatusType.orderInit);//!!!是初始状态不是审核通过状态
@@ -80,14 +90,12 @@ public class OrderService {
 				primerProduct.getPrimerProductOperations().add(createPrimerProductOperation(primerProduct));
 			}
 
-			for (PrimerProductValue pv : primerProduct.getPrimerProductValues()) {
-				pv.setPrimerProduct(primerProduct);
-			}
-
-			for (PrimerProductOperation po : primerProduct.getPrimerProductOperations()) {
-				po.setPrimerProduct(primerProduct);
-			}
-			
+			  //获取碱基数
+			  String tbnStr = orderCaculate.getAnJiShu(primerProduct.getGeneOrder());
+			  //总价格:修饰单价+碱基单价*碱基数+纯化价格(9+10*碱基数+11)
+			  BigDecimal totalVal = primerProduct.getModiPrice().add(primerProduct.getBaseVal().multiply(new BigDecimal(tbnStr))).add(primerProduct.getPurifyVal());
+			  primerProduct.setTotalVal(totalVal);
+			  orderTotalValue = orderTotalValue.add(primerProduct.getTotalVal());
 			if("od".equals(order.getOrderUpType())){
 			  //通过od值计算  1000 * 'OD总量' / 'OD/μmol'
 			  primerProduct.setNmolTotal(new BigDecimal(1000).multiply(primerProduct.getOdTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
@@ -100,8 +108,25 @@ public class OrderService {
 			  //（'nmol总量' * 'OD/μmol'）/ 1000
 			  primerProduct.setOdTotal(new BigDecimal(1000).multiply(primerProduct.getNmolTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
 			}
-		}
+			
+			//初始化数据 先实现功能后续优化
+			/*Map<PrimerValueType,PrimerProductValue> primerProductValueMap = Maps.newEnumMap(PrimerValueType.class);
+            for (PrimerValueType type : PrimerValueType.values()) {
+                primerProductValueMap.put(type,type.create(primerProduct));
+                primerProduct.setPrimerProductValues(Lists.newArrayList(primerProductValueMap.values()));
+            }*/
+			
+			for (PrimerProductValue pv : primerProduct.getPrimerProductValues()) {
+				pv.setPrimerProduct(primerProduct);
+			}
 
+			for (PrimerProductOperation po : primerProduct.getPrimerProductOperations()) {
+				po.setPrimerProduct(primerProduct);
+			}
+			
+			
+		}
+        order.setTotalValue(orderTotalValue);
 		orderRepository.save(order);
 
     }

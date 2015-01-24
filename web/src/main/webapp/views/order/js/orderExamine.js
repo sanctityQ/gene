@@ -12,6 +12,7 @@ var examineIni=function(){
 		type : "post",
 		url : "/gene/order/query",
 		dataType : "json",
+		data:{status:0},
 		success : function(data) {
 			if(data != null){
 				var total = data.totalElements;

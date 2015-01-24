@@ -23,6 +23,8 @@
 <script type="text/javascript">
 var orderNo = ${orderNo};
 var ctx = '${ctx}';
+//var reSultdata = ${reSultdata};
+//var total = ${total};
 </script>
 </head>
 <body>
@@ -78,23 +80,27 @@ var ctx = '${ctx}';
 		</table>
 	</div>
 	<div class="content_box info margin_btoom">
-		<h2><!-- <a href="javascript:;" class="right btn-primary submit" onclick="appendRow()" type="button">添加数据</a> -->生产数据</h2>
-		<table id="bigToSmall" class="easyui-datagrid" data-options="fitColumns:true,singleSelect: true,iconCls: 'icon-save',striped:true,method: 'get',onClickRow: onClickRow">
+		<h2><a href="javascript:;" class="right btn-primary submit" onclick="appendRow()" type="button">添加数据</a>生产数据</h2>
+		<table id="bigToSmall" class="easyui-datagrid" data-options="fitColumns:true,singleSelect: true,striped:true,method: 'get',onClickRow: onClickRow">
 		<thead>
 			<tr>
-				<th data-options="field:'productNo',width:80,sortable:true,editor:'text'">生产编号</th>
+				<th data-options="field:'productNo',width:80,sortable:true">生产编号</th>
 				<th data-options="field:'primeName',width:80,sortable:true,editor:'text'">引物名称</th>
 				<th data-options="field:'geneOrder',width:80,sortable:true,editor:'text'">序列</th>
-				<th data-options="field:'tbn',width:80,sortable:true,editor:'text'">碱基数</th>
-				<th data-options="field:'nmolTotal',width:80,sortable:true,editor:'text'">nmol总量</th>
-				<th data-options="field:'nmolTB',width:80,sortable:true,editor:'text'">nmol/tube</th>
-				<th data-options="field:'odTotal',width:80,sortable:true,editor:'text'">OD总量</th>
-				<th data-options="field:'odTB',width:80,sortable:true,editor:'text'">OD/tube</th>
+				<th data-options="field:'tbn',width:80,sortable:true,editor:'numberbox'">碱基数</th>
+				<c:if test="${order.orderUpType=='nmol'}">
+				<th data-options="field:'nmolTotal',width:80,sortable:true,editor:'numberbox'">nmol总量</th>
+				<th data-options="field:'nmolTB',width:80,sortable:true,editor:'numberbox'">nmol/tube</th>
+				</c:if>
+				<c:if test="${order.orderUpType=='od'}">
+				<th data-options="field:'odTotal',width:80,sortable:true,editor:'numberbox'">OD总量</th>
+				<th data-options="field:'odTB',width:80,sortable:true,editor:'numberbox'">OD/tube</th>
+				</c:if>
 				<th data-options="field:'purifyType',width:80,sortable:true,editor:'text'">纯化方式</th>
-				<th data-options="field:'modiPrice',width:80,sortable:true,editor:'text'">修饰价格</th>
-				<th data-options="field:'baseVal',width:80,sortable:true,editor:'text'">碱基单价</th>
-				<th data-options="field:'purifyVal',width:80,sortable:true,editor:'text'">纯化价格</th>
-				<th data-options="field:'totalVal',width:80,sortable:true,editor:'text'">总价格</th>
+				<th data-options="field:'modiPrice',width:80,sortable:true,editor:'numberbox'">修饰价格</th>
+				<th data-options="field:'baseVal',width:80,sortable:true,editor:'numberbox'">碱基单价</th>
+				<th data-options="field:'purifyVal',width:80,sortable:true,editor:'numberbox'">纯化价格</th>
+				<th data-options="field:'totalVal',width:80,sortable:true,editor:'numberbox'">总价格</th>
 				<th data-options="field:'fromProductNo',width:80,hidden:true,sortable:true,editor:'text'">来源生产编号</th>
 				<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>
 			</tr>
@@ -108,7 +114,7 @@ var ctx = '${ctx}';
 </div>
 <script src="${ctx}/views/order/js/orderInfo.js" ></script>
 <script type="text/javascript">
-getProduct(${total},${reSultdata});
+getProduct();
 </script>
 </body>
 </html>

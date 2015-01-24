@@ -38,7 +38,7 @@
 		<div class="import_box" style="line-height: 16px;">
 			<i class="icon-upload-alt"></i>上传您的excel模板，系统将根据您导入的信息生成订单。
 			<br />
-			<a href="${templateFilePath}" class="down_excel">下载excel模板文件…</a>
+			<a href="${ctx}/order/downLoad" class="down_excel">下载excel模板文件…</a>
 			<br /><br />
 			<div class="file_box">
 				<input name="file" type="file" onchange="document.getElementById('viewfile').value=this.value;" class="file" id="upload" /> 

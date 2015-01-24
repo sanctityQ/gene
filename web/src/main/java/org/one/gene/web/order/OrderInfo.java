@@ -10,18 +10,18 @@ public class OrderInfo {
 
 	//订单导入属性
 	private Customer customer;
-	private Page<Order> orderPage;
+	private Order order;
 	public Customer getCustomer() {
 		return customer;
 	}
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
-	public Page<Order> getOrderPage() {
-		return orderPage;
+	public Order getOrder() {
+		return order;
 	}
-	public void setOrderPage(Page<Order> orderPage) {
-		this.orderPage = orderPage;
+	public void setOrder(Order order) {
+		this.order = order;
 	}
 	
 	//订单信息列表属性
