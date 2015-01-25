@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -333,16 +336,13 @@ public class PrintService {
      * 导出文件
      * @throws IOException 
      * */
-	public EntityReply<File> exportFile( String orderNo,String flag, Invocation inv) throws IOException {
+	public void exportFile( String orderNo,String flag, Invocation inv) throws IOException {
 		
-		EntityReply<File> fileStr = null;
 		if ("0".equals(flag)) {
-			fileStr = this.exportReport(orderNo, inv);
+			exportReport(orderNo, inv);
 		} else if ("1".equals(flag)) {
-			fileStr = this.exportEnvelope(orderNo, inv);
+			exportEnvelope(orderNo, inv);
 		}
-    		
-      return fileStr;
 	}
 	
 	
@@ -350,21 +350,9 @@ public class PrintService {
      * 导出打印报告单文件
      * @throws IOException 
      * */
-	public EntityReply<File> exportReport( String orderNo, Invocation inv) throws IOException {
-		
-		
-		//读取上机表文件输出地址
-		InputStream inputStream  =   this.getClass().getClassLoader().getResourceAsStream("application.properties");  
-		Properties p = new  Properties(); 
-		try {
-			p.load(inputStream);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+	public void exportReport( String orderNo, Invocation inv) throws IOException {
 		
 		Order order = orderRepository.findByOrderNo(orderNo);
-		String strFilePath = p.getProperty("sjbPath");
-		String report_templet_Path = p.getProperty("report_templet_Path");
 		String customerCode = order.getCustomerCode();//客户代码
 		String customerName = order.getCustomerName();//客户名称
 		Customer customer = customerRepository.findByCode(customerCode);
@@ -463,9 +451,10 @@ public class PrintService {
 				templetName = customerCode+".xls";
 			}
 			
-			HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(report_templet_Path+templetName));
+			String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+"report"+File.separator;
+			
+			HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(templatePath+templetName));
 	        HSSFSheet sheet = workbook.getSheetAt(0);
-			FileOutputStream fos = null;
 			HSSFRow row = null;
 			HSSFCell cell = null;
 			int startRowNum = 0;
@@ -624,38 +613,24 @@ public class PrintService {
 			}
 			
         	
-        	fos = new FileOutputStream(strFilePath + strFileName);
-    		// 把相应的Excel 工作簿存盘
-    		workbook.write(fos);
-		
-
-		   //读取文件
-		   File file = new File(strFilePath, strFileName);
-		
-		return Replys.with(file).as(Raw.class).downloadFileName(strFileName);
+            //输出文件到客户端
+            HttpServletResponse response = inv.getResponse();
+            response.setContentType("application/x-msdownload");
+            response.setHeader("Content-Disposition", "attachment;filename=\"" + strFileName + "\"");
+            OutputStream out=response.getOutputStream();
+            workbook.write(out);
+            out.flush();
+            out.close();
     }
 
     /**
      * 导出打印信封文件
      * @throws IOException 
      * */
-	public EntityReply<File> exportEnvelope( String orderNo, Invocation inv) throws IOException {
-		
-		
-		//读取上机表文件输出地址
-		InputStream inputStream  =   this.getClass().getClassLoader().getResourceAsStream("application.properties");  
-		Properties p = new  Properties(); 
-		try {
-			p.load(inputStream);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+	public void exportEnvelope( String orderNo, Invocation inv) throws IOException {
 		
 		Order order = orderRepository.findByOrderNo(orderNo);
-		String strFilePath = p.getProperty("sjbPath");
-		String report_templet_Path = p.getProperty("report_templet_Path");
 		String customerCode = order.getCustomerCode();//客户代码
-		String customerName = order.getCustomerName();//客户名称
 		Customer customer = customerRepository.findByCode(customerCode);
 		String strFileName = customerCode+"-"+System.currentTimeMillis()+".xls";
 		
@@ -673,10 +648,9 @@ public class PrintService {
 		//形成Excel
 		//读取信封模板
 		String templetName = "envelope.xls";
-		
-		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(report_templet_Path+templetName));
+		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+"report"+File.separator;
+		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(templatePath+templetName));
         HSSFSheet sheet = workbook.getSheetAt(0);
-		FileOutputStream fos = null;
 		HSSFRow row = null;
 		HSSFCell cell = null;
 		
@@ -698,14 +672,14 @@ public class PrintService {
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(customer.getName());
 		
-    	fos = new FileOutputStream(strFilePath + strFileName);
-		// 把相应的Excel 工作簿存盘
-		workbook.write(fos);
-
-	   //读取文件
-	   File file = new File(strFilePath, strFileName);
-		
-	   return Replys.with(file).as(Raw.class).downloadFileName(strFileName);
+        //输出文件到客户端
+        HttpServletResponse response = inv.getResponse();
+        response.setContentType("application/x-msdownload");
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + strFileName + "\"");
+        OutputStream out=response.getOutputStream();
+        workbook.write(out);
+        out.flush();
+        out.close();
     }
 	
 	

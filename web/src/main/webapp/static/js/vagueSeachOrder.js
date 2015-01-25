@@ -1,18 +1,17 @@
 $(function(){
-
-    $("#seachCustom")
+    $("#seachOrder")
         .focus(function(){$(this).addClass("fouse");})  
         .blur(function(){$(this).removeClass("fouse");});
     
-    seachCustomChange();
+    seachOrderChange();
 });
-function seachCustomChange(){
-    var seach = $("#seachCustom");
+function seachOrderChange(){
+    var seach = $("#seachOrder");
     var left = seach.offset().left;
     var top = seach.offset().top + 30;
-    var list = $("#seachCustomList");
+    var list = $("#seachOrderList");
     list.css({'left':left,'top':top});
-    list.on("click",'li',seachCustomSelect);
+    list.on("click",'li',seachOrderSelect);
     seach.bind('input',function(){
         ajaxSeach();
     }).bind('keyup',function(){
@@ -23,10 +22,10 @@ function seachCustomChange(){
             if(seach.val() != ''){
                 $.ajax({
                     type: "post",
-                    url: "/gene/user/vagueSeachCustomer",
+                    url: "/gene/order/vagueSeachOrder",
                     dataType: "json",
             		data:{
-            			customercode: seach.val()
+            			orderNo: seach.val()
                     },
                     success:function(data){
                         list.empty();
@@ -35,8 +34,8 @@ function seachCustomChange(){
                             list.show(100);
                         }
                         for(var i = 0; i < data.length; i++){
-                            var code = data[i].code;
-                            var name = data[i].name;
+                            var code = data[i].orderNo;
+                            var name = data[i].orderNo;
                             li += '<li id="'+code+'">'+name+'</li>';
                         };
                         list.append(li);
@@ -48,12 +47,12 @@ function seachCustomChange(){
         },500)
     }
 }
-function seachCustomSelect(){
-    var seach = $("#seachCustom");
-    var list = $("#seachCustomList");
+function seachOrderSelect(){
+    var seach = $("#seachOrder");
+    var list = $("#seachOrderList");
     var id = $(this).attr("id");
     var val = $(this).text();
     seach.val(val);
-    $("#customercode").val(id);
+    $("#seachOrder").val(id);
     list.hide(100);
 }
