@@ -60,12 +60,12 @@
 	</div>
 	<div title="报告单" data-options="iconCls:'report'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li><i class="icon-file-text"></i>生成报告单</li>
+			<li url="${ctx}/print/createReport" id="createReport"><i class="icon-file-text"></i>生成报告单</li>
 		</ul>
 	</div>
 	<div title="信封打印" data-options="iconCls:'mail'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li><i class="icon-print"></i>信封打印</li>
+			<li url="${ctx}/print/envelopePrint" id="envelopePrint"><i class="icon-print"></i>信封打印</li>
 		</ul>
 	</div>
 	<div title="出库单打印" data-options="iconCls:'outbound'" style="height:200px;">

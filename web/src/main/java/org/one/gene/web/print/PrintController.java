@@ -2,6 +2,7 @@ package org.one.gene.web.print;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,9 @@ import com.sinosoft.one.mvc.web.annotation.Path;
 import com.sinosoft.one.mvc.web.annotation.rest.Get;
 import com.sinosoft.one.mvc.web.annotation.rest.Post;
 import com.sinosoft.one.mvc.web.instruction.reply.EntityReply;
+import com.sinosoft.one.mvc.web.instruction.reply.Reply;
+import com.sinosoft.one.mvc.web.instruction.reply.Replys;
+import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
 
 
 @Path
@@ -153,10 +157,18 @@ public class PrintController {
      * 进入打印报告单查询页面
      * 
      * */
-    @Get("prePrintReportQuery")
-    public String prePrintReportQuery(){
-    	
-    	return "printReportQuery";
+    @Get("createReport")
+    public String createReport(){
+    	return "createReport";
+    }
+
+    /**
+     * 进入打印信封查询页面
+     * 
+     * */
+    @Get("envelopePrint")
+    public String envelopePrint(){
+    	return "envelopePrint";
     }
     
     /**
@@ -164,8 +176,9 @@ public class PrintController {
      * @throws IOException 
      * @throws Exception 
      * */
-	public String printReportQuery(@Param("orderNo") String orderNo,
+	public Reply printReportQuery(@Param("orderNo") String orderNo,
 			@Param("customerCode") String customerCode,
+			@Param("modifyTime") String modifyTime,
 			@Param("pageNo") Integer pageNo,
 			@Param("pageSize") Integer pageSize, Invocation inv) throws Exception {
     	
@@ -181,33 +194,30 @@ public class PrintController {
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
         searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
+		if (!"".equals(modifyTime)) {
+        	searchParams.put(SearchFilter.Operator.GT+"_modifyTime",new Date(modifyTime));
+        	searchParams.put(SearchFilter.Operator.LT+"_modifyTime",new Date(modifyTime+" 59:59:59"));
+        }
+        
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         
         Page<Order> orderPage = orderRepository.findAll(spec,pageable);
         Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
         
-    	inv.addModel("page", orderListPage);
-    	inv.addModel("pageSize", pageSize);
-    	
-    	return "printReportList";
+    	return Replys.with(orderListPage).as(Json.class);
     }
     
     
     /**
      * 打印报告单
+     * @throws IOException 
      * */
-	@Post("exportFile/{orderNo}/{flag}")
-	public EntityReply<File> exportFile(@Param("orderNo") String orderNo, @Param("flag") String flag, Invocation inv) {
+	@Post("exportFile/{orderNoStr}/{flag}/")
+	public void exportFile( @Param("flag") String flag,@Param("orderNoStr") String orderNo, Invocation inv) throws IOException {
     	
-    	EntityReply<File> fileStr = null;
-    	try {
-    		fileStr = printService.exportFile(orderNo, flag, inv);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	return fileStr;
+		printService.exportFile(orderNo, flag, inv);
+
     }
 	
 	

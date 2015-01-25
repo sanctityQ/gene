@@ -322,6 +322,12 @@ public class OrderController {
         return Replys.with(order.toString()).as(Text.class);
     }
     
-    
+    //模糊查询订单号
+    @Post("vagueSeachOrder")
+    public Reply vagueSeachOrder( @Param("orderNo") String orderNo,Invocation inv){
+    	String orderSQLStr = "%" + orderNo + "%";
+    	List<Order> orders = orderRepository.vagueSeachOrder(orderSQLStr);
+    	return Replys.with(orders).as(Json.class);
+    }
 
 }
