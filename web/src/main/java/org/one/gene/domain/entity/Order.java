@@ -6,15 +6,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -26,6 +18,8 @@ import com.google.common.collect.Lists;
 @Entity
 @Table(name = "`order`", uniqueConstraints = @UniqueConstraint(name = "`uk_order_no`", columnNames = "`order_no`"))
 public class Order extends IdEntity implements java.io.Serializable {
+
+    public static enum OrderType {od, nmol}
 
     /**
      * 订单号.
@@ -74,7 +68,7 @@ public class Order extends IdEntity implements java.io.Serializable {
     /**
      * 订单导入类型 nmol、od
      */
-    private String orderUpType;
+    private OrderType orderUpType;
     /**
      * 订单总计 所有生产数据总价格合计
      */
@@ -204,12 +198,14 @@ public class Order extends IdEntity implements java.io.Serializable {
     public void setValidate(boolean validate) {
         this.validate = validate;
     }
+
     @Column(name = "`order_up_type`")
-    public String getOrderUpType() {
+    @Enumerated(value = EnumType.STRING)
+    public OrderType getOrderUpType() {
 		return orderUpType;
 	}
 
-	public void setOrderUpType(String orderUpType) {
+	public void setOrderUpType(OrderType orderUpType) {
 		this.orderUpType = orderUpType;
 	}
 	@Transient
@@ -234,11 +230,6 @@ public class Order extends IdEntity implements java.io.Serializable {
         this.primerProducts = primerProducts;
     }
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
-
     @Transient
 	public String getProductNoMinToMax() {
 		return productNoMinToMax;
@@ -255,6 +246,13 @@ public class Order extends IdEntity implements java.io.Serializable {
 	public void setTbnTotal(String tbnTotal) {
 		this.tbnTotal = tbnTotal;
 	}
+
+    @Transient
+    public boolean isOrderType(OrderType orderType){
+        return this.getOrderUpType().equals(orderType);
+    }
+
+
     
 }
 

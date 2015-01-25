@@ -187,10 +187,29 @@ public class OrderController {
     
     
     @Post("save")
-    public Object save(@Param("primerProducts") List<PrimerProduct> primerProducts,@Param("orderNo") String orderNo,Invocation inv) throws IllegalStateException, IOException {
+    public Reply save(@Param("primerProducts") List<PrimerProduct> primerProducts,@Param("orderNo") String orderNo,Invocation inv) throws IllegalStateException, IOException {
     	Order order = orderRepository.findByOrderNo(orderNo);
-        order.setPrimerProducts(primerProducts);
-        orderService.save(order);
+        Map<Long, PrimerProduct> newPrimerProductMap = Maps.newHashMap();
+        for (PrimerProduct primerProduct : primerProducts) {
+            newPrimerProductMap.put(primerProduct.getId(),primerProduct);
+        }
+        for (PrimerProduct primerProduct : order.getPrimerProducts()) {
+            PrimerProduct newPrimerProduct = newPrimerProductMap.get(primerProduct.getId());
+            if (newPrimerProduct != null) {
+                primerProduct.setNmolTB(newPrimerProduct.getNmolTB());
+                primerProduct.setNmolTotal(newPrimerProduct.getNmolTotal());
+
+                newPrimerProductMap.remove(primerProduct.getId());
+            }
+        }
+        for (PrimerProduct newPrimerProduct : newPrimerProductMap.values()) {
+            newPrimerProduct.setOrder(order);
+            //order.getPrimerProducts().add(newPrimerProduct);
+        }
+
+        //order.setPrimerProducts(primerProducts);
+       // orderService.save(order);
+        orderService.saveOrderAndPrimerProduct(order,newPrimerProductMap.values());
     	return Replys.with("sucess").as(Text.class);  
     }
     

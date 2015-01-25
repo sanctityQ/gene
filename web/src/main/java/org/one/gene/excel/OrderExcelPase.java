@@ -3,7 +3,6 @@ package org.one.gene.excel;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -103,7 +102,7 @@ public class OrderExcelPase {
 				  case 4:	
 					  if(!"".equals(v)){
 					    primerProduct.setNmolTotal(new BigDecimal(v));
-					    order.setOrderUpType("nmol");
+					    order.setOrderUpType(Order.OrderType.nmol);
 					  }
 					break;
 				  case 5:	
@@ -114,7 +113,7 @@ public class OrderExcelPase {
 				  case 6:	
 					  if(!"".equals(v)){
 					    primerProduct.setOdTotal(new BigDecimal(v));
-					    order.setOrderUpType("od");
+					    order.setOrderUpType(Order.OrderType.od);
 					  }
 					break;
 				  case 7:	

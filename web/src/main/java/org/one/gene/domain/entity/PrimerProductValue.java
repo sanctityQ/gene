@@ -46,7 +46,7 @@ public class PrimerProductValue extends IdEntity implements java.io.Serializable
     public PrimerProductValue() {
     }
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "`primer_product_id`", nullable = false)
     public PrimerProduct getPrimerProduct() {
         return primerProduct;

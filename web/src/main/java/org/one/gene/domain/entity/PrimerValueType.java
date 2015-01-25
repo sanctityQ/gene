@@ -4,8 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.one.gene.domain.CalculatePrimerValue;
 
-import com.sinosoft.one.data.jade.parsers.parser.function.Add;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -20,7 +18,13 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
-            return primerProduct.getOdTotal();
+            if(primerProduct.isOrderUpType(Order.OrderType.nmol)) {
+                //（'nmol/tube' * 'OD/μmol'）/ 1000
+                return primerProduct.getNmolTotal().multiply(ODμmol.value(primerProduct))
+                        .divide(new BigDecimal(1000)).setScale(1, RoundingMode.HALF_UP);
+            }else{
+                return primerProduct.getOdTotal();
+            }
         }
 
     },
@@ -33,7 +37,13 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
-            return primerProduct.getOdTB();
+            if(primerProduct.isOrderUpType(Order.OrderType.nmol)) {
+                //（'nmol总量' * 'OD/μmol'）/ 1000
+                return primerProduct.getNmolTB().multiply(ODμmol.value(primerProduct))
+                        .divide(new BigDecimal(1000)).setScale(1, RoundingMode.HALF_UP);
+            }else{
+                return primerProduct.getOdTB();
+            }
         }
 
     },
@@ -45,8 +55,15 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
         }
 
         @Override
-        BigDecimal value(PrimerProduct primerProduct) {
-            return primerProduct.getNmolTotal();
+        BigDecimal value(PrimerProduct primerProduct)
+        {
+            if(primerProduct.isOrderUpType(Order.OrderType.od)) {
+                //通过od值计算  1000 * 'OD总量' / 'OD/μmol'
+                return new BigDecimal(1000).multiply(primerProduct.getOdTotal()).divide(
+                        ODμmol.value(primerProduct), 2, BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP);
+            }else{
+                return primerProduct.getNmolTotal();
+            }
         }
     },
 
@@ -58,7 +75,13 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
-            return primerProduct.getNmolTB();
+            if (primerProduct.isOrderUpType(Order.OrderType.od)) {
+                //1000 * 'OD/tube' / 'OD/μmol'
+                return new BigDecimal(1000).multiply(primerProduct.getOdTB()).divide(
+                        ODμmol.value(primerProduct), 2, BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP);
+            } else {
+                return primerProduct.getNmolTB();
+            }
         }
     },
 
@@ -279,7 +302,7 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
-            return primerProduct.getOdTotal().divide(primerProduct.getOdTB(), 0, BigDecimal.ROUND_UP);
+            return odTotal.value(primerProduct).divide(odTB.value(primerProduct), 0, BigDecimal.ROUND_UP);
         }
     },
 

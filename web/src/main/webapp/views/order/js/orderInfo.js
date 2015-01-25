@@ -45,18 +45,17 @@ function onClickRow(index){
     });
 }
 function getChanesSave(){
-	bigToSmall.datagrid('endEdit',editIndex);
+//	bigToSmall.datagrid('endEdit',editIndex);
     var primerProducts = bigToSmall.datagrid('getData').rows;
-    //console.log(primerProducts);
-
+    console.log(primerProducts);
     $.ajax({
 		type : "post",
         url: ctx + "/order/save",
 		dataType : "html",
         data: {
-        	"primerProducts": primerProducts,
-        	 "orderNo":orderNo
-        	},
+            "primerProducts": primerProducts,
+            "orderNo": orderNo
+        },
 		success : function(data) {
 			if(data == "sucess"){
 				goToPage('/gene/views/order/orderList.jsp');
@@ -88,9 +87,9 @@ function copyRow(e){
         odTotal                :"",
         odTB                   :"",
         purifyType             :row.purifyType,
-        modiPrice              :"",
-        baseVal                :"",
-        purifyVal              :"",
+        modiPrice              :row.modiPrice,
+        baseVal                :row.baseVal,
+        purifyVal              :row.purifyVal,
         totalVal               :"",
         fromProductNo          :row.productNo,
         //复制收集全量数据，下面为行对象其他属性赋值。
@@ -104,12 +103,12 @@ function copyRow(e){
         operationType          :row.operationType,
         order                  :row.order,
         primeName              :row.primeName,
-        remark                 :row.remark,
-        primerProductOperations:"",
-        primerProductValues    :"",
+        remark                 :row.remark
+        //primerProductOperations:"",
+        //primerProductValues    :""
         }
     });
-    row.primerProductOperations[ind].id="";
+    //row.primerProductOperations[ind].id="";
     for(var i=0;i<row.primerProductValues[ind].length;i++){
     	row.primerProductValues[i].id="";
     }

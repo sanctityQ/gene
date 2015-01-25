@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.persistence.*;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.Cascade;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 
 import com.google.common.collect.Lists;
@@ -477,7 +478,6 @@ public class PrimerProduct implements java.io.Serializable {
 	
     @PostLoad
     public void init(){
-    	System.out.println("this.getPrimerProductValues()=="+this.getPrimerProductValues().size());
         for (PrimerProductValue primerProductValue : this.getPrimerProductValues()) {
             this.primerProductValueMap.put(primerProductValue.getType(),primerProductValue);
         }
@@ -488,7 +488,10 @@ public class PrimerProduct implements java.io.Serializable {
         return this.primerProductValueMap.get(type).getValue();
     }
 
-
+    @Transient
+    public Boolean isOrderUpType(Order.OrderType orderType){
+        return this.getOrder().isOrderType(orderType);
+    }
 
 
     @PrePersist

@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class OrderService {
 	 * @throws IllegalStateException
 	 * @throws IOException
 	 */
-	@Transactional(readOnly=false)
+	@Transactional
     public void save(Order order){
 
     	//存储订单数据
@@ -74,57 +75,58 @@ public class OrderService {
         if(order.getCreateTime() == null){
             order.setCreateTime(new Date());
         }
-        BigDecimal orderTotalValue = new BigDecimal("0");
+//        BigDecimal orderTotalValue = new BigDecimal(0);
     	//存储生产数据
         for (PrimerProduct primerProduct : order.getPrimerProducts()) {
-        	//primerProduct.getPrimerProductValues().removeAll(primerProduct.getPrimerProductValues());
+			//primerProduct.getPrimerProductValues().removeAll(primerProduct.getPrimerProductValues());
 			//后续补充，获取登录操作人员的归属机构。
 			primerProduct.setComCode("11000000");
 			primerProduct.setOperationType(PrimerType.PrimerStatusType.orderInit);//!!!是初始状态不是审核通过状态
 			primerProduct.setOrder(order);
+
+
+			//获取碱基数
+			String tbnStr = orderCaculate.getAnJiShu(primerProduct.getGeneOrder());
+			//总价格:修饰单价+碱基单价*碱基数+纯化价格(9+10*碱基数+11)
+			BigDecimal totalVal = primerProduct.getModiPrice().add(primerProduct.getBaseVal().multiply(new BigDecimal(tbnStr))).add(primerProduct.getPurifyVal());
+			primerProduct.setTotalVal(totalVal);
+//			orderTotalValue = orderTotalValue.add(primerProduct.getTotalVal());
+
+//			if ("od".equals(order.getOrderUpType())) {
+//				//通过od值计算  1000 * 'OD总量' / 'OD/μmol'
+//				primerProduct.setNmolTotal(new BigDecimal(1000).multiply(primerProduct.getOdTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())), 2, BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
+//				//1000 * 'OD/tube' / 'OD/μmol'
+//				primerProduct.setNmolTB(new BigDecimal(1000).multiply(primerProduct.getOdTB()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())), 2, BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
+//			}
+//			if ("nmol".equals(order.getOrderUpType())) {
+//				//（'nmol/tube' * 'OD/μmol'）/ 1000
+//				primerProduct.setOdTB(new BigDecimal(1000).multiply(primerProduct.getNmolTB()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())), 2, BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
+//				//（'nmol总量' * 'OD/μmol'）/ 1000
+//				primerProduct.setOdTotal(new BigDecimal(1000).multiply(primerProduct.getNmolTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())), 2, BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
+//			}
+
+			//初始化数据 先实现功能后续优化
+			if(primerProduct.getId() == null){
+				List<PrimerProductValue> primerProductValueList = new ArrayList<PrimerProductValue>();
+				for (PrimerValueType type : PrimerValueType.values()) {
+					PrimerProductValue primerProductValue = type.create(primerProduct);
+					primerProductValue.setPrimerProduct(primerProduct);
+					primerProductValueList.add(primerProductValue);
+				}
+				primerProduct.setPrimerProductValues(primerProductValueList);
+			}
+
+			primerProduct.init();
+
+
 			if (primerProduct.getPrimerProductOperations().isEmpty()) {
 				primerProduct.getPrimerProductOperations().add(createPrimerProductOperation(primerProduct));
 			}
-
-			  //获取碱基数
-			  String tbnStr = orderCaculate.getAnJiShu(primerProduct.getGeneOrder());
-			  //总价格:修饰单价+碱基单价*碱基数+纯化价格(9+10*碱基数+11)
-			  BigDecimal totalVal = primerProduct.getModiPrice().add(primerProduct.getBaseVal().multiply(new BigDecimal(tbnStr))).add(primerProduct.getPurifyVal());
-			  primerProduct.setTotalVal(totalVal);
-			  orderTotalValue = orderTotalValue.add(primerProduct.getTotalVal());
-			if("od".equals(order.getOrderUpType())){
-			  //通过od值计算  1000 * 'OD总量' / 'OD/μmol'
-			  primerProduct.setNmolTotal(new BigDecimal(1000).multiply(primerProduct.getOdTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
-			  //1000 * 'OD/tube' / 'OD/μmol'
-			  primerProduct.setNmolTB(new BigDecimal(1000).multiply(primerProduct.getOdTB()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
-			}
-			if("nmol".equals(order.getOrderUpType())){
-			  //（'nmol/tube' * 'OD/μmol'）/ 1000
-			  primerProduct.setOdTB(new BigDecimal(1000).multiply(primerProduct.getNmolTB()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
-			  //（'nmol总量' * 'OD/μmol'）/ 1000
-			  primerProduct.setOdTotal(new BigDecimal(1000).multiply(primerProduct.getNmolTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())),2,BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
-			}
-			
-			//初始化数据 先实现功能后续优化
-			List<PrimerProductValue> primerProductValueList = new ArrayList<PrimerProductValue>();
-            for (PrimerValueType type : PrimerValueType.values()) {
-            	 PrimerProductValue primerProductValue = type.create(primerProduct);
-            	 for(PrimerProductValue pv:primerProduct.getPrimerProductValues()){
-            	   if(pv.getType().equals(type)){
-            	     primerProductValue.setId(pv.getId());
-            	   }
-            	 }
-            	 primerProductValueList.add(primerProductValue);
-            }
-            primerProduct.setPrimerProductValues(primerProductValueList);
-
 			for (PrimerProductOperation po : primerProduct.getPrimerProductOperations()) {
 				po.setPrimerProduct(primerProduct);
 			}
-			
-			
 		}
-        order.setTotalValue(orderTotalValue);
+//        order.setTotalValue(orderTotalValue);
 		orderRepository.save(order);
 
     }
@@ -167,7 +169,7 @@ public class OrderService {
 	public OrderInfo getOrderInfos(Order order){
 		OrderInfo OrderInfo = new OrderInfo();
 		List<PrimerProduct> PrimerProducts = new ArrayList<PrimerProduct>();
-		
+
 		//组织订单列表对象
 		OrderInfo.setOrderNo(order.getOrderNo());
 		OrderInfo.setCustomerName(order.getCustomerName());
@@ -209,13 +211,13 @@ public class OrderService {
      * @return
      * @throws ParseException 
      */
-    public Order convertOrder(Customer customer,String fileName,Order order) throws ParseException{
+    public Order convertOrder(Customer customer, String fileName,Order order) throws ParseException{
     	order.setOrderNo(atomicLongUtil.getOrderSerialNo());
-    	
-    	order.setCustomerCode(customer.getCode());
-    	order.setCustomerName(customer.getName());
+
+		order.setCustomerCode(customer.getCode());
+		order.setCustomerName(customer.getName());
     	//后续补充，获取登录操作人员的归属机构。
-    	order.setComCode("11000000");
+		order.setComCode("11000000");
     	order.setType("00");
     	order.setFileName(fileName);
     	order.setCreateTime(new Date());
@@ -326,5 +328,10 @@ public class OrderService {
       	}
   		
   	}
-  	
+
+	@Transactional
+	public void saveOrderAndPrimerProduct(Order order, Collection<PrimerProduct> values) {
+		this.save(order);
+		this.primerProductRepository.save(values);
+	}
 }

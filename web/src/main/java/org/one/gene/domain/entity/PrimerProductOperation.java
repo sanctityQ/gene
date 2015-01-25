@@ -81,7 +81,7 @@ public class PrimerProductOperation extends IdEntity implements java.io.Serializ
 //        this.primerProductId = primerProductId;
 //    }
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "`primer_product_id`", nullable = false)
     public PrimerProduct getPrimerProduct() {
         return primerProduct;
