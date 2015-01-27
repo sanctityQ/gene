@@ -33,7 +33,7 @@ var ctx = '${ctx}';
 	<div class="content_box totle margin_btoom">
 		<b>订单号：</b>${order.orderNo}<br />
 		<b>订购日期：</b><fmt:formatDate value="${order.createTime}" pattern="yyyy-MM-dd HH:mm:ss" /><br />
-		<b class="bule">订单总计：</b>￥ ${order.totalValue}<br />
+		<span id="orderUpType"><b class="bule">订单总计：</b>￥ ${order.totalValue}<br /></span>
 		<b>订单类型：</b>${order.orderUpType} 类型
 	</div>
 	<div class="content_box info margin_btoom">
