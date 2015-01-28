@@ -42,41 +42,51 @@ function onClickRow(index){
     var geneOrder = bigToSmall.datagrid('getEditor', {index:index,field:'geneOrder'});
     //碱基数
 	var tbn = bigToSmall.datagrid('getEditor', {index:index,field:'tbn'});
-	var tbnVal = $(tbn.target).numberbox('getValue');
+	//var tbnVal = $(tbn.target).parent().find('input.textbox-text').val();
+	var tbnVal = $(tbn.target).parents('div.datagrid-cell').parents('tr').find('td[field="tbn"] input.datagrid-editable-input');
 	//修饰单价
 	var modiPrice = bigToSmall.datagrid('getEditor', {index:index,field:'modiPrice'});
-	var modiPriceVal = $(modiPrice.target).numberbox('getValue');
+	var modiPriceVal = $(modiPrice.target).parents('div.datagrid-cell').parents('tr').find('td[field="modiPrice"] input.datagrid-editable-input');
 	//碱基单价
     var baseVal = bigToSmall.datagrid('getEditor', {index:index,field:'baseVal'});
-    var baseValVal = $(baseVal.target).numberbox('getValue');
+    var baseValVal = $(baseVal.target).parents('div.datagrid-cell').parents('tr').find('td[field="baseVal"] input.datagrid-editable-input');
     //纯化价格
     var purifyVal = bigToSmall.datagrid('getEditor', {index:index,field:'purifyVal'});
-    var purifyValVal = $(purifyVal.target).numberbox('getValue');
+    var purifyValVal = $(purifyVal.target).parents('div.datagrid-cell').parents('tr').find('td[field="purifyVal"] input.datagrid-editable-input');
+
     //总价格
     var totalObj = bigToSmall.datagrid('getEditor', {index:index,field:'totalVal'});
+    var totalVal = $(totalObj.target).parents('div.datagrid-cell').parents('tr').find('td[field="totalVal"] input.datagrid-editable-input');
     //自动计算
     geneOrder.target.textbox({
     	onChange : function(){
     		$(tbn.target).numberbox('setValue',this.value.length);
-    		calculateByGeneOrder(this.value.length,modiPriceVal,baseValVal,purifyValVal,totalObj);
+    		calculateByGeneOrder(this.value.length,modiPriceVal.val(),baseValVal.val(),purifyValVal.val(),totalObj);
+        }
+    });
+    tbn.target.textbox({
+    	onChange : function(){
+    		calculateByGeneOrder(this.value,modiPriceVal.val(),baseValVal.val(),purifyValVal.val(),totalObj);
         }
     });
     modiPrice.target.numberbox({
     	onChange : function(){
-    		calculateByGeneOrder(tbnVal,this.value,baseValVal,purifyValVal,totalObj);
+    		calculateByGeneOrder(tbnVal.val(),this.value,baseValVal.val(),purifyValVal.val(),totalObj);
         }
     });
     baseVal.target.numberbox({
     	onChange : function(){
-    		calculateByGeneOrder(tbnVal,modiPriceVal,this.value,purifyValVal,totalObj);
+    		calculateByGeneOrder(tbnVal.val(),modiPriceVal.val(),this.value,purifyValVal.val(),totalObj);
         }
     });
     purifyVal.target.numberbox({
     	onChange : function(){
-    		calculateByGeneOrder(tbnVal,modiPriceVal,baseValVal,this.value,totalObj);
+    		calculateByGeneOrder(tbnVal.val(),modiPriceVal.val(),baseValVal.val(),this.value,totalObj);
         }
     });
     
+    
+     
 }
 
 var calculateByGeneOrder=function(tbnVal,modiPriceVal,baseValVal,purifyValVal,totalObj){
@@ -85,12 +95,16 @@ var calculateByGeneOrder=function(tbnVal,modiPriceVal,baseValVal,purifyValVal,to
 	var addOne = accAdd(mul,purifyValVal);
     var total = accAdd(addOne,modiPriceVal);
     $(totalObj.target).numberbox('setValue',total);
+    sumtotal();
+}
+
+var sumtotal=function(){
     var primerProducts = bigToSmall.datagrid('getData').rows;
     var sumTotal = 0;
     for(var i=0;i<primerProducts.length;i++){
     	sumTotal = accAdd(sumTotal,primerProducts[i].totalVal);
     }
-    console.log("sumTotal="+sumTotal);
+    $("#totalValue").html('<b class="bule">订单总计：</b>￥ '+sumTotal+'<br />');
 }
 
 function getChanesSave(){
@@ -175,6 +189,7 @@ var getProduct=function(){
 		data:"orderNo="+orderNo,
 		success : function(data) {
 			if(data != null){
+				$("#totalValue").html('<b class="bule">订单总计：</b>￥ '+data.order.totalValue+'<br />');
         		var total = data.order.primerProducts.length;
         		var reSultdata = data.order.primerProducts;
         		var jsonsource = {total: total, rows: reSultdata};
