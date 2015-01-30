@@ -287,8 +287,8 @@ public class OrderController {
     @Post("downLoad") 
     public String downLoad(Invocation inv) throws Exception{
     	
-		String fileName = "views"+File.separator+"downLoad"+File.separator+"template"+File.separator+"orderTemplate.xls";
-		String filePath = inv.getServletContext().getRealPath("/")+fileName;
+		String fileName = "orderTemplate.xls";
+		String filePath = inv.getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+fileName;
 		
 		System.out.println("文件下载路径filePath::::::"+filePath);
 		

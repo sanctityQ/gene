@@ -54,34 +54,31 @@ function onClickRow(index){
     var purifyVal = bigToSmall.datagrid('getEditor', {index:index,field:'purifyVal'});
     var purifyValVal = $(purifyVal.target).parents('div.datagrid-cell').parents('tr').find('td[field="purifyVal"] input.datagrid-editable-input');
 
-    //总价格
-    var totalObj = bigToSmall.datagrid('getEditor', {index:index,field:'totalVal'});
-    var totalVal = $(totalObj.target).parents('div.datagrid-cell').parents('tr').find('td[field="totalVal"] input.datagrid-editable-input');
     //自动计算
     geneOrder.target.textbox({
     	onChange : function(){
     		$(tbn.target).numberbox('setValue',this.value.length);
-    		calculateByGeneOrder(this.value.length,modiPriceVal.val(),baseValVal.val(),purifyValVal.val(),totalObj);
+    		calculateByGeneOrder(this.value.length,modiPriceVal.val(),baseValVal.val(),purifyValVal.val(),index);
         }
     });
     tbn.target.textbox({
     	onChange : function(){
-    		calculateByGeneOrder(this.value,modiPriceVal.val(),baseValVal.val(),purifyValVal.val(),totalObj);
+    		calculateByGeneOrder(this.value,modiPriceVal.val(),baseValVal.val(),purifyValVal.val(),index);
         }
     });
     modiPrice.target.numberbox({
     	onChange : function(){
-    		calculateByGeneOrder(tbnVal.val(),this.value,baseValVal.val(),purifyValVal.val(),totalObj);
+    		calculateByGeneOrder(tbnVal.val(),this.value,baseValVal.val(),purifyValVal.val(),index);
         }
     });
     baseVal.target.numberbox({
     	onChange : function(){
-    		calculateByGeneOrder(tbnVal.val(),modiPriceVal.val(),this.value,purifyValVal.val(),totalObj);
+    		calculateByGeneOrder(tbnVal.val(),modiPriceVal.val(),this.value,purifyValVal.val(),index);
         }
     });
     purifyVal.target.numberbox({
     	onChange : function(){
-    		calculateByGeneOrder(tbnVal.val(),modiPriceVal.val(),baseValVal.val(),this.value,totalObj);
+    		calculateByGeneOrder(tbnVal.val(),modiPriceVal.val(),baseValVal.val(),this.value,index);
         }
     });
     
@@ -89,21 +86,28 @@ function onClickRow(index){
      
 }
 
-var calculateByGeneOrder=function(tbnVal,modiPriceVal,baseValVal,purifyValVal,totalObj){
-	//修饰单价修改计算 修饰单价+碱基单价*碱基数+纯化价格
+var calculateByGeneOrder=function(tbnVal,modiPriceVal,baseValVal,purifyValVal,index){
+	//总价格
+    var totalObj = bigToSmall.datagrid('getEditor', {index:index,field:'totalVal'});
+    var inp = $(totalObj.target).parent().find('input.datagrid-editable-input');
+    //修饰单价修改计算 修饰单价+碱基单价*碱基数+纯化价格
 	var mul = accMul(baseValVal,tbnVal);
 	var addOne = accAdd(mul,purifyValVal);
     var total = accAdd(addOne,modiPriceVal);
     $(totalObj.target).numberbox('setValue',total);
-    sumtotal();
+    sumtotal(inp.val(),index);
 }
 
-var sumtotal=function(){
+var sumtotal=function(newTotalVal,index){
     var primerProducts = bigToSmall.datagrid('getData').rows;
     var sumTotal = 0;
     for(var i=0;i<primerProducts.length;i++){
+    	//dataGrid 编辑状态下无法获取当前行最新值。将当前行不参与计算
+    	if(i==index){continue;}
     	sumTotal = accAdd(sumTotal,primerProducts[i].totalVal);
     }
+    //汇总当前行最新值，求和。
+    sumTotal = accAdd(sumTotal,newTotalVal)
     $("#totalValue").html('<b class="bule">订单总计：</b>￥ '+sumTotal+'<br />');
 }
 
