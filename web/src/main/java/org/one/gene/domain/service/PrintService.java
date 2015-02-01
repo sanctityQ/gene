@@ -91,18 +91,20 @@ public class PrintService {
     /**
      * 得到导出打印标签的生产数据
      * */
-	public List<PrimerProduct> getPrimerProducts(String boardNo, String  productNo, Invocation inv) {
+	public List<PrimerProduct> getPrimerProducts(String boardNo, Invocation inv) {
 		
 		List<PrimerProduct> primerProducts = new ArrayList<PrimerProduct>();
-		if (!"".equals(productNo)) {
-			PrimerProduct primerProduct = primerProductRepository.findByProductNoOrOutProductNo(productNo, productNo);
+		List<PrimerProduct> primerProductBoardNOs =  new ArrayList<PrimerProduct>();
+		if (!"".equals(boardNo)) {
+			PrimerProduct primerProduct = primerProductRepository.findByProductNoOrOutProductNo(boardNo, boardNo);
 			if (primerProduct != null) {
 				primerProducts.add(primerProduct);
 			}
-		}else{
-			primerProducts = primerProductRepository.findByBoardNo(boardNo);
+			primerProductBoardNOs = primerProductRepository.findByBoardNo(boardNo);
+			if (primerProductBoardNOs != null && primerProductBoardNOs.size()>0) {
+				primerProducts.addAll(primerProductBoardNOs);
+			}
 		}
-		
 		
 		return primerProducts;
 	}
