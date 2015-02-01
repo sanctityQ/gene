@@ -121,7 +121,7 @@ CREATE TABLE `board` (
 CREATE TABLE `board_hole` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
   `board_no`          VARCHAR(127) COMMENT '板号',
-  `hole_no`           CHAR(2) COMMENT '孔号',
+  `hole_no`           VARCHAR(7) COMMENT '孔号',
   `product_id`        BIGINT(20) COMMENT '生产数据ID',
   `create_time`       DATETIME NOT NULL COMMENT '创建时间',
   `create_user`       INT(11) NOT NULL COMMENT '创建user',
