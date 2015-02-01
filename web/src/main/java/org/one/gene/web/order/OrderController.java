@@ -1,12 +1,6 @@
 package org.one.gene.web.order;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +8,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.io.Files;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
@@ -22,6 +17,8 @@ import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +40,9 @@ import com.sinosoft.one.mvc.web.instruction.reply.transport.Text;
 
 @Path
 public class OrderController {
+
+
+    private static Logger logger = LoggerFactory.getLogger(OrderController.class);
     
     @Autowired
     private OrderService orderService;
@@ -264,8 +264,6 @@ public class OrderController {
     /**
      * 订单审核查询
      * @param orderNo
-     * @param pageNo
-     * @param pageSize
      * @param inv
      * @return
      * @throws Exception
@@ -285,40 +283,23 @@ public class OrderController {
     
     @Get("downLoad") 
     @Post("downLoad") 
-    public String downLoad(Invocation inv) throws Exception{
+    public void downLoad(Invocation inv) throws IOException {
     	
 		String fileName = "orderTemplate.xls";
 		String filePath = inv.getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+fileName;
-		
-		System.out.println("文件下载路径filePath::::::"+filePath);
-		
-        File file=new File(filePath);
         
-        InputStream is=new FileInputStream(file);
-        OutputStream os=inv.getResponse().getOutputStream();
-        BufferedInputStream bis = new BufferedInputStream(is);
-        BufferedOutputStream bos = new BufferedOutputStream(os);
-        
-        fileName = java.net.URLEncoder.encode(fileName, "UTF-8");// 处理中文文件名的问题
-        fileName = new String(fileName.getBytes("UTF-8"), "GBK");// 处理中文文件名的问题
+
         inv.getResponse().reset();
         inv.getResponse().setContentType("application/x-msdownload");// 不同类型的文件对应不同的MIME类型
         inv.getResponse().setHeader("Content-Disposition", "attachment; filename="+fileName);
-        int bytesRead = 0;
-        byte[] buffer = new byte[1024];
-        while ((bytesRead = bis.read(buffer)) != -1){
-            bos.write(buffer, 0, bytesRead);// 将文件发送到客户端
-        }
-        bos.flush();
-        bis.close();
-        bos.close();
-        is.close();
-        os.close();
-        return null;
+        Files.copy(new File(filePath),inv.getResponse().getOutputStream());
+        inv.getResponse().flushBuffer();
+        inv.getResponse().getOutputStream().flush();
     }
 
-    public Reply test(){
-        Order order = orderRepository.findOne(1l);
+    public Reply test(@Param("id")Long id){
+        logger.info("test order id is  {}", id);
+        Order order = orderRepository.findOne(id);
         return Replys.with(order.toString()).as(Text.class);
     }
     
