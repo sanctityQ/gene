@@ -22,7 +22,12 @@
 	<logger name="org.one.gene" level="INFO" />
 
 	<!--log4jdbc -->
+	<logger name="jdbc.sqlonly" level="OFF"/>
 	<logger name="jdbc.sqltiming" level="INFO"/>
+	<logger name="jdbc.resultset" level="OFF"/>
+	<logger name="jdbc.resultsettable" level="INFO"/>
+	<logger name="jdbc.audit" level="OFF"/>
+	<logger name="jdbc.connection" level="OFF"/>
 
 	<root level="INFO">
 		<appender-ref ref="console" />
