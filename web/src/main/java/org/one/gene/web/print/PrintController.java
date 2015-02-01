@@ -51,18 +51,18 @@ public class PrintController {
      * 进入打印标签查询页面
      * 
      * */
-    @Get("prePrintLabelQuery")
-    public String prePrintLabelQuery(){
+    @Get("productionLabel")
+    public String productionLabel(){
     	
-    	return "printLabelQuery";
+    	return "productionLabel";
     }
     
     /**
      * 打印标签查询
      * */
-	public String printLabelQuery(@Param("boardNo") String boardNo,	@Param("productNo") String productNo, Invocation inv) {
+	public String printLabelQuery(@Param("boardNo") String boardNo, Invocation inv) {
 
-		List<PrimerProduct> primerProducts = printService.getPrimerProducts(boardNo, productNo, inv);
+		List<PrimerProduct> primerProducts = printService.getPrimerProducts(boardNo, inv);
 		List<Order> orders = printService.getOrderListFromPrimerProductList(primerProducts);
     	
 		inv.addModel("primerProducts", primerProducts);

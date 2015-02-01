@@ -234,7 +234,7 @@ public class OrderController {
         if(pageSize == null){
             pageSize = 10;
         }
-        Pageable pageable = new PageRequest(pageNo,pageSize);
+        Pageable pageable = new PageRequest(pageNo-1,pageSize);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
         searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);

@@ -75,7 +75,7 @@
 	</div>
 	<div title="打印标签" data-options="iconCls:'print'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li><i class="icon-bookmark"></i>生产标签</li>
+			<li url="${ctx}/print/productionLabel" id="productionLabel"><i class="icon-bookmark"></i>生产标签</li>
 			<li><i class="icon-cogs"></i>生产标签配置</li>
 			<li><i class="icon-bookmark-empty"></i>发货标签</li>
 		</ul>

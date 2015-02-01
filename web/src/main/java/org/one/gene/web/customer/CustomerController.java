@@ -1,9 +1,11 @@
 package org.one.gene.web.customer;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.User;
 import org.one.gene.domain.service.CustomerService;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
@@ -19,6 +21,9 @@ import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
 import com.sinosoft.one.mvc.web.annotation.Path;
 import com.sinosoft.one.mvc.web.annotation.rest.Post;
+import com.sinosoft.one.mvc.web.instruction.reply.Reply;
+import com.sinosoft.one.mvc.web.instruction.reply.Replys;
+import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
 
 @Path
 public class CustomerController {
@@ -78,4 +83,16 @@ public class CustomerController {
 		
 		return "customerQuery";
 	}
+	
+    /**
+     * 模糊查询客户信息
+     * */
+    @Post("vagueSeachCustomer")
+    public Reply vagueSeachCustomer(@Param("customercode") String customercode, Invocation inv){
+		String customerSQL = "%" + customercode + "%";
+		List<Customer> customers = customerRepository.vagueSeachCustomer(customerSQL);
+    	return Replys.with(customers).as(Json.class);
+    }
+    
+    
 }
