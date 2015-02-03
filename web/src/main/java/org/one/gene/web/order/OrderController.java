@@ -177,6 +177,7 @@ public class OrderController {
 	    
     	 for(PrimerProduct primerProduct:order.getPrimerProducts()){
     		orderService.addNewValue(primerProduct);
+    		primerProduct.setOperationTypeDesc(primerProduct.getOperationType().desc());
     	 }
 
         OrderInfo orderInfo = new OrderInfo();
