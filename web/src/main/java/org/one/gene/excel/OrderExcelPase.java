@@ -73,7 +73,7 @@ public class OrderExcelPase {
 	 * @param sheetIndex 第几个sheet页
 	 * @param rows 忽略的行数或从第几行开始
 	 */
-	public Order ReadExcel(String path, int sheetIndex, String rows,Order order) {
+	public Order ReadExcel(String path, int sheetIndex, String rows,Order order,String prefix) {
 		// 获取Excel文件的第1个sheet的内容
 		ArrayList<ArrayList<String>> lists = excelResolver.ReadExcel(path, 1,"2-");
 //		ArrayList<PrimerProduct>  primerProducts = new ArrayList<PrimerProduct>();
@@ -88,7 +88,7 @@ public class OrderExcelPase {
 				  case 1:
 					  //如果Excel导入中有生产编号存储为外部生产编号，如果没有系统自动生成
 					  if("".equals(v)){
-						  primerProduct.setProductNo(atomicLongUtil.getProductSerialNo());
+						  primerProduct.setProductNo(atomicLongUtil.getProductSerialNo(prefix));
 					  }else{
 						  primerProduct.setOutProductNo(v);
 					  }

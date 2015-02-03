@@ -124,7 +124,7 @@ public class OrderController {
         	}
         	//组织订单对象
         	Order order = new Order();
-        	order = orderService.ReadExcel(path, 1,"2-",order);
+        	order = orderService.ReadExcel(path, 1,"2-",order,customer.getPrefix());
         	orderService.convertOrder(customer,filename,order);
         	//保存订单信息
         	orderService.save(order);

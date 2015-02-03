@@ -9,7 +9,7 @@ function formatOper(val,row,index){
 var orderInfoIni=function(){
 	$.ajax({
 		type : "post",
-		url : "/gene/order/query",
+		url : ctx+"/order/query",
 		dataType : "json",
 		success : function(data) {
 			if(data != null){
@@ -33,7 +33,7 @@ var getOrderInfo=function(){
 	var customerCode = $("#customerCode").val();
 	$.ajax({
 		type : "post",
-		url : "/gene/order/query",
+		url : ctx+"/order/query",
 		dataType : "json",
 		data:
 		{
@@ -59,7 +59,7 @@ var getOrderInfo=function(){
 //查看
 var lookOrder=function(id,index){
 	var row = $('#orderList').datagrid('getData').rows[index];
-	goToPage('/gene/views/order/orderView.jsp?orderNo='+row.orderNo);
+	goToPage(ctx+'/views/order/orderView.jsp?orderNo='+row.orderNo);
 }
 
 /**
@@ -68,7 +68,7 @@ var lookOrder=function(id,index){
 var orderDetail=function(orderNo){
 	$.ajax({
 		type : "post",
-		url : "/gene/order/productQuery",
+		url : ctx+"/order/productQuery",
 		dataType : "json",
 		data:"orderNo="+orderNo,
 		success : function(data) {

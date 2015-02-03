@@ -34,9 +34,12 @@ CREATE TABLE `customer` (
   `phone_no` VARCHAR(15) COMMENT '联系电话',
   `fax` VARCHAR(15) COMMENT '传真',
   `email` VARCHAR(63) COMMENT '邮箱',
-  `web_site` varchar(127) DEFAULT NULL COMMENT '网址',
+  `web_site` varchar(127)  COMMENT '网址',
+  `unit` varchar(255)  COMMENT '客户单位',
+  `office` varchar(255)  COMMENT '办事处',
   `create_time` DATETIME NOT NULL COMMENT '创建时间',
   `modify_time` DATETIME NOT NULL COMMENT '最后修改时间',
+  `prefix` varchar(2)  COMMENT '生产编号开头标识',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_customer_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户信息表';

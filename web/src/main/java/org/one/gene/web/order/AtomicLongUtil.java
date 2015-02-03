@@ -75,7 +75,7 @@ public class AtomicLongUtil {
 	  * 获取生产编号
 	  * @return
 	  */
-	 public String getProductSerialNo(){
+	 public String getProductSerialNo(String prefix){
 		 
 		//获取数据库当前最后一条的单号
 		 PrimerProduct product = primerProductRepository.getLastProduct();
@@ -101,7 +101,7 @@ public class AtomicLongUtil {
 			 updateMin(productNextNum,0);
 			 productMap.put("productSerial", productNextNum);
 		 }
-		 return productNoFormat(productMap.get("productSerial").get());
+		 return productNoFormat(productMap.get("productSerial").get(),prefix);
 	 }
 	 
 	 
@@ -156,7 +156,7 @@ public class AtomicLongUtil {
 	  * @param sn
 	  * @return
 	  */
-	 public String productNoFormat(long sn){
+	 public String productNoFormat(long sn,String prefix){
 		//X+(年份最后1位) + MM-DD + 四位流水号
 		//取得序列号格式化字符串
 		int count ="XXXX".length();
@@ -169,7 +169,7 @@ public class AtomicLongUtil {
 		//当前的流水号
 		String current_serial_number = df.format(sn);
 		
-		String current_number = "X"+dateString.substring(3)+current_serial_number;
+		String current_number = prefix+dateString.substring(3)+current_serial_number;
 		return current_number;
 	 }
 	 

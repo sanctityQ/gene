@@ -2,11 +2,14 @@ package org.one.gene.domain.entity;
 // Generated Dec 14, 2014 1:21:34 AM by One Data Tools 1.0.0
 
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
@@ -63,7 +66,29 @@ public class Customer extends IdEntity implements java.io.Serializable {
      * 网址
      */
     private String webSite;
-
+    
+    /**
+     * 客户单位
+     */
+    private String unit;
+    
+    /**
+     * 办事处
+     */
+    private String office;
+    
+    /**
+     * 创建时间.
+     */
+    private Date createTime;
+    /**
+     * 修改时间.
+     */
+    private Date modifyTime;
+    /**
+     * 生产编号开头.
+     */
+    private String prefix;
     
     private List<PrimerProduct> primerProducts = Lists.newArrayList();
     
@@ -157,7 +182,50 @@ public class Customer extends IdEntity implements java.io.Serializable {
 		this.webSite = webSite;
 	}
 
-    @Transient
+	@Column(name = "`unit`", length = 255)
+    public String getUnit() {
+		return unit;
+	}
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+
+	@Column(name = "`office`", length = 255)
+	public String getOffice() {
+		return office;
+	}
+	public void setOffice(String office) {
+		this.office = office;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "`create_time`", length = 19)
+	public Date getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "`modify_time`", length = 19)
+	public Date getModifyTime() {
+		return modifyTime;
+	}
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = modifyTime;
+	}
+
+	@Column(name = "`prefix`", length = 2)
+	public String getPrefix() {
+		return prefix;
+	}
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+
+	@Transient
     public List<PrimerProduct> getPrimerProducts() {
         return primerProducts;
     }

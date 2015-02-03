@@ -87,7 +87,7 @@
 	</div>
 	<div title="客户管理" data-options="iconCls:'custom'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li><i class="icon-cogs"></i>客户管理</li>
+			<li url="${ctx}/customer/clientManage"><i class="icon-cogs"></i>客户管理</li>
 		</ul>
 	</div>
 	<div title="产品管理" data-options="iconCls:'product'" style="height:200px;">

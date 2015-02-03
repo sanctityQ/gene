@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.one.gene.domain.entity.Customer;
-import org.one.gene.domain.entity.User;
 import org.one.gene.domain.service.CustomerService;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
@@ -20,10 +19,12 @@ import com.google.common.collect.Maps;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
 import com.sinosoft.one.mvc.web.annotation.Path;
+import com.sinosoft.one.mvc.web.annotation.rest.Get;
 import com.sinosoft.one.mvc.web.annotation.rest.Post;
 import com.sinosoft.one.mvc.web.instruction.reply.Reply;
 import com.sinosoft.one.mvc.web.instruction.reply.Replys;
 import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
+import com.sinosoft.one.mvc.web.instruction.reply.transport.Text;
 
 @Path
 public class CustomerController {
@@ -33,46 +34,41 @@ public class CustomerController {
 	@Autowired
     private CustomerRepository customerRepository;
 	
+	@Get("clientManage")
+    public String clientManage(){
+        return "clientManage";
+    }
+	@Get("customerView")
+    public String customerView(@Param("customerCode") String customerCode,Invocation inv){
+		Customer customer = customerRepository.findByCode(customerCode);
+		inv.addModel("customer", customer);
+        return "customerView";
+    }
 	@Post("save")
 	public String save(@Param("customer") Customer customer,Invocation inv) throws IllegalStateException, IOException{
 
-		/*String realpathdir = "";
-    	String path="";//暂时按照只上传一个文件定义
-    	String filename = "";
-    	if (!file.isEmpty()) { 
-        	filename = file.getOriginalFilename();
-        	realpathdir = inv.getServletContext().getRealPath("/")+"customer/companyLogo/"+customer.getCode()+"/";
-        	path = realpathdir+filename;
-        	
-    	    // 创建文件目录
-    	    File savedir = new File(realpathdir);
-    	    // 如果目录不存在就创建
-    	    if (!savedir.exists()) {
-    	      savedir.mkdirs();
-    	    }
-    	    
-        	System.out.println(path);
-        	file.transferTo(new File(path));
-    	}*/
 		customerService.save(customer);
 		return "";
 	}
 	
 	@Post("query")
-	public String query(@Param("customerName") String customerName,@Param("pageNo")Integer pageNo,
+	public Reply query(@Param("customerName") String customerName,
+			@Param("unitName") String unitName,
+			@Param("pageNo")Integer pageNo,
             @Param("pageSize")Integer pageSize,Invocation inv){
 		
-		if(pageNo == null){
-            pageNo = 0;
+		if(pageNo == null || pageNo ==0){
+            pageNo = 1;
         }
 
         if(pageSize == null){
-            pageSize = 5;
+            pageSize = 10;
         }
 
-        Pageable pageable = new PageRequest(pageNo,pageSize);
+        Pageable pageable = new PageRequest(pageNo-1,pageSize);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_name",customerName);
+        searchParams.put(SearchFilter.Operator.EQ+"_unit",unitName);
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<Customer> spec = DynamicSpecifications.bySearchFilter(filters.values(), Customer.class);
         
@@ -81,7 +77,7 @@ public class CustomerController {
     	inv.addModel("page", customerPage);
     	inv.addModel("pageSize", pageSize);
 		
-		return "customerQuery";
+    	return Replys.with(customerPage).as(Json.class);
 	}
 	
     /**
@@ -94,5 +90,27 @@ public class CustomerController {
     	return Replys.with(customers).as(Json.class);
     }
     
+    /**
+     * 模糊查询客户单位
+     * */
+    @Post("vagueSeachUnit")
+    public Reply vagueSeachUnit(@Param("unitName") String unitName, Invocation inv){
+		String unitSQL = "%" + unitName + "%";
+		List<Customer> customers = customerRepository.vagueSeachUnit(unitSQL);
+    	return Replys.with(customers).as(Json.class);
+    }
+    
+    /**
+     * 删除
+     * @param orderNo
+     * @param inv
+     * @return
+     */
+    @Post("delete") 
+    public Object delete(@Param("customerCode") String customerCode,Invocation inv){
+    	Customer customer = customerRepository.findByCode(customerCode);
+    	customerRepository.delete(customer);
+    	return Replys.with("sucess").as(Text.class);  
+    }
     
 }
