@@ -70,7 +70,7 @@
 	</div>
 	<div title="出库单打印" data-options="iconCls:'outbound'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li><i class="icon-print"></i>出库单打印</li>
+			<li url="${ctx}/print/printOutBoundList"><i class="icon-print"></i>出库单打印</li>
 		</ul>
 	</div>
 	<div title="打印标签" data-options="iconCls:'print'" style="height:200px;">

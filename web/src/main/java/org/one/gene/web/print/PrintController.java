@@ -58,6 +58,16 @@ public class PrintController {
     }
     
     /**
+     * 进入出库单打印查询页面
+     * 
+     * */
+    @Get("printOutBoundList")
+    public String printOutBoundList(){
+    	
+    	return "outboundPrinting";
+    }
+    
+    /**
      * 打印标签查询
      * */
 	public String printLabelQuery(@Param("boardNo") String boardNo, Invocation inv) {
@@ -82,31 +92,29 @@ public class PrintController {
     
     
     @Post("printOutBoundQuery")
-    public String printOutBoundQuery(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,@Param("pageNo")Integer pageNo,
+    public Reply printOutBoundQuery(@Param("orderNo") String orderNo, @Param("customerName") String customerName,@Param("pageNo")Integer pageNo,
                         @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
 
-        if(pageNo == null){
-            pageNo = 0;
+    	if(pageNo == null || pageNo ==0){
+            pageNo = 1;
         }
 
         if(pageSize == null){
-            pageSize = 5;
+            pageSize = 10;
         }
 
-        Pageable pageable = new PageRequest(pageNo,pageSize);
+        Pageable pageable = new PageRequest(pageNo-1,pageSize);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
-        searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
-        //searchParams.put(SearchFilter.Operator.EQ+"_primerproduct.operationType","delivery");
+        searchParams.put(SearchFilter.Operator.EQ+"_customerName",customerName);
+        
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         
         Page<Order> orderPage = orderRepository.findAll(spec,pageable);
-        Page<OrderInfo> orderListPage = printService.convertOutbound(orderPage,pageable);
+        Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
         
-    	inv.addModel("page", orderListPage);
-    	inv.addModel("pageSize", pageSize);
-        return "printOutboundQuery";
+    	return Replys.with(orderListPage).as(Json.class);
     }
     
     @Post("printOutBound")

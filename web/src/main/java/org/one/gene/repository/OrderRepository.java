@@ -9,7 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import com.sinosoft.one.data.jade.annotation.SQL;
-import com.sinosoft.one.mvc.web.annotation.Param;
+import org.springframework.data.repository.query.Param;
 
 @Repository
 public interface OrderRepository extends PagingAndSortingRepository<Order, Long> , JpaSpecificationExecutor<Order> {

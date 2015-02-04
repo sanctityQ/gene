@@ -67,3 +67,32 @@ var getProducts=function(){
 	});
 
 }
+
+var printOutBoundQuery=function(){
+	var gridOpts = $('#productionData').datagrid('getPager').data("pagination").options;
+	var customerName = $("#seachCustom").val();
+	var orderNo =  $("#seachOrder").val();
+	
+	$.ajax({
+		type : "post",
+		url : ctx+"/print/printOutBoundQuery",
+		dataType : "json",
+		data:{
+			customerName: customerName,
+			orderNo: orderNo,
+			pageNo: gridOpts.pageNumber,
+			pageSize: gridOpts.pageSize
+        },
+		success : function(data) {
+			if(data != null){
+        		var total = data.totalElements;
+        		var reSultdata = data.content;
+        		var jsonsource = {total: total, rows: reSultdata};
+        		$('#productionData').datagrid("loadData",jsonsource);
+			}
+		},
+		error:function(){
+			alert("无法获取信息");
+		}
+	});
+}
