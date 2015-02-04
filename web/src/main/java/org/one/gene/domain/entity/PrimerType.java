@@ -100,6 +100,12 @@ public class PrimerType {
             public String desc() {
                 return "发货";
             }
+        },
+        finish {
+            @Override
+            public String desc() {
+                return "完成";
+            }
         };
 
     }
