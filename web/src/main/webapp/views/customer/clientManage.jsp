@@ -40,7 +40,7 @@ var ctx = '${ctx}';
 			</td>
 			<td><button type="button" class="btn" onclick="getCustomerList()">查询</button></td>
 			<td align="right">
-				<button type="button" class="btn btn-primary" onclick="goToPage('addClient.html')">添加客户</button>
+				<button type="button" class="btn btn-primary" onclick="goToPage('${ctx}/customer/addClient')">添加客户</button>
 				<!-- <button type="button" class="btn btn-primary submit" onclick="deleteRows('orderList')">批量删除</button> -->
 			</td>
 		</tr>
@@ -66,6 +66,7 @@ var ctx = '${ctx}';
 <script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script src="${ctx}/static/js/vagueSeachUnit.js" ></script>
 <script type="text/javascript">
+getCustomerini();
 $(function(){
     var dg = $('#customerList');
     var opts = dg.datagrid('options');

@@ -1,6 +1,7 @@
 package org.one.gene.web.customer;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -44,11 +45,24 @@ public class CustomerController {
 		inv.addModel("customer", customer);
         return "customerView";
     }
+	@Get("modifyCustomer")
+    public String modifyCustomer(@Param("customerCode") String customerCode,Invocation inv){
+		Customer customer = customerRepository.findByCode(customerCode);
+		inv.addModel("customer", customer);
+        return "addClient";
+    }
+	@Get("addClient")
+	public String addClient(Invocation inv){
+		Customer customer = new Customer();
+		customer.setCreateTime(new Date());
+		inv.addModel("customer", customer);
+		return "addClient";
+	}
 	@Post("save")
 	public String save(@Param("customer") Customer customer,Invocation inv) throws IllegalStateException, IOException{
-
+		customer.setModifyTime(new Date());
 		customerService.save(customer);
-		return "";
+		return "clientManage";
 	}
 	
 	@Post("query")

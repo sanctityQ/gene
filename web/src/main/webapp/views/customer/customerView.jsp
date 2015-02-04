@@ -34,7 +34,9 @@ var ctx = '${ctx}';
 			</tr>
             <tr>
                 <td align="right">客户编号:</td>
-                <td colspan="3"><input class="readonly_inp" type="text" value="${customer.code}" disabled style="width:150px" /></td>
+                <td><input class="readonly_inp" type="text" value="${customer.code}" disabled style="width:150px" /></td>
+                <td align="right">结算方式:</td>
+                <td colspan="3"><input class="readonly_inp" type="text" name="customer.payWays" value="${customer.payWays}" disabled style="width:150px" /></td>
             </tr>
 			<tr>
 				<td align="right">姓名:</td>
@@ -60,7 +62,21 @@ var ctx = '${ctx}';
                     <input class="readonly_inp" type="text" value="${customer.phoneNo}" disabled style="width:150px" />
 				</td>
 			</tr>
+			<tr>
+                <td align="right">生产编号开头:</td>
+				<td>
+                    <input class="readonly_inp" type="text" name="customer.prefix" value="${customer.prefix}" disabled style="width:50px" />
+				</td>
+				<td align="right">网址:</td>
+				<td>
+                    <input class="readonly_inp" type="text" name="customer.webSite" value="${customer.webSite}" disabled style="width:150px" />
+				</td>
+            </tr>
             <tr>
+                <td align="right">传真:</td>
+				<td>
+                    <input class="readonly_inp" type="text" name="customer.fax" value="${customer.fax}" disabled style="width:150px" />
+				</td>
                 <td align="right">Email:</td>
                 <td colspan="3"><input class="readonly_inp" type="text" value="${customer.email}" disabled style="width:150px" /></td>
             </tr>

@@ -97,7 +97,7 @@ var ctx = '${ctx}';
 	</table>
 	</div>
 	<div class="tools_bar">
-		<button type="" class="btn btn-primary" onclick="goToPage(${ctx}'/order/orderList');">确 定</button>
+		<button type="" class="btn btn-primary" onclick="goToPage('${ctx}/order/orderList');">确 定</button>
 	</div>
 </div>
 <script src="${ctx}/views/order/js/orderList.js" ></script>

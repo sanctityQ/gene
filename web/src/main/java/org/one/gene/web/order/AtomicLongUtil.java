@@ -168,7 +168,7 @@ public class AtomicLongUtil {
 		java.text.DecimalFormat df = new java.text.DecimalFormat(sb.toString());
 		//当前的流水号
 		String current_serial_number = df.format(sn);
-		
+		if(prefix==null){prefix="";}
 		String current_number = prefix+dateString.substring(3)+current_serial_number;
 		return current_number;
 	 }
