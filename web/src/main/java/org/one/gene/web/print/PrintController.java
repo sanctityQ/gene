@@ -71,9 +71,9 @@ public class PrintController {
     /**
      * 打印标签查询
      * */
-	public String printLabelQuery(@Param("boardNo") String boardNo, Invocation inv) {
+	public String printLabelQuery(@Param("boardNo") String boardNo,@Param("noType") String noType, Invocation inv) {
 
-		List<PrimerProduct> primerProducts = printService.getPrimerProducts(boardNo, inv);
+		List<PrimerProduct> primerProducts = printService.getPrimerProducts(boardNo, noType, inv);
 		List<Order> orders = printService.getOrderListFromPrimerProductList(primerProducts);
     	
 		inv.addModel("primerProducts", primerProducts);

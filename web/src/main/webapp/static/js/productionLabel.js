@@ -56,7 +56,8 @@ function seachLiSelect(){
 //查询方法
 function searchLabel(){
 	
-	var boardNo = $.trim($('#seachPrimerProduct').val());
+	var boardNo = $.trim($('#boardNoOrProductNo').val());
+	var noType = $.trim($('#noType').val());
 	
 	if(boardNo == ""){
 		alert("请输入板号或生产编号。");
@@ -68,7 +69,8 @@ function searchLabel(){
         url : "/gene/print/printLabelQuery",
         dataType:'json',
 		data:{
-			boardNo: boardNo
+			boardNo: boardNo,
+			noType:noType
         },
         success:function(data){
             var company = data.company;

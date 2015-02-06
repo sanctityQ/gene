@@ -55,7 +55,7 @@
 		<ul class="sbu_menu">
 			<li url="${ctx}/delivery/deliveryResults" id="consignmentProcessing"><i class="icon-truck"></i>发货处理</li>
 			<li><i class="icon-file-text-alt"></i>发货清单</li>
-			<li><i class="icon-retweet"></i>发货召回</li>
+			<li url="${ctx}/delivery/deliveryRecall" id="deliveryRecall"><i class="icon-retweet"></i>发货召回</li>
 		</ul>
 	</div>
 	<div title="报告单" data-options="iconCls:'report'" style="height:200px;">

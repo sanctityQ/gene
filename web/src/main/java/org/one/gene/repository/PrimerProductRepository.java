@@ -73,5 +73,9 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
     public List<PrimerProduct> findByOrder(Order order);
     
     public List<PrimerProduct> findByBoardNo(String boardNo);
+    
+	@SQL("select * from `primer_product`  where `product_no` like :productNo or `out_product_no` like :outProductNo ")
+	List<PrimerProduct> vagueSeachPrimerProduct(@Param("productNo") String productNo, @Param("outProductNo") String outProductNo);
+	
 }
 

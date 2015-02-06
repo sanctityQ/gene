@@ -454,4 +454,40 @@ public class SynthesisController {
     	return "detectResultsBoard";
     }
     
+    
+    /**
+     * 模糊查询板信息或生产信息
+     * */
+    @Post("vagueSeachBoardNoOrProductNo")
+    public Reply vagueSeachBoardNoOrProductNo(@Param("boardNo") String boardNo, Invocation inv){
+		if (!StringUtils.isBlank(boardNo)) {
+			boardNo = "%" + boardNo + "%";
+        }
+		List<Board> boards = boardRepository.vagueSeachBoard(boardNo);
+		for(Board board:boards){
+			board.setType("1");//板
+		}
+		
+		if (!StringUtils.isBlank(boardNo)) {
+			List<PrimerProduct> primerProducts = primerProductRepository.vagueSeachPrimerProduct(boardNo, boardNo);
+			for(PrimerProduct pp:primerProducts){
+				Board board = new Board();
+				
+				board.setType("2");//生产编号
+				if (!"".equals(pp.getProductNo())) {
+					board.setBoardNo(pp.getProductNo());
+				}else{
+					board.setBoardNo(pp.getOutProductNo());
+				}
+				
+				boards.add(board);
+				
+			}
+		}
+		
+    	return Replys.with(boards).as(Json.class);
+    }
+    
+    
+    
 }

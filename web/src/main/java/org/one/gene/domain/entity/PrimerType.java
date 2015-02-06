@@ -249,13 +249,13 @@ public class PrimerType {
         backSuccess {
             @Override
             public String desc() {
-                return null;
+                return "发货召回成功";
             }
         },
         backFailure {
             @Override
             public String desc() {
-                return null;
+            	return "发货召回失败";
             }
         }
 

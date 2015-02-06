@@ -25,8 +25,9 @@
 		<div class="import_box">
 			<i class="icon-pencil"></i>请输入板号或生产编号进行查询。
 			<br />
-			<input class="inp_text" type="text" id="seachPrimerProduct" name="boardNo" value="" style="width: 300px" />
-			<ul id="seachPrimerProductList"></ul>
+			<input class="inp_text" type="text" id="boardNoOrProductNo" value="" style="width: 300px" />
+			<input type="hidden" id="noType" value=""/>
+			<ul id="seachBoardList"></ul>
 		</div>
 		<div class="import_box" style="padding-bottom: 50px;">
 			<button class="btn-primary submit" type="button" onclick="searchLabel();">查询标签</button>
@@ -34,7 +35,7 @@
         <div id="downList"></div>
 	</div>
 </div>
-<script src="${ctx}/static/js/vagueSeachBoard.js"></script>
+<script src="${ctx}/static/js/vagueSeachBoardOrproductNo.js"></script>
 <script src="${ctx}/static/js/productionLabel.js"></script>
 <script type="text/javascript">
 </script>
