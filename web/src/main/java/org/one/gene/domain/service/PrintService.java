@@ -52,6 +52,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.io.Files;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.instruction.reply.EntityReply;
 import com.sinosoft.one.mvc.web.instruction.reply.Replys;
@@ -721,8 +722,9 @@ public class PrintService {
 			orderInfoList.add(orderInfo);
 		}
 		
-		String filePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views\\downLoad\\template\\outboundTemplate.xlsx";
-		String outFilePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views\\print\\outboundZip\\";
+		String templateName = "outboundTemplate.xlsx";
+		String filePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+templateName;
+		String outFilePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"print"+File.separator+"outboundZip"+File.separator;
 		//压缩包名称
 		String zipFileName = "";
 		int count = 0;
@@ -779,11 +781,11 @@ public class PrintService {
 	
 	public OrderInfo getOutbound(Order order){
 		OrderInfo orderInfo = new OrderInfo();
-		
+		Customer customer = customerRepository.findByCode(order.getCustomerCode());
 		//组织订单列表对象
 		orderInfo.setOrderNo(order.getOrderNo());
 		orderInfo.setCustomerName(order.getCustomerName());
-		orderInfo.setCustomerPhoneNm(customerRepository.findByCode(order.getCustomerCode()).getPhoneNo());
+		orderInfo.setCustomerPhoneNm(customer.getPhoneNo());
 		//业务员 调整值获取
 		orderInfo.setHandlerCode("98834342");
 		//收样日期
@@ -792,8 +794,8 @@ public class PrintService {
 		orderInfo.setMakingNo("0000000010");
 		//制单人（当前系统操作人员） 调整值获取 根据登陆信息获取
 		orderInfo.setOperatorCode("34343434");
-		//联系人（客户管理中的联系人） 调整值获取
-		orderInfo.setLinkName("张三");
+		//联系人（客户管理中的负责人） 调整值获取
+		orderInfo.setLinkName(customer.getLeaderName());
 		//制单日期
 		orderInfo.setMakingDate(new Date());
 		//商品编码 默认赋值

@@ -96,3 +96,21 @@ var printOutBoundQuery=function(){
 		}
 	});
 }
+
+
+function printOutBound(){
+    var rows = $('#productionData').datagrid('getSelections');
+    var orderInfoList=new Array();
+    for(var i = 0; i < rows.length; i++){
+        var data = rows[i];
+        var outbound = {
+			     "orderNo":""
+			     };
+        outbound["orderNo"] = "";
+        outbound["orderNo"] = data.orderNo;
+        orderInfoList.push(outbound);
+    }
+    var path = ctx+'/print/printOutBound?orderInfoList='+JSON.stringify(orderInfoList); 
+	 $('#printOutBoundfm').attr("action", path).submit();
+	 //window.location.href = path;
+}

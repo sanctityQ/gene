@@ -25,6 +25,7 @@ var ctx = '${ctx}';
 </script>
 </head>
 <body>
+<form id="printOutBoundfm"  action="${ctx}/print/printOutBound" method="post" class="form-horizontal">
 <div class="tools">
 	<table width="100%">
 		<tr>
@@ -46,7 +47,7 @@ var ctx = '${ctx}';
 		</tr>
 	</table>
     <div class="btn_group">
-        <button id="makeBoard" type="button" class="btn btn-primary" disabled onclick="">打印出库单</button>
+        <button id="makeBoard" type="button" class="btn btn-primary" disabled onclick="printOutBound()">打印出库单</button>
     </div>
 </div>
 <table id="productionData" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true">
@@ -64,6 +65,7 @@ var ctx = '${ctx}';
 	</thead>
 </table>
 <div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
+</form>
 <script src="${ctx}/static/js/productionData.js" ></script>
 <script src="${ctx}/static/js/createReport.js" ></script>
 <script src="${ctx}/static/js/vagueSeachOrder.js" ></script>

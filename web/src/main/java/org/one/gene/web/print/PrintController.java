@@ -33,6 +33,7 @@ import com.sinosoft.one.mvc.web.instruction.reply.EntityReply;
 import com.sinosoft.one.mvc.web.instruction.reply.Reply;
 import com.sinosoft.one.mvc.web.instruction.reply.Replys;
 import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
+import com.sinosoft.one.mvc.web.instruction.reply.transport.Text;
 
 
 @Path
@@ -121,9 +122,9 @@ public class PrintController {
     public EntityReply<File> printOutBound(@Param("orderInfoList")String orderInfoList,Invocation inv) throws Exception {
     	 List<OrderInfo> orderInfoLists = JSON.parseArray(orderInfoList, OrderInfo.class);
     	
-    	 EntityReply<File> fileStr = null;
+    	 EntityReply<File> fileStr = null; //form 提交使用该类型返回
      	try {
-     		fileStr =  printService.printOutbound(orderInfoLists,inv);
+      		fileStr = printService.printOutbound(orderInfoLists,inv);
  		} catch (IOException e) {
  			// TODO Auto-generated catch block
  			e.printStackTrace();
