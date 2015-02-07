@@ -89,6 +89,10 @@ public class Customer extends IdEntity implements java.io.Serializable {
      * 生产编号开头.
      */
     private String prefix;
+    /**
+     * 业务员.
+     */
+    private String handlerCode;
     
     private List<PrimerProduct> primerProducts = Lists.newArrayList();
     
@@ -222,6 +226,13 @@ public class Customer extends IdEntity implements java.io.Serializable {
 	}
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
+	}
+	@Column(name = "`handler_code`", length = 30)
+	public String getHandlerCode() {
+		return handlerCode;
+	}
+	public void setHandlerCode(String handlerCode) {
+		this.handlerCode = handlerCode;
 	}
 
 

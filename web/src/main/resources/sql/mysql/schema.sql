@@ -40,6 +40,7 @@ CREATE TABLE `customer` (
   `create_time` DATETIME NOT NULL COMMENT '创建时间',
   `modify_time` DATETIME NOT NULL COMMENT '最后修改时间',
   `prefix` varchar(2)  COMMENT '生产编号开头标识',
+  `handler_code` varchar(30)  COMMENT NOT NULL '业务员代码',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_customer_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户信息表';

@@ -56,7 +56,9 @@ var ctx = '${ctx}';
 			</tr>
 			<tr>
 				<td align="right">客户地址:</td>
-				<td colspan="3"><input id="address" name="customer.address" class="readonly_inp" type="text"  style="width: 50%" disabled/></td>
+				<td><input id="address" name="customer.address" class="readonly_inp" type="text"  style="width: 50%" disabled/></td>
+				<td align="right">传真:</td>
+				<td><input id="fax" name="customer.fax" class="readonly_inp" type="text"  style="width: 50%" value="${customer.fax}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">联系电话:</td>
@@ -66,7 +68,9 @@ var ctx = '${ctx}';
 			</tr>
 			<tr>
 				<td align="right">网址:</td>
-				<td colspan="3"><input id="webSite" class="readonly_inp" type="text" value="" style="width: 50%" disabled/></td>
+				<td><input id="webSite" class="readonly_inp" type="text" value="" style="width: 50%" disabled/></td>
+			    <td align="right">业务员:</td>
+				<td><input id="handlerCode" class="readonly_inp" type="text" style="width: 80%" value="${customer.handlerCode}" disabled/></td>
 			</tr>
 			<tr>
 				<td colspan="4" height="10"></td>

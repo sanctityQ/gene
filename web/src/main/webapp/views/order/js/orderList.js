@@ -83,6 +83,8 @@ var orderDetail=function(orderNo){
                 $("#phoneNo").val(data.customer.phoneNo);
                 $("#email").val(data.customer.email);
                 $("#webSite").val(data.customer.webSite);
+                $("#fax").val(data.customer.fax);
+                $("#handlerCode").val(data.customer.handlerCode);
                 $("#customerUnit").val(data.customer.invoiceTitle);
                 
                 $("#createTime").html("<b>订购日期：</b>"+data.order.createTime);
