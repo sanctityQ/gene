@@ -87,6 +87,8 @@ public class OrderInfo {
 	private String operatorCode;
 	//联系人（客户管理中的联系人）
 	private String linkName;
+	//单位
+	private String unit;
 	//制单日期
 	private Date makingDate;
 	//商品编码
@@ -122,6 +124,12 @@ public class OrderInfo {
 	}
 	public void setLinkName(String linkName) {
 		this.linkName = linkName;
+	}
+	public String getUnit() {
+		return unit;
+	}
+	public void setUnit(String unit) {
+		this.unit = unit;
 	}
 	public Date getMakingDate() {
 		return makingDate;

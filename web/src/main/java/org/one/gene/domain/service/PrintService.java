@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +25,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
@@ -52,7 +55,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.io.Files;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.instruction.reply.EntityReply;
 import com.sinosoft.one.mvc.web.instruction.reply.Replys;
@@ -717,13 +719,6 @@ public class PrintService {
 	 * @throws FileNotFoundException 
 	 */
 	public EntityReply<File> printOutbound(List<OrderInfo> orderInfoLists,Invocation inv) throws Exception{
-		OrderInfo orderInfo = new OrderInfo();
-		List<OrderInfo> orderInfoList = new ArrayList<OrderInfo>();
-		for(OrderInfo orders:orderInfoLists){
-			Order order = orderRepository.findByOrderNo(orders.getOrderNo());
-			orderInfo = getOutbound(order);
-			orderInfoList.add(orderInfo);
-		}
 		
 		String templateName = "outboundTemplate.xlsx";
 		String filePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+templateName;
@@ -737,38 +732,99 @@ public class PrintService {
 		System.out.println("文件下载路径outFilePath::::::"+outFilePath);
 		List<String> fileNames = new ArrayList<String>();
 		ExcelCreateUtil exportExcel = new ExcelCreateUtil();
-		for(OrderInfo outbound:orderInfoList){
-		
+
+		for(OrderInfo orders:orderInfoLists){
+			Order order = orderRepository.findByOrderNo(orders.getOrderNo());
+			Customer customer = customerRepository.findByCode(order.getCustomerCode());
+			
 			exportExcel.setSrcPath(filePath);
-			exportExcel.setDesPath(outFilePath+outbound.getOrderNo()+".xlsx");
+			exportExcel.setDesPath(outFilePath+order.getOrderNo()+".xlsx");
 			exportExcel.setSheetName("sheet1");
 			exportExcel.getSheetBySheetName();
 			Sheet sheet = exportExcel.getSheet();
 			java.text.SimpleDateFormat sf = new java.text.SimpleDateFormat("yyyy-MM-dd");
 			//在相应的单元格进行赋值  
+			Cell cell11 = sheet.getRow(0).getCell(0); 
+			cell11.setCellValue(customer.getName()+"引物合成出库单");
 			Cell cell23 = sheet.getRow(1).getCell(2);  
-	        cell23.setCellValue(sf.format(outbound.getCreateTime()));  
+	        cell23.setCellValue(sf.format(order.getCreateTime()));  
 	        Cell cell26 = sheet.getRow(1).getCell(5);  
-	        cell26.setCellValue(outbound.getOrderNo());  
+	        cell26.setCellValue(order.getOrderNo());  
 	        Cell cell33 = sheet.getRow(2).getCell(2);  
-	        cell33.setCellValue(outbound.getCustomerName());  
+	        cell33.setCellValue(customer.getName());  
 	        Cell cell36 = sheet.getRow(2).getCell(5);  
-	        cell36.setCellValue("测试4"); 
+	        cell36.setCellValue(customer.getUnit()); 
 	        Cell cell43 = sheet.getRow(3).getCell(2);  
-	        cell43.setCellValue(sf.format(outbound.getMakingDate()));  
+	        cell43.setCellValue(sf.format(new Date()));  
 	        Cell cell46 = sheet.getRow(3).getCell(5);  
-	        cell46.setCellValue(outbound.getOperatorCode());  
+	        //制单人（当前系统操作人员） 调整值获取 根据登陆信息获取
+	        cell46.setCellValue("34343434");  
 	        Cell cell63 = sheet.getRow(5).getCell(2);  
-	        cell63.setCellValue(outbound.getHandlerCode());  
-	        fileNames.add(outbound.getOrderNo()+".xlsx");
+	        cell63.setCellValue(customer.getHandlerCode());  
+	        //表格顶部创建结束
+	        
+	        //创建表格列表开始
+	        int cellIndex = 0;
+	        for(PrimerProduct primerProduct:order.getPrimerProducts()){
+	        	
+//	        	exportExcel.getCellStyle().setBorderBottom(exportExcel.getCellStyle().BORDER_THIN);
+//	        	exportExcel.getCellStyle().setBorderLeft(exportExcel.getCellStyle().BORDER_THIN);
+//	        	exportExcel.getCellStyle().setBorderRight(exportExcel.getCellStyle().BORDER_THIN);
+//	        	exportExcel.getCellStyle().setBorderTop(exportExcel.getCellStyle().BORDER_THIN);
+	        	for(int i=0;i<11;i++){
+	        		Cell cell = sheet.getRow(cellIndex+7).getCell(i); 
+		        	cell.setCellType(Cell.CELL_TYPE_STRING);
+		        	switch(i){
+		        	  case 0:
+						  cell.setCellValue(primerProduct.getProductNo());
+					    break;
+					  case 1:
+						  cell.setCellValue(primerProduct.getPrimeName());
+					  	break;
+					  case 2:
+						  cell.setCellValue(primerProduct.getGeneOrder());
+						break;
+					  case 3:
+						  cell.setCellValue(primerProduct.getGeneOrder().trim().length());
+						break;
+					  case 4:
+						  cell.setCellValue(primerProduct.getOdTotal().toString());
+						break;
+					  case 5:
+						  cell.setCellValue(primerProduct.getOdTotal().divide(primerProduct.getOdTB(),2,BigDecimal.ROUND_HALF_UP).toString());
+						break;
+					  case 6:
+						  cell.setCellValue(primerProduct.getPurifyType());
+						break;
+					  case 7:
+						  cell.setCellValue(primerProduct.getModiFiveType());
+						break;
+					  case 8:
+						  cell.setCellValue(primerProduct.getModiThreeType());
+						break;
+					  case 9:
+						  cell.setCellValue(primerProduct.getModiMidType()+","+primerProduct.getModiSpeType());
+						break;
+					  case 10:
+						  cell.setCellValue(primerProduct.getRemark());
+						break;
+					  default:
+						break;
+					}
+	        	}
+	        	
+	        	cellIndex++;
+	        }
+	        //创建表格列表结束
+	        fileNames.add(order.getOrderNo()+".xlsx");
 			exportExcel.outputExcel();
 			
 			 count++;
 			 if(count==1) {
-				 starName = outbound.getOrderNo();
+				 starName = order.getOrderNo();
 		     }
-			 if(count==orderInfoList.size()) {
-				 endName = "~"+outbound.getOrderNo();
+			 if(count==orderInfoLists.size()) {
+				 endName = "~"+order.getOrderNo();
 		     }
 		}
 		
@@ -799,6 +855,7 @@ public class PrintService {
 		orderInfo.setOperatorCode("34343434");
 		//联系人（客户管理中的负责人） 调整值获取
 		orderInfo.setLinkName(customer.getLeaderName());
+		orderInfo.setUnit(customer.getUnit());
 		//制单日期
 		orderInfo.setMakingDate(new Date());
 		//商品编码 默认赋值

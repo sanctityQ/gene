@@ -12,6 +12,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -26,6 +27,7 @@ public class ExcelCreateUtil {
     private POIFSFileSystem fs = null;
 	private Workbook wb = null;
 	private Sheet sheet = null;
+	private CellStyle cellStyle = null;
 
 	public ExcelCreateUtil() {
 	}
@@ -78,11 +80,13 @@ public class ExcelCreateUtil {
 	        
 	        if(srcXlsPath.indexOf(".xlsx")!=-1) {
 	        	wb = new XSSFWorkbook(new FileInputStream(fi));
-	        	sheet = (XSSFSheet) wb.getSheet(sheetName);  
+	        	sheet = (XSSFSheet) wb.getSheet(sheetName); 
+	        	cellStyle = wb.createCellStyle();
 			}else {
 				fs = new POIFSFileSystem(new FileInputStream(fi));  
 				wb = new HSSFWorkbook(fs);
-				sheet = (HSSFSheet) wb.getSheet(sheetName);  
+				sheet = (HSSFSheet) wb.getSheet(sheetName); 
+				cellStyle = wb.createCellStyle();
 			}
 	        
 	        
@@ -121,6 +125,14 @@ public class ExcelCreateUtil {
 		this.wb = wb;
 	}
 
+
+	public CellStyle getCellStyle() {
+		return cellStyle;
+	}
+
+	public void setCellStyle(CellStyle cellStyle) {
+		this.cellStyle = cellStyle;
+	}
 
 	/**
 	 * 输入EXCEL文件
