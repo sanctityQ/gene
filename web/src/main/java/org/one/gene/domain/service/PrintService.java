@@ -117,22 +117,30 @@ public class PrintService {
 	
     /**
      * 从生产数据得到订单List
+     * @throws Exception 
      * */
-	public List<Order> getOrderListFromPrimerProductList(List<PrimerProduct> primerProducts) {
+	public List<Order> getPrintLabelList(List<PrimerProduct> primerProducts, Invocation inv) throws Exception {
 		
 		List<Order> orders = new ArrayList<Order>();
-		Map<String, Order> map = new HashMap<String, Order>();
+		Map<String, Order> ccMap = new HashMap<String, Order>();
 		Order order = new Order();
 		for (PrimerProduct primerProduct : primerProducts) {
-			order = new Order();
-			order = primerProduct.getOrder();
-			if (map.get(order.getCustomerCode()) == null) {
-				map.put(order.getCustomerCode(), order);
+			
+			if (ccMap.get(primerProduct.getOrder().getCustomerCode()) == null) {
+				order = new Order();
+				order.setCustomerCode(primerProduct.getOrder().getCustomerCode());
+				order.setCustomerName(primerProduct.getOrder().getCustomerName());
+			}else{
+				order = ccMap.get(primerProduct.getOrder().getCustomerCode());
 			}
+			
+			order.getPrimerProducts().add(primerProduct);
+			ccMap.put(order.getCustomerCode(), order);
+			
 		}
 
-		for (Map.Entry<String, Order> orderMap : map.entrySet()) {
-			orders.add((Order) orderMap.getValue());
+		for (Map.Entry<String, Order> orderMap : ccMap.entrySet()) {
+			orders.add(exportLabel( orderMap.getValue(), inv));
 		}
 		
 		return orders;
@@ -142,26 +150,17 @@ public class PrintService {
      * 导出打印标签文件
      * @throws Exception 
      * */
-	public EntityReply<File> exportLabel( List<PrimerProduct> primerProducts, String customerCode, Invocation inv) throws Exception {
+	public Order exportLabel(Order order, Invocation inv) throws Exception {
+		 
+		String filePath = File.separator+"gene"+File.separator+"upExcel"+File.separator+"printLabel"+File.separator;
+		String strFilePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"upExcel"+File.separator+"printLabel"+File.separator;
+		String strFileName = order.getCustomerCode()+System.currentTimeMillis()+".xls";
 		
-		
-		//读取上机表文件输出地址
-		InputStream inputStream  =   this.getClass().getClassLoader().getResourceAsStream("application.properties");    
-		Properties p = new  Properties(); 
-		try {
-			p.load(inputStream);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		
-		String strFilePath = p.getProperty("sjbPath");
-		String strFileName = customerCode+System.currentTimeMillis()+".xls";
-
 		PrintLabel printLabel = new PrintLabel();
 		List<PrintLabel> printLabels = new ArrayList<PrintLabel>();
 		PrimerProduct primerProduct = new PrimerProduct();
 		
-		for (PrimerProduct primerProductTemp : primerProducts) {
+		for (PrimerProduct primerProductTemp : order.getPrimerProducts()) {
 			
 			//重新查询数据
 			primerProduct = primerProductRepository.findOne(primerProductTemp.getId());
@@ -240,9 +239,9 @@ public class PrintService {
 			
 		//形成Excel
 		//读取配置信息
-		PrimerLabelConfig primerLabelConfig = primerLabelConfigRepository.findByCustomerCode(customerCode);
+		PrimerLabelConfig primerLabelConfig = primerLabelConfigRepository.findByCustomerCode(order.getCustomerCode());
 		if (primerLabelConfig == null) {
-			throw new Exception("客户代码"+customerCode+"的引物标签打印信息为空，请配置！");
+			throw new Exception(order.getCustomerName()+"的引物标签打印信息为空，请配置！");
 		}
 
 		//计算第一列多少行
@@ -332,12 +331,10 @@ public class PrintService {
 		fos = new FileOutputStream(strFilePath + strFileName);
 		// 把相应的Excel 工作簿存盘
 		workbook.write(fos);
-
+    
+		order.setFileName(filePath + strFileName);
 		
-		//读文件
-		File file = new File(strFilePath, strFileName); 
-		
-		return Replys.with(file).as(Raw.class).downloadFileName(strFileName);
+		return order;
     }
 	
     /**
