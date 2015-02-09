@@ -73,16 +73,18 @@ function searchLabel(){
 			noType:noType
         },
         success:function(data){
-            var company = data.company;
             var downList = $('#downList');
             var html = '<ul class="xls_list"><li class="tip"><i class="icon-info-sign"></i>选择下列公司下载生产标签。</li>';
-            for(var i = 0; i < company.length; i++){
-                var name = company[i].name;
-                var src = company[i].src;
+            for(var i = 0; i < data.length; i++){
+                var name = data[i].customerName;
+                var src = data[i].fileName;
                 html += '<li><i class="icon-paper-clip"></i><a href="'+src+'" >'+name+'</a></li>';
             }
             html += '</ul>';
             downList.append(html);
-        }
+        },
+		error:function(){
+			alert("无法获取信息");
+		}
     })
 }

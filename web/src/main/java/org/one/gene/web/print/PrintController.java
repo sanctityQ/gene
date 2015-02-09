@@ -71,15 +71,17 @@ public class PrintController {
     /**
      * 打印标签查询
      * */
-	public String printLabelQuery(@Param("boardNo") String boardNo,@Param("noType") String noType, Invocation inv) {
+	public Reply printLabelQuery(@Param("boardNo") String boardNo,@Param("noType") String noType, Invocation inv) {
 
 		List<PrimerProduct> primerProducts = printService.getPrimerProducts(boardNo, noType, inv);
-		List<Order> orders = printService.getOrderListFromPrimerProductList(primerProducts);
+		List<Order> orders = null;
+		try {
+			orders = printService.getPrintLabelList(primerProducts, inv);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     	
-		inv.addModel("primerProducts", primerProducts);
-    	inv.addModel("orders", orders);
-    	
-    	return "printLabelList";
+    	return Replys.with(orders).as(Json.class);
     }
 
     /**
@@ -150,10 +152,7 @@ public class PrintController {
 		
     	EntityReply<File> fileStr = null;
     	try {
-    		fileStr = printService.exportLabel(primerProducts, customerCode, inv);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+//    		fileStr = printService.exportLabel(primerProducts, customerCode, inv);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
