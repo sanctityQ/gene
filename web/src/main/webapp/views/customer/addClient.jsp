@@ -44,8 +44,9 @@ var ctx = '${ctx}';
 			<tr>
 				<td align="right">姓名:</td>
 				<td><input class="inp_text" type="text" name="customer.name" value="${customer.name}"  style="width:150px" /></td>
-				<td align="right">Email:</td>
-                <td colspan="3"><input class="inp_text" name="customer.email" type="text" value="${customer.email}"  style="width:150px" /></td>
+				<td align="right">业务员:</td>
+                <td><input class="inp_text" name="customer.handlerCode" type="text" value="${customer.handlerCode}"  style="width:150px" /></td>
+				
 			</tr>
 			<tr>
 				<td align="right">负责人姓名:</td>
@@ -56,29 +57,30 @@ var ctx = '${ctx}';
                 </td>
 			</tr>
 			<tr>
-				<td align="right">发票抬头:</td>
-				<td><input class="inp_text" type="text" name="customer.invoiceTitle" value="${customer.invoiceTitle}"  style="width: 80%" /></td>
+				<td align="right">生产编号开头:</td>
+				<td>
+                    <input class="inp_text" type="text" name="customer.prefix" value="${customer.prefix}"  style="width:150px" />
+				</td>
 				<td align="right">联系电话:</td>
 				<td>
                     <input class="inp_text" type="text" name="customer.phoneNo" value="${customer.phoneNo}"  style="width:150px" />
 				</td>
 			</tr>
             <tr>
-                <td align="right">生产编号开头:</td>
-				<td>
-                    <input class="inp_text" type="text" name="customer.prefix" value="${customer.prefix}"  style="width:50px" />
-				</td>
+                <td align="right">&nbsp;
+            	</td>
+            	<td>
+            	<input class="readonly_inp" type="text" disabled value="例：X501120004为生产编号，录入生产编号开头标识X,J等开头。"  style="width: 80%" />
+            	</td>
 				<td align="right">网址:</td>
 				<td>
                     <input class="inp_text" type="text" name="customer.webSite" value="${customer.webSite}"  style="width:150px" />
 				</td>
             </tr>
             <tr>
-            	<td align="right">&nbsp;
-            	</td>
-            	<td>
-            	<input class="readonly_inp" type="text" disabled value="例：X501120004为生产编号，录入生产编号开头标识X,J等开头。"  style="width: 80%" />
-            	</td>
+            	
+            	<td align="right">发票抬头:</td>
+				<td><input class="inp_text" type="text" name="customer.invoiceTitle" value="${customer.invoiceTitle}"  style="width: 80%" /></td>
             	<td align="right">传真:</td>
 				<td>
                     <input class="inp_text" type="text" name="customer.fax" value="${customer.fax}"  style="width:150px" />
@@ -86,9 +88,11 @@ var ctx = '${ctx}';
             </tr>
 			<tr>
 				<td align="right">客户地址:</td>
-				<td colspan="3">
-                    <input class="inp_text" type="text" name="customer.address" value="${customer.address}"  style="width: 50%" />
+				<td>
+                    <input class="inp_text" type="text" name="customer.address" value="${customer.address}"  style="width: 80%" />
                 </td>
+                <td align="right">Email:</td>
+                <td><input class="inp_text" name="customer.email" type="text" value="${customer.email}"  style="width:150px" /></td>
 			</tr>
             <tr>
                 <td align="right">办事处:</td>

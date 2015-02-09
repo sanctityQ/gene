@@ -41,10 +41,8 @@ var ctx = '${ctx}';
 			<tr>
 				<td align="right">姓名:</td>
 				<td><input class="readonly_inp" type="text" value="${customer.name}" disabled style="width:150px" /></td>
-				<td align="right">&nbsp;</td>
-				<td>
-                    &nbsp;&nbsp;&nbsp;
-				</td>
+				<td align="right">业务员:</td>
+                <td><input class="readonly_inp" name="customer.handlerCode" type="text" value="${customer.handlerCode}"  style="width: 150px" /></td>
 			</tr>
 			<tr>
 				<td align="right">负责人姓名:</td>
@@ -55,30 +53,31 @@ var ctx = '${ctx}';
                 </td>
 			</tr>
 			<tr>
-				<td align="right">发票抬头:</td>
-				<td><input class="readonly_inp" type="text" value="${customer.invoiceTitle}" disabled style="width: 80%" /></td>
+				
+				<td align="right">生产编号开头:</td>
+				<td>
+                    <input class="readonly_inp" type="text" name="customer.prefix" value="${customer.prefix}" disabled style="width:150px" />
+				</td>
 				<td align="right">联系电话:</td>
 				<td>
                     <input class="readonly_inp" type="text" value="${customer.phoneNo}" disabled style="width:150px" />
 				</td>
 			</tr>
 			<tr>
-                <td align="right">生产编号开头:</td>
-				<td>
-                    <input class="readonly_inp" type="text" name="customer.prefix" value="${customer.prefix}" disabled style="width:50px" />
-				</td>
+                <td align="right">Email:</td>
+                <td><input class="readonly_inp" type="text" value="${customer.email}" disabled style="width:150px" /></td>
 				<td align="right">网址:</td>
 				<td>
                     <input class="readonly_inp" type="text" name="customer.webSite" value="${customer.webSite}" disabled style="width:150px" />
 				</td>
             </tr>
             <tr>
+                <td align="right">发票抬头:</td>
+				<td><input class="readonly_inp" type="text" value="${customer.invoiceTitle}" disabled style="width: 80%" /></td>
                 <td align="right">传真:</td>
 				<td>
                     <input class="readonly_inp" type="text" name="customer.fax" value="${customer.fax}" disabled style="width:150px" />
 				</td>
-                <td align="right">Email:</td>
-                <td colspan="3"><input class="readonly_inp" type="text" value="${customer.email}" disabled style="width:150px" /></td>
             </tr>
 			<tr>
 				<td align="right">客户地址:</td>
