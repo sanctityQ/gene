@@ -270,11 +270,11 @@ public class OrderService {
     }
     
     public Order ReadExcel(String path, int sheetIndex, String rows,Order order,String prefix) {
-    	return orderExcelPase.ReadExcel(path, 1,"2-",order,prefix);
+    	return orderExcelPase.ReadExcel(path, sheetIndex,rows,order,prefix);
     }
     
     public ArrayList<String> getExcelPaseErrors(String path,int ignoreRows, int sheetIndex) throws FileNotFoundException, IOException{
-    	return orderExcelPase.getExcelPaseErrors(path,1,2);
+    	return orderExcelPase.getExcelPaseErrors(path,ignoreRows,sheetIndex);
     }
     
     /**

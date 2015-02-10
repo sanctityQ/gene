@@ -113,22 +113,26 @@ var modifyOrder=function(id,index){
 
 //删除
 var deleteOrder=function(id,index){
-	var row = $('#orderList').datagrid('getData').rows[index];
-	var orderNo = row.orderNo;
-	$.ajax({
-		type : "post",
-		url : ctx+"/order/delete",
-		dataType : "html",
-		data:"orderNo="+orderNo,
-		success : function(data) {
-			if(data == "sucess"){
-				alert("删除成功！")
-				getOrderInfo();
-			}
-		},
-		error:function(){
-			alert("删除失败!");
-		}
-	});
+	 $.messager.confirm('系统消息','确认删除选中的数据?',function(data){
+		 if(data){
+			var row = $('#orderList').datagrid('getData').rows[index];
+			var orderNo = row.orderNo;
+			$.ajax({
+				type : "post",
+				url : ctx+"/order/delete",
+				dataType : "html",
+				data:"orderNo="+orderNo,
+				success : function(data) {
+					if(data == "sucess"){
+						alert("删除成功！")
+						getOrderInfo();
+					}
+				},
+				error:function(){
+					alert("删除失败!");
+				}
+			});
+		 }else{}
+	 });
 }
 

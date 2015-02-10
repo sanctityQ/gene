@@ -77,7 +77,9 @@ public class OrderController {
     	ArrayList<String> errors = new ArrayList<String>();
     	
     	if("".equals(customerCode)){
-    		throw new Exception("客户代码或名称未录入，请您录入！");
+    		inv.addModel("userExp", "无此客户信息，请您确认后重新上传！");
+    		return "orderImport";
+    		//throw new Exception("客户代码或名称未录入，请您录入！");
     	}
     	if (file.isEmpty()) {
     		throw new Exception("请您选择要上传的文件！");
@@ -110,7 +112,7 @@ public class OrderController {
         	file.transferTo(new File(path));
 	        
 	        if(!"".equals(path)){
-		        errors = orderService.getExcelPaseErrors(path,1,2);
+		        errors = orderService.getExcelPaseErrors(path,1,1);
 	        }
     	}
         if(errors.size()>0){
@@ -120,7 +122,9 @@ public class OrderController {
         	//获取客户信息
         	Customer customer = orderService.findCustomer(customerCode);
         	if(customer==null){
-        		throw new Exception("无此客户信息，请您确认后重新上传！");
+        		inv.addModel("userExp", "无此客户信息，请您确认后重新上传！");
+        		return "orderImport";
+        		//throw new Exception("无此客户信息，请您确认后重新上传！");
         	}
         	//组织订单对象
         	Order order = new Order();

@@ -20,6 +20,21 @@
 <title>订单导入</title>
 <script type="text/javascript">
  var ctx = '${ctx}';
+ function uploadSubmit(){
+	 if($("#seachCustom").val()==""){
+		 alert("请录入客户姓名或客户代码！");
+		 return false;
+	 }
+	 if($("#upload").val()==""){
+		 alert("请上传文件！");
+		 return false;
+	 }
+	 $('#inputForm').submit();
+ }
+ //暂时处理后台异常
+ var userExp = '${userExp}';
+ if(userExp!=''){ alert(userExp)}
+
 </script>
 </head>
 <body>
@@ -47,7 +62,7 @@
 			</div>
 		</div>
 		<div class="import_box" style="padding-bottom: 50px;">
-			<button class="btn-primary submit" type="submit" >生成订单</button>
+			<button class="btn-primary submit" type="button" onclick="uploadSubmit()">生成订单</button>
 		</div>
 	</div>
 </div>

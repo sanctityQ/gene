@@ -19,11 +19,7 @@ function moveConfigure(direction){
             var select = configure.children('li.selected');
             if(select.length){
                 var total = print.children('li').length + select.length;
-                if(total >columnsNumber){
-                    $.messager.alert('系统提示','已超出打印标签最大范围，请调整选择内容。');
-                }else{
-                    print.append(select);
-                };
+                print.append(select);
             }else{
                 $.messager.alert('系统提示','您没有选择"待配置项"中的任何数据，请选择。');
             }

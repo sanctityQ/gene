@@ -18,23 +18,28 @@ var modifyCustomer=function(index){
 }
 //删除
 var deleteCustomer=function(index){
-	var row = $('#customerList').datagrid('getData').rows[index];
-	var customerCode = row.code;
-	$.ajax({
-		type : "post",
-		url : ctx+"/customer/delete",
-		dataType : "html",
-		data:"customerCode="+customerCode,
-		success : function(data) {
-			if(data == "sucess"){
-				alert("删除成功！")
-				getCustomerList();
-			}
-		},
-		error:function(){
-			alert("删除失败!");
-		}
-	});
+    $.messager.confirm('系统消息','确认删除选中的数据?',function(data){
+    	if(data){
+	    	var row = $('#customerList').datagrid('getData').rows[index];
+	    	var customerCode = row.code;
+	    	$.ajax({
+	    		type : "post",
+	    		url : ctx+"/customer/delete",
+	    		dataType : "html",
+	    		data:"customerCode="+customerCode,
+	    		success : function(data) {
+	    			if(data == "sucess"){
+	    				alert("删除成功！")
+	    				getCustomerList();
+	    			}
+	    		},
+	    		error:function(){
+	    			alert("删除失败!");
+	    		}
+	    	});
+    	}else{}
+    });
+	
 }
 
 var getCustomerList=function(){

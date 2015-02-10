@@ -120,7 +120,7 @@ public class SynthesisController {
         if(pageSize == null){
             pageSize = 10;
         }
-        Pageable pageable = new PageRequest(pageNo,pageSize);
+        Pageable pageable = new PageRequest(pageNo-1,pageSize);
         
         Page<PrimerProduct> primerProductPage = synthesisService.makeBoardQuery(customercode, modiFlag, tbn1, tbn2, purifytype, pageable);
     	

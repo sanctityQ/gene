@@ -84,15 +84,6 @@ public class PrintController {
     	return Replys.with(orders).as(Json.class);
     }
 
-    /**
-     * 进入打印标签配置页面
-     * 
-     * */
-    @Get("printLabelConfig")
-    public String printLabelConfig(){
-    	return "printLabelConfig";
-    }
-    
     
     @Post("printOutBoundQuery")
     public Reply printOutBoundQuery(@Param("orderNo") String orderNo, @Param("customerName") String customerName,@Param("pageNo")Integer pageNo,
