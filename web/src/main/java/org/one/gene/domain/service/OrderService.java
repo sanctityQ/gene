@@ -67,18 +67,20 @@ public class OrderService {
     public void save(Order order){
 
     	//存储订单数据
-    	order.setOutOrderNo(order.getOutOrderNo());
+		if("".equals(order.getOutOrderNo())){
+    	  order.setOutOrderNo(order.getOrderNo());
+		}else{
+		  order.setOutOrderNo(order.getOutOrderNo());
+		}
     	order.setModifyTime(new Date());
     	order.setStatus(0);//初始状态
         if(order.getCreateTime() == null){
             order.setCreateTime(new Date());
         }
-//        BigDecimal orderTotalValue = new BigDecimal(0);
     	//存储生产数据
         for (PrimerProduct primerProduct : order.getPrimerProducts()) {
-			//primerProduct.getPrimerProductValues().removeAll(primerProduct.getPrimerProductValues());
 			//后续补充，获取登录操作人员的归属机构。
-			primerProduct.setComCode("11000000");
+			primerProduct.setComCode(order.getComCode());
 			primerProduct.setOperationType(PrimerType.PrimerStatusType.orderInit);//!!!是初始状态不是审核通过状态
 			primerProduct.setOrder(order);
 
@@ -89,19 +91,6 @@ public class OrderService {
 			BigDecimal totalVal = primerProduct.getModiPrice().add(primerProduct.getBaseVal().multiply(new BigDecimal(tbnStr))).add(primerProduct.getPurifyVal());
 			primerProduct.setTotalVal(totalVal);
 //			orderTotalValue = orderTotalValue.add(primerProduct.getTotalVal());
-
-//			if ("od".equals(order.getOrderUpType())) {
-//				//通过od值计算  1000 * 'OD总量' / 'OD/μmol'
-//				primerProduct.setNmolTotal(new BigDecimal(1000).multiply(primerProduct.getOdTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())), 2, BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
-//				//1000 * 'OD/tube' / 'OD/μmol'
-//				primerProduct.setNmolTB(new BigDecimal(1000).multiply(primerProduct.getOdTB()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())), 2, BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
-//			}
-//			if ("nmol".equals(order.getOrderUpType())) {
-//				//（'nmol/tube' * 'OD/μmol'）/ 1000
-//				primerProduct.setOdTB(new BigDecimal(1000).multiply(primerProduct.getNmolTB()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())), 2, BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
-//				//（'nmol总量' * 'OD/μmol'）/ 1000
-//				primerProduct.setOdTotal(new BigDecimal(1000).multiply(primerProduct.getNmolTotal()).divide(new BigDecimal(orderCaculate.getOD_Vmol(primerProduct.getGeneOrder())), 2, BigDecimal.ROUND_HALF_UP).setScale(1, RoundingMode.HALF_UP));
-//			}
 
 			//初始化数据 先实现功能后续优化
 			if(primerProduct.getId() == null){
@@ -124,7 +113,6 @@ public class OrderService {
 				po.setPrimerProduct(primerProduct);
 			}
 		}
-//        order.setTotalValue(orderTotalValue);
 		orderRepository.save(order);
 
     }
@@ -336,6 +324,12 @@ public class OrderService {
 	@Transactional
 	public void saveOrderAndPrimerProduct(Order order, Collection<PrimerProduct> values) {
 		this.save(order);
+		//新增数据时comcode赋值
+		for (PrimerProduct primerProduct : values) {
+			if("".equals(primerProduct.getComCode())||primerProduct.getComCode()==null){
+				primerProduct.setComCode(order.getComCode());
+			}
+		}
 		this.primerProductRepository.save(values);
 	}
 }

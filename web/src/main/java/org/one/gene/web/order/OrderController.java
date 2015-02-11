@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -185,6 +187,24 @@ public class OrderController {
     	 for(PrimerProduct primerProduct:order.getPrimerProducts()){
     		orderService.addNewValue(primerProduct);
     		primerProduct.setOperationTypeDesc(primerProduct.getOperationType().desc());
+    		//修饰
+			String midi = "";
+			if (!"".equals(primerProduct.getModiFiveType())) {
+				midi += primerProduct.getModiFiveType()+",";
+			}
+			if (!"".equals(primerProduct.getModiMidType())) {
+				midi += primerProduct.getModiMidType()+",";
+			}
+			if (!"".equals(primerProduct.getModiSpeType())) {
+				midi += primerProduct.getModiSpeType()+",";
+			}
+			if (!"".equals(primerProduct.getModiThreeType())) {
+				midi += primerProduct.getModiThreeType()+",";
+			}
+			if(!"".equals(midi)){
+				midi = "("+midi.substring(0, midi.length()-1)+")";
+				primerProduct.setMidi(midi);
+			}
     	 }
 
         OrderInfo orderInfo = new OrderInfo();
@@ -242,7 +262,8 @@ public class OrderController {
         if(pageSize == null){
             pageSize = 10;
         }
-        Pageable pageable = new PageRequest(pageNo-1,pageSize);
+        Sort s=new Sort(Direction.DESC, "createTime");
+        Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
         searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);

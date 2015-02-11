@@ -18,6 +18,7 @@ function bigendEditing(){
   }
 }
 function appendRow(){
+    var row = $('#bigToSmall').datagrid('getData').rows[0];
     bigToSmall.datagrid('appendRow',{
         row: {
         	
