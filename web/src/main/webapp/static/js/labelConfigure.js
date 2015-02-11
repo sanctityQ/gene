@@ -1,4 +1,4 @@
-var columnsNumber = 4;
+var columnsNumber = 1;
 $(function(){
     $('#columnsNumber').on('click','input',changeColumns)
     $('#setRows ul').on('click','li',setSelected)
@@ -54,10 +54,36 @@ function moveConfigure(direction){
 }
 function saveConfigure(){
     var print = $('#printList').children('li');
-    var ary = [];
+    var customerCode = $('#customerCode').val();
+    if(customerCode==""){alert("请录入正确的客户代码！");return false;}
+    var customerName = $('#seachCustom').val();
+//    var ary = [];
+    var config = {}
+    if(print.length==0){alert("您提交的配置生产标签列为空，请正确选择！");return false;}
     print.each(function(){
         var text = $(this).text();
-        ary.push(text);
+    	var valueStr = $(this).attr("value");
+    	config[valueStr] = text;
     })
-    alert(ary);
+//    ary.push(config);
+//    console.log(JSON.stringify(config));
+    $.ajax({
+		type : "post",
+        url: ctx + "/labelConfigure/configSave",
+		dataType : "html",
+        data: {
+            "customerCode": customerCode,
+            "customerName": customerName,
+            "columnsNumber":columnsNumber,
+            "configList":JSON.stringify(config)
+        },
+		success : function(data) {
+			if(data == "sucess"){
+				alert("生产标签配置保存成功！")
+			}
+		},
+		error:function(){
+			alert("数据保存失败，请重试！");
+		}
+	});
 }

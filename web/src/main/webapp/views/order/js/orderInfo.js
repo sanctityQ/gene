@@ -61,7 +61,7 @@ function onClickRow(index){
     		calculateByGeneOrder(this.value.length,modiPriceVal.val(),baseValVal.val(),purifyValVal.val(),index);
         }
     });
-    tbn.target.textbox({
+    tbn.target.numberbox({
     	onChange : function(){
     		calculateByGeneOrder(this.value,modiPriceVal.val(),baseValVal.val(),purifyValVal.val(),index);
         }

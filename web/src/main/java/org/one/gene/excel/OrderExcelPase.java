@@ -36,29 +36,29 @@ public class OrderExcelPase {
 	 */
 	public ArrayList<String> getExcelPaseErrors(String path,int ignoreRows, int sheetIndex) throws FileNotFoundException, IOException{
 		
-		String[][] date = excelResolver.getDataValide(path,1,2);
+		String[][] date = excelResolver.getDataValide(path,ignoreRows,sheetIndex);
 		
 		ArrayList<String> Errors = new ArrayList<String>();
 
 		for (int i = 0; i < date.length; i++) {
 			StringBuffer message = new StringBuffer(100);
 			if("".equals(date[i][2])){
-				message.append("第"+(i+2)+"行第3列[序列]数据不能为空! \n");
+				message.append("第"+(i+4)+"行第3列[序列]数据不能为空! \n");
 			}
-			if("".equals(date[i][9])){
-				message.append("第"+(i+2)+"行第10列[纯化方式]数据不能为空! \n");
+			if("".equals(date[i][7])){
+				message.append("第"+(i+4)+"行第8列[纯化方式]数据不能为空! \n");
 			}
 			if("".equals(date[i][3])&&"".equals(date[i][5])){
-				message.append("第"+(i+2)+"行第4列与第6列[OD与nmol]数据不能同时为空! \n");
+				message.append("第"+(i+4)+"行第4列与第6列[OD与nmol]数据不能同时为空! \n");
 			}
 			if(!"".equals(date[i][3])&&!"".equals(date[i][5])){
-				message.append("第"+(i+2)+"行第4列与第6列[OD与nmol]数据不能同时存在! \n");
+				message.append("第"+(i+4)+"行第4列与第6列[OD与nmol]数据不能同时存在! \n");
 			}
 			if(!"".equals(date[i][3])&&"".equals(date[i][4])){
-				message.append("第"+(i+2)+"行第4列[nmol总量]不为空值时，第5列[nmol/tube]数据不能为空! \n");
+				message.append("第"+(i+4)+"行第4列[nmol总量]不为空值时，第5列[nmol/tube]数据不能为空! \n");
 			}
 			if(!"".equals(date[i][5])&&"".equals(date[i][6])){
-				message.append("第"+(i+2)+"行第6列[OD总量]不为空值时，第7列[OD/tube]数据不能为空! \n");
+				message.append("第"+(i+4)+"行第6列[OD总量]不为空值时，第7列[OD/tube]数据不能为空! \n");
 			}
 			if(!"".equals(message.toString())){
 			  Errors.add(message.toString());
@@ -68,6 +68,22 @@ public class OrderExcelPase {
 	}
 	
 	/**
+	 * 获取外部订单号
+	 * @param path
+	 * @param sheetIndex
+	 * @param rows
+	 * @return
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
+	 */
+	public String getOutOrderNo(String path, int sheetIndex, int ignoreRows) throws FileNotFoundException, IOException {
+		String outOrderNo = "";
+		String[][] date = excelResolver.getDataValide(path,ignoreRows,sheetIndex);
+		outOrderNo = date[0][0];
+		
+		return outOrderNo;
+	}
+	/**
 	 * 解析第二个订单中的列表信息
 	 * @param path
 	 * @param sheetIndex 第几个sheet页
@@ -75,7 +91,7 @@ public class OrderExcelPase {
 	 */
 	public Order ReadExcel(String path, int sheetIndex, String rows,Order order,String prefix) {
 		// 获取Excel文件的第1个sheet的内容
-		ArrayList<ArrayList<String>> lists = excelResolver.ReadExcel(path, 1,"2-");
+		ArrayList<ArrayList<String>> lists = excelResolver.ReadExcel(path, sheetIndex,rows);
 //		ArrayList<PrimerProduct>  primerProducts = new ArrayList<PrimerProduct>();
     	//输出单元格数据
 		for(ArrayList<String> data : lists) {

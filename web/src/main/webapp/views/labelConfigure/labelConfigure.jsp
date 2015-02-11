@@ -34,7 +34,12 @@ var ctx = '${ctx}';
             </tr>
             <tr>
                 <td align="right">客户代码：</td>
-                <td><input class="inp_text" type="text" value="" style="width: 80%" /></td>
+                <!-- <td><input class="inp_text" type="text" value="" style="width: 80%" /></td> -->
+                <td>
+                <input class="inp_text" type="text" id="seachCustom" name="customerName" value="" style="width: 80%" />
+			    <input class="inp_text" id="customerCode" type="hidden" name="customerCode" value=""/>
+			    <ul id="seachList"></ul>
+			    </td>
                 <!-- <td><button type="button" class="btn">配 置</button></td> -->
             </tr>
             <tr>
@@ -68,13 +73,13 @@ var ctx = '${ctx}';
                             </td>
                             <td>
                                 <ul id="printList">
-                                    <li value="a">生产编号</li>
-                                    <li value="b">引物名称</li>
-                                    <li value="c">OD/Tube</li>
-                                    <li value="d">MW</li>
-                                    <li value="e">Tm(℃)</li>
-                                    <li value="f">100pmole/μl</li>
-                                    <li value="g">修饰</li>
+                                    <li value="productNo">生产编号</li>
+                                    <li value="primeName">引物名称</li>
+                                    <li value="odTB">OD/Tube</li>
+                                    <li value="MW">MW</li>
+                                    <li value="TM">Tm(℃)</li>
+                                    <li value="100pmoleμl">100pmole/μl</li>
+                                    <li value="midi">修饰</li>
                                 </ul>
                             </td>
                             <td width="60">
@@ -83,20 +88,13 @@ var ctx = '${ctx}';
                             </td>
                             <td>
                                 <ul id="configureList">
-                                    <li>订单号</li>
-                                    <li>生产编号</li>
-                                    <li>引物名称</li>
-                                    <li>OD/Tube</li>
-                                    <li>nmole/tube</li>
-                                    <li>管数</li>
-                                    <li>MW</li>
-                                    <li>TM</li>
-                                    <li>GC(%)</li>
-                                    <li>Tm(℃)</li>
-                                    <li>100pmole/μl</li>
-                                    <li value="bark">备注/日期</li>
-                                    <li>修饰</li>
-                                    <li>加水量</li>
+                                    <li value="orderNo">订单号</li>
+                                    <li value="nmolTB">nmole/tube</li>
+                                    <li value="tb">管数</li>
+                                    <li value="TM">TM</li>
+                                    <li value="GC">GC(%)</li>
+                                    <li value="remark">备注/日期</li>
+                                    <li value="pmole">加水量</li>
                                     
                                 </ul>
                             </td>
@@ -114,5 +112,6 @@ var ctx = '${ctx}';
 	</div>
 </div>
 <script src="${ctx}/static/js/labelConfigure.js" ></script>
+<script src="${ctx}/static/js/vagueSeach.js" ></script>
 </body>
 </html>

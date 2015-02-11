@@ -3,7 +3,6 @@ package org.one.gene.domain.service;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,8 +67,7 @@ public class OrderService {
     public void save(Order order){
 
     	//存储订单数据
-    	//外部订单号何处收集,这里不能设置外部订单号！！！
-    	order.setOutOrderNo(order.getOrderNo());
+    	order.setOutOrderNo(order.getOutOrderNo());
     	order.setModifyTime(new Date());
     	order.setStatus(0);//初始状态
         if(order.getCreateTime() == null){
@@ -167,15 +165,16 @@ public class OrderService {
     }
 	
 	public OrderInfo getOrderInfos(Order order){
-		OrderInfo OrderInfo = new OrderInfo();
+		OrderInfo orderInfo = new OrderInfo();
 		List<PrimerProduct> PrimerProducts = new ArrayList<PrimerProduct>();
 
 		//组织订单列表对象
-		OrderInfo.setOrderNo(order.getOrderNo());
-		OrderInfo.setCustomerName(order.getCustomerName());
-		OrderInfo.setCreateTime(order.getCreateTime());
-		OrderInfo.setModifyTime(order.getModifyTime());
-		OrderInfo.setStatus(String.valueOf(order.getStatus()));
+		orderInfo.setOrderNo(order.getOrderNo());
+		orderInfo.setOutOrderNO(order.getOutOrderNo());
+		orderInfo.setCustomerName(order.getCustomerName());
+		orderInfo.setCreateTime(order.getCreateTime());
+		orderInfo.setModifyTime(order.getModifyTime());
+		orderInfo.setStatus(String.valueOf(order.getStatus()));
 		PrimerProducts = order.getPrimerProducts();
 		BigDecimal tbnTotal = new BigDecimal("0");
 		//定义订单集合中第一个生产代码
@@ -197,10 +196,10 @@ public class OrderService {
 		    tbnTotal= tbnTotal.add(new BigDecimal(tbnStr));
 		    
 		}
-		OrderInfo.setProductNoMinToMax(firstProductNO+LastProductNO);
-		OrderInfo.setTbnTotal(tbnTotal.toString());
+		orderInfo.setProductNoMinToMax(firstProductNO+LastProductNO);
+		orderInfo.setTbnTotal(tbnTotal.toString());
 		
-		return OrderInfo;
+		return orderInfo;
 	}
 	
 	
@@ -213,7 +212,6 @@ public class OrderService {
      */
     public Order convertOrder(Customer customer, String fileName,Order order) throws ParseException{
     	order.setOrderNo(atomicLongUtil.getOrderSerialNo());
-
 		order.setCustomerCode(customer.getCode());
 		order.setCustomerName(customer.getName());
     	//后续补充，获取登录操作人员的归属机构。
@@ -275,6 +273,10 @@ public class OrderService {
     
     public ArrayList<String> getExcelPaseErrors(String path,int ignoreRows, int sheetIndex) throws FileNotFoundException, IOException{
     	return orderExcelPase.getExcelPaseErrors(path,ignoreRows,sheetIndex);
+    }
+    
+    public String getOutOrderNo(String path, int sheetIndex, int ignoreRows) throws FileNotFoundException, IOException {
+    	return orderExcelPase.getOutOrderNo(path,sheetIndex,ignoreRows);
     }
     
     /**

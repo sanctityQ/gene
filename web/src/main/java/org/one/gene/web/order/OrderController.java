@@ -112,7 +112,7 @@ public class OrderController {
         	file.transferTo(new File(path));
 	        
 	        if(!"".equals(path)){
-		        errors = orderService.getExcelPaseErrors(path,1,1);
+		        errors = orderService.getExcelPaseErrors(path,3,1);
 	        }
     	}
         if(errors.size()>0){
@@ -128,7 +128,10 @@ public class OrderController {
         	}
         	//组织订单对象
         	Order order = new Order();
-        	order = orderService.ReadExcel(path, 1,"2-",order,customer.getPrefix());
+        	//获取外部订单号
+        	String outOrderNo = orderService.getOutOrderNo(path,1,1);
+        	order.setOutOrderNo(outOrderNo);
+        	order = orderService.ReadExcel(path, 0,"4-",order,customer.getPrefix());
         	orderService.convertOrder(customer,filename,order);
         	//保存订单信息
         	orderService.save(order);

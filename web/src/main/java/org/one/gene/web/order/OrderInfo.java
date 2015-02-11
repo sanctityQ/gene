@@ -26,6 +26,7 @@ public class OrderInfo {
 	
 	//订单信息列表属性
 	private String orderNo;
+	private String outOrderNO;
 	private String customerName;
 	private String productNoMinToMax;
 	private String tbnTotal;
@@ -37,6 +38,12 @@ public class OrderInfo {
 	}
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
+	}
+	public String getOutOrderNO() {
+		return outOrderNO;
+	}
+	public void setOutOrderNO(String outOrderNO) {
+		this.outOrderNO = outOrderNO;
 	}
 	public String getCustomerName() {
 		return customerName;
