@@ -94,19 +94,19 @@ var ctx = '${ctx}';
 				<th data-options="field:'geneOrder',width:80,sortable:true,editor:'text'">序列</th>
 				<th data-options="field:'tbn',width:80,sortable:true,editor:'numberbox'">碱基数</th>
 				<c:if test="${order.orderUpType=='nmol'}">
-				<th data-options="field:'nmolTotal',width:80,sortable:true,editor:'numberbox'">nmol总量</th>
-				<th data-options="field:'nmolTB',width:80,sortable:true,editor:'numberbox'">nmol/tube</th>
+				<th data-options="field:'nmolTotal',width:80,sortable:true,min:0,precision:2,editor:{type:'numberbox',options:{precision:2}}">nmol总量</th>
+				<th data-options="field:'nmolTB',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">nmol/tube</th>
 				</c:if>
 				<c:if test="${order.orderUpType=='od'}">
-				<th data-options="field:'odTotal',width:80,sortable:true,editor:'numberbox'">OD总量</th>
-				<th data-options="field:'odTB',width:80,sortable:true,editor:'numberbox'">OD/tube</th>
+				<th data-options="field:'odTotal',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">OD总量</th>
+				<th data-options="field:'odTB',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">OD/tube</th>
 				</c:if>
 				<th data-options="field:'purifyType',width:80,sortable:true,editor:'text'">纯化方式</th>
 				<th data-options="field:'midi',width:80,sortable:true,editor:'text'">修饰</th>
-				<th data-options="field:'modiPrice',width:80,sortable:true,editor:'numberbox'">修饰价格</th>
-				<th data-options="field:'baseVal',width:80,sortable:true,editor:'numberbox'">碱基单价</th>
-				<th data-options="field:'purifyVal',width:80,sortable:true,editor:'numberbox'">纯化价格</th>
-				<th data-options="field:'totalVal',width:80,sortable:true,editor:'numberbox'">总价格</th>
+				<th data-options="field:'modiPrice',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">修饰价格</th>
+				<th data-options="field:'baseVal',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">碱基单价</th>
+				<th data-options="field:'purifyVal',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">纯化价格</th>
+				<th data-options="field:'totalVal',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">总价格</th>
 				<th data-options="field:'fromProductNo',width:80,hidden:true,sortable:true,editor:'text'">来源生产编号</th>
 				<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>
 			</tr>
