@@ -1,3 +1,4 @@
+
 var columnsNumber = 1;
 $(function(){
     $('#columnsNumber').on('click','input',changeColumns)
@@ -80,10 +81,12 @@ function saveConfigure(){
 		success : function(data) {
 			if(data == "sucess"){
 				alert("生产标签配置保存成功！")
+			}else{
+				alert(data)
 			}
 		},
-		error:function(){
-			alert("数据保存失败，请重试！");
+		error:function(data){
+			alert("配置保存失败，请重试！");
 		}
 	});
 }

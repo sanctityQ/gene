@@ -329,6 +329,9 @@ public class OrderService {
 			if("".equals(primerProduct.getComCode())||primerProduct.getComCode()==null){
 				primerProduct.setComCode(order.getComCode());
 			}
+			if("".equals(primerProduct.getOperationType())||primerProduct.getOperationType()==null){
+				primerProduct.setOperationType(order.getPrimerProducts().get(0).getOperationType());
+			}
 		}
 		this.primerProductRepository.save(values);
 	}

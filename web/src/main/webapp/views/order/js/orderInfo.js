@@ -18,13 +18,28 @@ function bigendEditing(){
   }
 }
 function appendRow(){
-    var row = $('#bigToSmall').datagrid('getData').rows[0];
-    bigToSmall.datagrid('appendRow',{
+	var row = $('#bigToSmall').datagrid('getData').rows[0];
+	bigToSmall.datagrid('insertRow',{
+        index: 0,
         row: {
-        	
+        	 productNo              :"",
+             primeName              :"",
+             geneOrder              :"",
+             tbn                    :"",
+             nmolTotal              :"",
+             nmolTB                 :"",
+             odTotal                :"",
+             odTB                   :"",
+             purifyType             :"",
+             modiPrice              :"",
+             baseVal                :"",
+             purifyVal              :"",
+             totalVal               :"",
+             fromProductNo          :row.productNo,
+             comCode                :row.comCode
         }
     });
-    var ind = $(".datagrid-btable").find('tr:last').attr("datagrid-row-index");
+    var ind = $(".datagrid-btable").find('tr:first').attr("datagrid-row-index");
     bigToSmall.datagrid('beginEdit',ind);
 }
 function onClickRow(index){
