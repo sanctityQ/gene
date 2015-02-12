@@ -170,7 +170,33 @@ public class SynthesisService {
 		if(totalCount>96){
 			totalCount = 96;
 		}
-		ArrayList holeNoList = new ArrayList();
+		
+		//通过竖排或者横排来组织排列的数据，然后放入固定的排版中
+		ArrayList holeNoList = getHoleOrderList(flag);
+		String tempHoleNo = "";
+		String tempProductNo = "";
+		Map<String, String> lastHoleMap = new HashMap<String, String>();
+		
+		for(int i=0 ;i<holeNoList.size();i++){
+			tempHoleNo = (String)holeNoList.get(i);
+			System.out.println("选择的排序为="+flag+"="+tempHoleNo);
+			tempProductNo = "";
+			
+			if(boardHoleMap.get(tempHoleNo) != null){
+				tempProductNo = (String)boardHoleMap.get(tempHoleNo);
+			}else{
+				for (String v : productNoMap.values()) {
+					tempProductNo = v;
+					break;
+				}
+				if(!"".equals(tempProductNo)){
+					productNoMap.remove(tempProductNo);
+				}
+			}
+			
+			lastHoleMap.put(tempHoleNo, tempProductNo);
+		}
+		
 		ArrayList holeList = new ArrayList();
 		
 		holeList.add("A");
@@ -189,76 +215,32 @@ public class SynthesisService {
 		jsonStr += "\"total\":"+totalCount+",\r";
 		jsonStr += "\"rows\":[\r";
 		
-		//竖板
-		if ("1".equals(flag)) {
+		for(int i=0 ;i<holeList.size();i++){
 			
+			jsonStr += "{\"row"+(i+1)+"\":[\r";
+			
+			String hole = (String)holeList.get(i);
 			for (int j=1;j<13;j++){
+				holeNo = hole+j;
+				productNo = "";
 				
-				jsonStr += "{\"row"+j+"\":[\r";
-				
-				for(int i=0 ;i<holeList.size();i++){
-					String hole = (String)holeList.get(i);
-					holeNo = hole+j;
-					productNo = "";
-					if(boardHoleMap.get(holeNo) != null){
-						productNo = (String)boardHoleMap.get(holeNo);
-					}else{
-						for (String v : productNoMap.values()) {
-							productNo = v;
-							break;
-						}
-						if(!"".equals(productNo)){
-							productNoMap.remove(productNo);
-						}
-					}
-					
-					jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\"}";
-					
-					if (i!=holeList.size()-1){
-						jsonStr += ",\r";
-					}
+				if(lastHoleMap.get(holeNo) != null){
+					productNo = (String)lastHoleMap.get(holeNo);
 				}
 				
-				if(j==12){
-					jsonStr += "]}\r";
-				}else{
-					jsonStr += "]},\r";
+				jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\"}";
+				
+				if (j!=12){
+					jsonStr += ",\r";
 				}
 			}
-			
-		} else {
-			for(int i=0 ;i<holeList.size();i++){
-				
-				jsonStr += "{\"row"+(i+1)+"\":[\r";
-				
-				String hole = (String)holeList.get(i);
-				for (int j=1;j<13;j++){
-					holeNo = hole+j;
-					productNo = "";
-					if(boardHoleMap.get(holeNo) != null){
-						productNo = (String)boardHoleMap.get(holeNo);
-					}else{
-						for (String v : productNoMap.values()) {
-							productNo = v;
-							break;
-						}
-						if(!"".equals(productNo)){
-							productNoMap.remove(productNo);
-						}
-					}
-					jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\"}";
-					
-					if (j!=12){
-						jsonStr += ",\r";
-					}
-				}
-				if(i == holeList.size()-1){
-					jsonStr += "]}\r";
-				}else{
-					jsonStr += "]},\r";
-				}
+			if(i == holeList.size()-1){
+				jsonStr += "]}\r";
+			}else{
+				jsonStr += "]},\r";
 			}
 		}
+
 
 		jsonStr += "]\r}";
 
@@ -268,6 +250,46 @@ public class SynthesisService {
 		
 		return jsonStr;
 	}
+	
+	public ArrayList getHoleOrderList(String boardType) {
+		ArrayList holeNoList = new ArrayList();
+		ArrayList holeList = new ArrayList();
+		String holeNo = "";
+		
+		holeList.add("A");
+		holeList.add("B");
+		holeList.add("C");
+		holeList.add("D");
+		holeList.add("E");
+		holeList.add("F");
+		holeList.add("G");
+		holeList.add("H");
+		
+		//竖板
+		if ("1".equals(boardType)) {
+			
+			for (int j=1;j<13;j++){
+				for(int i=0 ;i<holeList.size();i++){
+					String hole = (String)holeList.get(i);
+					holeNo = hole+j;
+					holeNoList.add(holeNo);
+				}
+			}
+			
+		} else {
+			for(int i=0 ;i<holeList.size();i++){
+				String hole = (String)holeList.get(i);
+				for (int j=1;j<13;j++){
+					holeNo = hole+j;
+					holeNoList.add(holeNo);
+				}
+			}
+		}
+		
+       return holeNoList;
+	}
+	
+	
 	
 	//提交制表信息
     @Transactional(readOnly = false)
@@ -581,7 +603,7 @@ public class SynthesisService {
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(boardNo);
 		
-		String remark = "备注：  合成柱:    "+currentTime+"       总碱基="+totalBN+"    洗脱体积=       μl";
+		String remark = "备注：  合成柱:                   总碱基="+totalBN+"    洗脱体积=       μl";
 		row = sheet.getRow(15);
 		cell = row.getCell(1);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
