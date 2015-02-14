@@ -37,8 +37,8 @@
     <div class="btn_group">
         <button class="btn btn-primary" id="mutualBtn" disabled onclick="exchangePosition();">交换位置</button>
         <ul class="right board_sequence" id="boardSequence">
-            <li title="横排" onclick="makeBoard('holeList','0','0');"></li>
-            <li title="竖排" class="vertical selected" onclick="makeBoard('holeList','1','0');"></li>
+            <li title="横排" onclick="makeBoard('holeList','0','0');" id="boardType0"></li>
+            <li title="竖排" class="vertical selected" onclick="makeBoard('holeList','1','0');" id="boardType1"></li>
             <li class="notes">排列方式：</li>
         </ul>
         <p class="right pipe_number">NOML / TUB * <span id="totals">96</span></p>
@@ -54,7 +54,7 @@
     <button class="btn btn-primary" onclick="saveBoard();" type="">保 存</button>
 </div>
 <script src="${ctx}/static/js/makeBoard.js" ></script>
-<script src="${ctx}/static/js/vagueSeachBoard.js" ></script>
+<script src="${ctx}/static/js/vagueSeachMakeBoard.js"></script>
 <script type="text/javascript">
 function goToResultsBoard(){
 	var boardNo = $.trim($('#boardNo').val());

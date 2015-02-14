@@ -57,4 +57,9 @@ function seachLiSelect(){
     var boardType = $(this).attr("boardType");
     seach.val(val);
     list.hide(100);
+    if(boardType == '1'){
+    	$("#boardType1").trigger("click");
+    }else{
+    	$("#boardType0").trigger("click");
+    }
 }

@@ -13,7 +13,7 @@ function setBoardHeight(){
     var h = $(document).height() - 117;
     $('#board_box').height(h);
 }
-function makeBoard(id,flag,oldFlag){
+function makeBoard(id,flag){
 	
 	var board = $('#'+id);
     var tBody = '';
@@ -24,7 +24,6 @@ function makeBoard(id,flag,oldFlag){
         dataType:'json',
 		data:{
 			flag: flag,
-			oldFlag:oldFlag,
 			boardNo: $('#boardNo').val(),
 			productNoStr: $('#productNoArray').val()
         },

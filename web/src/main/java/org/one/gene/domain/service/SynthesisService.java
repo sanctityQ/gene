@@ -3,15 +3,12 @@ package org.one.gene.domain.service;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,14 +16,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletResponse;
-
-import com.sinosoft.one.mvc.web.annotation.Param;
-import com.sinosoft.one.mvc.web.instruction.reply.transport.Raw;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -59,8 +52,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sinosoft.one.mvc.web.Invocation;
-import com.sinosoft.one.mvc.web.instruction.reply.EntityReply;
-import com.sinosoft.one.mvc.web.instruction.reply.Replys;
 
 //Spring Bean的标识.
 @Component
@@ -142,15 +133,15 @@ public class SynthesisService {
 	}
 
     //到制板页面
-	public String makeBoard(String boardNo, String flag, String oldFlag,
+	public String makeBoard(String boardNo, String flag, 
 			String productNoStr, Invocation inv) throws IOException {
 		
 		System.out.println("=====页面选择的生产编号=" + productNoStr);
 		int totalCount = 0;
-		Map<String, String> productNoMap = new HashMap<String, String>();
 		String[] productNoStrArray = productNoStr.split(",");
+		List<String> selectProductNoList = new ArrayList<String>();
 		for (int i = 0; i < productNoStrArray.length; i++) {
-			productNoMap.put(productNoStrArray[i], productNoStrArray[i]);
+			selectProductNoList.add(productNoStrArray[i]);
 			totalCount += 1;
 		}
 		
@@ -162,9 +153,7 @@ public class SynthesisService {
 				boardHoleMap.put(boardHole.getHoleNo(), boardHole.getPrimerProduct().getProductNo());
 				totalCount += 1;
 			}
-			if("1".equals(oldFlag)){//模糊查询的板号才使用已有的板类型
-				flag = board.getBoardType();
-			}
+			flag = board.getBoardType();
 		}
 		
 		if(totalCount>96){
@@ -172,25 +161,27 @@ public class SynthesisService {
 		}
 		
 		//通过竖排或者横排来组织排列的数据，然后放入固定的排版中
-		ArrayList holeNoList = getHoleOrderList(flag);
+		List<BoardHole> holeNoList = getHoleOrderList(flag);
 		String tempHoleNo = "";
 		String tempProductNo = "";
+		BoardHole boardHole = null;
 		Map<String, String> lastHoleMap = new HashMap<String, String>();
 		
 		for(int i=0 ;i<holeNoList.size();i++){
-			tempHoleNo = (String)holeNoList.get(i);
-			System.out.println("选择的排序为="+flag+"="+tempHoleNo);
+			boardHole = (BoardHole)holeNoList.get(i);
+			tempHoleNo = boardHole.getHoleNo();
+			//System.out.println("选择的排序为="+flag+"="+tempHoleNo);
 			tempProductNo = "";
 			
 			if(boardHoleMap.get(tempHoleNo) != null){
 				tempProductNo = (String)boardHoleMap.get(tempHoleNo);
 			}else{
-				for (String v : productNoMap.values()) {
+				for (String v : selectProductNoList) {
 					tempProductNo = v;
 					break;
 				}
 				if(!"".equals(tempProductNo)){
-					productNoMap.remove(tempProductNo);
+					selectProductNoList.remove(tempProductNo);
 				}
 			}
 			
@@ -251,8 +242,10 @@ public class SynthesisService {
 		return jsonStr;
 	}
 	
-	public ArrayList getHoleOrderList(String boardType) {
-		ArrayList holeNoList = new ArrayList();
+	public List<BoardHole> getHoleOrderList(String boardType) {
+		
+		List<BoardHole> holeNoList = new ArrayList<BoardHole>();
+		BoardHole boardHole = null;
 		ArrayList holeList = new ArrayList();
 		String holeNo = "";
 		
@@ -265,6 +258,7 @@ public class SynthesisService {
 		holeList.add("G");
 		holeList.add("H");
 		
+		int index = 0;
 		//竖板
 		if ("1".equals(boardType)) {
 			
@@ -272,7 +266,12 @@ public class SynthesisService {
 				for(int i=0 ;i<holeList.size();i++){
 					String hole = (String)holeList.get(i);
 					holeNo = hole+j;
-					holeNoList.add(holeNo);
+					
+					index++;
+					boardHole = new BoardHole();
+					boardHole.setHoleNo(holeNo);
+					
+					holeNoList.add(boardHole);
 				}
 			}
 			
@@ -281,7 +280,12 @@ public class SynthesisService {
 				String hole = (String)holeList.get(i);
 				for (int j=1;j<13;j++){
 					holeNo = hole+j;
-					holeNoList.add(holeNo);
+					
+					index++;
+					boardHole = new BoardHole();
+					boardHole.setHoleNo(holeNo);
+					
+					holeNoList.add(boardHole);
 				}
 			}
 		}
@@ -857,13 +861,11 @@ public class SynthesisService {
 		}
 		
 		int totalCount = 0;
-		String flag = "";
 		String typeFlag = "1";//生产数据是否复合查询类型 ：1 复合， 0 不复合
 		//查询板号信息
 		Map<String, PrimerProduct> boardHoleMap = new HashMap<String, PrimerProduct>();
 		Board board = boardRepository.findByBoardNo(boardNo);
 		if (board != null) {
-			flag = board.getBoardType();
 			for (BoardHole boardHole : board.getBoardHoles()) {
 				PrimerProduct primerProduct = boardHole.getPrimerProduct();
 				
@@ -899,79 +901,38 @@ public class SynthesisService {
 		jsonStr += "\"total\":"+totalCount+",\r";
 		jsonStr += "\"rows\":[\r";
 		
-		//竖板
-		if ("1".equals(flag)) {
+		for(int i=0 ;i<holeList.size();i++){
 			
+			jsonStr += "{\"row"+(i+1)+"\":[\r";
+			
+			String hole = (String)holeList.get(i);
 			for (int j=1;j<13;j++){
-				
-				jsonStr += "{\"row"+j+"\":[\r";
-				
-				for(int i=0 ;i<holeList.size();i++){
-					String hole = (String)holeList.get(i);
-					holeNo = hole+j;
-					productNo = "";
-					purifyType = "";
-					if(boardHoleMap.get(holeNo) != null){
-						primerProduct = (PrimerProduct)boardHoleMap.get(holeNo);
-						productNo = primerProduct.getProductNo();
-						if (!"OPC".equals(primerProduct.getPurifyType())
-								&& operationType.equals(PrimerStatusType.purify)) {
-							purifyType = primerProduct.getPurifyType();
-						}
-						if (operationType.equals(PrimerStatusType.measure) && measureMap.get(holeNo) != null) {
-							BigDecimal measure = (BigDecimal)measureMap.get(holeNo);
-							productNo = new BigDecimal(1.2).multiply(primerProduct.getOdTotal()).divide(measure.multiply(new BigDecimal(20)),0, BigDecimal.ROUND_UP)+"";
-						}
+				holeNo = hole+j;
+				productNo = "";
+				purifyType = "";
+				if(boardHoleMap.get(holeNo) != null){
+					primerProduct = (PrimerProduct)boardHoleMap.get(holeNo);
+					productNo = primerProduct.getProductNo();
+					if (!"OPC".equals(primerProduct.getPurifyType())
+							&& operationType.equals(PrimerStatusType.purify)) {
+						purifyType = primerProduct.getPurifyType();
 					}
-					
-					jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\",\"identifying\":\""+purifyType+"\"}";
-					
-					if (i!=holeList.size()-1){
-						jsonStr += ",\r";
+					if (operationType.equals(PrimerStatusType.measure) && measureMap.get(holeNo) != null) {
+						BigDecimal measure = (BigDecimal)measureMap.get(holeNo);
+						productNo = new BigDecimal(1.2).multiply(primerProduct.getOdTotal()).divide(measure.multiply(new BigDecimal(20)),0, BigDecimal.ROUND_UP)+"";
 					}
 				}
 				
-				if(j==12){
-					jsonStr += "]}\r";
-				}else{
-					jsonStr += "]},\r";
+				jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\",\"identifying\":\""+purifyType+"\"}";
+				
+				if (j!=12){
+					jsonStr += ",\r";
 				}
 			}
-			
-		} else {
-			for(int i=0 ;i<holeList.size();i++){
-				
-				jsonStr += "{\"row"+(i+1)+"\":[\r";
-				
-				String hole = (String)holeList.get(i);
-				for (int j=1;j<13;j++){
-					holeNo = hole+j;
-					productNo = "";
-					purifyType = "";
-					if(boardHoleMap.get(holeNo) != null){
-						primerProduct = (PrimerProduct)boardHoleMap.get(holeNo);
-						productNo = primerProduct.getProductNo();
-						if (!"OPC".equals(primerProduct.getPurifyType())
-								&& operationType.equals(PrimerStatusType.purify)) {
-							purifyType = primerProduct.getPurifyType();
-						}
-						if (operationType.equals(PrimerStatusType.measure) && measureMap.get(holeNo) != null) {
-							BigDecimal measure = (BigDecimal)measureMap.get(holeNo);
-							productNo = new BigDecimal(1.2).multiply(primerProduct.getOdTotal()).divide(measure.multiply(new BigDecimal(20)),0, BigDecimal.ROUND_UP)+"";
-						}
-					}
-					
-					jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\",\"identifying\":\""+purifyType+"\"}";
-					
-					if (j!=12){
-						jsonStr += ",\r";
-					}
-				}
-				if(i == holeList.size()-1){
-					jsonStr += "]}\r";
-				}else{
-					jsonStr += "]},\r";
-				}
+			if(i == holeList.size()-1){
+				jsonStr += "]}\r";
+			}else{
+				jsonStr += "]},\r";
 			}
 		}
 
