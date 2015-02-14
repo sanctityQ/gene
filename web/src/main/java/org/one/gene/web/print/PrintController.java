@@ -89,18 +89,19 @@ public class PrintController {
     public Reply printOutBoundQuery(@Param("orderNo") String orderNo, @Param("customerName") String customerName,@Param("pageNo")Integer pageNo,
                         @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
 
-    	if(pageNo == null || pageNo ==0){
+    	if(pageNo == null || pageNo <=0){
             pageNo = 1;
         }
 
         if(pageSize == null){
-            pageSize = 10;
+            pageSize = 20;
         }
 
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
         searchParams.put(SearchFilter.Operator.EQ+"_customerName",customerName);
+        searchParams.put(SearchFilter.Operator.EQ+"_status","2");//审核通过
         
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
