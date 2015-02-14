@@ -136,11 +136,10 @@ public class SynthesisController {
      * */
     @Post("makeBoardEdit")
 	public Reply makeBoardEdit(@Param("flag") String flag,
-			                   @Param("oldFlag") String oldFlag,
 			                   @Param("boardNo") String boardNo,
 			                   @Param("productNoStr") String productNoStr, Invocation inv) throws IOException {
     	
-    	String jsonStr = synthesisService.makeBoard(boardNo, flag, oldFlag, productNoStr, inv);
+    	String jsonStr = synthesisService.makeBoard(boardNo, flag, productNoStr, inv);
         
     	return Replys.with(jsonStr).as(Json.class);
     }
