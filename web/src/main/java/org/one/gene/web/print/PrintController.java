@@ -176,23 +176,24 @@ public class PrintController {
      * @throws Exception 
      * */
 	public Reply printReportQuery(@Param("orderNo") String orderNo,
-			@Param("customerCode") String customerCode,
+			@Param("customercode") String customercode,
 			@Param("modifyTime") String modifyTime,
 			@Param("pageNo") Integer pageNo,
 			@Param("pageSize") Integer pageSize, Invocation inv) throws Exception {
     	
-        if(pageNo == null){
-            pageNo = 0;
+        if(pageNo == null || pageNo <= 0){
+            pageNo = 1;
         }
 
         if(pageSize == null){
-            pageSize = 5;
+            pageSize = 20;
         }
 
-        Pageable pageable = new PageRequest(pageNo,pageSize);
+        Pageable pageable = new PageRequest(pageNo-1,pageSize);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
-        searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
+        searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customercode);
+        searchParams.put(SearchFilter.Operator.EQ+"_status","2");//审核通过
 		if (!"".equals(modifyTime)) {
         	searchParams.put(SearchFilter.Operator.GT+"_modifyTime",new Date(modifyTime));
         	searchParams.put(SearchFilter.Operator.LT+"_modifyTime",new Date(modifyTime+" 59:59:59"));

@@ -38,7 +38,7 @@ var getOrderInfos=function(){
 	if($("#seachOrder").val() != ''){
 		orderNo = $("#seachOrder").val();
 	}
-	var modifyTime = $('#modifyTime').datebox('getValue');  
+	var modifyTime = $('#modifyTime').datebox('getValue');
 	
 	if(modifyTime==null){
 		modifyTime = "";
