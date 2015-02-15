@@ -1,7 +1,9 @@
 package org.one.gene.web.labelConfigure;
 
+import java.util.List;
 import java.util.Map;
 
+import org.one.gene.domain.entity.PrimerLabelConfigSub;
 import org.one.gene.domain.service.LabelConfigureService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,13 +38,10 @@ public class LabelConfigureController {
     public Reply configSave(@Param("customerCode") String customerCode,
     		                @Param("customerName") String customerName,
     		                @Param("columnsNumber") String columnsNumber,
-    		                @Param("configList") String configList,
+    		                @Param("primerLabelConfigSubs") List<PrimerLabelConfigSub> primerLabelConfigSubs,
     		                Invocation inv) {
-    	String message ="";
     	
-    	Map<String,Object>  jsonMap = JSON.parseObject(configList);
-    	
-    	message = labelConfigureService.configSave(customerCode, customerName,columnsNumber,jsonMap);
+    	String message = labelConfigureService.configSave(customerCode, customerName,columnsNumber,primerLabelConfigSubs);
     	
     	return Replys.with(message).as(Text.class);  
     }

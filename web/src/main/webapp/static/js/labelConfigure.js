@@ -1,5 +1,5 @@
 
-var columnsNumber = 1;
+var columnsNumber = 3;
 $(function(){
     $('#columnsNumber').on('click','input',changeColumns)
     $('#setRows ul').on('click','li',setSelected)
@@ -58,15 +58,17 @@ function saveConfigure(){
     var customerCode = $('#customerCode').val();
     if(customerCode==""){alert("请录入正确的客户代码！");return false;}
     var customerName = $('#seachCustom').val();
-//    var ary = [];
-    var config = {}
+    var primerLabelConfigSubs = [];
     if(print.length==0){alert("您提交的配置生产标签列为空，请正确选择！");return false;}
-    print.each(function(){
+    print.each(function(index){
         var text = $(this).text();
     	var valueStr = $(this).attr("value");
-    	config[valueStr] = text;
+    	primerLabelConfigSubs.push({
+    		"type":valueStr,
+    		"typeDesc":text,
+    		"sorting":index
+    	});
     })
-//    ary.push(config);
 //    console.log(JSON.stringify(config));
     $.ajax({
 		type : "post",
@@ -76,7 +78,7 @@ function saveConfigure(){
             "customerCode": customerCode,
             "customerName": customerName,
             "columnsNumber":columnsNumber,
-            "configList":JSON.stringify(config)
+            "primerLabelConfigSubs":primerLabelConfigSubs
         },
 		success : function(data) {
 			if(data == "sucess"){

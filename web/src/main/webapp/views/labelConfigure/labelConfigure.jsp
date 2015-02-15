@@ -45,9 +45,9 @@ var ctx = '${ctx}';
             <tr>
                 <td align="right">打印列数：</td>
                 <td colspan="2" id="columnsNumber">
-                    <label><input type="radio" value="1" name="number" checked /> 一列</label>
+                    <label><input type="radio" value="1" name="number" /> 一列</label>
                     <label><input type="radio" value="2" name="number" /> 二列</label>
-                    <label><input type="radio" value="3" name="number" /> 三列</label>
+                    <label><input type="radio" value="3" name="number" checked/> 三列</label>
                 </td>
             </tr>
 <!--             <tr>
