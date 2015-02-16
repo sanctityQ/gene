@@ -106,8 +106,11 @@ public class PrintService {
 				}
 			}else if("2".equals(noType)){
 				PrimerProduct primerProduct = primerProductRepository.findByProductNoOrOutProductNo(boardNo, boardNo);
-				if (primerProduct != null) {
-					primerProducts.add(primerProduct);
+				Order order = orderRepository.findByOrderNo(primerProduct.getOrder().getOrderNo());
+				if (order != null&order.getPrimerProducts().size()>0) {
+					for(PrimerProduct pp:order.getPrimerProducts()){
+						primerProducts.add(pp);
+					}
 				}
 			}
 		}

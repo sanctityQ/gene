@@ -77,7 +77,7 @@
 		<ul class="sbu_menu">
 			<li url="${ctx}/print/productionLabel" id="productionLabel"><i class="icon-bookmark"></i>生产标签</li>
 			<li url="${ctx}/labelConfigure/config"><i class="icon-cogs"></i>生产标签配置</li>
-			<li><i class="icon-bookmark-empty"></i>发货标签</li>
+			<li url="${ctx}/delivery/deliveryLabel"><i class="icon-bookmark-empty"></i>发货标签</li>
 		</ul>
 	</div>
 	<div title="业务员管理" data-options="iconCls:'salesman'" style="height:200px;">

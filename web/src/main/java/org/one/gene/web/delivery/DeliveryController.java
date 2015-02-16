@@ -1,33 +1,17 @@
 package org.one.gene.web.delivery;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
-import com.sinosoft.one.mvc.web.Invocation;
-import com.sinosoft.one.mvc.web.annotation.Param;
-import com.sinosoft.one.mvc.web.annotation.Path;
-import com.sinosoft.one.mvc.web.annotation.rest.Post;
-
-import com.sinosoft.one.mvc.web.annotation.rest.Get;
-import com.sinosoft.one.mvc.web.instruction.reply.Reply;
-import com.sinosoft.one.mvc.web.instruction.reply.Replys;
-import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
-
-
-import org.one.gene.domain.entity.BoardHole;
-import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.service.DeliveryService;
-import org.one.gene.domain.service.SynthesisService;
+import org.one.gene.domain.service.PrintService;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
-import org.one.gene.repository.BoardHoleRepository;
-import org.one.gene.repository.BoardRepository;
 import org.one.gene.repository.OrderRepository;
-import org.one.gene.repository.PrimerProductOperationRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.repository.PrimerProductValueRepository;
 import org.one.gene.web.order.OrderInfo;
@@ -36,6 +20,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+
+import com.google.common.collect.Maps;
+import com.sinosoft.one.mvc.web.Invocation;
+import com.sinosoft.one.mvc.web.annotation.Param;
+import com.sinosoft.one.mvc.web.annotation.Path;
+import com.sinosoft.one.mvc.web.annotation.rest.Get;
+import com.sinosoft.one.mvc.web.annotation.rest.Post;
+import com.sinosoft.one.mvc.web.instruction.reply.EntityReply;
+import com.sinosoft.one.mvc.web.instruction.reply.Reply;
+import com.sinosoft.one.mvc.web.instruction.reply.Replys;
+import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
 
 @Path
 public class DeliveryController {
@@ -51,6 +46,8 @@ public class DeliveryController {
     
     @Autowired
     private DeliveryService deliveryService;
+    @Autowired
+	private PrintService printService;
     
    
     /**
@@ -143,6 +140,26 @@ public class DeliveryController {
     } 
     
     
+    /**
+     * 发货标签
+     * 
+     * */
+    @Get("deliveryLabel")
+    public String deliveryLabel(){
+    	return "deliveryLabel";
+    }
     
-    
+    @Post("deliveryLabelPrint")
+    public EntityReply<File> deliveryLabelPrint(@Param("boardNo") String boardNo,@Param("noType") String noType, Invocation inv) {
+    	
+		List<PrimerProduct> primerProducts = printService.getPrimerProducts(boardNo, noType, inv);
+		EntityReply<File> fileStr = null; //form 提交使用该类型返回
+		try {
+			fileStr = deliveryService.deliveryLabel(primerProducts, inv);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    	return fileStr;
+    }
 }

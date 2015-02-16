@@ -1,10 +1,10 @@
 package org.one.gene.web.order;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
-import org.springframework.data.domain.Page;
 
 public class OrderInfo {
 
@@ -27,6 +27,9 @@ public class OrderInfo {
 	//订单信息列表属性
 	private String orderNo;
 	private String outOrderNO;
+	private String productNo;
+	private BigDecimal odTotal;
+	private BigDecimal OdTB;
 	private String customerName;
 	private String productNoMinToMax;
 	private String tbnTotal;
@@ -44,6 +47,24 @@ public class OrderInfo {
 	}
 	public void setOutOrderNO(String outOrderNO) {
 		this.outOrderNO = outOrderNO;
+	}
+	public String getProductNo() {
+		return productNo;
+	}
+	public void setProductNo(String productNo) {
+		this.productNo = productNo;
+	}
+	public BigDecimal getOdTotal() {
+		return odTotal;
+	}
+	public void setOdTotal(BigDecimal odTotal) {
+		this.odTotal = odTotal;
+	}
+	public BigDecimal getOdTB() {
+		return OdTB;
+	}
+	public void setOdTB(BigDecimal odTB) {
+		OdTB = odTB;
 	}
 	public String getCustomerName() {
 		return customerName;
