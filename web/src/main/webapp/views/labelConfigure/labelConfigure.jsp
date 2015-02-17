@@ -40,7 +40,7 @@ var ctx = '${ctx}';
 			    <input class="inp_text" id="customerCode" type="hidden" name="customerCode" value=""/>
 			    <ul id="seachList"></ul>
 			    </td>
-                <!-- <td><button type="button" class="btn">配 置</button></td> -->
+                <td><button type="button" class="btn" onclick="searchConfigure()">查询</button></td>
             </tr>
             <tr>
                 <td align="right">打印列数：</td>

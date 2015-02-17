@@ -70,4 +70,9 @@ public class LabelConfigureService {
 		return primerLabelConfig;
 	}
 	
+	public PrimerLabelConfig searchConfigure(String customerCode){
+		PrimerLabelConfig primerLabelConfig = primerLabelConfigRepository.findByCustomerCode(customerCode);
+		return primerLabelConfig;
+	}
+	
 }
