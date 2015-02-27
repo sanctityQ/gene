@@ -76,13 +76,13 @@
 	<div title="打印标签" data-options="iconCls:'print'" style="height:200px;">
 		<ul class="sbu_menu">
 			<li url="${ctx}/print/productionLabel" id="productionLabel"><i class="icon-bookmark"></i>生产标签</li>
-			<li url="${ctx}/labelConfigure/config"><i class="icon-cogs"></i>生产标签配置</li>
-			<li url="${ctx}/delivery/deliveryLabel"><i class="icon-bookmark-empty"></i>发货标签</li>
+			<li url="${ctx}/labelConfigure/config" id="labelConfigure"><i class="icon-cogs"></i>生产标签配置</li>
+			<li url="${ctx}/delivery/deliveryLabel" id="deliveryLabel"><i class="icon-bookmark-empty"></i>发货标签</li>
 		</ul>
 	</div>
 	<div title="业务员管理" data-options="iconCls:'salesman'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li><i class="icon-cogs"></i>业务员管理</li>
+			<li url="${ctx}/user/prepareManageQuery"><i class="icon-cogs"></i>业务员管理</li>
 		</ul>
 	</div>
 	<div title="客户管理" data-options="iconCls:'custom'" style="height:200px;">

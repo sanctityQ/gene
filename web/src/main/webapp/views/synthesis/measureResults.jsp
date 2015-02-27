@@ -60,7 +60,15 @@ function goToResultsBoard(){
 		alert("请选择文件。");
 		return;
 	}
-	
+	if($("#upload").val().length > 1) {		
+		var lexcel = $("#upload").val().lastIndexOf(".");
+		var type = $("#upload").val().substring(lexcel + 1);
+		
+		if(type != "xls") {
+			alert("请您上传excel格式文件！");
+			return false;
+		}		
+	}
 	document.form.submit();
 }
 </script>

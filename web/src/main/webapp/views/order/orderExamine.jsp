@@ -17,6 +17,9 @@
 <script src="${ctx}/static/js/jquery.easyui.min.js" ></script>
 <script src="${ctx}/static/js/perfect-scrollbar.min.js" ></script>
 <script src="${ctx}/static/js/index.js" ></script>
+<script type="text/javascript">
+ var ctx = '${ctx}';
+</script>
 </head>
 <body>
 <div class="tools">

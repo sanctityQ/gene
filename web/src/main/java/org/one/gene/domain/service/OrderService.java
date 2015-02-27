@@ -293,6 +293,7 @@ public class OrderService {
     			  primerProductOperation.setType(PrimerType.PrimerOperationType.orderCheckSuccess);
     			  primerProductOperation.setTypeDesc(PrimerType.PrimerOperationType.orderCheckSuccess.desc());
     			  primerProduct.setOperationType(PrimerType.PrimerStatusType.makeBoard);//订单审核通过，生产数据到可制板状态
+    			  primerProduct.setBackTimes(0);
     			}
     		}
     	}

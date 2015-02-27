@@ -260,7 +260,7 @@ public class OrderController {
         }
 
         if(pageSize == null){
-            pageSize = 10;
+            pageSize = 20;
         }
         Sort s=new Sort(Direction.DESC, "createTime");
         Pageable pageable = new PageRequest(pageNo-1,pageSize,s);

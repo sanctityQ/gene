@@ -10,13 +10,22 @@ function formatOper(val,row,index){
 var examineIni=function(){
 	$.ajax({
 		type : "post",
-		url : "/gene/order/query",
+		url : ctx+"/order/query",
 		dataType : "json",
 		data:{status:0},
 		success : function(data) {
 			if(data != null){
 				var total = data.totalElements;
         		var reSultdata = data.content;
+        		for(var i=0;i<reSultdata.length;i++){
+        			if(reSultdata[i].status=='0'){
+        			  reSultdata[i].status = '订单初始化';
+        			}else if(reSultdata[i].status=='1'){
+        			  reSultdata[i].status = '订单审核通过';
+        			}else if(reSultdata[i].status=='2'){
+        			  reSultdata[i].status = '订单审核不通过';	
+        			}
+        		}
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#orderList').datagrid("loadData",jsonsource);
 			}
@@ -34,19 +43,29 @@ var getExamineInfo=function(){
 	var customerCode = $("#customerCode").val();
 	$.ajax({
 		type : "post",
-		url : "/gene/order/query",
+		url : ctx+"/order/query",
 		dataType : "json",
 		data:
 		{
 			orderNo:orderNo,
 	        customerCode:customerCode,
 			pageNo: gridOpts.pageNumber,
-			pageSize: gridOpts.pageSize
+			pageSize: gridOpts.pageSize,
+			status:'0'
         },
 		success : function(data) {
 			if(data != null){
 				var total = data.totalElements;
         		var reSultdata = data.content;
+        		for(var i=0;i<reSultdata.length;i++){
+        			if(reSultdata[i].status=='0'){
+        			  reSultdata[i].status = '订单初始化';
+        			}else if(reSultdata[i].status=='1'){
+        			  reSultdata[i].status = '订单审核通过';
+        			}else if(reSultdata[i].status=='2'){
+        			  reSultdata[i].status = '订单审核不通过';	
+        			}
+        		}
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#orderList').datagrid("loadData",jsonsource);
 			}
@@ -60,13 +79,13 @@ var getExamineInfo=function(){
 //审核订单查询
 var checkOrder=function(id,index){
 	var row = $('#orderList').datagrid('getData').rows[index];
-	goToPage('/gene/views/order/orderInfoExamine.jsp?orderNo='+row.orderNo);
+	goToPage(ctx+'/views/order/orderInfoExamine.jsp?orderNo='+row.orderNo);
 }
 
 var examine=function(orderNo,failReason){
 	$.ajax({
 		type : "post",
-		url : "/gene/order/examine",
+		url : ctx+"/order/examine",
 		dataType : "html",
 		data:
 		{
@@ -78,7 +97,7 @@ var examine=function(orderNo,failReason){
 				if(failReason==''){
 				  alert("审核通过！")
 			    }
-				goToPage('/gene/views/order/orderExamine.jsp');
+				goToPage(ctx+'/views/order/orderExamine.jsp');
 			}
 		},
 		error:function(){

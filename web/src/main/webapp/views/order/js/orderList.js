@@ -1,6 +1,11 @@
 var bigIndex = undefined,orderList = $('#orderList');
 function formatOper(val,row,index){
-    return '&nbsp;<a href="javascript:;" onclick="lookOrder('+row.id+','+index+')"><i class="icon-book"></i>查看</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;"  onclick="modifyOrder('+row.id+','+index+')"><i class="icon-pencil"></i>修改</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;" onclick="deleteOrder('+row.id+','+index+')"><i class="icon-trash"></i>删除</a>&nbsp;';
+	if(row.status=='订单审核通过'){
+		return '&nbsp;<a href="javascript:;" onclick="lookOrder('+row.id+','+index+')"><i class="icon-book"></i>查看</a>&nbsp;';
+	}else{
+		return '&nbsp;<a href="javascript:;" onclick="lookOrder('+row.id+','+index+')"><i class="icon-book"></i>查看</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;"  onclick="modifyOrder('+row.id+','+index+')"><i class="icon-pencil"></i>修改</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;" onclick="deleteOrder('+row.id+','+index+')"><i class="icon-trash"></i>删除</a>&nbsp;';
+	}
+    
 }
 
 /**
@@ -15,8 +20,18 @@ var orderInfoIni=function(){
 			if(data != null){
 				var total = data.totalElements;
         		var reSultdata = data.content;
+        		for(var i=0;i<reSultdata.length;i++){
+        			if(reSultdata[i].status=='0'){
+        			  reSultdata[i].status = '订单初始化';
+        			}else if(reSultdata[i].status=='1'){
+        			  reSultdata[i].status = '订单审核通过';
+        			}else if(reSultdata[i].status=='2'){
+        			  reSultdata[i].status = '订单审核不通过';	
+        			}
+        		}
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#orderList').datagrid("loadData",jsonsource);
+        		
 			}
 		},
 		error:function(){
@@ -46,6 +61,15 @@ var getOrderInfo=function(){
 			if(data != null){
 				var total = data.totalElements;
         		var reSultdata = data.content;
+        		for(var i=0;i<reSultdata.length;i++){
+        			if(reSultdata[i].status=='0'){
+        			  reSultdata[i].status = '订单初始化';
+        			}else if(reSultdata[i].status=='1'){
+        			  reSultdata[i].status = '订单审核通过';
+        			}else if(reSultdata[i].status=='2'){
+        			  reSultdata[i].status = '订单审核不通过';	
+        			}
+        		}
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#orderList').datagrid("loadData",jsonsource);
 			}

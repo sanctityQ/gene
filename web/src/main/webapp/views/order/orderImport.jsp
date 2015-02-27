@@ -29,6 +29,15 @@
 		 alert("请上传文件！");
 		 return false;
 	 }
+	 if($("#upload").val().length > 1) {		
+		var lexcel = $("#upload").val().lastIndexOf(".");
+		var type = $("#upload").val().substring(lexcel + 1);
+		
+		if(type != "xls") {
+			alert("请您上传excel格式文件！");
+			return false;
+		}		
+	}
 	 $('#inputForm').submit();
  }
  //暂时处理后台异常
