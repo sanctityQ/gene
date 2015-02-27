@@ -34,7 +34,7 @@ public class PrimerType {
         makeBoard {
             @Override
             public String desc() {
-                return "制板";
+                return "待制板";
             }
         },
         /**
@@ -43,7 +43,7 @@ public class PrimerType {
         synthesis {
             @Override
             public String desc() {
-                return "合成";
+                return "待合成";
             }
         },
         /**
@@ -52,7 +52,7 @@ public class PrimerType {
         modification {
             @Override
             public String desc() {
-                return "修饰";
+                return "待修饰";
             }
         },
         /**
@@ -61,44 +61,44 @@ public class PrimerType {
         ammonia {
             @Override
             public String desc() {
-                return "氨解";
+                return "待氨解";
             }
         },
 
         purify {
             @Override
             public String desc() {
-                return "纯化";
+                return "待纯化";
             }
         },
         measure {
             @Override
             public String desc() {
-                return "测值";
+                return "待测值";
             }
         },
         pack {
             @Override
             public String desc() {
-                return "分装";
+                return "待分装";
             }
         },
         bake {
             @Override
             public String desc() {
-                return "烘干";
+                return "待烘干";
             }
         },
         detect {
             @Override
             public String desc() {
-                return "检测";
+                return "待检测";
             }
         },
         delivery {
             @Override
             public String desc() {
-                return "发货";
+                return "待发货";
             }
         },
         finish {
