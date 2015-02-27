@@ -24,7 +24,7 @@
 	        <input type="hidden" id="operationType" name="operationType" value="modification"/>
 		<tr>
 			<td align="right">板号:</td>
-			<td><input class="inp_text" type="text" id="boardNo" name="boardNo" value="" style="width: 80%" />
+			<td><input class="inp_text" type="text" autocomplete="off" id="boardNo" name="boardNo" value="" style="width: 80%" />
 			    <ul id="seachBoardList"></ul>
 			</td>
             <td>

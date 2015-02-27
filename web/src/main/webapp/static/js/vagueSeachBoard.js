@@ -13,10 +13,30 @@ function seachBoardChange(){
     var list = $("#seachBoardList");
     list.css({'left':left,'top':top});
     list.on("click",'li',seachLiSelect);
-    seach.bind('input',function(){
+    seach.bind('keydown',function(event){
+        var select = $('li.selected',list);
+        if(event.keyCode == 40){
+            if(select.length){
+                if(select.index()!=$('li',list).length-1){
+                    select.removeClass('selected').next().addClass('selected');
+                }
+            }else{
+                $('li:first',list).addClass('selected');
+            }
+        }else if(event.keyCode == 38){
+            if(select.length){
+                if(select.index()!=0){
+                    select.removeClass('selected').prev().addClass('selected');
+                }
+            }else{
+                $('li:first',list).addClass('selected');
+            }
+        }else if(event.keyCode == 13){
+            var val = select.text();
+            select.trigger('click');
+        }else{
         ajaxSeach();
-    }).bind('keyup',function(){
-        ajaxSeach();
+        }
     });
     function ajaxSeach(){
         setTimeout(function(){
@@ -37,8 +57,7 @@ function seachBoardChange(){
                         for(var i = 0; i < data.length; i++){
                             var id = data[i].id;
                             var boardNo = data[i].boardNo;
-                            var boardType = data[i].boardType;
-                            li += '<li id="'+id+'" boardType="'+boardType+'">'+boardNo+'</li>';
+                            li += '<li id="'+id+'">'+boardNo+'</li>';
                         };
                         list.append(li);
                     }
@@ -46,15 +65,14 @@ function seachBoardChange(){
             }else{
                 list.hide(100);
             }
-        },500)
-    }
+        },500);
+    };
 }
 function seachLiSelect(){
     var seach = $("#boardNo");
     var list = $("#seachBoardList");
     var id = $(this).attr("id");
     var val = $(this).text();
-    var boardType = $(this).attr("boardType");
-    seach.val(val);
+    seach.val(val).attr("tagId",id);
     list.hide(100);
-}
+};

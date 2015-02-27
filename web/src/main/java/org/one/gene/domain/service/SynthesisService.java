@@ -765,12 +765,18 @@ public class SynthesisService {
 					primerProduct.setMidi(midi);
 				}
 				
+			   if (primerProduct.getReviewFileName() == null || "null".equals(primerProduct.getReviewFileName())) {
+				   primerProduct.setReviewFileName("");
+			   }
+				   
 				//文件超连接
 			   if (!"".equals(primerProduct.getReviewFileName())) {
 				   String templateFilePath= File.separator+"gene"+File.separator+"upExcel"+File.separator+"detect"+File.separator+primerProduct.getReviewFileName();
 				   System.out.println("检测结果查询页面，下载附件文件的路径templateFilePath="+templateFilePath);
 				   primerProduct.setReviewFileName("<a href='"+templateFilePath+"' target='_blank'>"+primerProduct.getReviewFileName()+"</a>");
 				}
+			   
+
 			}
 
 			return primerProductPage;

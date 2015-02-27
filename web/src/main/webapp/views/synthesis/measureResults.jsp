@@ -25,7 +25,7 @@
 		<div class="import_box">
 			<i class="icon-group"></i>请输入需要导入的板号。
 			<br />
-			<input class="inp_text" type="text" id="boardNo" name="boardNo" value="" style="width: 300px" />
+			<input class="inp_text" type="text" autocomplete="off" id="boardNo" name="boardNo" value="" style="width: 300px" />
 			<ul id="seachBoardList"></ul>
 		</div>
 		<div class="import_box" style="line-height: 16px;">

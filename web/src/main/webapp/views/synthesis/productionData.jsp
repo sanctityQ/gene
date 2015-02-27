@@ -23,7 +23,7 @@
 	<table width="100%">
 		<tr>
 			<td align="right">客户代码:</td>
-			<td><input class="inp_text" type="text" id="seachCustom" name="customerName" value="" style="width: 150px" />
+			<td><input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 150px" />
 			    <input class="inp_text" type="hidden" id="customercode" name="customercode" value=""/>
 			    <ul id="seachCustomList"></ul>
 			</td>
@@ -34,9 +34,10 @@
             <td align="left">纯化方式:</td>
             <td>
                 <select id="purifytype" name="purifytype" class="my_select" style="width: 80px;">
-                    <option>OPC</option>
-                    <option>PAGE</option>
-                    <option>HPLC</option>
+                    <option value="">所有</option>
+                    <option value="OPC">OPC</option>
+                    <option value="PAGE">PAGE</option>
+                    <option value="HPLC">HPLC</option>
                 </select>
             </td>
             <td><button type="button" class="btn" onclick="getProducts();">查询</button></td>
