@@ -21,6 +21,7 @@
 <body>
 <div class="page_padding">
 	<div class="content_box">
+	    <input type="hidden" id="operationType" name="operationType" value="ammonia"/>
 		<h2>录入氨解结果</h2>
 		<div class="import_box">
 			<i class="icon-pencil"></i>请输入板号，点击“氨解结果”按钮，进入结果录入页面。

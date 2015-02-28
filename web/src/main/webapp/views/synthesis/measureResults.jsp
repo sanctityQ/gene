@@ -21,6 +21,7 @@
 <form name="form" modelAttribute="user" action="${ctx}/synthesis/uploadMeasure" method="post" enctype="multipart/form-data" class="form-horizontal">
 <div class="page_padding">
 	<div class="content_box">
+	    <input type="hidden" id="operationType" name="operationType" value="measure"/>
 		<h2>测值结果</h2>
 		<div class="import_box">
 			<i class="icon-group"></i>请输入需要导入的板号。

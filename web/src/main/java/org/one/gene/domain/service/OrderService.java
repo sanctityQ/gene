@@ -83,6 +83,8 @@ public class OrderService {
 			primerProduct.setComCode(order.getComCode());
 			primerProduct.setOperationType(PrimerType.PrimerStatusType.orderInit);//!!!是初始状态不是审核通过状态
 			primerProduct.setOrder(order);
+			primerProduct.setModifyTime(new Date());//最新修改时间
+			primerProduct.setBackTimes(0);
 
 
 			//获取碱基数
@@ -294,6 +296,7 @@ public class OrderService {
     			  primerProductOperation.setTypeDesc(PrimerType.PrimerOperationType.orderCheckSuccess.desc());
     			  primerProduct.setOperationType(PrimerType.PrimerStatusType.makeBoard);//订单审核通过，生产数据到可制板状态
     			  primerProduct.setBackTimes(0);
+    			  primerProduct.setModifyTime(new Date());//最新修改时间
     			}
     		}
     	}
@@ -333,6 +336,8 @@ public class OrderService {
 			if("".equals(primerProduct.getOperationType())||primerProduct.getOperationType()==null){
 				primerProduct.setOperationType(order.getPrimerProducts().get(0).getOperationType());
 			}
+			  primerProduct.setBackTimes(0);
+			  primerProduct.setModifyTime(new Date());//最新修改时间
 		}
 		this.primerProductRepository.save(values);
 	}

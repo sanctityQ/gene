@@ -34,14 +34,13 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
     */
     private Date createTime;
 
-
-    private Date modifyTime;
-
     /**
     * 创建user.
     */
     private Long createUser;
 
+    private Date modifyTime;
+    private Long modifyUser;
     /**
      * 状态
      */
@@ -152,6 +151,15 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
         this.modifyTime = modifyTime;
     }
 
+    @Column(name="`modify_user`")
+    public Long getModifyUser() {
+    return this.modifyUser;
+    }
+
+    public void setModifyUser(Long modifyUser) {
+    this.modifyUser = modifyUser;
+    }
+    
     @Column(name="`status`")
     public int getStatus() {
         return status;

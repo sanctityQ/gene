@@ -361,7 +361,6 @@ public class SynthesisService {
 			boardHole.setPrimerProduct(primerProduct);
 			boardHole.setCreateUser(123L);//后续需要调整到从session取值
 			boardHole.setCreateTime(new Date());
-			boardHole.setModifyTime(new Date());
 			boardHole.setStatus(0);//0 正常 1 删除
 			
 			if (lastHoleMap.get(holeNoArray[0]) != null) {
@@ -427,25 +426,26 @@ public class SynthesisService {
     	}
     	
     	Board board = boardRepository.findByBoardNo(boardNo);
-		BoardHole boardHole = null;
 		BoardHole boardHoleTemp = null;//页面取得的孔信息
-		List<BoardHole> boardHoles = board.getBoardHoles();
 		PrimerProduct primerProduct = new PrimerProduct(); 
 		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
 		List<PrimerProductOperation> primerProductOperations = new ArrayList<PrimerProductOperation>();
 		PrimerOperationType type = null;
 		String typeDesc = "";
 		
-		for (int i = board.getBoardHoles().size() - 1; i >= 0; i--) {
-			boardHole = (BoardHole) board.getBoardHoles().get(i);
+		for (BoardHole boardHole:board.getBoardHoles()) {
+			
 			primerProduct = boardHole.getPrimerProduct();
-			if(bhMap.get(boardHole.getHoleNo())!=null){
+			
+			if (bhMap.get(boardHole.getHoleNo()) != null) {
 				boardHoleTemp = (BoardHole)bhMap.get(boardHole.getHoleNo());
 				String failFlag = boardHoleTemp.getFailFlag();//是否失败标志
 				String failReason = boardHoleTemp.getRemark();//失败原因
 				
 				type = null;
 				boardHole.getPrimerProduct().setModifyTime(new Date());//最后修改时间
+				boardHole.setModifyTime(new Date());//最后修改时间
+				boardHole.setModifyUser(123L);//后续从session取得
 				
 				if ("0".equals(failFlag)) { // Synthesis success
 					failReason = "";
@@ -455,8 +455,10 @@ public class SynthesisService {
 							|| !"".equals(primerProduct.getModiMidType())
 							|| !"".equals(primerProduct.getModiSpeType())) { // 需要修饰，到待修饰状态
 						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.modification);
+						board.setOperationType(PrimerStatusType.modification);
 					} else {//不需要修饰，到待氨解状态
 						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.ammonia);
+						board.setOperationType(PrimerStatusType.ammonia);
 					}
 					
 					type = PrimerOperationType.synthesisSuccess;
@@ -464,17 +466,15 @@ public class SynthesisService {
 					
 				} else if ("1".equals(failFlag)) { // Synthesis fail
 					
-					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
-					boardHole.getPrimerProduct().setBoardNo("");//清空板号
 					if (boardHole.getPrimerProduct().getBackTimes() != null) {
 						boardHole.getPrimerProduct().setBackTimes(boardHole.getPrimerProduct().getBackTimes()+1);//循环重回次数+1
 					}else{
 						boardHole.getPrimerProduct().setBackTimes(1);
 					}
 					
-					//删除孔信息
-					boardHoleRepository.delete(boardHole);
-					boardHoles.remove(i);
+					boardHole.setStatus(1);//删除
+					boardHole.getPrimerProduct().setBoardNo("");//清空板号
+					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
 					
 					type = PrimerOperationType.synthesisFailure;
 					typeDesc = PrimerOperationType.synthesisFailure.desc();
@@ -491,6 +491,10 @@ public class SynthesisService {
 				primerProductOperation.setTypeDesc(typeDesc);
 				primerProductOperation.setBackTimes(boardHole.getPrimerProduct().getBackTimes());
 				primerProductOperation.setFailReason(failReason);
+				
+				if ("1".equals(failFlag)) {
+					boardHole.setPrimerProductOperation(primerProductOperation);
+				}
 				
 				primerProductOperations.add(primerProductOperation);
 				
