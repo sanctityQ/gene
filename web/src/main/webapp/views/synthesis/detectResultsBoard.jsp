@@ -29,7 +29,10 @@
 			</td>
 			<td align="right">生产编号:</td>
 			<td class="scope"><input class="inp_text" type="text" id="productNo" name="productNo" value="" style="width: 50%" /></td>
-            <td>修饰方式:</td>
+			<td colspan="3" height="10"></td>
+		</tr>
+        <tr>
+            <td align="right">修饰方式:</td>
             <td>
                 <label><input type="checkbox" id="modiFiveType" name="modiFiveType" checked/> 5'修饰</label>
                 <label><input type="checkbox" id="modiThreeType" name="modiThreeType" checked/> 3'修饰</label>
@@ -44,9 +47,7 @@
                 <label><input type="radio" id="purifyType" name="purifyType" value="HPLC"/>HPLC</label>
             </td>
             <td><button type="button" class="btn" onclick="getResultProducts();">查询</button></td>
-		</tr>
-        <tr>
-            <td colspan="9" height="10"></td>
+            <td colspan="2" height="10"></td>
         </tr>
 	</table>
     <div class="btn_group">
