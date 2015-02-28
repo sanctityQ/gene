@@ -5,6 +5,7 @@ package org.one.gene.domain.entity;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -116,6 +117,9 @@ public class PrimerProduct implements java.io.Serializable {
 
     private List<PrimerProductOperation> primerProductOperations = Lists.newArrayList();
 
+    private Date modifyTime;//操作时间
+    
+    
     private String operationTypeDesc;//操作类型描述
 	private BigDecimal odTotal;//OD总量
 	private BigDecimal odTB;//OD/TB
@@ -476,6 +480,18 @@ public class PrimerProduct implements java.io.Serializable {
 		this.mw = mw;
 	}
 	
+	
+    @Column(name="`modify_time`")
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+    
+    
     @PostLoad
     public void init(){
         for (PrimerProductValue primerProductValue : this.getPrimerProductValues()) {

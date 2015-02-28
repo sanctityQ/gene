@@ -445,6 +445,7 @@ public class SynthesisService {
 				String failReason = boardHoleTemp.getRemark();//失败原因
 				
 				type = null;
+				boardHole.getPrimerProduct().setModifyTime(new Date());//最后修改时间
 				
 				if ("0".equals(failFlag)) { // Synthesis success
 					failReason = "";

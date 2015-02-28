@@ -46,7 +46,8 @@ function seachBoardChange(){
                     url: "/gene/synthesis/vagueSeachBoard",
                     dataType: "json",
             		data:{
-            			boardNo: seach.val()
+            			boardNo: seach.val(),
+            			operationType:$("#operationType").val()
                     },
                     success:function(data){
                         list.empty();
