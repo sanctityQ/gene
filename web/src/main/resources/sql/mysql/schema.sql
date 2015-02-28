@@ -118,6 +118,7 @@ CREATE TABLE `board` (
   `type`              VARCHAR(31) COMMENT '类型',
   `create_time`       DATETIME NOT NULL COMMENT '创建时间',
   `create_user`       INT(11) NOT NULL COMMENT '创建user',
+  `operation_type`     VARCHAR(31) NOT NULL COMMENT '状态',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_board_no` (`board_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='合成板表';
@@ -129,6 +130,10 @@ CREATE TABLE `board_hole` (
   `product_id`        BIGINT(20) COMMENT '生产数据ID',
   `create_time`       DATETIME NOT NULL COMMENT '创建时间',
   `create_user`       INT(11) NOT NULL COMMENT '创建user',
+  `modify_time`       DATETIME NOT NULL COMMENT '修改时间',
+  `status`            TINYINT(2)  COMMENT '状态:0正常，1删除',
+  `ppo_id` INT(11) COMMENT '引物操作ID',
+  `sorting` TINYINT(2) DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_board_no_hole_no` (`board_no`,`hole_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='合成板表';

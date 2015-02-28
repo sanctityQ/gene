@@ -270,6 +270,7 @@ public class SynthesisService {
 					index++;
 					boardHole = new BoardHole();
 					boardHole.setHoleNo(holeNo);
+					boardHole.setSorting(index);
 					
 					holeNoList.add(boardHole);
 				}
@@ -284,6 +285,7 @@ public class SynthesisService {
 					index++;
 					boardHole = new BoardHole();
 					boardHole.setHoleNo(holeNo);
+					boardHole.setSorting(index);
 					
 					holeNoList.add(boardHole);
 				}
@@ -308,7 +310,22 @@ public class SynthesisService {
     	board.setBoardType(boardType);
 		board.setCreateUser(123);//后续需要调整到从session取值
 		board.setCreateTime(new Date());
+		board.setOperationType(PrimerStatusType.synthesis);//待合成
     	
+		//取得孔的排序
+		List<BoardHole> holeNoList = getHoleOrderList(boardType);
+		String sortHoleNo = "";
+		int    sorting = 0;
+		BoardHole boardHoleSort = null;
+		Map<String, Integer> lastHoleMap = new HashMap<String, Integer>();
+		for(int i=0 ;i<holeNoList.size();i++){
+			boardHoleSort = (BoardHole)holeNoList.get(i);
+			sortHoleNo = boardHoleSort.getHoleNo();
+			sorting    = boardHoleSort.getSorting();
+			lastHoleMap.put(sortHoleNo, sorting);
+		}
+		
+		
 		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
 		List<PrimerProductOperation> primerProductOperations = new ArrayList<PrimerProductOperation>();
 		
@@ -344,6 +361,14 @@ public class SynthesisService {
 			boardHole.setPrimerProduct(primerProduct);
 			boardHole.setCreateUser(123L);//后续需要调整到从session取值
 			boardHole.setCreateTime(new Date());
+			boardHole.setModifyTime(new Date());
+			boardHole.setStatus(0);//0 正常 1 删除
+			
+			if (lastHoleMap.get(holeNoArray[0]) != null) {
+				boardHole.setSorting(lastHoleMap.get(holeNoArray[0]));
+			}else{
+				boardHole.setSorting(0);
+			}
 			
 			boardHoles.add(boardHole);
 			

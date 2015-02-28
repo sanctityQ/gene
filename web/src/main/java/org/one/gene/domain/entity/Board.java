@@ -8,6 +8,7 @@ import javax.persistence.*;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 
 /**
  * Board
@@ -38,7 +39,11 @@ public class Board extends IdEntity implements java.io.Serializable {
     private Integer createUser;
 
     private List<BoardHole> boardHoles = Lists.newArrayList();
-
+    /**
+     * 状态.
+     */
+    private PrimerStatusType operationType;
+    
     public Board() {
     }
 
@@ -95,6 +100,7 @@ public class Board extends IdEntity implements java.io.Serializable {
     }
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "board")
+    @OrderBy(value = "sorting ASC")
     public List<BoardHole> getBoardHoles() {
         return this.boardHoles;
     }
@@ -108,6 +114,16 @@ public class Board extends IdEntity implements java.io.Serializable {
 		return ToStringBuilder.reflectionToString(this);
 	}
 
+    @Column(name = "`operation_type`", length = 31)
+    @Enumerated(value = EnumType.STRING)
+    public PrimerStatusType getOperationType() {
+        return this.operationType;
+    }
+
+    public void setOperationType(PrimerStatusType operationType) {
+        this.operationType = operationType;
+    }
+    
 }
 
 
