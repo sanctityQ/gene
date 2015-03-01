@@ -98,10 +98,10 @@ var ctx = '${ctx}';
 				<th data-options="field:'odTB',width:80,sortable:true,editor:'text'">OD/tube</th>
 				</c:if>
 				<th data-options="field:'purifyType',width:80,sortable:true,editor:'text'">纯化方式</th>
-				<th data-options="field:'midi',width:80,sortable:true,editor:'text',styler:cellStyler">修饰</th>
-				<th data-options="field:'modiPrice',width:80,sortable:true,editor:'text'">修饰价格</th>
-				<th data-options="field:'baseVal',width:80,sortable:true,editor:'text'">碱基单价</th>
-				<th data-options="field:'purifyVal',width:80,sortable:true,editor:'text'">纯化价格</th>
+				<th data-options="field:'midi',width:200,sortable:true,editor:'text',styler:cellStyler">修饰</th>
+				<th data-options="field:'modiPrice',width:40,sortable:true,editor:'text'">修饰价格</th>
+				<th data-options="field:'baseVal',width:40,sortable:true,editor:'text'">碱基单价</th>
+				<th data-options="field:'purifyVal',width:40,sortable:true,editor:'text'">纯化价格</th>
 				<th data-options="field:'totalVal',width:80,sortable:true,editor:'text'">总价格</th>
 				<th data-options="field:'fromProductNo',width:80,hidden:true,sortable:true,editor:'text'">来源生产编号</th>
 

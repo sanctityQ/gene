@@ -193,7 +193,7 @@ CREATE TABLE `primer_label_config_sub` (
 
 CREATE TABLE `customer_price` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
-  `customer_code` VARCHAR(31)      NOT NULL COMMENT '客户代码',
+  `customer_code` VARCHAR(15)      NOT NULL COMMENT '客户代码',
   `modi_price`   DECIMAL(10,2) COMMENT '修饰价格',
   `base_val`     DECIMAL(10,2) COMMENT '碱基单价',
   `purify_val`     DECIMAL(10,2) COMMENT '纯化价格',

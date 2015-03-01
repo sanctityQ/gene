@@ -5,13 +5,7 @@ package org.one.gene.domain.entity;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -93,6 +87,8 @@ public class Customer extends IdEntity implements java.io.Serializable {
      * 业务员.
      */
     private String handlerCode;
+
+    private CustomerPrice customerPrice;
     
     private List<PrimerProduct> primerProducts = Lists.newArrayList();
     
@@ -255,9 +251,14 @@ public class Customer extends IdEntity implements java.io.Serializable {
         this.fax = fax;
     }
 
-	@Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "`cp_id`",unique = true)
+    public CustomerPrice getCustomerPrice() {
+        return customerPrice;
+    }
+
+    public void setCustomerPrice(CustomerPrice customerPrice) {
+        this.customerPrice = customerPrice;
     }
 }
 

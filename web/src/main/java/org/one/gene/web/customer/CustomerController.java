@@ -60,7 +60,6 @@ public class CustomerController {
 	}
 	@Post("save")
 	public String save(@Param("customer") Customer customer,Invocation inv) throws IllegalStateException, IOException{
-		customer.setModifyTime(new Date());
 		customerService.save(customer);
 		return "clientManage";
 	}

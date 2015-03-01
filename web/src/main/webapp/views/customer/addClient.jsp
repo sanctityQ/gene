@@ -98,6 +98,20 @@ var ctx = '${ctx}';
                 <td align="right">办事处:</td>
                 <td colspan="3"><input class="inp_text" name="customer.office" type="text" value="${customer.office}"  style="width: 50%" /></td>
             </tr>
+            <tr>
+				<td align="right">修饰价格:</td>
+				<td><input class="inp_text" type="text" name="customer.customerPrice.modifyPrice" value="${customer.customerPrice.modifyPrice}"  style="width:150px" /></td>
+				<td align="right">碱基单价:</td>
+                <td><input class="inp_text" name="customer.customerPrice.baseVal" type="text" value="${customer.customerPrice.baseVal}"  style="width:150px" /></td>
+				
+			</tr>
+			<tr>
+				<td align="right">纯化价格:</td>
+				<td><input class="inp_text" type="text" name="customer.customerPrice.purifyVal" value="${customer.customerPrice.purifyVal}"  style="width:150px" /></td>
+				<td align="right">&nbsp;</td>
+                <td>&nbsp;</td>
+				
+			</tr>
 			<tr>
 				<td colspan="3" height="10"></td>
 			</tr>

@@ -35,9 +35,10 @@ function appendRow(){
              odTotal                :"",
              odTB                   :"",
              purifyType             :"",
-             modiPrice              :"",
-             baseVal                :"",
-             purifyVal              :"",
+             midi                   :row.midi,
+             modiPrice              :row.modiPrice,
+             baseVal                :row.baseVal,
+             purifyVal              :row.purifyVal,
              totalVal               :"",
              fromProductNo          :row.productNo,
              comCode                :row.comCode
@@ -65,28 +66,31 @@ function onClickRow(index){
 	//var tbnVal = $(tbn.target).parent().find('input.textbox-text').val();
 	var tbnVal = $(tbn.target).parents('div.datagrid-cell').parents('tr').find('td[field="tbn"] input.datagrid-editable-input');
 	//修饰单价
-	var modiPrice = bigToSmall.datagrid('getEditor', {index:index,field:'modiPrice'});
-	var modiPriceVal = $(modiPrice.target).parents('div.datagrid-cell').parents('tr').find('td[field="modiPrice"] input.datagrid-editable-input');
+	var row = bigToSmall.datagrid('getSelected');
+//	var modiPrice = bigToSmall.datagrid('getSelected', {index:index,field:'modiPrice'});
+//	var modiPriceVal = $(modiPrice.target).parents('div.datagrid-cell').parents('tr').find('td[field="modiPrice"] input.datagrid-editable-input');
 	//碱基单价
-    var baseVal = bigToSmall.datagrid('getEditor', {index:index,field:'baseVal'});
-    var baseValVal = $(baseVal.target).parents('div.datagrid-cell').parents('tr').find('td[field="baseVal"] input.datagrid-editable-input');
+//    var baseVal = bigToSmall.datagrid('getSelected', {index:index,field:'baseVal'});
+//    var baseValVal = $(baseVal.target).parents('div.datagrid-cell').parents('tr').find('td[field="baseVal"] input.datagrid-editable-input');
     //纯化价格
-    var purifyVal = bigToSmall.datagrid('getEditor', {index:index,field:'purifyVal'});
-    var purifyValVal = $(purifyVal.target).parents('div.datagrid-cell').parents('tr').find('td[field="purifyVal"] input.datagrid-editable-input');
-
+//    var purifyVal = bigToSmall.datagrid('getSelected', {index:index,field:'purifyVal'});
+//    var purifyValVal = $(purifyVal.target).parents('div.datagrid-cell').parents('tr').find('td[field="purifyVal"] input.datagrid-editable-input');
+	var modiPriceVal = row.modiPrice;
+	var baseValVal = row.baseVal;
+	var purifyValVal = row.purifyVal;
     //自动计算
     geneOrder.target.textbox({
     	onChange : function(){
     		$(tbn.target).numberbox('setValue',this.value.length);
-    		calculateByGeneOrder(this.value.length,modiPriceVal.val(),baseValVal.val(),purifyValVal.val(),index);
+    		calculateByGeneOrder(this.value.length,modiPriceVal,baseValVal,purifyValVal,index);
         }
     });
     tbn.target.numberbox({
     	onChange : function(){
-    		calculateByGeneOrder(this.value,modiPriceVal.val(),baseValVal.val(),purifyValVal.val(),index);
+    		calculateByGeneOrder(this.value,modiPriceVal,baseValVal,purifyValVal,index);
         }
     });
-    modiPrice.target.numberbox({
+    /*modiPrice.target.numberbox({
     	onChange : function(){
     		calculateByGeneOrder(tbnVal.val(),this.value,baseValVal.val(),purifyValVal.val(),index);
         }
@@ -100,7 +104,7 @@ function onClickRow(index){
     	onChange : function(){
     		calculateByGeneOrder(tbnVal.val(),modiPriceVal.val(),baseValVal.val(),this.value,index);
         }
-    });
+    });*/
     
     
      
@@ -174,17 +178,17 @@ function copyRow(e){
         odTotal                :"",
         odTB                   :"",
         purifyType             :row.purifyType,
+        midi				   :row.midi,
         modiPrice              :row.modiPrice,
         baseVal                :row.baseVal,
         purifyVal              :row.purifyVal,
-        totalVal               :"",
+        totalVal               :row.totalVal,
         fromProductNo          :row.productNo,
         //复制收集全量数据，下面为行对象其他属性赋值。
         comCode                :row.comCode,
         geneOrder              :row.geneOrder,
         modiFiveType           :row.modiFiveType,
         modiMidType            :row.modiMidType,
-        modiPrice              :"",
         modiSpeType            :row.modiSpeType,
         modiThreeType          :row.modiThreeType,
         operationType          :row.operationType,

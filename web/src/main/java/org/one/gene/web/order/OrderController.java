@@ -136,7 +136,7 @@ public class OrderController {
         	//获取外部订单号
         	String outOrderNo = orderService.getOutOrderNo(path,1,1);
         	order.setOutOrderNo(outOrderNo);
-        	order = orderService.ReadExcel(path, 0,"4-",order,customer.getPrefix());
+        	order = orderService.ReadExcel(path, 0,"4-",order,customer);
         	orderService.convertOrder(customer,filename,order);
         	//保存订单信息
         	orderService.save(order);

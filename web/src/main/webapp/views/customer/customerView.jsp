@@ -42,7 +42,7 @@ var ctx = '${ctx}';
 				<td align="right">姓名:</td>
 				<td><input class="readonly_inp" type="text" value="${customer.name}" disabled style="width:150px" /></td>
 				<td align="right">业务员:</td>
-                <td><input class="readonly_inp" name="customer.handlerCode" type="text" value="${customer.handlerCode}"  style="width: 150px" /></td>
+                <td><input class="readonly_inp" disabled name="customer.handlerCode" type="text" value="${customer.handlerCode}"  style="width: 150px" /></td>
 			</tr>
 			<tr>
 				<td align="right">负责人姓名:</td>
@@ -89,6 +89,20 @@ var ctx = '${ctx}';
                 <td align="right">办事处:</td>
                 <td colspan="3"><input class="readonly_inp" type="text" value="${customer.office}" disabled style="width: 50%" /></td>
             </tr>
+            <tr>
+				<td align="right">修饰价格:</td>
+				<td><input class="readonly_inp" disabled type="text" name="customer.customerPrice.modifyPrice" value="${customer.customerPrice.modifyPrice}"  style="width:150px" /></td>
+				<td align="right">碱基单价:</td>
+                <td><input class="readonly_inp" disabled name="customer.customerPrice.baseVal" type="text" value="${customer.customerPrice.baseVal}"  style="width:150px" /></td>
+				
+			</tr>
+			<tr>
+				<td align="right">纯化价格:</td>
+				<td><input class="readonly_inp" disabled type="text" name="customer.customerPrice.purifyVal" value="${customer.customerPrice.purifyVal}"  style="width:150px" /></td>
+				<td align="right">&nbsp;</td>
+                <td>&nbsp;</td>
+				
+			</tr>
 			<tr>
 				<td colspan="3" height="10"></td>
 			</tr>
