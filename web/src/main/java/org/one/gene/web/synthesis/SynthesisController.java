@@ -267,7 +267,12 @@ public class SynthesisController {
 		if (!StringUtils.isBlank(boardNo)) {
 			boardNo = "%" + boardNo + "%";
         }
-		List<Board> boards = boardRepository.vagueSeachBoard(boardNo, operationType.toString());
+		
+		String strOperationType = "";
+		if (operationType != null) {
+			strOperationType = operationType.toString();
+		}
+		List<Board> boards = boardRepository.vagueSeachBoard(boardNo, strOperationType);
     	return Replys.with(boards).as(Json.class);
     }
     
