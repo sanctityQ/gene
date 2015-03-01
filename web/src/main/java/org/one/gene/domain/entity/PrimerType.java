@@ -200,50 +200,50 @@ public class PrimerType {
         packSuccess {
             @Override
             public String desc() {
-                return PrimerStatusType.pack.desc()+"成功";
+                return "分装成功";
             }
         },
         packFailure {
             @Override
             public String desc() {
-                return PrimerStatusType.pack.desc()+"失败";
+                return "分装失败";
             }
         },
         bakeSuccess {
             @Override
             public String desc() {
-                return PrimerStatusType.bake.desc()+"成功";
+                return "烘干成功";
             }
         },
         bakeFailure {
             @Override
             public String desc() {
-                return PrimerStatusType.bake.desc()+"失败";
+                return "烘干失败";
             }
         },
         detectSuccess {
             @Override
             public String desc() {
-                return PrimerStatusType.detect.desc()+"成功";
+                return "检测成功";
             }
         },
         detectFailure {
             @Override
             public String desc() {
-                return PrimerStatusType.detect.desc()+"失败";
+                return "检测失败";
             }
         },
 
         deliverySuccess {
             @Override
             public String desc() {
-                return PrimerStatusType.delivery.desc()+"成功";
+                return "发货成功";
             }
         },
         deliveryFailure {
             @Override
             public String desc() {
-                return PrimerStatusType.delivery.desc()+"失败";
+                return "发货失败";
             }
         },
         backSuccess {

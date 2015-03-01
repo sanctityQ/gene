@@ -261,11 +261,18 @@ public class SynthesisController {
      * 模糊查询板信息
      * */
     @Post("vagueSeachBoard")
-    public Reply vagueSeachBoard(@Param("boardNo") String boardNo, Invocation inv){
+	public Reply vagueSeachBoard(@Param("boardNo") String boardNo,
+			@Param("operationType") PrimerStatusType operationType,
+			Invocation inv) {
 		if (!StringUtils.isBlank(boardNo)) {
 			boardNo = "%" + boardNo + "%";
         }
-		List<Board> boards = boardRepository.vagueSeachBoard(boardNo);
+		
+		String strOperationType = "";
+		if (operationType != null) {
+			strOperationType = operationType.toString();
+		}
+		List<Board> boards = boardRepository.vagueSeachBoard(boardNo, strOperationType);
     	return Replys.with(boards).as(Json.class);
     }
     
@@ -458,11 +465,13 @@ public class SynthesisController {
      * 模糊查询板信息或生产信息
      * */
     @Post("vagueSeachBoardNoOrProductNo")
-    public Reply vagueSeachBoardNoOrProductNo(@Param("boardNo") String boardNo, Invocation inv){
+	public Reply vagueSeachBoardNoOrProductNo(@Param("boardNo") String boardNo,
+			@Param("operationType") PrimerStatusType operationType,
+			Invocation inv) {
 		if (!StringUtils.isBlank(boardNo)) {
 			boardNo = "%" + boardNo + "%";
         }
-		List<Board> boards = boardRepository.vagueSeachBoard(boardNo);
+		List<Board> boards = boardRepository.vagueSeachBoard(boardNo,operationType.toString());
 		for(Board board:boards){
 			board.setType("1");//板
 		}

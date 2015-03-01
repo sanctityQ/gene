@@ -270,6 +270,7 @@ public class SynthesisService {
 					index++;
 					boardHole = new BoardHole();
 					boardHole.setHoleNo(holeNo);
+					boardHole.setSorting(index);
 					
 					holeNoList.add(boardHole);
 				}
@@ -284,6 +285,7 @@ public class SynthesisService {
 					index++;
 					boardHole = new BoardHole();
 					boardHole.setHoleNo(holeNo);
+					boardHole.setSorting(index);
 					
 					holeNoList.add(boardHole);
 				}
@@ -308,7 +310,22 @@ public class SynthesisService {
     	board.setBoardType(boardType);
 		board.setCreateUser(123);//后续需要调整到从session取值
 		board.setCreateTime(new Date());
+		board.setOperationType(PrimerStatusType.synthesis);//待合成
     	
+		//取得孔的排序
+		List<BoardHole> holeNoList = getHoleOrderList(boardType);
+		String sortHoleNo = "";
+		int    sorting = 0;
+		BoardHole boardHoleSort = null;
+		Map<String, Integer> lastHoleMap = new HashMap<String, Integer>();
+		for(int i=0 ;i<holeNoList.size();i++){
+			boardHoleSort = (BoardHole)holeNoList.get(i);
+			sortHoleNo = boardHoleSort.getHoleNo();
+			sorting    = boardHoleSort.getSorting();
+			lastHoleMap.put(sortHoleNo, sorting);
+		}
+		
+		
 		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
 		List<PrimerProductOperation> primerProductOperations = new ArrayList<PrimerProductOperation>();
 		
@@ -344,6 +361,13 @@ public class SynthesisService {
 			boardHole.setPrimerProduct(primerProduct);
 			boardHole.setCreateUser(123L);//后续需要调整到从session取值
 			boardHole.setCreateTime(new Date());
+			boardHole.setStatus(0);//0 正常 1 删除
+			
+			if (lastHoleMap.get(holeNoArray[0]) != null) {
+				boardHole.setSorting(lastHoleMap.get(holeNoArray[0]));
+			}else{
+				boardHole.setSorting(0);
+			}
 			
 			boardHoles.add(boardHole);
 			
@@ -402,24 +426,26 @@ public class SynthesisService {
     	}
     	
     	Board board = boardRepository.findByBoardNo(boardNo);
-		BoardHole boardHole = null;
 		BoardHole boardHoleTemp = null;//页面取得的孔信息
-		List<BoardHole> boardHoles = board.getBoardHoles();
 		PrimerProduct primerProduct = new PrimerProduct(); 
 		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
 		List<PrimerProductOperation> primerProductOperations = new ArrayList<PrimerProductOperation>();
 		PrimerOperationType type = null;
 		String typeDesc = "";
 		
-		for (int i = board.getBoardHoles().size() - 1; i >= 0; i--) {
-			boardHole = (BoardHole) board.getBoardHoles().get(i);
+		for (BoardHole boardHole:board.getBoardHoles()) {
+			
 			primerProduct = boardHole.getPrimerProduct();
-			if(bhMap.get(boardHole.getHoleNo())!=null){
+			
+			if (bhMap.get(boardHole.getHoleNo()) != null) {
 				boardHoleTemp = (BoardHole)bhMap.get(boardHole.getHoleNo());
 				String failFlag = boardHoleTemp.getFailFlag();//是否失败标志
 				String failReason = boardHoleTemp.getRemark();//失败原因
 				
 				type = null;
+				boardHole.getPrimerProduct().setModifyTime(new Date());//最后修改时间
+				boardHole.setModifyTime(new Date());//最后修改时间
+				boardHole.setModifyUser(123L);//后续从session取得
 				
 				if ("0".equals(failFlag)) { // Synthesis success
 					failReason = "";
@@ -433,22 +459,22 @@ public class SynthesisService {
 						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.ammonia);
 					}
 					
+					board.setOperationType(boardHole.getPrimerProduct().getOperationType());
+					
 					type = PrimerOperationType.synthesisSuccess;
 					typeDesc = PrimerOperationType.synthesisSuccess.desc();
 					
 				} else if ("1".equals(failFlag)) { // Synthesis fail
 					
-					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
-					boardHole.getPrimerProduct().setBoardNo("");//清空板号
 					if (boardHole.getPrimerProduct().getBackTimes() != null) {
 						boardHole.getPrimerProduct().setBackTimes(boardHole.getPrimerProduct().getBackTimes()+1);//循环重回次数+1
 					}else{
 						boardHole.getPrimerProduct().setBackTimes(1);
 					}
 					
-					//删除孔信息
-					boardHoleRepository.delete(boardHole);
-					boardHoles.remove(i);
+					boardHole.setStatus(1);//删除
+					boardHole.getPrimerProduct().setBoardNo("");//清空板号
+					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
 					
 					type = PrimerOperationType.synthesisFailure;
 					typeDesc = PrimerOperationType.synthesisFailure.desc();
@@ -465,6 +491,10 @@ public class SynthesisService {
 				primerProductOperation.setTypeDesc(typeDesc);
 				primerProductOperation.setBackTimes(boardHole.getPrimerProduct().getBackTimes());
 				primerProductOperation.setFailReason(failReason);
+				
+				if ("1".equals(failFlag)) {
+					boardHole.setPrimerProductOperation(primerProductOperation);
+				}
 				
 				primerProductOperations.add(primerProductOperation);
 				
@@ -489,14 +519,27 @@ public class SynthesisService {
 	public void exportMachineTable(String boardNo, Invocation inv) throws IOException {
 		
 		String tableContext = "";//
-		List<PrimerProduct> PrimerProducts = primerProductRepository.findByBoardNo(boardNo);
+		Board board = boardRepository.findByBoardNo(boardNo);
+		PrimerProduct primerProduct = null;
 		int i = 0;
-		for(PrimerProduct primerProduct:PrimerProducts){
+		for(BoardHole bh:board.getBoardHoles()){
+			primerProduct = bh.getPrimerProduct();
 			if ( i !=0 ){//行尾加回车
 				tableContext += "\r\n";
 			}
-			tableContext += primerProduct.getProductNo()+", ";
-			tableContext += primerProduct.getGeneOrder();
+			//生产编号
+			if (!"".equals(primerProduct.getProductNo())) {
+				tableContext += primerProduct.getProductNo()+", ";
+			}else{
+				tableContext += primerProduct.getOutProductNo()+", ";
+			}
+			
+			//序列，如果是删除的，展现错误类型信息
+			if(bh.getStatus() == 0){
+				tableContext += primerProduct.getGeneOrder();
+			}else if(bh.getStatus() == 1){
+				tableContext += bh.getPrimerProductOperation().getTypeDesc();
+			}
 			i++;
 		}
     	
@@ -765,12 +808,21 @@ public class SynthesisService {
 					primerProduct.setMidi(midi);
 				}
 				
+			   if (primerProduct.getReviewFileName() == null || "null".equals(primerProduct.getReviewFileName())) {
+				   primerProduct.setReviewFileName("");
+			   }
+				   
 				//文件超连接
 			   if (!"".equals(primerProduct.getReviewFileName())) {
 				   String templateFilePath= File.separator+"gene"+File.separator+"upExcel"+File.separator+"detect"+File.separator+primerProduct.getReviewFileName();
 				   System.out.println("检测结果查询页面，下载附件文件的路径templateFilePath="+templateFilePath);
 				   primerProduct.setReviewFileName("<a href='"+templateFilePath+"' target='_blank'>"+primerProduct.getReviewFileName()+"</a>");
 				}
+			   
+			   if(primerProduct.getBackTimes() == null){
+				   primerProduct.setBackTimes(0);
+			   }
+
 			}
 
 			return primerProductPage;
@@ -789,6 +841,18 @@ public class SynthesisService {
 		for (PrimerProduct pp:primerProducts) {
 			
 			PrimerProduct primerProduct = primerProductRepository.findOne(pp.getId());
+			BoardHole boardHole = boardHoleRepository.findByPrimerProduct(primerProduct);
+			
+			primerProduct.setModifyTime(new Date());//最后修改时间
+			
+			if (boardHole != null) {
+				boardHole.setModifyTime(new Date());//最后修改时间
+				boardHole.setModifyUser(123L);//后续从session取得
+			}
+			
+			if(primerProduct.getBackTimes() == null){
+				primerProduct.setBackTimes(0);
+			}
 			type = null;
 			
 			if ("1".equals(successFlag)) { // success
@@ -813,10 +877,8 @@ public class SynthesisService {
 					primerProduct.setBackTimes(1);
 				}
 				
-				//删除孔信息
-				BoardHole boardHole = boardHoleRepository.findByPrimerProduct(primerProduct);
 				if (boardHole != null) {
-					boardHoleRepository.delete(boardHole);
+					boardHole.setStatus(1);//删除
 				}
 				
 				if (operationType.equals(PrimerStatusType.modification)) {
@@ -840,12 +902,49 @@ public class SynthesisService {
 			primerProductOperation.setBackTimes(primerProduct.getBackTimes());
 			primerProductOperation.setFailReason(failReason);
 			
-			System.out.println("================"+primerProductOperation.getPrimerProduct().getId()+"=="+primerProductOperation.getType()+"==="+primerProductOperation.getBackTimes());
+			if ("0".equals(successFlag)) {
+				boardHole.setPrimerProductOperation(primerProductOperation);
+			}
+			
+			//保存轨迹信息
 			primerProductOperationRepository.save(primerProductOperation);
 
 			//保存primer_product表数据
 			primerProductRepository.save(primerProduct);
-    	}
+			
+			//更新孔信息
+			boardHoleRepository.save(boardHole);
+			
+			
+			//如果是本板号中最后一个修饰（检测）的数据，则更新板状态
+			String boardNo = boardHole.getBoard().getBoardNo();
+			Board board = boardRepository.findByBoardNo(boardNo);
+			
+			boolean boardFlag = false;
+			boolean allPPFlag = true;
+			
+			if(board.getOperationType() == operationType){
+				boardFlag = true;
+			}
+			
+			for(BoardHole bh:board.getBoardHoles()){
+				PrimerProduct ppTemp = bh.getPrimerProduct();
+				if(ppTemp.getOperationType() == operationType){
+					allPPFlag = false;
+					break;
+				}
+			}
+			if(boardFlag && allPPFlag){
+				if (operationType.equals(PrimerStatusType.modification)) {
+					board.setOperationType(PrimerStatusType.purify);
+					
+				} else if (operationType.equals(PrimerStatusType.detect)) {
+					board.setOperationType(PrimerStatusType.delivery);
+					
+				}
+				boardRepository.save(board);
+			}
+		}
     	
     	return "";
     }
@@ -871,10 +970,12 @@ public class SynthesisService {
 				
 				this.addNewValue(primerProduct);
 				
-				boardHoleMap.put(boardHole.getHoleNo(), primerProduct);
-				totalCount += 1;
+				if (boardHole.getStatus() == 0) {//0正常  1 删除  
+					boardHoleMap.put(boardHole.getHoleNo(), primerProduct);
+					totalCount += 1;
+				}
 				
-				if (!boardHole.getPrimerProduct().getOperationType().equals(operationType)) {
+				if (!boardHole.getPrimerProduct().getOperationType().equals(operationType) && boardHole.getStatus() == 0) {
 					typeFlag = "0";
 				}
 			}
@@ -954,21 +1055,24 @@ public class SynthesisService {
     	}
     	
     	Board board = boardRepository.findByBoardNo(boardNo);
-		BoardHole boardHole = null;
 		BoardHole boardHoleTemp = null;
-		List<BoardHole> boardHoles = board.getBoardHoles();
 		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
 		List<PrimerProductOperation> primerProductOperations = new ArrayList<PrimerProductOperation>();
 		PrimerOperationType type = null;
 		String typeDesc = "";
 		
-		for (int i = board.getBoardHoles().size() - 1; i >= 0; i--) {
-			boardHole = (BoardHole) board.getBoardHoles().get(i);
+		for (BoardHole boardHole:board.getBoardHoles()) {
+			
 			if(bhMap.get(boardHole.getHoleNo())!=null){
+				
 				boardHoleTemp = (BoardHole)bhMap.get(boardHole.getHoleNo());
 				String failFlag = boardHoleTemp.getFailFlag();
 				String failReason = boardHoleTemp.getRemark();
 				type = null;
+				
+				boardHole.getPrimerProduct().setModifyTime(new Date());//最后修改时间
+				boardHole.setModifyTime(new Date());//最后修改时间
+				boardHole.setModifyUser(123L);//后续从session取得
 				
 				if ("0".equals(failFlag)) { // success
 					failReason = "";
@@ -994,7 +1098,8 @@ public class SynthesisService {
 						type = PrimerOperationType.measureSuccess;
 						typeDesc = PrimerOperationType.measureSuccess.desc();
 					}
-                    	
+					
+					board.setOperationType(boardHole.getPrimerProduct().getOperationType());//板的状态赋值
 					
 				} else if ("1".equals(failFlag) || "2".equals(failFlag) || "3".equals(failFlag)) { // fail
 					
@@ -1010,9 +1115,7 @@ public class SynthesisService {
 						boardHole.getPrimerProduct().setBackTimes(1);
 					}
 					
-					//删除孔信息
-					boardHoleRepository.delete(boardHole);
-					boardHoles.remove(i);
+					boardHole.setStatus(1);//删除
 					
 					if (operationType.equals(PrimerStatusType.ammonia)) {
 						type = PrimerOperationType.ammoniaFailure;
@@ -1042,7 +1145,11 @@ public class SynthesisService {
 				primerProductOperation.setType(type);
 				primerProductOperation.setTypeDesc(typeDesc);
 				primerProductOperation.setBackTimes(boardHole.getPrimerProduct().getBackTimes());
-				primerProductOperation.setFailReason(failReason);//
+				primerProductOperation.setFailReason(failReason);
+				
+				if ("1".equals(failFlag) || "2".equals(failFlag) || "3".equals(failFlag)) {
+					boardHole.setPrimerProductOperation(primerProductOperation);
+				}
 				
 				primerProductOperations.add(primerProductOperation);
 				

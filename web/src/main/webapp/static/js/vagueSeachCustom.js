@@ -13,10 +13,30 @@ function seachCustomChange(){
     var list = $("#seachCustomList");
     list.css({'left':left,'top':top});
     list.on("click",'li',seachCustomSelect);
-    seach.bind('input',function(){
+    seach.bind('keydown',function(event){
+        var select = $('li.selected',list);
+        if(event.keyCode == 40){
+            if(select.length){
+                if(select.index()!=$('li',list).length-1){
+                    select.removeClass('selected').next().addClass('selected');
+                }
+            }else{
+                $('li:first',list).addClass('selected');
+            }
+        }else if(event.keyCode == 38){
+            if(select.length){
+                if(select.index()!=0){
+                    select.removeClass('selected').prev().addClass('selected');
+                }
+            }else{
+                $('li:first',list).addClass('selected');
+            }
+        }else if(event.keyCode == 13){
+            var val = select.text();
+            select.trigger('click');
+        }else{
         ajaxSeach();
-    }).bind('keyup',function(){
-        ajaxSeach();
+        }
     });
     function ajaxSeach(){
         setTimeout(function(){
@@ -45,15 +65,14 @@ function seachCustomChange(){
             }else{
                 list.hide(100);
             }
-        },500)
-    }
+        },500);
+    };
 }
 function seachCustomSelect(){
     var seach = $("#seachCustom");
     var list = $("#seachCustomList");
     var id = $(this).attr("id");
     var val = $(this).text();
-    seach.val(val);
-    $("#customercode").val(id);
+    seach.val(val).attr("tagId",id);
     list.hide(100);
-}
+};

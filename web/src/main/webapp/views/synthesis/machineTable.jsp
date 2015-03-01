@@ -26,7 +26,7 @@
 			<div class="import_box">
 				<i class="icon-list-alt"></i>请选择板号后导出相应上机表。
 				<br />
-				<input class="inp_text" id="boardNo" type="text" name="boardNo" value="" style="width: 300px" />
+				<input class="inp_text" autocomplete="off" id="boardNo" type="text" name="boardNo" value="" style="width: 300px" />
 				<ul id="seachBoardList"></ul>
 			</div>
 	

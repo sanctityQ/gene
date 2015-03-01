@@ -38,6 +38,21 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
     * 创建user.
     */
     private Long createUser;
+
+    private Date modifyTime;
+    private Long modifyUser;
+    /**
+     * 状态
+     */
+    private int status;
+
+    private PrimerProductOperation primerProductOperation;
+
+    /**
+     * 排序
+     */
+    private int sorting;
+
     private String failFlag;//临时字段 成功失败标志:  0 成功; 1 失败; 2 重新合成; 3 重新分装
     private String remark;//临时字段
     
@@ -125,8 +140,53 @@ public class BoardHole extends IdEntity implements java.io.Serializable {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-	
-	
+
+    @Column(name="`modify_time`")
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    @Column(name="`modify_user`")
+    public Long getModifyUser() {
+    return this.modifyUser;
+    }
+
+    public void setModifyUser(Long modifyUser) {
+    this.modifyUser = modifyUser;
+    }
+    
+    @Column(name="`status`")
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "`ppo_id`", nullable = false)
+    public PrimerProductOperation getPrimerProductOperation() {
+        return primerProductOperation;
+    }
+
+    public void setPrimerProductOperation(PrimerProductOperation primerProductOperation) {
+        this.primerProductOperation = primerProductOperation;
+    }
+
+    @Column(name="`sorting`")
+    public int getSorting() {
+        return sorting;
+    }
+
+    public void setSorting(int sorting) {
+        this.sorting = sorting;
+    }
 }
 
 

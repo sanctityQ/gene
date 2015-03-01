@@ -21,11 +21,12 @@
 <form name="form" modelAttribute="user" action="${ctx}/synthesis/uploadMeasure" method="post" enctype="multipart/form-data" class="form-horizontal">
 <div class="page_padding">
 	<div class="content_box">
+	    <input type="hidden" id="operationType" name="operationType" value="measure"/>
 		<h2>测值结果</h2>
 		<div class="import_box">
 			<i class="icon-group"></i>请输入需要导入的板号。
 			<br />
-			<input class="inp_text" type="text" id="boardNo" name="boardNo" value="" style="width: 300px" />
+			<input class="inp_text" type="text" autocomplete="off" id="boardNo" name="boardNo" value="" style="width: 300px" />
 			<ul id="seachBoardList"></ul>
 		</div>
 		<div class="import_box" style="line-height: 16px;">

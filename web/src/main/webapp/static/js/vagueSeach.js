@@ -38,11 +38,6 @@ function seachChange(url){
             ajaxSeach();
         }
     });
-/*    seach.bind('input',function(){
-        ajaxSeach();
-    }).bind('keyup',function(){
-        ajaxSeach();
-    });*/
     function ajaxSeach(){
         setTimeout(function(){
             if(seach.val() != ''){
@@ -71,8 +66,8 @@ function seachChange(url){
             }else{
                 list.hide(100);
             }
-        },500)
-    }
+        },500);
+    };
 }
 function seachLiSelect(){
     var seach = $("#seachCustom");
@@ -82,4 +77,4 @@ function seachLiSelect(){
     seach.val(val).attr("tagId",id);
     $("#customerCode").val(id);
     list.hide(100);
-}
+};

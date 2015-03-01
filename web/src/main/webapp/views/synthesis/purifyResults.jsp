@@ -21,11 +21,12 @@
 <body>
 <div class="page_padding">
 	<div class="content_box">
+	    <input type="hidden" id="operationType" name="operationType" value="purify"/>
 		<h2>录入纯化结果</h2>
 		<div class="import_box">
 			<i class="icon-pencil"></i>请输入板号，点击“纯化结果”按钮，进入结果录入页面。
 			<br />
-			<input class="inp_text" type="text" id="boardNo" name="boardNo" value="" style="width: 300px" />
+			<input class="inp_text" type="text" autocomplete="off" id="boardNo" name="boardNo" value="" style="width: 300px" />
 			<ul id="seachBoardList"></ul>
 		</div>
 

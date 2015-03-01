@@ -24,28 +24,30 @@
 		    <input type="hidden" id="operationType" name="operationType" value="detect"/>
 		<tr>
 			<td align="right">板号:</td>
-			<td><input class="inp_text" type="text" id="boardNo" name="boardNo" value="" style="width: 80%" />
+			<td><input class="inp_text" type="text" autocomplete="off" id="boardNo" name="boardNo" value="" style="width: 80%" />
 			    <ul id="seachBoardList"></ul>
 			</td>
 			<td align="right">生产编号:</td>
-			<td class="scope"><input class="inp_text" type="text" id="productNo" name="productNo" value="" style="width: 60%" /></td>
-            <td>修饰方式:</td>
+			<td class="scope"><input class="inp_text" type="text" id="productNo" name="productNo" value="" style="width: 50%" /></td>
+			<td colspan="3" height="10"></td>
+		</tr>
+        <tr>
+            <td align="right">修饰方式:</td>
             <td>
-                <label><input type="checkbox" id="modiFiveType" name="modiFiveType"/> 5'修饰</label>
-                <label><input type="checkbox" id="modiThreeType" name="modiThreeType"/> 3'修饰</label>
-                <label><input type="checkbox" id="modiMidType" name="modiMidType"/> 中间修饰</label>
-                <label><input type="checkbox" id="modiSpeType" name="modiSpeType"/> 特殊修饰</label>
+                <label><input type="checkbox" id="modiFiveType" name="modiFiveType" checked/> 5'修饰</label>
+                <label><input type="checkbox" id="modiThreeType" name="modiThreeType" checked/> 3'修饰</label>
+                <label><input type="checkbox" id="modiMidType" name="modiMidType" checked/> 中间修饰</label>
+                <label><input type="checkbox" id="modiSpeType" name="modiSpeType" checked/> 特殊修饰</label>
             </td>
             <td align="right">纯化方式:</td>
             <td>
+                <label><input type="radio" id="purifyType" name="purifyType" value="" checked/>所有</label>
                 <label><input type="radio" id="purifyType" name="purifyType" value="OPC"/>OPC</label>
                 <label><input type="radio" id="purifyType" name="purifyType" value="PAGE"/>PAGE</label>
                 <label><input type="radio" id="purifyType" name="purifyType" value="HPLC"/>HPLC</label>
             </td>
             <td><button type="button" class="btn" onclick="getResultProducts();">查询</button></td>
-		</tr>
-        <tr>
-            <td colspan="9" height="10"></td>
+            <td colspan="2" height="10"></td>
         </tr>
 	</table>
     <div class="btn_group">
@@ -65,13 +67,13 @@
             <th data-options="field:'reviewFileName',width:120,sortable:true">文件</th>
 			<th data-options="field:'boardNo',width:80,sortable:true">板号</th>
 			<th data-options="field:'geneOrder',width:80,sortable:true">序列</th>
-			<th data-options="field:'tbn',width:80,sortable:true">碱基数</th>
-            <th data-options="field:'purifyType',width:80,sortable:true">纯化方式</th>
+			<th data-options="field:'tbn',width:40,sortable:true">碱基数</th>
+            <th data-options="field:'purifyType',width:50,sortable:true">纯化方式</th>
             <th data-options="field:'midi',width:80,sortable:true">修饰</th>
-            <th data-options="field:'operationTypeDesc',width:80,sortable:true">状态</th>
-            <th data-options="field:'backTimes',width:80,sortable:true">重回次数</th>
-            <th data-options="field:'mw',width:80,sortable:true">分子量(MW)</th>
-            <th data-options="field:'attr9',width:80,sortable:true">操作时间</th>
+            <th data-options="field:'operationTypeDesc',width:60,sortable:true">状态</th>
+            <th data-options="field:'backTimes',width:50,sortable:true">重回次数</th>
+            <th data-options="field:'mw',width:70,sortable:true">分子量(MW)</th>
+            <th data-options="field:'modifyTime',width:90,sortable:true">操作时间</th>
 		</tr>
 	</thead>
 </table>
