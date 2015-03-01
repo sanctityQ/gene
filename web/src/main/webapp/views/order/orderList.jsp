@@ -28,9 +28,15 @@ var ctx = '${ctx}';
 	<table width="100%">
 		<tr>
 			<td align="right">订单号:</td>
-			<td><input id="orderNo" class="inp_text" type="text" value="" style="width: 60%" /></td>
+			<td>
+			<input class="inp_text" type="text" id="seachOrder" name="orderNo" value="" style="width:80%"/>
+			<ul id="seachOrderList"></ul>
+			</td>
 			<td>客户代码:</td>
-			<td><input id="customerCode" class="inp_text" type="text" value="" style="width: 60%" /></td>
+			<td><input class="inp_text" type="text" id="seachCustom" name="customerName" style="width:150px" />
+			    <input class="inp_text" type="hidden" id="customercode" name="customercode" />
+			    <ul id="seachCustomList"></ul>
+			</td>
 			<td><button type="button" class="btn" onclick="getOrderInfo();">查询</button></td>
 			<td align="right">
 				<!-- <button type="button" class="btn btn-primary" onclick="goToPage('addOrder.html')">增加订单</button>
@@ -57,6 +63,8 @@ var ctx = '${ctx}';
 </table>
 <div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
 <script src="${ctx}/views/order/js/orderList.js" ></script>
+<script src="${ctx}/static/js/vagueSeachOrder.js" ></script>
+<script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script type="text/javascript">
 orderInfoIni();
 $(function(){

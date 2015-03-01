@@ -30,7 +30,7 @@ var ctx = '${ctx}';
 		<tr>
 			<td align="right">姓名:</td>
 			<td>
-			<input class="inp_text" type="text" id="seachCustom" name="customerName" value="" style="width:60%" />
+			<input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width:60%" />
 			<input class="inp_text" id="customerCode" type="hidden" name="customerCode" />
 			<ul id="seachCustomList"></ul>
 			</td>

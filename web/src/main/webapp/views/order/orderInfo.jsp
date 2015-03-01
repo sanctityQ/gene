@@ -102,7 +102,7 @@ var ctx = '${ctx}';
 				<th data-options="field:'odTB',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">OD/tube</th>
 				</c:if>
 				<th data-options="field:'purifyType',width:80,sortable:true,editor:'text'">纯化方式</th>
-				<th data-options="field:'midi',width:80,sortable:true,editor:'text'">修饰</th>
+				<th data-options="field:'midi',width:80,sortable:true,editor:'text',styler:cellStyler">修饰</th>
 				<th data-options="field:'modiPrice',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">修饰价格</th>
 				<th data-options="field:'baseVal',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">碱基单价</th>
 				<th data-options="field:'purifyVal',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">纯化价格</th>

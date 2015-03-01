@@ -183,3 +183,13 @@ CREATE TABLE `primer_label_config_sub` (
   UNIQUE KEY `uk_plc_id_type` (`primer_label_config_id`,`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='引物标签打印配置子表';
 
+
+CREATE TABLE `customer_price` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `customer_code` VARCHAR(31)      NOT NULL COMMENT '客户代码',
+  `modi_price`   DECIMAL(10,2) COMMENT '修饰价格',
+  `base_val`     DECIMAL(10,2) COMMENT '碱基单价',
+  `purify_val`     DECIMAL(10,2) COMMENT '纯化价格',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_plc_id_customer` (`customer_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户引物单价配置表';

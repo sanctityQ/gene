@@ -13,11 +13,36 @@ function seachChange(url){
     var list = $("#seachList");
     list.css({'left':left,'top':top});
     list.on("click",'li',seachLiSelect);
-    seach.bind('input',function(){
+    seach.bind('keydown',function(event){
+        var select = $('li.selected',list);
+        if(event.keyCode == 40){
+            if(select.length){
+                if(select.index()!=$('li',list).length-1){
+                    select.removeClass('selected').next().addClass('selected');
+                }
+            }else{
+                $('li:first',list).addClass('selected');
+            }
+        }else if(event.keyCode == 38){
+            if(select.length){
+                if(select.index()!=0){
+                    select.removeClass('selected').prev().addClass('selected');
+                }
+            }else{
+                $('li:first',list).addClass('selected');
+            }
+        }else if(event.keyCode == 13){
+            var val = select.text();
+            select.trigger('click');
+        }else{
+            ajaxSeach();
+        }
+    });
+/*    seach.bind('input',function(){
         ajaxSeach();
     }).bind('keyup',function(){
         ajaxSeach();
-    });
+    });*/
     function ajaxSeach(){
         setTimeout(function(){
             if(seach.val() != ''){

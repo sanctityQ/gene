@@ -25,7 +25,7 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
     public List<Order> findByCustomerCode(String customerCode);
 
     
-	@SQL("select * from `order` where `status` = '2' and (`order_no` like :orderNoSQL or `out_order_no` like :orderNoSQL ) ")
+	@SQL("select * from `order` where (`order_no` like :orderNoSQL or `out_order_no` like :orderNoSQL ) ")
 	List<Order> vagueSeachOrder(@Param("orderNoSQL") String orderNoSQL);
 	
 }

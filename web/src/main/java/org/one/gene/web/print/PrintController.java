@@ -86,7 +86,7 @@ public class PrintController {
 
     
     @Post("printOutBoundQuery")
-    public Reply printOutBoundQuery(@Param("orderNo") String orderNo, @Param("customerName") String customerName,@Param("pageNo")Integer pageNo,
+    public Reply printOutBoundQuery(@Param("orderNo") String orderNo, @Param("customerName") String customerName,@Param("status") String status,@Param("pageNo")Integer pageNo,
                         @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
 
     	if(pageNo == null || pageNo <=0){
@@ -101,7 +101,7 @@ public class PrintController {
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
         searchParams.put(SearchFilter.Operator.EQ+"_customerName",customerName);
-        searchParams.put(SearchFilter.Operator.EQ+"_status","2");//审核通过
+        searchParams.put(SearchFilter.Operator.EQ+"_status",status);//审核通过
         
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);

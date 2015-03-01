@@ -1,6 +1,10 @@
 var bigIndex = undefined,bigToSmall = $('#bigToSmall'),editIndex = 0;
 function cellStyler(value,row,index){
-    return 'color:red;';
+	if(value!=''){
+      return 'color:red;';
+    }else{
+      return '';	
+    }
 }
 function formatOper(val,row,index){
 	if(row.nmolTotal>=50 || row.odTotal>=10){
@@ -186,12 +190,9 @@ function copyRow(e){
         operationType          :row.operationType,
         order                  :row.order,
         primeName              :row.primeName,
-        remark                 :row.remark
-        //primerProductOperations:"",
-        //primerProductValues    :""
+        remark                 :row.remark,
         }
     });
-    //row.primerProductOperations[ind].id="";
     for(var i=0;i<row.primerProductValues[ind].length;i++){
     	row.primerProductValues[i].id="";
     }

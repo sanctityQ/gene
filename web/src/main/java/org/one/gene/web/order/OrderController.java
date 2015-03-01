@@ -60,6 +60,9 @@ public class OrderController {
     	String fileName = "orderTemplate.xls";
 		String templateFilePath= File.separator+"gene"+File.separator+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+fileName;
 		inv.addModel("templateFilePath", templateFilePath);
+		//获取客户代码，外部客户控制页面客户代码是否显示录入，并自动赋值客户代码
+		//实现功能代码暂时写死
+		inv.addModel("flag", "1");
         return "orderImport";
     }
     @Get("orderList")
@@ -338,6 +341,18 @@ public class OrderController {
     	String orderSQLStr = "%" + orderNo + "%";
     	List<Order> orders = orderRepository.vagueSeachOrder(orderSQLStr);
     	return Replys.with(orders).as(Json.class);
+    }
+    
+    @Post("lookQuery")
+    @Get("lookQuery")
+    public String lookQuery(@Param("orderNo") String orderNo, Invocation inv) throws Exception {
+    	 Order order = orderRepository.findByOrderNo(orderNo);
+    	 String coustomerCode = "";
+     	 coustomerCode = order.getCustomerCode();
+     	 Customer customer = orderService.findCustomer(coustomerCode);
+     	 inv.addModel("customer", customer);
+		 inv.addModel("order", order);
+    	 return "orderView";
     }
 
 }

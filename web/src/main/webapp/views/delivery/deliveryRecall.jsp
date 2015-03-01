@@ -24,7 +24,7 @@ var ctx = '${ctx}';
 	<table width="100%">
 		<tr>
 			<td align="right">客户代码:</td>
-			<td><input class="inp_text" type="text" id="seachCustom" name="customerName" value="" style="width: 150px" />
+			<td><input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 150px" />
 			    <input class="inp_text" type="hidden" id="customercode" name="customercode" value=""/>
 			    <ul id="seachCustomList"></ul>
 			</td>

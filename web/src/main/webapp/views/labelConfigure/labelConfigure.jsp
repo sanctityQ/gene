@@ -36,7 +36,7 @@ var ctx = '${ctx}';
                 <td align="right">客户代码：</td>
                 <!-- <td><input class="inp_text" type="text" value="" style="width: 80%" /></td> -->
                 <td>
-                <input class="inp_text" type="text" id="seachCustom" name="customerName" value="" style="width: 80%" />
+                <input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 80%" />
 			    <input class="inp_text" id="customerCode" type="hidden" name="customerCode" value=""/>
 			    <ul id="seachList"></ul>
 			    </td>

@@ -1,4 +1,11 @@
 var bigIndex = undefined,orderList = $('#orderList');
+function cellStyler(value,row,index){
+	if(value!=''){
+      return 'color:red;';
+    }else{
+      return '';	
+    }
+}
 function formatOper(val,row,index){
 	if(row.status=='订单审核通过'){
 		return '&nbsp;<a href="javascript:;" onclick="lookOrder('+row.id+','+index+')"><i class="icon-book"></i>查看</a>&nbsp;';
@@ -44,7 +51,7 @@ var orderInfoIni=function(){
  */
 var getOrderInfo=function(){
     var gridOpts = $('#orderList').datagrid('getPager').data("pagination").options;
-	var orderNo = $("#orderNo").val();
+	var orderNo = $("#seachOrder").val();
 	var customerCode = $("#customerCode").val();
 	$.ajax({
 		type : "post",
@@ -83,7 +90,8 @@ var getOrderInfo=function(){
 //查看
 var lookOrder=function(id,index){
 	var row = $('#orderList').datagrid('getData').rows[index];
-	goToPage(ctx+'/views/order/orderView.jsp?orderNo='+row.orderNo);
+	var path = ctx+'/order/lookQuery?orderNo='+row.orderNo;  
+	window.location.href = path;
 }
 
 /**
@@ -98,22 +106,7 @@ var orderDetail=function(orderNo){
 		success : function(data) {
 			if(data != null){
 				/*赋值 begin*/
-                $("#code").val(data.customer.code);
-                $("#name").val(data.customer.name);
-                $("#leaderName").val(data.customer.leaderName);
-                $("#invoiceTitle").val(data.customer.invoiceTitle);
-                $("#payWays").val(data.customer.payWays);
-                $("#address").val(data.customer.address);
-                $("#phoneNo").val(data.customer.phoneNo);
-                $("#email").val(data.customer.email);
-                $("#webSite").val(data.customer.webSite);
-                $("#fax").val(data.customer.fax);
-                $("#handlerCode").val(data.customer.handlerCode);
-                $("#customerUnit").val(data.customer.invoiceTitle);
-                
-                $("#createTime").html("<b>订购日期：</b>"+data.order.createTime);
                 $("#totalValue").html("<b class='bule'>订单总计：</b>￥ "+data.order.totalValue);
-                $("#totalValue").html("<b>订单类型：</b>￥ "+data.order.orderUpType+"类型");
                 /*赋值 end*/
         		var total = data.order.primerProducts.length;
         		var reSultdata = data.order.primerProducts;

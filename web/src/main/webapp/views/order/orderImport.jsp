@@ -52,13 +52,15 @@
 <div class="page_padding">
 	<div class="content_box">
 		<h2>导入单订信息</h2>
+		<c:if test="${flag=='1'}">
 		<div class="import_box">
 			<i class="icon-group"></i>请输入客户姓名或客户代码。
 			<br />
-			<input class="inp_text" type="text" id="seachCustom" name="customerName" value="" style="width: 300px" />
+			<input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 300px" />
 			<input class="inp_text" id="customerCode" type="hidden" name="customerCode" value=""/>
 			<ul id="seachList"></ul>
 		</div>
+		</c:if>
 		<div class="import_box" style="line-height: 16px;">
 			<i class="icon-upload-alt"></i>上传您的excel模板，系统将根据您导入的信息生成订单。
 			<br />
@@ -66,7 +68,7 @@
 			<br /><br />
 			<div class="file_box">
 				<input name="file" type="file" onchange="document.getElementById('viewfile').value=this.value;" class="file" id="upload" /> 
-				<input name="file" type="text" id="viewfile" class="inp_text" value="请选择文件…" style="width: 220px;" /> 
+				<input name="fileh" type="text" id="viewfile" class="inp_text" value="请选择文件…" style="width: 220px;" /> 
 				<label class="btn" for="unload">浏览…</label>
 			</div>
 		</div>
@@ -76,6 +78,8 @@
 	</div>
 </div>
 </form>
+<c:if test="${flag=='1'}">
 <script src="${ctx}/static/js/vagueSeach.js" ></script>
+</c:if>
 </body>
 </html>
