@@ -37,7 +37,7 @@ var boardNo = ${boardNo};
         </tr>
 	</table>
     <div class="btn_group">
-        <p class="right pipe_number">NOML / TUB * 96</p>
+        <p class="right pipe_number"><span id="totals"></span></p>
         <button class="btn" id="selectAll" onclick="selectAll(this);">全选</button>
         <button class="btn btn-success" onclick="setSucceed(true);">成功</button>
         <button class="btn btn-danger" onclick="setSucceed(false);">失败</button>
@@ -71,7 +71,7 @@ function boardEditMeasure(data){
 	var typeDesc = data.typeDesc;
     var total = data.total;
     var rows = data.rows;
-    //$('#totals').text(total);
+    $('#totals').text(total);
     for(var i = 0; i < rows.length; i++){
         var row = 'row' + (i+1);
         var hole = rows[i][row];

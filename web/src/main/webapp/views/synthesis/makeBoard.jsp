@@ -42,7 +42,7 @@
             <li title="竖排" class="vertical selected" onclick="makeBoard('holeList','1','0');" id="boardType1"></li>
             <li class="notes">排列方式：</li>
         </ul>
-        <p class="right pipe_number">NOML / TUB * <span id="totals">96</span></p>
+        <p class="right pipe_number"><span id="totals"></span></p>
     </div>
 </div>
 <div id="board_box">
