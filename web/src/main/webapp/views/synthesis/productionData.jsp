@@ -60,9 +60,9 @@
 			<th data-options="field:'tbn',width:60,sortable:true">碱基数</th>
             <th data-options="field:'purifyType',width:60,sortable:true">纯化方式</th>
             <th data-options="field:'midi',width:120,sortable:true">修饰</th>
-            <th data-options="field:'operationTypeDesc',width:80,sortable:true">状态</th>
-            <th data-options="field:'backTimes',width:80,sortable:true">重回次数</th>
-            <th data-options="field:'attr9',width:80,sortable:true">操作时间</th>
+            <th data-options="field:'operationTypeDesc',width:60,sortable:true">状态</th>
+            <th data-options="field:'backTimes',width:40,sortable:true">重回次数</th>
+            <th data-options="field:'modifyTime',width:80,sortable:true">操作时间</th>
 		</tr>
 	</thead>
 </table>

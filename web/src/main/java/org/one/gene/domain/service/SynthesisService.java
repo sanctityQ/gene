@@ -28,6 +28,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
+import org.one.gene.domain.entity.Order.OrderType;
 import org.one.gene.domain.entity.PackTableHoleConfig;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
@@ -146,12 +147,14 @@ public class SynthesisService {
 		}
 		
 		//查询板号信息
-		Map<String, String> boardHoleMap = new HashMap<String, String>();
+		OrderType orderUpType = null;
+		Map<String, String> boardHoleMap = new HashMap<String, String>();//数据库中的板孔信息
 		Board board = boardRepository.findByBoardNo(boardNo);
 		if (board != null) {
 			for (BoardHole boardHole : board.getBoardHoles()) {
 				boardHoleMap.put(boardHole.getHoleNo(), boardHole.getPrimerProduct().getProductNo());
 				totalCount += 1;
+				orderUpType = boardHole.getPrimerProduct().getOrder().getOrderUpType();
 			}
 			flag = board.getBoardType();
 		}
@@ -164,28 +167,44 @@ public class SynthesisService {
 		List<BoardHole> holeNoList = getHoleOrderList(flag);
 		String tempHoleNo = "";
 		String tempProductNo = "";
+		String lastProductNo = "";
 		BoardHole boardHole = null;
 		Map<String, String> lastHoleMap = new HashMap<String, String>();
 		
 		for(int i=0 ;i<holeNoList.size();i++){
 			boardHole = (BoardHole)holeNoList.get(i);
 			tempHoleNo = boardHole.getHoleNo();
-			//System.out.println("选择的排序为="+flag+"="+tempHoleNo);
 			tempProductNo = "";
 			
-			if(boardHoleMap.get(tempHoleNo) != null){
+			if (boardHoleMap.get(tempHoleNo) != null) {
 				tempProductNo = (String)boardHoleMap.get(tempHoleNo);
-			}else{
+				lastProductNo = tempProductNo;
+			} else {
 				for (String v : selectProductNoList) {
 					tempProductNo = v;
+					lastProductNo = tempProductNo;
 					break;
 				}
-				if(!"".equals(tempProductNo)){
+				if (!"".equals(tempProductNo)) {
 					selectProductNoList.remove(tempProductNo);
 				}
 			}
 			
 			lastHoleMap.put(tempHoleNo, tempProductNo);
+		}
+		if (orderUpType == null) {
+			PrimerProduct primerProduct = primerProductRepository.findByProductNoOrOutProductNo(lastProductNo, lastProductNo);
+			if (primerProduct != null) {
+				 orderUpType = primerProduct.getOrder().getOrderUpType();
+			}
+
+		}
+		
+		String totalLabel = "";
+		if (orderUpType == OrderType.nmol) {
+			totalLabel = "NMOL / TUBE * "+totalCount;
+		}else{
+			totalLabel = "OD / TUBE * "+totalCount;
 		}
 		
 		ArrayList holeList = new ArrayList();
@@ -203,7 +222,7 @@ public class SynthesisService {
 		String productNo = "";
 		String jsonStr = "{\r";
 		jsonStr += "\"boardType\":"+flag+",\r";
-		jsonStr += "\"total\":"+totalCount+",\r";
+		jsonStr += "\"total\":\""+totalLabel+"\",\r";
 		jsonStr += "\"rows\":[\r";
 		
 		for(int i=0 ;i<holeList.size();i++){
@@ -337,9 +356,9 @@ public class SynthesisService {
 		for (int i = 0; i < holeStrArray.length; i++) {
 			String holeNoStr = holeStrArray[i];
 			String[] holeNoArray = holeNoStr.split(":");
-			System.out.println("===============生产编号="+holeNoArray[1]);
 			
 			primerProduct = primerProductRepository.findByProductNo(holeNoArray[1]);
+			primerProduct.setModifyTime(new Date());
 			
 			addNewValue(primerProduct);
 	    	
@@ -362,6 +381,7 @@ public class SynthesisService {
 			boardHole.setCreateUser(123L);//后续需要调整到从session取值
 			boardHole.setCreateTime(new Date());
 			boardHole.setStatus(0);//0 正常 1 删除
+			boardHole.setModifyTime(new Date());
 			
 			if (lastHoleMap.get(holeNoArray[0]) != null) {
 				boardHole.setSorting(lastHoleMap.get(holeNoArray[0]));
@@ -565,6 +585,11 @@ public class SynthesisService {
 		
 		SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");//设置日期格式
         String currentTime = df.format(new Date());
+        Board board = boardRepository.findByBoardNo(boardNo);
+        String boardType = "";
+        if (board != null){
+        	boardType = board.getBoardType();
+        }
         
 		//读取分装表孔配置信息
 		String encoding="GBK";
@@ -582,17 +607,24 @@ public class SynthesisService {
         	pthc.setHoleNo(configArray[0]);
         	pthc.setRow(Integer.parseInt(configArray[1]));
         	pthc.setColumn(Integer.parseInt(configArray[2]));
-        	pthcMap.put(configArray[0], pthc);
+        	pthc.setBoardType(configArray[3]);
+			if (boardType.equals(pthc.getBoardType())) {//板类型匹配才使用
+        		pthcMap.put(configArray[0], pthc);
+        	}
         	
         }
         read.close();
 
-		Board board = boardRepository.findByBoardNo(boardNo);
+		
         if (board != null){
         	for(BoardHole boardHole:board.getBoardHoles()){
         		if (pthcMap.get(boardHole.getHoleNo()) != null) {
         			pthc = pthcMap.get(boardHole.getHoleNo());
         			pthc.setPrimerProduct(boardHole.getPrimerProduct());
+        			pthc.setStatus(boardHole.getStatus());
+					if (pthc.getStatus() == 1) {//删除
+						pthc.setReason(boardHole.getPrimerProductOperation().getTypeDesc());
+        			}
         			pthcMap.put(boardHole.getHoleNo(), pthc);
         		}
         	}
@@ -603,15 +635,21 @@ public class SynthesisService {
 		
 		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(excelFilePath));
 		HSSFSheet sheet = workbook.getSheetAt(0);
-		FileOutputStream fos = null;
 		HSSFRow row = null;
 		HSSFCell cell = null;
 
 		BigDecimal totalBN= new BigDecimal(0);//总碱基数
 		PrimerProduct pp = null;
 		PrimerProduct ppLast = null;
+		String holeNo = "";
 		for (Map.Entry<String, PackTableHoleConfig> map : pthcMap.entrySet()) {
 			pthc = map.getValue();
+			holeNo = map.getKey();
+			
+			row = sheet.getRow(pthc.getRow());
+			cell = row.getCell(pthc.getColumn());// 孔号
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(holeNo);
 			
 			pp = pthc.getPrimerProduct();
 			if( pp != null ){
@@ -619,23 +657,44 @@ public class SynthesisService {
 				addNewValue(pp);
 				
 				totalBN = totalBN.add(pp.getTbn());
-				
-				row = sheet.getRow(pthc.getRow());
-				cell = row.getCell(pthc.getColumn()+1);// 生产编号
+                
+				// 生产编号
+				cell = row.getCell(pthc.getColumn()+1);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				if(!"".equals(pp.getProductNo())){
+				if (!"".equals(pp.getProductNo())) {
 					cell.setCellValue(pp.getProductNo());
 				}else{
 					cell.setCellValue(pp.getOutProductNo());
 				}
-				cell = row.getCell(pthc.getColumn()+2);// 分装
-				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				cell.setCellValue(pp.getOdTB()+"OD*"+pp.getTb());
-				cell = row.getCell(pthc.getColumn()+3);// 体积
-				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				cell.setCellValue(pp.getOdTotal()+"");
-				
-				ppLast = pp;
+				if (pthc.getStatus() == 0) {//正常数据
+					
+					// 分装
+					cell = row.getCell(pthc.getColumn()+2);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					if (pp.getOrder().getOrderUpType() == OrderType.nmol) {
+						cell.setCellValue(pp.getNmolTB()+""+pp.getOrder().getOrderUpType()+"*"+pp.getTb());
+					}else{
+						cell.setCellValue(pp.getOdTB()+""+pp.getOrder().getOrderUpType()+"*"+pp.getTb());
+					}
+					
+					// 体积:导入测试数据后显示体积
+					int measureCount = primerProductOperationRepository.getCountWithType(pp.getId(), PrimerOperationType.measureSuccess.toString());
+					if (measureCount > 0) {
+						cell = row.getCell(pthc.getColumn()+3);
+						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+						if (pp.getOrder().getOrderUpType() == OrderType.nmol) {
+							cell.setCellValue(pp.getNmolTotal()+"");
+						}else{
+							cell.setCellValue(pp.getOdTotal()+"");
+						}
+					}
+					
+					ppLast = pp;
+				}else{
+					cell = row.getCell(pthc.getColumn()+2);//显示失败原因
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue(pthc.getReason());
+				}
 			}
 		}
 
@@ -961,6 +1020,7 @@ public class SynthesisService {
 		
 		int totalCount = 0;
 		String typeFlag = "1";//生产数据是否复合查询类型 ：1 复合， 0 不复合
+		OrderType orderUpType = null;
 		//查询板号信息
 		Map<String, PrimerProduct> boardHoleMap = new HashMap<String, PrimerProduct>();
 		Board board = boardRepository.findByBoardNo(boardNo);
@@ -973,6 +1033,7 @@ public class SynthesisService {
 				if (boardHole.getStatus() == 0) {//0正常  1 删除  
 					boardHoleMap.put(boardHole.getHoleNo(), primerProduct);
 					totalCount += 1;
+					orderUpType = boardHole.getPrimerProduct().getOrder().getOrderUpType();
 				}
 				
 				if (!boardHole.getPrimerProduct().getOperationType().equals(operationType) && boardHole.getStatus() == 0) {
@@ -981,6 +1042,13 @@ public class SynthesisService {
 			}
 		}
 
+		String totalLabel = "";
+		if (orderUpType == OrderType.nmol) {
+			totalLabel = "NOML / TUBE * "+totalCount;
+		}else{
+			totalLabel = "OD / TUBE * "+totalCount;
+		}
+		
 		ArrayList holeNoList = new ArrayList();
 		ArrayList holeList = new ArrayList();
 		PrimerProduct primerProduct = null;
@@ -999,7 +1067,7 @@ public class SynthesisService {
 		String jsonStr = "{\r";
 		jsonStr += "\"typeFlag\":"+typeFlag+",\r";
 		jsonStr += "\"typeDesc\":\""+operationType.desc()+"\",\r";
-		jsonStr += "\"total\":"+totalCount+",\r";
+		jsonStr += "\"total\":\""+totalLabel+"\",\r";
 		jsonStr += "\"rows\":[\r";
 		
 		for(int i=0 ;i<holeList.size();i++){

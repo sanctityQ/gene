@@ -43,7 +43,7 @@ var boardNo = ${boardNo};
             <li><i class="icon-mail-reply-all"></i>重新合成</li>
             <li><i class="icon-dropbox"></i>重新分装</li>
         </ul>
-        <p class="right pipe_number">NOML / TUB * 96</p>
+        <p class="right pipe_number"><span id="totals"></span></p>
         <button class="btn" id="selectAll" onclick="selectAll(this);">全选</button>
         <button class="btn btn-success" onclick="setSucceed(true);">成功</button>
         <button class="btn btn-danger" onclick="setSucceedDouble(false,'compose');">重新合成</button>

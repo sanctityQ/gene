@@ -36,7 +36,7 @@ function boardEdit(id,operationType){
         	var typeDesc = data.typeDesc;
             var total = data.total;
             var rows = data.rows;
-            //$('#totals').text(total);
+            $('#totals').text(total);
             for(var i = 0; i < rows.length; i++){
                 var row = 'row' + (i+1);
                 var hole = rows[i][row];
@@ -243,7 +243,6 @@ function setSucceedDouble(ok,lose){
                     text:'确 定',
                     handler:function(){
                         var text = $('#inputCause .inp_text').val();
-                        alert(text);
                         $('#inputCause').dialog('close');
                         selects.each(function(){
                             var status = $(this);
