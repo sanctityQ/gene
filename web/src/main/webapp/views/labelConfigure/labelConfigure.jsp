@@ -77,7 +77,7 @@ var ctx = '${ctx}';
                                     <li value="primeName">引物名称</li>
                                     <li value="odTB">OD/Tube</li>
                                     <li value="MW">MW</li>
-                                    <li value="TM">Tm(℃)</li>
+                                    <li value="TM">TM</li>
                                     <li value="100pmoleμl">100pmole/μl</li>
                                     <li value="midi">修饰</li>
                                 </ul>
@@ -91,7 +91,6 @@ var ctx = '${ctx}';
                                     <li value="orderNo">订单号</li>
                                     <li value="nmolTB">nmole/tube</li>
                                     <li value="tb">管数</li>
-                                    <li value="TM">TM</li>
                                     <li value="GC">GC(%)</li>
                                     <li value="remark">备注/日期</li>
                                     <li value="pmole">加水量</li>

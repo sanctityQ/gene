@@ -94,7 +94,6 @@ function saveConfigure(){
 }
 
 function searchConfigure(){
-    var print = $('#printList').children('li');
     var customerCode = $('#customerCode').val();
     if(customerCode==""){alert("请录入正确的客户代码或客户名称！");return false;}
     $.ajax({
@@ -109,34 +108,33 @@ function searchConfigure(){
 				$('#customerCode').val(data.customerCode);
 				$('#seachCustom').val(data.customerName);
 				//打印列数赋值
-				if(data.columnType=='one'){columnsNumber=1;}
-				else if(data.columnType=='two'){columnsNumber=2;}
-				else if(data.columnType=='three'){columnsNumber=3;}
-				$('#columnsNumber').on('click','input',columnsNumber)
+				if(data.columnType=='one'){
+					columnsNumber=1;
+					$("input[name='number'][value='1']").attr("checked",true);
+				}
+				else if(data.columnType=='two'){
+					columnsNumber=2;
+					$("input[name='number'][value='2']").attr("checked",true);
+				}
+				else if(data.columnType=='three'){
+					columnsNumber=3;
+					$("input[name='number'][value='3']").attr("checked",true);
+				}
+				//$('#columnsNumber').on('click','input',changeColumns)
+				
 				//配置项赋值
-				var print = $('#printList').children('li');
-				print.each(function(index){
-					//全部选中
-					$(this).toggleClass('selected');
-					//移动到右侧
-					moveConfigure('right');
-					//选中取消
-					$(this).toggleClass('selected');
-			    })
-			    var configureList = $('#configureList').children('li');
-		    	configureList.each(function(index){
-		        	var valueStr = $(this).attr("value");
-		        	for(var i=0;i<data.primerLabelConfigSubs.length;i++){
-				    	if(valueStr==data.primerLabelConfigSubs[i].type){
-				    		//选中
-							$(this).toggleClass('selected');
-							//移动到左侧
-							moveConfigure('left');
-							//选中取消
-							$(this).toggleClass('selected');
-				    	}
-				    }
-			    })
+				var configure = $('#configureList');
+			    var print = $('#printList');
+				configure.append($('#printList').children('li'));
+				
+				for(var i=0;i<data.primerLabelConfigSubs.length;i++){
+					configure.children('li').each(function(index){
+						var valueStr = $(this).attr("value");
+						if(data.primerLabelConfigSubs[i].type==valueStr){
+							print.append($(this));
+						}
+					})
+				}
 			}
 		},
 		error:function(data){
