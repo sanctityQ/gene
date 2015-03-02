@@ -39,8 +39,8 @@ var boardNo = ${boardNo};
 	</table>
     <div class="btn_group">
         <p class="right pipe_number"><span id="totals"></span></p>
-        <button class="btn" id="selectAll" onclick="selectAll(this);">全选</button>
-        <button class="btn btn-success" onclick="setSucceed(true);">成功</button>
+        <button class="btn" id="selectAll" onclick="selectAll(this);">全选</button>
+        <button class="btn btn-success" onclick="setSucceed(true);">成功</button>
         <button class="btn btn-danger" onclick="setSucceed(false);">失败</button>
     </div>
 </div>

@@ -18,7 +18,7 @@
 <script src="${ctx}/static/js/index.js" ></script>
 </head>
 <body>
-<form name="form" modelAttribute="user" action="${ctx}/synthesis/uploadMeasure" method="post" enctype="multipart/form-data" class="form-horizontal">
+<form id="form" modelAttribute="user" action="${ctx}/synthesis/uploadMeasure" method="post" enctype="multipart/form-data" class="form-horizontal">
 <div class="page_padding">
 	<div class="content_box">
 	    <input type="hidden" id="operationType" name="operationType" value="measure"/>
@@ -41,11 +41,10 @@
 			</div>
 		</div>
 		<div class="import_box" style="padding-bottom: 50px;">
-			<button class="btn-primary submit" type="" onclick="goToResultsBoard()">测值结果</button>
+			<button class="btn-primary submit" type="button" onclick="goToResultsBoard()">测值结果</button>
 		</div>
 	</div>
 </div>
-<input type="hidden" id="operationType" name="operationType" value="measure"/>
 </form>
 <script src="${ctx}/static/js/vagueSeachBoard.js"></script>
 <script type="text/javascript">
@@ -55,22 +54,22 @@ function goToResultsBoard(){
 
 	if(boardNo == ""){
 		alert("请输入板号。");
-		return;
+		return false;
 	}
 	if(viewfile == "请选择文件…"){
 		alert("请选择文件。");
-		return;
+		return false;
 	}
-	if($("#upload").val().length > 1) {		
+	if($("#upload").val().length > 1) {
 		var lexcel = $("#upload").val().lastIndexOf(".");
 		var type = $("#upload").val().substring(lexcel + 1);
 		
-		if(type != "xls") {
+		if(type != "xls" && type != "xlsx") {
 			alert("请您上传excel格式文件！");
 			return false;
 		}		
 	}
-	document.form.submit();
+	$('#form').submit();
 }
 </script>
 </body>
