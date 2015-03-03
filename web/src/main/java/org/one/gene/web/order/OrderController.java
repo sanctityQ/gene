@@ -82,12 +82,24 @@ public class OrderController {
     	ArrayList<String> errors = new ArrayList<String>();
     	
     	if("".equals(customerCode)){
+    		//刷新时赋值客户类型
+    		inv.addModel("flag", "1");
     		inv.addModel("userExp", "无此客户信息，请您确认后重新上传！");
     		return "orderImport";
     		//throw new Exception("客户代码或名称未录入，请您录入！");
     	}
-    	if (file.isEmpty()) {
-    		throw new Exception("请您选择要上传的文件！");
+    	try{
+	    	if (file.isEmpty()) {
+	    		//刷新时赋值客户类型
+	    		inv.addModel("flag", "1");
+	    		inv.addModel("userExp", "请您选择要上传的文件！");
+	    		return "orderImport";
+	    	}
+    	}catch(Exception e){
+    		//刷新时赋值客户类型
+    		inv.addModel("flag", "1");
+    		inv.addModel("userExp", "请您选择要上传的文件！");
+    		return "orderImport";
     	}
     	
     	//取得当前所在年份

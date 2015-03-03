@@ -150,7 +150,7 @@ public class DeliveryController {
     }
     
     @Post("deliveryLabelPrint")
-    public EntityReply<File> deliveryLabelPrint(@Param("boardNo") String boardNo,@Param("noType") String noType, Invocation inv) {
+    public Object deliveryLabelPrint(@Param("boardNo") String boardNo,@Param("noType") String noType, Invocation inv) {
     	
 		List<PrimerProduct> primerProducts = printService.getPrimerProducts(boardNo, noType, inv);
 		EntityReply<File> fileStr = null; //form 提交使用该类型返回
@@ -158,6 +158,8 @@ public class DeliveryController {
 			fileStr = deliveryService.deliveryLabel(primerProducts, inv);
 		} catch (Exception e) {
 			e.printStackTrace();
+			inv.addModel("userExp","您录入发货标签查询条件无信息，请您核对后重新查询!");
+    		return "deliveryLabel";
 		}
     	
     	return fileStr;

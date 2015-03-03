@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%> 
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
@@ -22,6 +21,9 @@
 <script type="text/javascript">
 var orderNo = ${orderNo};
 var ctx = '${ctx}';
+//暂时处理后台异常
+var userExp = '${userExp}';
+if(userExp!=''){ alert(userExp)}
 </script>
 </head>
 <form id="deliveryLabelfm"  action="${ctx}/delivery/deliveryLabelPrint" method="post" class="form-horizontal">
