@@ -471,7 +471,11 @@ public class SynthesisController {
 		if (!StringUtils.isBlank(boardNo)) {
 			boardNo = "%" + boardNo + "%";
         }
-		List<Board> boards = boardRepository.vagueSeachBoard(boardNo,operationType.toString());
+		String strOperationType = "";
+		if (operationType != null) {
+			strOperationType = operationType.toString();
+		}
+		List<Board> boards = boardRepository.vagueSeachBoard(boardNo,strOperationType);
 		for(Board board:boards){
 			board.setType("1");//板
 		}
@@ -496,6 +500,15 @@ public class SynthesisController {
     	return Replys.with(boards).as(Json.class);
     }
     
-    
+    /**
+     * 初始化板号
+     * */
+    @Post("initBoardNo")
+	public Reply initBoardNo(@Param("operationType") PrimerStatusType operationType, Invocation inv) {
+
+		List<Board> boards = boardRepository.initBoardNo(operationType.toString());
+		
+    	return Replys.with(boards).as(Json.class);
+    }   
     
 }

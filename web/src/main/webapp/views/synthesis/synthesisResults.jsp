@@ -33,10 +33,15 @@
 		<div class="import_box" style="padding-bottom: 50px;">
 			<button class="btn-primary submit" type="button" onclick="goToResultsBoard()">合成结果</button>
 		</div>
+		<div id="initBoardNoList"></div>
 	</div>
 </div>
 <script src="${ctx}/static/js/vagueSeachBoard.js" ></script>
+<script src="${ctx}/static/js/initBoardNo.js" ></script>
 <script type="text/javascript">
+
+//initBoardNo("/gene/views/synthesis/synthesisResultsBoard.jsp?boardNo=");
+
 function goToResultsBoard(){
 	var boardNo = $.trim($('#boardNo').val());
 	
