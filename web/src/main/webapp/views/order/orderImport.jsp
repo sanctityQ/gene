@@ -47,7 +47,7 @@
   function getPath(obj){  //参数obj为input file对象
 	var file_upl = document.getElementById('upload');
 	file_upl.select();
-	var realpath = document.selection.createRange().text;
+	var realpath = document.selection.createRange().htmlText;
 	return realpath;
  } 
 </script>
