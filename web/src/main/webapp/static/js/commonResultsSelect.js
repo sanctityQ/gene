@@ -36,9 +36,10 @@ function setResult(toggal){
             			failReason: ''
                     },
             		success : function(data) {
+            			alert("提交成功！");
             		},
             		error:function(){
-            			alert("无法处理信息");
+            			alert("无法处理信息！");
             		}
             	});
             	
