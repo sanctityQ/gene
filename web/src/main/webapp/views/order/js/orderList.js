@@ -28,6 +28,9 @@ var orderInfoIni=function(){
 				var total = data.totalElements;
         		var reSultdata = data.content;
         		for(var i=0;i<reSultdata.length;i++){
+        			if(reSultdata[i].outOrderNO!=''){
+        				reSultdata[i].orderNo = reSultdata[i].outOrderNO;
+        			}
         			if(reSultdata[i].status=='0'){
         			  reSultdata[i].status = '订单初始化';
         			}else if(reSultdata[i].status=='1'){
@@ -69,13 +72,17 @@ var getOrderInfo=function(){
 				var total = data.totalElements;
         		var reSultdata = data.content;
         		for(var i=0;i<reSultdata.length;i++){
-        			if(reSultdata[i].status=='0'){
-        			  reSultdata[i].status = '订单初始化';
-        			}else if(reSultdata[i].status=='1'){
-        			  reSultdata[i].status = '订单审核通过';
-        			}else if(reSultdata[i].status=='2'){
-        			  reSultdata[i].status = '订单审核不通过';	
+        			if(reSultdata[i].outOrderNO!=''){
+        				reSultdata[i].orderNo = reSultdata[i].outOrderNO;
         			}
+        			if(reSultdata[i].status=='0'){
+          			  reSultdata[i].status = '订单初始化';
+          			}else if(reSultdata[i].status=='1'){
+          			  reSultdata[i].status = '订单审核通过';
+          			}else if(reSultdata[i].status=='2'){
+          			  reSultdata[i].status = '订单审核不通过';	
+          			}
+        			
         		}
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#orderList').datagrid("loadData",jsonsource);
