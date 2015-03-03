@@ -51,8 +51,8 @@
     </div>
 </div>
 <div class="tools_bar tabbing">
-    <button class="btn" onclick="goToPage('productionData.jsp');" type="">取 消</button>
-    <button class="btn btn-primary" onclick="saveBoard();" type="">保 存</button>
+    <button class="btn" onclick="goToPage('productionData.jsp');" type="button">取 消</button>
+    <button class="btn btn-primary" onclick="saveBoard();" type="button">保 存</button>
 </div>
 <script src="${ctx}/static/js/makeBoard.js" ></script>
 <script src="${ctx}/static/js/vagueSeachMakeBoard.js"></script>
