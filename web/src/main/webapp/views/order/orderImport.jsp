@@ -43,13 +43,6 @@
  //暂时处理后台异常
  var userExp = '${userExp}';
  if(userExp!=''){ alert(userExp)}
-//获取文件路径，解决在IE8下由于安全问题，服务端获取客户端文件的路径为C：/fakePath问题
-  function getPath(obj){  //参数obj为input file对象
-	var file_upl = document.getElementById('upload');
-	file_upl.select();
-	var realpath = document.selection.createRange().htmlText;
-	return realpath;
- } 
 </script>
 </head>
 <body>
@@ -73,7 +66,7 @@
 			<a href="${ctx}/order/downLoad" class="down_excel">下载excel模板文件…</a>
 			<br /><br />
 			<div class="file_box">
-				<input name="file" type="file" onchange="document.getElementById('viewfile').value=getPath(this);" class="file" id="upload" /> 
+				<input name="file" type="file" onchange="document.getElementById('viewfile').value=this.value;" class="file" id="upload" /> 
 				<input name="fileText" type="text" id="viewfile" class="inp_text" value="请选择文件…" style="width: 220px;" /> 
 				<label class="btn" for="unload">浏览…</label>
 			</div>
