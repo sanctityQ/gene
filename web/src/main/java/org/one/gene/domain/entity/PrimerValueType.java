@@ -342,7 +342,7 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
-            return new BigDecimal("313.2").multiply(av.value(primerProduct))
+        	return new BigDecimal("313.2").multiply(av.value(primerProduct))
             		.add(new BigDecimal("289.2").multiply(cv.value(primerProduct)))
             		.add(new BigDecimal("329.2").multiply(gv.value(primerProduct)))
             		.add(new BigDecimal("304.2").multiply(tv.value(primerProduct)))
@@ -362,7 +362,7 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 					.subtract(new BigDecimal(61))
 					//临时处理方案，产品管理功能完成优化此处
 					.add(new BigDecimal(PropotiesService.getValue(primerProduct.getModiFiveType().trim()+"-5")))
-					.add(new BigDecimal(PropotiesService.getValue(primerProduct.getModiThreeType().trim())))
+					.add(new BigDecimal(PropotiesService.getValue(primerProduct.getModiThreeType().trim()+"")))
 					.add(new BigDecimal(PropotiesService.getValue(primerProduct.getModiMidType().trim()+"-m")))
 					.add(new BigDecimal(PropotiesService.getValue(primerProduct.getModiSpeType().trim()+"-sp")))
 					.setScale(1, RoundingMode.HALF_UP);
