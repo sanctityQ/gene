@@ -12,18 +12,28 @@ function setBoardHeight(){
     $('#board_box').height(h);
 }
 function holesClick(){
-    $(this).toggleClass('selected');
+    var number = $(this).children('div.hole').text();
+    if(number != ''){
+        $(this).toggleClass('selected');
+    }else{
+        $.messager.alert('系统消息：','改孔没有孔号，不能进行相关操作。')
+    }
 }
 function selectAll(e){
     var btn = $(e);
     if(btn.text() == '全选'){
-        $("#holeList").find('div.hole_box').addClass('selected');
+        $("#holeList").find('div.hole_box').each(function(){
+            var box = $(this);
+            var number = box.children('div.hole').text();
+            if(number != ''){
+                box.addClass('selected');
+            }
+        })
         btn.text('反选');
     }else{
-        $("#holeList").find('div.hole_box').removeClass('selected');
+        $("#holeList").find('div.selected').removeClass('selected');
         btn.text('全选');
     }
-
 }
 function synthesisBoard(id){
     var board = $('#'+id);
