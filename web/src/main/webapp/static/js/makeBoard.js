@@ -90,7 +90,12 @@ function saveBoard(){
 	
 }
 function holesClick(){
-    $(this).toggleClass('selected');
+    var number = $(this).children('div.hole').text();
+    if(number != ''){
+        $(this).toggleClass('selected');
+    }else{
+        $.messager.alert('系统消息：','该孔没有生产编号，不能进行相关操作。')
+    }
     var selects = $('#holeList').find('div.selected');
     var mutual = $('#mutualBtn');
     if(selects.length == 2){

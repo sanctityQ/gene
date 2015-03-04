@@ -6,18 +6,28 @@ function setBoardHeight(){
     $('#board_box').height(h);
 }
 function holesClick(){
-    $(this).toggleClass('selected');
+    var number = $(this).children('div.hole').text();
+    if(number != ''){
+        $(this).toggleClass('selected');
+    }else{
+        $.messager.alert('系统消息：','该孔没有生产编号，不能进行相关操作。')
+    }
 }
 function selectAll(e){
     var btn = $(e);
     if(btn.text() == '全选'){
-        $("#holeList").find('div.hole_box').addClass('selected');
+        $("#holeList").find('div.hole_box').each(function(){
+            var box = $(this);
+            var number = box.children('div.hole').text();
+            if(number != ''){
+                box.addClass('selected');
+            }
+        })
         btn.text('反选');
     }else{
         $("#holeList").find('div.hole_box').removeClass('selected');
         btn.text('全选');
     }
-
 }
 function boardEdit(id,operationType){
     var board = $('#'+id);
@@ -169,23 +179,20 @@ function setSucceed(ok){
                 },{
                     text:'确 定',
                     handler:function(){
-                        var ary = [];
                         var text = $('#inputCause .inp_text').val();
                         $('#inputCause').dialog('close');
                         selects.each(function(){
                             var status = $(this);
                             var tag = status.children('div.tag');
-                            var No = status.children('div.hole').text();
                             if(!status.hasClass(result)){
                                 status.removeClass().addClass('hole_box ' + result);
+                                tag.children('i').remove();
+                                tag.prepend(icon);
                             }else{
                                 status.removeClass('selected');
                             };
                             status.children('div.reason').text(text);
-                            tag.prepend(icon);
-                            ary.push(No);
                         });
-                        //alert('选中:'+ary+"\n原因:"+text)
                     }
                 }]
             });
@@ -195,10 +202,12 @@ function setSucceed(ok){
                 var tag = status.children('div.tag');
                 if(!status.hasClass(result)){
                     status.removeClass().addClass('hole_box ' + result);
+                    tag.children('i').remove();
+                    tag.prepend(icon);
                 }else{
                     status.removeClass('selected');
                 };
-                tag.prepend(icon);
+
             })
         };
     }else{
@@ -252,7 +261,9 @@ function setSucceedDouble(ok,lose){
                             }else{
                                 status.removeClass('selected');
                             };
+                            status.children('div.compound').remove();
                             $(this).append(identifying);
+                            tag.children('i').remove();
                             tag.prepend(icon);
                         })
                     }
@@ -267,6 +278,8 @@ function setSucceedDouble(ok,lose){
                 }else{
                     status.removeClass('selected');
                 };
+                status.children('div.compound').remove();
+                tag.children('i').remove();
                 tag.prepend(icon);
             })
         };

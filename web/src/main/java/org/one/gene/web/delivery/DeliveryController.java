@@ -2,6 +2,7 @@ package org.one.gene.web.delivery;
 
 import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
@@ -164,4 +168,81 @@ public class DeliveryController {
     	
     	return fileStr;
     }
+    
+    
+    /**
+     * 进入发货清单查询页面
+     * 
+     * */
+    @Get("deliveryList")
+    public String deliveryList(){
+    	
+    	return "deliveryList";
+    }
+    
+    
+    /**
+     * 发货清单查询列表
+     * @throws Exception
+     */
+    @Post("queryDeliveryList")
+	public Reply queryDeliveryList(
+			@Param("orderNo") String orderNo,
+			@Param("customerName") String customerName,
+			@Param("createStartTime") String createStartTime,
+			@Param("createEndTime") String createEndTime,
+			@Param("pageNo") Integer pageNo,
+			@Param("pageSize") Integer pageSize, Invocation inv)
+			throws Exception {
+
+        if(pageNo == null || pageNo ==0){
+            pageNo = 1;
+        }
+
+        if(pageSize == null){
+            pageSize = 20;
+        }
+        Pageable pageable = new PageRequest(pageNo-1,pageSize);
+        Map<String,Object> searchParams = Maps.newHashMap();
+        
+        searchParams.put(SearchFilter.Operator.EQ+"_order.orderNo",orderNo);
+        searchParams.put(SearchFilter.Operator.EQ+"_order.customerName",customerName);
+		if (!"".equals(createStartTime)) {
+        	searchParams.put(SearchFilter.Operator.GT+"__order.createTime",new Date(createStartTime+" 00:00:00"));
+        }
+		if (!"".equals(createEndTime)) {
+        	searchParams.put(SearchFilter.Operator.LT+"__order.createTime",new Date(createEndTime+" 59:59:59"));
+        }
+//        searchParams.put(SearchFilter.Operator.EQ+"__operationType",PrimerStatusType.finish);
+        
+        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
+        Specification<PrimerProduct> spec = DynamicSpecifications.bySearchFilter(filters.values(), PrimerProduct.class);
+        
+        Page<PrimerProduct> primerProductPage = primerProductRepository.findAll(spec,pageable);
+        Page<OrderInfo> primerProductListPage = deliveryService.convertPrimerProductList(primerProductPage,pageable);
+        
+        return Replys.with(primerProductListPage).as(Json.class);
+    }
+    
+    
+    @Post("deliveryList")
+	public EntityReply<File> deliveryList(
+			@Param("primerProducts") String primerProductJson,
+			Invocation inv) {
+    	
+    	
+    	List<OrderInfo> orderInfos = JSON.parseArray(primerProductJson,OrderInfo.class);
+    	
+		List<PrimerProduct> primerProducts = printService.getDeliveryPrimerProducts(orderInfos, inv);
+		EntityReply<File> fileStr = null; //form 提交使用该类型返回
+		try {
+			fileStr = deliveryService.deliveryLabel(primerProducts, inv);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    	return fileStr;
+    }
+    
+    
 }

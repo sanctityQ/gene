@@ -865,4 +865,24 @@ public class PrintService {
 		
 		return orderInfo;
 	}
+	
+	
+    /**
+     * 得到发货清单的生产数据
+     * */
+	public List<PrimerProduct> getDeliveryPrimerProducts(List<OrderInfo> orderInfos, Invocation inv) {
+		
+		List<PrimerProduct> primerProducts = new ArrayList<PrimerProduct>();
+		List<PrimerProduct> primerProductBoardNOs =  new ArrayList<PrimerProduct>();
+		PrimerProduct primerProduct = null;
+		for (OrderInfo orderInfo : orderInfos) {
+			String productNo = orderInfo.getProductNoMinToMax();
+			primerProduct = primerProductRepository.findByProductNoOrOutProductNo(productNo, productNo);
+			if (primerProduct != null) {
+				primerProducts.add(primerProduct);
+			}
+
+		}
+		return primerProducts;
+	}
 }

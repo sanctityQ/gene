@@ -45,7 +45,7 @@ var boardNo = ${boardNo};
         </ul>
         <p class="right pipe_number"><span id="totals"></span></p>
         <button class="btn" id="selectAll" onclick="selectAll(this);">全选</button>
-        <button class="btn btn-success" onclick="setSucceed(true);">成功</button>
+        <button class="btn btn-success" onclick="setSucceedDouble(true);">成功</button>
         <button class="btn btn-danger" onclick="setSucceedDouble(false,'compose');">重新合成</button>
         <button class="btn btn-primary" onclick="setSucceedDouble(false,'split');">重新分装</button>
     </div>
