@@ -55,9 +55,6 @@ var getOrderInfos=function(){
         		var total = data.totalElements;
         		var reSultdata = data.content;
         		for(var i=0;i<reSultdata.length;i++){
-        			if(reSultdata[i].outOrderNO!=''){
-        				reSultdata[i].orderNo = reSultdata[i].outOrderNO;
-        			}
         			if(reSultdata[i].status=='0'){
         			  reSultdata[i].status = '订单初始化';
         			}else if(reSultdata[i].status=='1'){

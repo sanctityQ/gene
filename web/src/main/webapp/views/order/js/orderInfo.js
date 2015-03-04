@@ -6,10 +6,24 @@ function cellStyler(value,row,index){
       return '';	
     }
 }
+function deletRow(index){
+    var tr = bigToSmall.datagrid('selectRow',index);
+    var row = bigToSmall.datagrid('getSelections');
+    $.messager.confirm('系统消息','确认删除选中的数据?',function(ok){
+        bigToSmall.datagrid('deleteRow',index);
+    });
+    editIndex = editIndex -1;
+}
 function formatOper(val,row,index){
-	if(row.nmolTotal>=50 || row.odTotal>=10){
-      return '<a href="javascript:;" onclick="copyRow(this)">复制</a>';
+	var toggle = row.del;
+    if(toggle){
+        return '<a href="javascript:;" onclick="deletRow('+index+')">删除</a>';
+    }else{
+    	if(row.nmolTotal>=50 || row.odTotal>=10){
+	      return '<a href="javascript:;" onclick="copyRow(this)">复制</a>';
+	    }
     }
+	
 }
 function bigendEditing(){
   if (bigIndex == undefined){return true}
@@ -26,6 +40,7 @@ function appendRow(){
 	bigToSmall.datagrid('insertRow',{
         index: 0,
         row: {
+        	 del:true,
         	 productNo              :"",
              primeName              :"",
              geneOrder              :"",
@@ -59,56 +74,30 @@ function onClickRow(index){
       bigToSmall.datagrid('selectRow', bigIndex);
     }
   }
-  	//序列
-    var geneOrder = bigToSmall.datagrid('getEditor', {index:index,field:'geneOrder'});
-    //碱基数
-	var tbn = bigToSmall.datagrid('getEditor', {index:index,field:'tbn'});
-	//var tbnVal = $(tbn.target).parent().find('input.textbox-text').val();
-	var tbnVal = $(tbn.target).parents('div.datagrid-cell').parents('tr').find('td[field="tbn"] input.datagrid-editable-input');
-	//修饰单价
+  bindGridEvent();
+}
+
+function bindGridEvent(){
+    var geneOrderObj = bigToSmall.datagrid('getEditor', {index:editIndex,field:'geneOrder'});
+    var tbnObj = bigToSmall.datagrid('getEditor', {index:editIndex,field:'tbn'});
+    var geneOrder = $(geneOrderObj.target).parent().find('input.datagrid-editable-input');
+    var tbn = $(tbnObj.target).parent().find('input.datagrid-editable-input');
+    //修饰单价
 	var row = bigToSmall.datagrid('getSelected');
-//	var modiPrice = bigToSmall.datagrid('getSelected', {index:index,field:'modiPrice'});
-//	var modiPriceVal = $(modiPrice.target).parents('div.datagrid-cell').parents('tr').find('td[field="modiPrice"] input.datagrid-editable-input');
-	//碱基单价
-//    var baseVal = bigToSmall.datagrid('getSelected', {index:index,field:'baseVal'});
-//    var baseValVal = $(baseVal.target).parents('div.datagrid-cell').parents('tr').find('td[field="baseVal"] input.datagrid-editable-input');
-    //纯化价格
-//    var purifyVal = bigToSmall.datagrid('getSelected', {index:index,field:'purifyVal'});
-//    var purifyValVal = $(purifyVal.target).parents('div.datagrid-cell').parents('tr').find('td[field="purifyVal"] input.datagrid-editable-input');
 	var modiPriceVal = row.modiPrice;
 	var baseValVal = row.baseVal;
 	var purifyValVal = row.purifyVal;
-    //自动计算
-    geneOrder.target.textbox({
-    	onChange : function(){
-    		$(tbn.target).numberbox('setValue',this.value.length);
-    		calculateByGeneOrder(this.value.length,modiPriceVal,baseValVal,purifyValVal,index);
-        }
+    geneOrder.bind("keyup",function(){
+        var num = geneOrder.val().length;
+        $(tbnObj.target).numberbox('setValue',num);
+        calculateByGeneOrder(num,modiPriceVal,baseValVal,purifyValVal,editIndex);
     });
-    tbn.target.numberbox({
-    	onChange : function(){
-    		calculateByGeneOrder(this.value,modiPriceVal,baseValVal,purifyValVal,index);
-        }
+    tbn.bind("keyup",function(){
+        calculateByGeneOrder(tbn.val(),modiPriceVal,baseValVal,purifyValVal,editIndex);
     });
-    /*modiPrice.target.numberbox({
-    	onChange : function(){
-    		calculateByGeneOrder(tbnVal.val(),this.value,baseValVal.val(),purifyValVal.val(),index);
-        }
-    });
-    baseVal.target.numberbox({
-    	onChange : function(){
-    		calculateByGeneOrder(tbnVal.val(),modiPriceVal.val(),this.value,purifyValVal.val(),index);
-        }
-    });
-    purifyVal.target.numberbox({
-    	onChange : function(){
-    		calculateByGeneOrder(tbnVal.val(),modiPriceVal.val(),baseValVal.val(),this.value,index);
-        }
-    });*/
     
-    
-     
 }
+
 
 var calculateByGeneOrder=function(tbnVal,modiPriceVal,baseValVal,purifyValVal,index){
 	//总价格
@@ -168,6 +157,7 @@ function copyRow(e){
     bigToSmall.datagrid('insertRow',{
         index: ind, // index start with 0
         row: {
+        del:true,
         //复制页面展示数据
         productNo              :row.productNo+"1",
         primeName              :row.primeName,
@@ -201,6 +191,9 @@ function copyRow(e){
     	row.primerProductValues[i].id="";
     }
     bigToSmall.datagrid('beginEdit',ind);
+    setTimeout(function(){
+        tr.next().trigger('click');
+    },100);
 }
 
 /**

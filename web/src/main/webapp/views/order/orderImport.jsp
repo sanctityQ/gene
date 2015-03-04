@@ -67,7 +67,7 @@
 			<br /><br />
 			<div class="file_box">
 				<input name="file" type="file" onchange="document.getElementById('viewfile').value=this.value;" class="file" id="upload" /> 
-				<input name="fileText" type="text" id="viewfile" class="inp_text" value="请选择文件…" style="width: 220px;" /> 
+				<input name="file" type="text" id="viewfile" class="inp_text" value="请选择文件…" style="width: 220px;" /> 
 				<label class="btn" for="unload">浏览…</label>
 			</div>
 		</div>
