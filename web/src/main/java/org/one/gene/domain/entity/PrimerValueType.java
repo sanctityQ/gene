@@ -3,6 +3,7 @@ package org.one.gene.domain.entity;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.one.gene.domain.CalculatePrimerValue;
+import org.one.gene.domain.service.PropotiesService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -334,6 +335,11 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
             return "MW";
         }
 
+        /*(313.2 * #A + 289.2 * #C + 329.2 * #G+ 304.2 * #T + 
+        #U * 290.2 + #I * 252 + #N * 309 + #B * 307.5 + #D * 315.5+ 
+        #H * 302.2 + #K * 316.7 + #M * 301.2 + #R * 321.2 + 
+        #S * 309.2 + #V * 310.5 + #W * 308.7 + #Y * 296.7 - 61) + 每种修饰的分子量*/
+
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
             return new BigDecimal("313.2").multiply(av.value(primerProduct))
@@ -341,7 +347,7 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
             		.add(new BigDecimal("329.2").multiply(gv.value(primerProduct)))
             		.add(new BigDecimal("304.2").multiply(tv.value(primerProduct)))
             		.add(new BigDecimal("290.2").multiply(uv.value(primerProduct)))
-            		.add(new BigDecimal("314.2").multiply(iv.value(primerProduct)))
+            		.add(new BigDecimal("252").multiply(iv.value(primerProduct)))
 					.add(new BigDecimal("309").multiply(nv.value(primerProduct)))
 					.add(new BigDecimal("307.5").multiply(bv.value(primerProduct)))
 					.add(new BigDecimal("315.5").multiply(dv.value(primerProduct)))
@@ -354,7 +360,11 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 					.add(new BigDecimal("308.7").multiply(wv.value(primerProduct)))
 					.add(new BigDecimal("296.7").multiply(yv.value(primerProduct)))
 					.subtract(new BigDecimal(61))
-//					.add(每种修饰的分子量());
+					//临时处理方案，产品管理功能完成优化此处
+					.add(new BigDecimal(PropotiesService.getValue(primerProduct.getModiFiveType().trim()+"-5")))
+					.add(new BigDecimal(PropotiesService.getValue(primerProduct.getModiThreeType().trim())))
+					.add(new BigDecimal(PropotiesService.getValue(primerProduct.getModiMidType().trim()+"-m")))
+					.add(new BigDecimal(PropotiesService.getValue(primerProduct.getModiSpeType().trim()+"-sp")))
 					.setScale(1, RoundingMode.HALF_UP);
         }
     },
@@ -372,7 +382,7 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
          */
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
-            BigDecimal strAdd = cv.value(primerProduct).add(cv.value(primerProduct));
+            BigDecimal strAdd = cv.value(primerProduct).add(gv.value(primerProduct));
             BigDecimal strMul = new BigDecimal(100).multiply(strAdd);
             return strMul.divide(baseCount.value(primerProduct), 4, BigDecimal.ROUND_HALF_UP);
         }
