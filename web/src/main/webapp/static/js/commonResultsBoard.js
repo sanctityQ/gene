@@ -25,7 +25,7 @@ function selectAll(e){
         })
         btn.text('反选');
     }else{
-        $("#holeList").find('div.selected').removeClass('selected');
+        $("#holeList").find('div.hole_box').removeClass('selected');
         btn.text('全选');
     }
 }
@@ -179,23 +179,20 @@ function setSucceed(ok){
                 },{
                     text:'确 定',
                     handler:function(){
-                        var ary = [];
                         var text = $('#inputCause .inp_text').val();
                         $('#inputCause').dialog('close');
                         selects.each(function(){
                             var status = $(this);
                             var tag = status.children('div.tag');
-                            var No = status.children('div.hole').text();
                             if(!status.hasClass(result)){
                                 status.removeClass().addClass('hole_box ' + result);
+                                tag.children('i').remove();
+                                tag.prepend(icon);
                             }else{
                                 status.removeClass('selected');
                             };
                             status.children('div.reason').text(text);
-                            tag.prepend(icon);
-                            ary.push(No);
                         });
-                        //alert('选中:'+ary+"\n原因:"+text)
                     }
                 }]
             });
@@ -205,10 +202,12 @@ function setSucceed(ok){
                 var tag = status.children('div.tag');
                 if(!status.hasClass(result)){
                     status.removeClass().addClass('hole_box ' + result);
+                    tag.children('i').remove();
+                    tag.prepend(icon);
                 }else{
                     status.removeClass('selected');
                 };
-                tag.prepend(icon);
+
             })
         };
     }else{
@@ -262,7 +261,9 @@ function setSucceedDouble(ok,lose){
                             }else{
                                 status.removeClass('selected');
                             };
+                            status.children('div.compound').remove();
                             $(this).append(identifying);
+                            tag.children('i').remove();
                             tag.prepend(icon);
                         })
                     }
@@ -277,6 +278,8 @@ function setSucceedDouble(ok,lose){
                 }else{
                     status.removeClass('selected');
                 };
+                status.children('div.compound').remove();
+                tag.children('i').remove();
                 tag.prepend(icon);
             })
         };

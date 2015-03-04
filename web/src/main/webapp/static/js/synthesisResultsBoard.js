@@ -16,7 +16,7 @@ function holesClick(){
     if(number != ''){
         $(this).toggleClass('selected');
     }else{
-        $.messager.alert('系统消息：','改孔没有孔号，不能进行相关操作。')
+        $.messager.alert('系统消息：','该孔没有生产编号，不能进行相关操作。')
     }
 }
 function selectAll(e){
@@ -169,23 +169,20 @@ function setSucceed(ok){
                 },{
                     text:'确 定',
                     handler:function(){
-                        var ary = [];
                         var text = $('#inputCause .inp_text').val();
                         $('#inputCause').dialog('close');
                         selects.each(function(){
                             var status = $(this);
                             var tag = status.children('div.tag');
-                            var No = status.children('div.hole').text();
                             if(!status.hasClass(result)){
                                 status.removeClass().addClass('hole_box ' + result);
+                                tag.children('i').remove();
+                                tag.prepend(icon);
                             }else{
                                 status.removeClass('selected');
                             };
                             status.children('div.reason').text(text);
-                            tag.prepend(icon);
-                            ary.push(No);
                         });
-                        //alert('选中:'+ary+"\n原因:"+text)
                     }
                 }]
             });
@@ -195,10 +192,12 @@ function setSucceed(ok){
                 var tag = status.children('div.tag');
                 if(!status.hasClass(result)){
                     status.removeClass().addClass('hole_box ' + result);
+                    tag.children('i').remove();
+                    tag.prepend(icon);
                 }else{
                     status.removeClass('selected');
                 };
-                tag.prepend(icon);
+
             })
         };
     }else{

@@ -264,11 +264,12 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);}
 .succeed .hole{background-position: 0 -50px ;color: #fff;text-shadow: 0 -1px 0 #438743;}
 .succeed .tag{color: #218b21;}
 .compound{position: absolute;font-size: 20px;right: -15px;top: 40px;color: #1da9da;}
-.lose .tag{color: #b41c1c;}
+.lose .tag,.compounded .tag{color: #b41c1c;}
+.regain .tag{color: #3472bd;}
 .tag i{font-size: 12px;margin-right: 2px;}
 .lose .hole,.compounded .hole{background-position:-50px -50px ;color: #fff;text-shadow: 1px 1px 1px #9e2d27;}
-.selected .hole{background-position: -50px 0;color: #fff;text-shadow: 0 -1px 0 #000;}
 .regain .hole{background-position:0 -100px;color: #fff;text-shadow: 1px 1px 1px #24599a;}
+.selected .hole{background-position: -50px 0;color: #fff;text-shadow: 0 -1px 0 #000;}
 .readonly_inp{border: none;background: none;color: #000;}
 .menu-text{padding-left: 2px;}
 .menu-text i{font-size: 14px;padding: 0 10px 0 3px;}
