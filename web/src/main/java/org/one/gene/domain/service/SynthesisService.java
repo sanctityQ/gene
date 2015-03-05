@@ -152,9 +152,11 @@ public class SynthesisService {
 		Board board = boardRepository.findByBoardNo(boardNo);
 		if (board != null) {
 			for (BoardHole boardHole : board.getBoardHoles()) {
-				boardHoleMap.put(boardHole.getHoleNo(), boardHole.getPrimerProduct().getProductNo());
-				totalCount += 1;
-				orderUpType = boardHole.getPrimerProduct().getOrder().getOrderUpType();
+				if (boardHole.getStatus() == 0) {//0正常  1 删除  
+					boardHoleMap.put(boardHole.getHoleNo(), boardHole.getPrimerProduct().getProductNo());
+					totalCount += 1;
+					orderUpType = boardHole.getPrimerProduct().getOrder().getOrderUpType();
+				}
 			}
 			flag = board.getBoardType();
 		}

@@ -1,37 +1,14 @@
 package org.one.gene.web.synthesis;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-
-import com.alibaba.fastjson.JSONObject;
-import com.sinosoft.one.mvc.web.Invocation;
-import com.sinosoft.one.mvc.web.annotation.Param;
-import com.sinosoft.one.mvc.web.annotation.Path;
-import com.sinosoft.one.mvc.web.annotation.rest.Post;
-
-import com.sinosoft.one.mvc.web.annotation.rest.Get;
-import com.sinosoft.one.mvc.web.instruction.reply.Reply;
-import com.sinosoft.one.mvc.web.instruction.reply.Replys;
-import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
-
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
-import org.one.gene.domain.entity.Customer;
-import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.entity.PrimerValueType;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.service.SynthesisService;
 import org.one.gene.repository.BoardHoleRepository;
@@ -45,6 +22,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.alibaba.fastjson.JSONObject;
+import com.sinosoft.one.mvc.web.Invocation;
+import com.sinosoft.one.mvc.web.annotation.Param;
+import com.sinosoft.one.mvc.web.annotation.Path;
+import com.sinosoft.one.mvc.web.annotation.rest.Get;
+import com.sinosoft.one.mvc.web.annotation.rest.Post;
+import com.sinosoft.one.mvc.web.instruction.reply.Reply;
+import com.sinosoft.one.mvc.web.instruction.reply.Replys;
+import com.sinosoft.one.mvc.web.instruction.reply.transport.Json;
 
 @Path
 public class SynthesisController {
@@ -504,11 +491,37 @@ public class SynthesisController {
      * 初始化板号
      * */
     @Post("initBoardNo")
-	public Reply initBoardNo(@Param("operationType") PrimerStatusType operationType, Invocation inv) {
+	public Reply initBoardNo(
+			@Param("operationType") PrimerStatusType operationType,
+			@Param("pageNo") Integer pageNo,
+			@Param("pageSize") Integer pageSize, Invocation inv) {
 
-		List<Board> boards = boardRepository.initBoardNo(operationType.toString());
+		if (pageNo == null || pageNo == 0) {
+			pageNo = 1;
+		}
+
+		if (pageSize == null) {
+			pageSize = 20;
+		}
+
+		Pageable pageable = new PageRequest(pageNo-1,pageSize);
 		
-    	return Replys.with(boards).as(Json.class);
-    }   
+		Page<Board> boards = boardRepository.initBoardNo(operationType.toString(), pageable);
+		for (Board board : boards) {
+			for (PrimerStatusType type : PrimerStatusType.values()) {
+				if (board.getOperationType() == type) {
+					board.setOperationTypeDesc(type.desc());
+					break;
+				}
+			}
+			if("0".equals(board.getBoardType())){
+				board.setBoardType("横排");
+			} else if("1".equals(board.getBoardType())){
+				board.setBoardType("竖排");
+			}
+		}
+
+		return Replys.with(boards).as(Json.class);
+	}
     
 }

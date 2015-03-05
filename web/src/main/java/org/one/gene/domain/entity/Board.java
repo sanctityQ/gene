@@ -44,6 +44,11 @@ public class Board extends IdEntity implements java.io.Serializable {
      */
     private PrimerStatusType operationType;
     
+    
+    private String operationTypeDesc;//操作类型描述
+    
+    
+    
     public Board() {
     }
 
@@ -123,6 +128,16 @@ public class Board extends IdEntity implements java.io.Serializable {
     public void setOperationType(PrimerStatusType operationType) {
         this.operationType = operationType;
     }
+    
+	@Transient
+	public String getOperationTypeDesc() {
+		return operationTypeDesc;
+	}
+
+
+	public void setOperationTypeDesc(String operationTypeDesc) {
+		this.operationTypeDesc = operationTypeDesc;
+	}
     
 }
 
