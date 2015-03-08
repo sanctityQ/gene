@@ -101,8 +101,23 @@ var ctx = '${ctx}';
 				<th data-options="field:'odTotal',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">OD总量</th>
 				<th data-options="field:'odTB',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">OD/tube</th>
 				</c:if>
-				<th data-options="field:'purifyType',width:80,sortable:true,editor:'text'">纯化方式</th>
-				<th data-options="field:'midi',width:200,sortable:true,styler:cellStyler">修饰</th>
+				<th data-options="field:'purifyType',width:80,sortable:true,editor:{
+							type:'combobox',
+							options:{
+							    panelHeight:100,
+								 valueField: 'label',
+                            textField: 'value',
+							    data: [
+							        {label: 'OPC',value: 'OPC'},
+							        {label: 'PAGE',value: 'PAGE'},
+							        {label: 'HPLC',value: 'HPLC'}
+							    ]
+							}}">纯化方式</th>
+				<!-- <th data-options="field:'midi',width:200,sortable:true,styler:cellStyler">修饰</th> -->
+				<th data-options="field:'modiFiveType',width:80,sortable:true,styler:cellStyler,editor:'text'">5修饰</th>
+				<th data-options="field:'modiThreeType',width:80,sortable:true,styler:cellStyler,editor:'text'">3修饰</th>
+				<th data-options="field:'modiMidType',width:80,sortable:true,styler:cellStyler,editor:'text'">中间修饰</th>
+				<th data-options="field:'modiSpeType',width:80,sortable:true,styler:cellStyler,editor:'text'">特殊单体</th>
 				<th data-options="field:'modiPrice',width:40,sortable:true">修饰价格</th>
 				<th data-options="field:'baseVal',width:40,sortable:true">碱基单价</th>
 				<th data-options="field:'purifyVal',width:40,sortable:true">纯化价格</th>

@@ -140,7 +140,7 @@ function getChanesSave(){
 		success : function(data) {
 			$.messager.progress('close');
 			if(data == "sucess"){
-				goToPage('/gene/views/order/orderList.jsp');
+				goToPage(ctx+'/views/order/orderList.jsp');
 			}
 		},
 		error:function(){

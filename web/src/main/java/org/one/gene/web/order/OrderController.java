@@ -241,7 +241,19 @@ public class OrderController {
             if (newPrimerProduct != null) {
                 primerProduct.setNmolTB(newPrimerProduct.getNmolTB());
                 primerProduct.setNmolTotal(newPrimerProduct.getNmolTotal());
-
+                primerProduct.setProductNo(newPrimerProduct.getProductNo());
+                primerProduct.setPrimeName(newPrimerProduct.getPrimeName());
+                primerProduct.setGeneOrder(newPrimerProduct.getGeneOrder());
+                primerProduct.setTbn(newPrimerProduct.getTbn());
+                primerProduct.setPurifyType(newPrimerProduct.getPurifyType());
+                primerProduct.setModiFiveType(newPrimerProduct.getModiFiveType());
+                primerProduct.setModiThreeType(newPrimerProduct.getModiThreeType());
+                primerProduct.setModiMidType(newPrimerProduct.getModiMidType());
+                primerProduct.setModiSpeType(newPrimerProduct.getModiSpeType());
+                primerProduct.setModiPrice(newPrimerProduct.getModiPrice());
+                primerProduct.setBaseVal(newPrimerProduct.getBaseVal());
+                primerProduct.setPurifyVal(newPrimerProduct.getPurifyVal());
+                primerProduct.setTotalVal(newPrimerProduct.getTotalVal());
                 newPrimerProductMap.remove(primerProduct.getId());
             }
         }
