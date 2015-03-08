@@ -4,6 +4,10 @@ package org.one.gene.repository;
 import java.util.List;
 
 import com.sinosoft.one.data.jade.annotation.SQL;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -11,7 +15,7 @@ import org.one.gene.domain.entity.Board;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BoardRepository extends PagingAndSortingRepository<Board, Long> {
+public interface BoardRepository extends PagingAndSortingRepository<Board, Long> , JpaSpecificationExecutor<Board> {
    
 	Board findByBoardNo(String boardNo);
     
@@ -24,7 +28,7 @@ public interface BoardRepository extends PagingAndSortingRepository<Board, Long>
 	List<Board> vagueSeachBoard(@Param("boardNo") String boardNo, @Param("operationType") String operationType);
 	
 	@SQL("select * from `board`  where `operation_type` = :operationType  order by `create_time` desc ")
-	List<Board> initBoardNo(@Param("operationType") String operationType);
+	Page<Board> initBoardNo(@Param("operationType") String operationType, Pageable pageable);
 	
 }
 

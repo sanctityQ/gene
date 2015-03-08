@@ -20,10 +20,10 @@
 </head>
 <body>
 <div class="page_padding">
-	<div class="content_box">
+	<div class="content_box margin_btoom">
 	    <input type="hidden" id="operationType" name="operationType" value="synthesis"/>
 		<h2>录入合成结果</h2>
-		<div class="import_box">
+		<div class="import_box" style="padding-top: 20px;">
 			<i class="icon-pencil"></i>请输入板号，点击“合成结果”按钮，进入结果录入页面。
 			<br />
 			<input class="inp_text" type="text" autocomplete="off" id="boardNo" name="boardNo" value="" style="width: 300px" />
@@ -33,8 +33,8 @@
 		<div class="import_box" style="padding-bottom: 50px;">
 			<button class="btn-primary submit" type="button" onclick="goToResultsBoard()">合成结果</button>
 		</div>
-		<div id="initBoardNoList"></div>
 	</div>
+	<%@ include file="/views/synthesis/initBoardNo.jsp"%> <!--  未处理板号初始化页面 -->
 </div>
 <script src="${ctx}/static/js/vagueSeachBoard.js" ></script>
 <script src="${ctx}/static/js/initBoardNo.js" ></script>
