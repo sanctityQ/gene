@@ -84,3 +84,11 @@ var ajaxFileUpload=function() {
     )
     //return false;
 }
+
+function progress(){
+    var win = $.messager.progress({
+        title:'系统消息',
+        msg:'请稍候…',
+        text:'页面载入中…'
+    });
+}

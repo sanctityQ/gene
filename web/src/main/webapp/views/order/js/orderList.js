@@ -19,11 +19,13 @@ function formatOper(val,row,index){
  * 订单列表初始化
  */
 var orderInfoIni=function(){
+	progress();
 	$.ajax({
 		type : "post",
 		url : ctx+"/order/query",
 		dataType : "json",
 		success : function(data) {
+			$.messager.progress('close');
 			if(data != null){
 				var total = data.totalElements;
         		var reSultdata = data.content;
@@ -45,6 +47,7 @@ var orderInfoIni=function(){
 			}
 		},
 		error:function(){
+			$.messager.progress('close');
 			alert("无法获取信息");
 		}
 	});
@@ -56,6 +59,7 @@ var getOrderInfo=function(){
     var gridOpts = $('#orderList').datagrid('getPager').data("pagination").options;
 	var orderNo = $("#seachOrder").val();
 	var customerCode = $("#customerCode").val();
+	progress();
 	$.ajax({
 		type : "post",
 		url : ctx+"/order/query",
@@ -68,6 +72,7 @@ var getOrderInfo=function(){
 			pageSize: gridOpts.pageSize
         },
 		success : function(data) {
+			$.messager.progress('close');
 			if(data != null){
 				var total = data.totalElements;
         		var reSultdata = data.content;
@@ -86,6 +91,7 @@ var getOrderInfo=function(){
 			}
 		},
 		error:function(){
+			$.messager.progress('close');
 			alert("无法获取信息");
 		}
 	});
@@ -102,12 +108,14 @@ var lookOrder=function(id,index){
  * 明细展示
  */
 var orderDetail=function(orderNo){
+	progress();
 	$.ajax({
 		type : "post",
 		url : ctx+"/order/productQuery",
 		dataType : "json",
 		data:"orderNo="+orderNo,
 		success : function(data) {
+			$.messager.progress('close');
 			if(data != null){
 				/*赋值 begin*/
                 $("#totalValue").html("<b class='bule'>订单总计：</b>￥ "+data.order.totalValue);
@@ -119,6 +127,7 @@ var orderDetail=function(orderNo){
 			}
 		},
 		error:function(){
+			$.messager.progress('close');
 			alert("无法获取信息");
 		}
 	});
@@ -138,18 +147,21 @@ var deleteOrder=function(id,index){
 		 if(data){
 			var row = $('#orderList').datagrid('getData').rows[index];
 			var orderNo = row.orderNo;
+			progress();
 			$.ajax({
 				type : "post",
 				url : ctx+"/order/delete",
 				dataType : "html",
 				data:"orderNo="+orderNo,
 				success : function(data) {
+					$.messager.progress('close');
 					if(data == "sucess"){
 						alert("删除成功！")
 						getOrderInfo();
 					}
 				},
 				error:function(){
+					$.messager.progress('close');
 					alert("删除失败!");
 				}
 			});

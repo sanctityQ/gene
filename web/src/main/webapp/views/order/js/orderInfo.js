@@ -127,7 +127,8 @@ var sumtotal=function(newTotalVal,index){
 function getChanesSave(){
 	bigToSmall.datagrid('endEdit',editIndex);
     var primerProducts = bigToSmall.datagrid('getData').rows;
-    console.log(primerProducts);
+//    console.log(primerProducts);
+    progress();
     $.ajax({
 		type : "post",
         url: ctx + "/order/save",
@@ -137,11 +138,13 @@ function getChanesSave(){
             "orderNo": orderNo
         },
 		success : function(data) {
+			$.messager.progress('close');
 			if(data == "sucess"){
 				goToPage('/gene/views/order/orderList.jsp');
 			}
 		},
 		error:function(){
+			$.messager.progress('close');
 			alert("数据保存失败，请重试！");
 		}
 	});
@@ -200,12 +203,14 @@ function copyRow(e){
  * 初始化加载导入订单列表
  */
 var getProduct=function(){
+	progress();
 	$.ajax({
 		type : "post",
 		url : ctx + "/order/productQuery",
 		dataType : "json",
 		data:"orderNo="+orderNo,
 		success : function(data) {
+			$.messager.progress('close');
 			if(data != null){
 				$("#totalValue").html('<b class="bule">订单总计：</b>￥ '+data.order.totalValue+'<br />');
         		var total = data.order.primerProducts.length;

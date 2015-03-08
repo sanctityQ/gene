@@ -8,12 +8,14 @@ function formatOper(val,row,index){
  * 订单列表初始化
  */
 var examineIni=function(){
+	progress();
 	$.ajax({
 		type : "post",
 		url : ctx+"/order/query",
 		dataType : "json",
 		data:{status:0},
 		success : function(data) {
+			$.messager.progress('close');
 			if(data != null){
 				var total = data.totalElements;
         		var reSultdata = data.content;
@@ -31,6 +33,7 @@ var examineIni=function(){
 			}
 		},
 		error:function(){
+			$.messager.progress('close');
 			alert("无法获取信息");
 		}
 	});
@@ -41,6 +44,7 @@ var getExamineInfo=function(){
     var gridOpts = $('#orderList').datagrid('getPager').data("pagination").options;
 	var orderNo = $("#orderNo").val();
 	var customerCode = $("#customerCode").val();
+	progress();
 	$.ajax({
 		type : "post",
 		url : ctx+"/order/query",
@@ -54,6 +58,7 @@ var getExamineInfo=function(){
 			status:'0'
         },
 		success : function(data) {
+			$.messager.progress('close');
 			if(data != null){
 				var total = data.totalElements;
         		var reSultdata = data.content;
@@ -71,6 +76,7 @@ var getExamineInfo=function(){
 			}
 		},
 		error:function(){
+			$.messager.progress('close');
 			alert("无法获取信息");
 		}
 	});
@@ -83,6 +89,7 @@ var checkOrder=function(id,index){
 }
 
 var examine=function(orderNo,failReason){
+	progress();
 	$.ajax({
 		type : "post",
 		url : ctx+"/order/examine",
@@ -93,6 +100,7 @@ var examine=function(orderNo,failReason){
 			failReason:failReason
         },
 		success : function(data) {
+			$.messager.progress('close');
 			if(data == "sucess"){
 				if(failReason==''){
 				  alert("审核通过！")
@@ -101,6 +109,7 @@ var examine=function(orderNo,failReason){
 			}
 		},
 		error:function(){
+			$.messager.progress('close');
 			alert("无法获取信息");
 		}
 	});

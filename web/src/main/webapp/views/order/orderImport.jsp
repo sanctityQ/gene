@@ -11,7 +11,7 @@
 <link href="${ctx}/static/css/perfect-scrollbar.min.css" type="text/css" rel="stylesheet" />
 <link href="${ctx}/static/css/master.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="${ctx}/static/css/font-awesome.min.css" />
-  <link rel="stylesheet" href="${ctx}/static/css/font-awesome-ie7.min.css">
+<link rel="stylesheet" href="${ctx}/static/css/font-awesome-ie7.min.css">
 <script src="${ctx}/static/js/jquery.min.js" ></script>
 <script src="${ctx}/static/js/jquery.easyui.min.js" ></script>
 <script src="${ctx}/static/js/perfect-scrollbar.min.js" ></script>
@@ -38,6 +38,7 @@
 			return false;
 		}		
 	}
+	 progress();
 	 $('#inputForm').submit();
  }
  //暂时处理后台异常
@@ -66,9 +67,9 @@
 			<a href="${ctx}/order/downLoad" class="down_excel">下载excel模板文件…</a>
 			<br /><br />
 			<div class="file_box">
-				<input name="file" type="file" onchange="document.getElementById('viewfile').value=this.value;" class="file" id="upload" /> 
-				<input name="file" type="text" id="viewfile" class="inp_text" value="请选择文件…" style="width: 220px;" /> 
-				<label class="btn" for="unload">浏览…</label>
+				<input name="file" type="file" id="upload" /> 
+<!-- 				<input name="file" type="text" id="viewfile" class="inp_text" value="请选择文件…" style="width: 220px;" /> 
+				<label class="btn" for="unload">浏览…</label> -->
 			</div>
 		</div>
 		<div class="import_box" style="padding-bottom: 50px;">
