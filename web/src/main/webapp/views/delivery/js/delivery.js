@@ -10,12 +10,9 @@ function formatOper(val,row,index){
  * 订单列表初始化
  */
 var orderInfoIni=function(){
-    var win = $.messager.progress({
-        title:'系统消息',
-        msg:'请稍候…',
-        text:'页面载入中…'
-    });
-    
+	
+	progress();
+
 	$.ajax({
 		type : "post",
 		url : "/gene/order/query",
@@ -36,13 +33,15 @@ var orderInfoIni=function(){
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#orderList').datagrid("loadData",jsonsource);
 			}
+			$.messager.progress('close');
 		},
 		error:function(){
+			$.messager.progress('close');
 			alert("无法获取信息");
 		}
 	});
 	
-	$.messager.progress('close');
+	
 	
 }
 /**
@@ -86,13 +85,15 @@ var getOrderInfo=function(){
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#orderList').datagrid("loadData",jsonsource);
 			}
+			$.messager.progress('close');
 		},
 		error:function(){
+			$.messager.progress('close');
 			alert("无法获取信息");
 		}
 	});
 	
-	$.messager.progress('close');
+	
 }
 
 //查看

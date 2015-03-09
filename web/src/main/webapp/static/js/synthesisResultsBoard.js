@@ -47,7 +47,8 @@ function synthesisBoard(id){
 			flag: '',
 			oldFlag:'1',
 			boardNo: $('#boardNo').val(),
-			productNoStr: ''
+			productNoStr: '',
+			operationType:'synthesis'
         },
         success: function(data){
             var total = data.total;

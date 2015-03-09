@@ -149,6 +149,7 @@ function saveBoardData(){
             	data.push({
             		"holeNo":holeNo,
             		"primerProduct.productNo":productNo,
+            		"primerProduct.measureVolume":productNo,
             		"failFlag":failFlag,
             		"remark":reason
             	});

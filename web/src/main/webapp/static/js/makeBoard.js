@@ -25,7 +25,8 @@ function makeBoard(id,flag){
 		data:{
 			flag: flag,
 			boardNo: $('#boardNo').val(),
-			productNoStr: $('#productNoArray').val()
+			productNoStr: $('#productNoArray').val(),
+			operationType:'makeBoard'
         },
         success: function(data){
             $('#boardType').val(data.boardType);
@@ -53,7 +54,9 @@ function saveBoard(){
 		alert("请输入板号。");
 		return;
 	}
-
+	
+	progress();
+	
 	var holeStr = "";
 	var holeNos = $('#holeList').find('div.hole');
 	var holeTags = $('#holeList').find('div.tag');
@@ -84,6 +87,7 @@ function saveBoard(){
 		        });
 		},
 		error:function(){
+			$.messager.progress('close');
 			alert("合成板数据保存失败！");
 		}
 	});

@@ -107,6 +107,7 @@ CREATE TABLE `primer_product` (
   `back_times`          TINYINT(2) DEFAULT '0' COMMENT '循环重回次数',
   `review_file_name`    VARCHAR(127) COMMENT '检测',
   `modify_time` DATETIME NOT NULL COMMENT '最后修改时间',
+  `measure_volume`       INT(11) COMMENT '测值体积',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_product_no` (`product_no`),
   KEY `idx_order_no` (`order_no`)
