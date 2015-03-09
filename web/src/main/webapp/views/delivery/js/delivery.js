@@ -10,6 +10,12 @@ function formatOper(val,row,index){
  * 订单列表初始化
  */
 var orderInfoIni=function(){
+    var win = $.messager.progress({
+        title:'系统消息',
+        msg:'请稍候…',
+        text:'页面载入中…'
+    });
+    
 	$.ajax({
 		type : "post",
 		url : "/gene/order/query",
@@ -35,11 +41,21 @@ var orderInfoIni=function(){
 			alert("无法获取信息");
 		}
 	});
+	
+	$.messager.progress('close');
+	
 }
 /**
  * 获取订单信息
  */
 var getOrderInfo=function(){
+	
+    var win = $.messager.progress({
+        title:'系统消息',
+        msg:'请稍候…',
+        text:'页面载入中…'
+    });
+    
     var gridOpts = $('#orderList').datagrid('getPager').data("pagination").options;
 	var orderNo = $("#orderNo").val();
 	var customerCode = $("#customerCode").val();
@@ -75,6 +91,8 @@ var getOrderInfo=function(){
 			alert("无法获取信息");
 		}
 	});
+	
+	$.messager.progress('close');
 }
 
 //查看
@@ -123,15 +141,23 @@ var orderDetail=function(orderNo){
 
 function saveDelivery(){
 	
+    var win = $.messager.progress({
+        title:'系统消息',
+        msg:'请稍候…',
+        text:'页面保存中…'
+    });
+    
     var rows = $('#bigToSmall').datagrid('getSelections');
     var primerProducts = [];
     if(rows.length == 0){
+    	$.messager.progress('close');
     	$.messager.alert('系统提示','请选择需要进行发货处理的数据。')
     	return false;
     }
     for(var i = 0; i < rows.length; i++){
         var data = rows[i];
         if( data.operationType != 'delivery'){
+        	$.messager.progress('close');
         	$.messager.alert('系统提示','您选择的生产编号:'+data.productNo+'的状态为:'+data.operationTypeDesc+'，不能进行发货处理。')
         	break;
         	return false;
@@ -158,4 +184,6 @@ function saveDelivery(){
 			alert("数据保存失败，请重试！");
 		}
 	});
+    
+    $.messager.progress('close');
 }

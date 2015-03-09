@@ -25,6 +25,12 @@ function setResult(toggal){
         $.messager.confirm('系统消息','确定将选中数据的结果设置为“成功”吗?',function(ok){
             if(ok){
 
+                var win = $.messager.progress({
+                    title:'系统消息',
+                    msg:'请稍候…',
+                    text:'页面保存中…'
+                });
+                
             	$.ajax({
             		type : "post",
             		url : "/gene/synthesis/resultsSelectSubmit",
@@ -47,6 +53,8 @@ function setResult(toggal){
                 decorate.menubutton('disable');
                 table.datagrid('loadData', { total: 0, rows: [] });//清空数据
                 //getResultProducts();
+                
+                $.messager.progress('close');
             }
         });
     }else{
@@ -98,7 +106,13 @@ function setResult(toggal){
 
 //查询需要选择成功失败的信息
 var getResultProducts=function(){
-	
+    
+	var win = $.messager.progress({
+        title:'系统消息',
+        msg:'请稍候…',
+        text:'页面载入中…'
+    });
+    
 	var gridOpts = $('#productionData').datagrid('getPager').data("pagination").options;
 	var modiFiveType;
 	var modiThreeType;
@@ -168,8 +182,10 @@ var getResultProducts=function(){
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#productionData').datagrid("loadData",jsonsource);
 			}
+			$.messager.progress('close');
 		},
 		error:function(){
+			$.messager.progress('close');
 			alert("无法获取信息");
 		}
 	});

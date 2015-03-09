@@ -29,6 +29,13 @@ function exportFile(flag){
 	document.form.submit();
 }
 var getOrderInfos=function(){
+	
+    var win = $.messager.progress({
+        title:'系统消息',
+        msg:'请稍候…',
+        text:'页面处理中…'
+    });
+    
 	var gridOpts = $('#productionData').datagrid('getPager').data("pagination").options;
 	var customercode = '';
 	if($("#seachCustom").val() != ''){
@@ -67,4 +74,7 @@ var getOrderInfos=function(){
 			alert("无法获取信息");
 		}
 	});
+
+	$.messager.progress('close');
+	
 }

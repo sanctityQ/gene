@@ -82,6 +82,12 @@ var saveBack=function(row,flag,text){
 }
 var getProducts=function(){
 	
+    var win = $.messager.progress({
+        title:'系统消息',
+        msg:'请稍候…',
+        text:'页面载入中…'
+    });
+    
 	var gridOpts = $('#productionData').datagrid('getPager').data("pagination").options;
 
 	var customercode = '';
@@ -115,4 +121,6 @@ var getProducts=function(){
 		}
 	});
 
+	$.messager.progress('close');
+	
 }

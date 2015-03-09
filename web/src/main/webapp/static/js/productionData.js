@@ -29,6 +29,12 @@ function makeBoard(url){
 
 var getProducts=function(){
 	
+    var win = $.messager.progress({
+        title:'系统消息',
+        msg:'请稍候…',
+        text:'页面载入中…'
+    });
+    
 	var gridOpts = $('#productionData').datagrid('getPager').data("pagination").options;
 	var strModifyFlag;
 	if($('#modiFlag').is(':checked')) {
@@ -60,12 +66,15 @@ var getProducts=function(){
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#productionData').datagrid("loadData",jsonsource);
 			}
+			$.messager.progress('close');
 		},
 		error:function(){
+			$.messager.progress('close');
 			alert("无法获取信息");
 		}
 	});
 
+	
 }
 
 var printOutBoundQuery=function(){
