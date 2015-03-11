@@ -3,6 +3,7 @@ package org.one.gene.excel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Map;
+import java.util.Stack;
 import java.util.TreeMap;
 
 import com.google.common.base.CharMatcher;
@@ -214,4 +215,41 @@ public class OrderCaculate {
 		return new BigDecimal(nmol_tube).multiply(new BigDecimal("10")).setScale(1,RoundingMode.HALF_UP).toString();
 	}
 
+	
+	public String getGeneOrder(String str){
+		//获取不包含在括号内字符串
+		String result = "";
+		Stack<Character> stack = new Stack<Character>();	 
+		StringBuffer resultbuf = new StringBuffer();	 
+		for(int i=0;i<str.length();i++){		 
+			char c = str.charAt(i);		 
+			if('(' == c){			 
+				stack.push(c);		 
+			}else if(')' == c){			 
+				stack.pop(); 		 
+			}else if(stack.isEmpty()){			
+				resultbuf.append(c);		 
+			}	 
+		}
+		result = resultbuf.toString();
+		return result;
+	}
+	
+	public String valiGeneOrder(String str){
+		//获取不包含在括号内字符串
+		String result = "";
+		Stack<Character> stack = new Stack<Character>();	 
+		for(int i=0;i<str.length();i++){		 
+			char c = str.charAt(i);		 
+			if('(' == c){			 
+				stack.push(c);		 
+			}else if(')' == c){			 
+				stack.pop(); 		 
+			}	 
+		}
+		if (!stack.isEmpty()) {
+			result = "修饰分子格式不完全正确,请您确认()是否成对出现！";
+		}
+		return result;
+	}
 }

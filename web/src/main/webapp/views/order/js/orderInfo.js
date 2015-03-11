@@ -78,6 +78,8 @@ function onClickRow(index){
 }
 
 function bindGridEvent(){
+	var geneOrderMidiObj = bigToSmall.datagrid('getEditor', {index:editIndex,field:'geneOrderMidi'});
+	var geneOrderMidi = $(geneOrderMidiObj.target).parent().find('input.datagrid-editable-input');
     var geneOrderObj = bigToSmall.datagrid('getEditor', {index:editIndex,field:'geneOrder'});
     var tbnObj = bigToSmall.datagrid('getEditor', {index:editIndex,field:'tbn'});
     var geneOrder = $(geneOrderObj.target).parent().find('input.datagrid-editable-input');
@@ -87,6 +89,15 @@ function bindGridEvent(){
 	var modiPriceVal = row.modiPrice;
 	var baseValVal = row.baseVal;
 	var purifyValVal = row.purifyVal;
+	
+	geneOrderMidi.bind("keyup",function(){
+		var Str = getGeneOrder(geneOrderMidi.val());
+        var num = Str.length;
+        $(geneOrderObj.target).val(Str);
+        $(tbnObj.target).numberbox('setValue',num);
+        calculateByGeneOrder(num,modiPriceVal,baseValVal,purifyValVal,editIndex);
+     });
+	
     geneOrder.bind("keyup",function(){
         var num = geneOrder.val().length;
         $(tbnObj.target).numberbox('setValue',num);
@@ -122,6 +133,62 @@ var sumtotal=function(newTotalVal,index){
     //汇总当前行最新值，求和。
     sumTotal = accAdd(sumTotal,newTotalVal)
     $("#totalValue").html('<b class="bule">订单总计：</b>￥ '+sumTotal+'<br />');
+}
+
+function getGeneOrder(str){
+	var wordin = new Array();
+	var wordout = new Array();
+	var m=0,n=0; p=0;
+    var count=0
+    
+    if(str_repeat("(",str)!=str_repeat(")",str)){
+    	alert("您录入的修饰方式格式有误，请您核实()是否成对出现!");
+    	return str;
+    }
+    
+	if(str.indexOf("(")<0 && str.indexOf(")")<0){
+		return str;
+	}
+
+    for(var i=0;i<str.length;i++){ 
+        if(str.charAt(i)=='('){ 
+            if(count==0){ 
+                m=i; 
+				
+				wordout.push(str.substring(p,m));
+            }
+            count++; 
+        } 
+        if(str.charAt(i)==')'){ 
+            count--; 
+            if(count==0){ 
+                n=i; 
+				p=n+1;
+				if(str.lastIndexOf(')')==n){
+				  wordout.push(str.substring(p,str.length));
+				}
+            } 
+        } 
+    }
+	var strout = "";
+	for(var k=0;k<wordout.length;k++){
+		strout = strout+wordout[k];
+	}
+	return strout;
+}
+
+function str_repeat(sub,geneOrder)
+{
+   var sum=0;
+   for(var k=0;k<geneOrder.length;k++)
+
+   {
+       if(geneOrder.charAt(k)==sub)
+       {
+           sum+=1;
+       }
+   }
+   return sum;
 }
 
 function getChanesSave(){

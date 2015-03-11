@@ -112,6 +112,11 @@ public class PrimerProduct implements java.io.Serializable {
      * 检测.
      */
     private String reviewFileName;
+    /**
+     * 带修饰引物序列.
+     */
+    private String geneOrderMidi;
+    
 
     private List<PrimerProductValue> primerProductValues = Lists.newArrayList();
 
@@ -349,8 +354,18 @@ public class PrimerProduct implements java.io.Serializable {
     public void setReviewFileName(String reviewFileName) {
         this.reviewFileName = reviewFileName;
     }
+    
+    @Column(name = "`gene_order_midi`", length = 255)
+    public String getGeneOrderMidi() {
+		return geneOrderMidi;
+	}
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "primerProduct", fetch = FetchType.LAZY)
+	public void setGeneOrderMidi(String geneOrderMidi) {
+		this.geneOrderMidi = geneOrderMidi;
+	}
+
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "primerProduct", fetch = FetchType.LAZY)
     public List<PrimerProductValue> getPrimerProductValues() {
         return primerProductValues;
     }

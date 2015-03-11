@@ -91,17 +91,18 @@ var ctx = '${ctx}';
 			<tr>
 				<th data-options="field:'productNo',width:80,sortable:true">生产编号</th>
 				<th data-options="field:'primeName',width:80,sortable:true,editor:'text'">引物名称</th>
-				<th data-options="field:'geneOrder',width:80,sortable:true,editor:'text'">序列</th>
-				<th data-options="field:'tbn',width:80,sortable:true,editor:'numberbox'">碱基数</th>
+				<th data-options="field:'geneOrderMidi',width:220,sortable:true,editor:'text'">序列</th>
+				<th data-options="field:'geneOrder',width:80,hidden:true,sortable:true,editor:'text'">序列</th>
+				<th data-options="field:'tbn',width:40,sortable:true,editor:'numberbox'">碱基数</th>
 				<c:if test="${order.orderUpType=='nmol'}">
-				<th data-options="field:'nmolTotal',width:80,sortable:true,min:0,precision:2,editor:{type:'numberbox',options:{precision:2}}">nmol总量</th>
-				<th data-options="field:'nmolTB',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">nmol/tube</th>
+				<th data-options="field:'nmolTotal',width:40,sortable:true,min:0,precision:2,editor:{type:'numberbox',options:{precision:2}}">nmol总量</th>
+				<th data-options="field:'nmolTB',width:40,sortable:true,editor:{type:'numberbox',options:{precision:2}}">nmol/tube</th>
 				</c:if>
 				<c:if test="${order.orderUpType=='od'}">
-				<th data-options="field:'odTotal',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">OD总量</th>
-				<th data-options="field:'odTB',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">OD/tube</th>
+				<th data-options="field:'odTotal',width:40,sortable:true,editor:{type:'numberbox',options:{precision:2}}">OD总量</th>
+				<th data-options="field:'odTB',width:40,sortable:true,editor:{type:'numberbox',options:{precision:2}}">OD/tube</th>
 				</c:if>
-				<th data-options="field:'purifyType',width:80,sortable:true,editor:{
+				<th data-options="field:'purifyType',width:60,sortable:true,editor:{
 							type:'combobox',
 							options:{
 							    panelHeight:100,
@@ -123,7 +124,7 @@ var ctx = '${ctx}';
 				<th data-options="field:'purifyVal',width:40,sortable:true">纯化价格</th>
 				<th data-options="field:'totalVal',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">总价格</th>
 				<th data-options="field:'fromProductNo',width:80,hidden:true,sortable:true,editor:'text'">来源生产编号</th>
-				<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>
+				<th data-options="field:'_operate',width:40,align:'center',formatter:formatOper">操作</th>
 			</tr>
 		</thead>
 	</table>

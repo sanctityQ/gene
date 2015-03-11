@@ -336,7 +336,7 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
         }
 
         /*(313.2 * #A + 289.2 * #C + 329.2 * #G+ 304.2 * #T + 
-        #U * 290.2 + #I * 252 + #N * 309 + #B * 307.5 + #D * 315.5+ 
+        #U * 290.2 + #I * 314.2 + #N * 309 + #B * 307.5 + #D * 315.5+ 
         #H * 302.2 + #K * 316.7 + #M * 301.2 + #R * 321.2 + 
         #S * 309.2 + #V * 310.5 + #W * 308.7 + #Y * 296.7 - 61) + 每种修饰的分子量*/
 
@@ -347,7 +347,7 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
             		.add(new BigDecimal("329.2").multiply(gv.value(primerProduct)))
             		.add(new BigDecimal("304.2").multiply(tv.value(primerProduct)))
             		.add(new BigDecimal("290.2").multiply(uv.value(primerProduct)))
-            		.add(new BigDecimal("252").multiply(iv.value(primerProduct)))
+            		.add(new BigDecimal("314.2").multiply(iv.value(primerProduct)))
 					.add(new BigDecimal("309").multiply(nv.value(primerProduct)))
 					.add(new BigDecimal("307.5").multiply(bv.value(primerProduct)))
 					.add(new BigDecimal("315.5").multiply(dv.value(primerProduct)))

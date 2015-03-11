@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +43,12 @@ public class OrderExcelPase {
 
 		for (int i = 0; i < date.length; i++) {
 			StringBuffer message = new StringBuffer(100);
+			if(!"".equals(date[i][2])){
+				String result = orderCaculate.valiGeneOrder(date[i][2]);
+				if(!"".equals(result)){
+				  message.append("第"+(i+4)+"行第3列[序列]数据"+result+" \n");
+				}
+			}
 			if("".equals(date[i][2])){
 				message.append("第"+(i+4)+"行第3列[序列]数据不能为空! \n");
 			}
@@ -113,7 +120,9 @@ public class OrderExcelPase {
 					  primerProduct.setPrimeName(v);
 					break;
 				  case 3:	
-					  primerProduct.setGeneOrder(orderCaculate.getYWSeqValue(v));
+					  String geneOrder = orderCaculate.getGeneOrder(v);
+					  primerProduct.setGeneOrderMidi(v);
+					  primerProduct.setGeneOrder(orderCaculate.getYWSeqValue(geneOrder));
 					break;
 				  case 4:	
 					  if(!"".equals(v)){
@@ -240,4 +249,5 @@ public class OrderExcelPase {
 		 Matcher matcher=pattern.matcher(str);  
 		 return matcher.find();
 	}
+	
 }
