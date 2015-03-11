@@ -130,7 +130,7 @@ public class DeliveryController {
     }
     
     /**
-     * 发货召回查询列表
+     * 发货召回保存
      * @throws Exception
      */
     @Post("saveBack")

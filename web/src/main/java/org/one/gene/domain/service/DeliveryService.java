@@ -13,6 +13,8 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.one.gene.domain.entity.Board;
+import org.one.gene.domain.entity.BoardHole;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerLabelConfigSub;
@@ -23,6 +25,7 @@ import org.one.gene.domain.entity.PrimerType.PrimerOperationType;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.entity.PrimerValueType;
 import org.one.gene.domain.entity.PrintLabel;
+import org.one.gene.repository.BoardRepository;
 import org.one.gene.repository.CustomerRepository;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductOperationRepository;
@@ -65,7 +68,8 @@ public class DeliveryService {
     @Autowired
     private CustomerRepository customerRepository;
     
-    
+    @Autowired
+    private BoardRepository boardRepository;
     
 	//保存发货信息
     @Transactional(readOnly = false)
@@ -155,38 +159,67 @@ public class DeliveryService {
 		for (OrderInfo orderInfo : orderInfos) {
 			primerProduct = primerProductRepository.findByProductNoOrOutProductNo(orderInfo.getProductNoMinToMax(), orderInfo.getProductNoMinToMax());
 			if (primerProduct != null) {
-				primerProduct.setBackTimes(primerProduct.getBackTimes()+1);
-				if ("1".equals(flag)) {//安排合成
-					primerProduct.setOperationType(PrimerStatusType.synthesis);
-				}else if ("2".equals(flag)) {//重新分装
-					primerProduct.setOperationType(PrimerStatusType.pack);
+				Board board = boardRepository.findByBoardNo(primerProduct.getBoardNo());
+				if (board != null) {
+					for (BoardHole boardHole:board.getBoardHoles()) {
+						
+						primerProductOperations = new ArrayList<PrimerProductOperation>();
+						
+						if (boardHole.getPrimerProduct().getId() == primerProduct.getId()){
+							
+							boardHole.getPrimerProduct().setModifyTime(new Date());//最后修改时间
+							boardHole.setModifyTime(new Date());//最后修改时间
+							boardHole.setModifyUser(123L);//后续从session取得
+							if (boardHole.getPrimerProduct().getBackTimes() != null) {
+								boardHole.getPrimerProduct().setBackTimes(boardHole.getPrimerProduct().getBackTimes()+1);//循环重回次数+1
+							}
+							
+							if ("1".equals(flag)) {//安排合成
+								boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
+								boardHole.getPrimerProduct().setBoardNo("");//清空板号
+								boardHole.setStatus(1);//删除
+							}else if ("2".equals(flag)) {//重新分装
+								boardHole.getPrimerProduct().setOperationType(PrimerStatusType.pack);//回到分装
+							}
+							
+							type = PrimerOperationType.backSuccess;
+							typeDesc = PrimerOperationType.backSuccess.desc();
+							
+							
+							//组装操作信息
+							primerProductOperation = new PrimerProductOperation();
+							primerProductOperation.setPrimerProduct(boardHole.getPrimerProduct());
+							primerProductOperation.setUserCode("123");//后续从session取得
+							primerProductOperation.setUserName("张三");//后续从session取得
+							primerProductOperation.setCreateTime(new Date());
+							primerProductOperation.setType(type);
+							primerProductOperation.setTypeDesc(typeDesc);
+							primerProductOperation.setBackTimes(boardHole.getPrimerProduct().getBackTimes());
+							primerProductOperation.setFailReason(text);
+							
+							if ("1".equals(flag)) {
+								boardHole.setPrimerProductOperation(primerProductOperation);
+							}
+							
+							primerProductOperations.add(primerProductOperation);
+							
+							
+							//保存primer_product表数据
+							primerProductRepository.save(boardHole.getPrimerProduct());
+						}
+						
+						//更新操作信息
+						primerProductOperationRepository.save(primerProductOperations);
+						
+					}
+					
+					boardRepository.save(board);
+					
 				}
-				
-				type = PrimerOperationType.backSuccess;
-				typeDesc = PrimerOperationType.backSuccess.desc();
-				
-				
-				//组装操作信息
-				primerProductOperation = new PrimerProductOperation();
-				primerProductOperation.setPrimerProduct(primerProduct);
-				primerProductOperation.setUserCode("123");//后续从session取得
-				primerProductOperation.setUserName("张三");//后续从session取得
-				primerProductOperation.setCreateTime(new Date());
-				primerProductOperation.setType(type);
-				primerProductOperation.setTypeDesc(typeDesc);
-				primerProductOperation.setBackTimes(primerProduct.getBackTimes());
-				primerProductOperation.setFailReason(text);
-				
-				primerProductOperations.add(primerProductOperation);
-				
-				
-				//保存primer_product表数据
-				primerProductRepository.save(primerProduct);
 			}
 			
     	}
-		//更新操作信息
-		primerProductOperationRepository.save(primerProductOperations);
+		
     	
     	return "";
     }

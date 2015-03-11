@@ -21,7 +21,7 @@
 	</div>
 	<div title="修饰与氨解" data-options="iconCls:'adorn'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li url="${ctx}/synthesis/preDecorateQuery" id="decorate"><i class="icon-star-half-full"></i>修饰</li>
+			<li url="${ctx}/synthesis/decorate" id="decorate"><i class="icon-star-half-full"></i>修饰</li>
 			<li url="${ctx}/synthesis/ammoniaResults" id="aminolysis"><i class="icon-th-large"></i>氨解</li>
 		</ul>
 	</div>

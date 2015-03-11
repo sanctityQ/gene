@@ -123,7 +123,7 @@ public class PrimerProduct implements java.io.Serializable {
     private List<PrimerProductOperation> primerProductOperations = Lists.newArrayList();
 
     private Date modifyTime;//操作时间
-    
+    private Integer measureVolume;//测值体积
     
     private String operationTypeDesc;//操作类型描述
 	private BigDecimal odTotal;//OD总量
@@ -506,6 +506,14 @@ public class PrimerProduct implements java.io.Serializable {
         this.modifyTime = modifyTime;
     }
     
+    @Column(name="`measure_volume`")
+    public Integer getMeasureVolume() {
+    return this.measureVolume;
+    }
+
+    public void setMeasureVolume(Integer measureVolume) {
+    this.measureVolume = measureVolume;
+    }
     
     @PostLoad
     public void init(){

@@ -47,7 +47,8 @@ function synthesisBoard(id){
 			flag: '',
 			oldFlag:'1',
 			boardNo: $('#boardNo').val(),
-			productNoStr: ''
+			productNoStr: '',
+			operationType:'synthesis'
         },
         success: function(data){
             var total = data.total;
@@ -75,6 +76,12 @@ function saveBoard(){
     var boardHoles = saveBoardData();
     //console.log(boardHoles);
 
+    var win = $.messager.progress({
+        title:'系统消息',
+        msg:'请稍候…',
+        text:'页面保存中…'
+    });
+    
     $.ajax({
     	url : "/gene/synthesis/submitSynthesis",
     	type : "post",
@@ -91,6 +98,7 @@ function saveBoard(){
 			}
 		},
 		error:function(){
+			$.messager.progress('close');
 			alert("数据保存失败，请重试！");
 		}
 	});

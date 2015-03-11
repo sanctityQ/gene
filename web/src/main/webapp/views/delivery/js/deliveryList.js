@@ -19,7 +19,13 @@ function gridUnCheck(rowIndex,rowData){
 }
 
 var getProducts=function(){
-	
+
+    var win = $.messager.progress({
+        title:'系统消息',
+        msg:'请稍候…',
+        text:'页面载入中…'
+    });
+    
 	var gridOpts = $('#productionData').datagrid('getPager').data("pagination").options;
 
 	$.ajax({
@@ -47,6 +53,8 @@ var getProducts=function(){
 		}
 	});
 
+	$.messager.progress('close');
+	
 };
 
 //导出发货清单

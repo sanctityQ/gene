@@ -134,8 +134,8 @@ public class SynthesisService {
 	}
 
     //到制板页面
-	public String makeBoard(String boardNo, String flag, 
-			String productNoStr, Invocation inv) throws IOException {
+	public String makeBoard(String boardNo, String flag, String productNoStr,
+			PrimerStatusType operationType, Invocation inv) throws IOException {
 		
 		System.out.println("=====页面选择的生产编号=" + productNoStr);
 		int totalCount = 0;
@@ -152,7 +152,7 @@ public class SynthesisService {
 		Board board = boardRepository.findByBoardNo(boardNo);
 		if (board != null) {
 			for (BoardHole boardHole : board.getBoardHoles()) {
-				if (boardHole.getStatus() == 0) {//0正常  1 删除  
+				if (boardHole.getStatus() == 0 && operationType == boardHole.getPrimerProduct().getOperationType()) {//0正常  1 删除 && 类型相同
 					boardHoleMap.put(boardHole.getHoleNo(), boardHole.getPrimerProduct().getProductNo());
 					totalCount += 1;
 					orderUpType = boardHole.getPrimerProduct().getOrder().getOrderUpType();
@@ -680,15 +680,10 @@ public class SynthesisService {
 					}
 					
 					// 体积:导入测试数据后显示体积
-					int measureCount = primerProductOperationRepository.getCountWithType(pp.getId(), PrimerOperationType.measureSuccess.toString());
-					if (measureCount > 0) {
+					if (pp.getMeasureVolume() != null) {
 						cell = row.getCell(pthc.getColumn()+3);
 						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-						if (pp.getOrder().getOrderUpType() == OrderType.nmol) {
-							cell.setCellValue(pp.getNmolTotal()+"");
-						}else{
-							cell.setCellValue(pp.getOdTotal()+"");
-						}
+						cell.setCellValue(pp.getMeasureVolume()+"");
 					}
 					
 					ppLast = pp;
@@ -1032,15 +1027,15 @@ public class SynthesisService {
 				
 				this.addNewValue(primerProduct);
 				
-				if (boardHole.getStatus() == 0) {//0正常  1 删除  
+				if (boardHole.getStatus() == 0  && operationType == primerProduct.getOperationType()) {//0正常  1 删除   && 类型相同
 					boardHoleMap.put(boardHole.getHoleNo(), primerProduct);
 					totalCount += 1;
 					orderUpType = boardHole.getPrimerProduct().getOrder().getOrderUpType();
 				}
 				
-				if (!boardHole.getPrimerProduct().getOperationType().equals(operationType) && boardHole.getStatus() == 0) {
-					typeFlag = "0";
-				}
+//				if (!boardHole.getPrimerProduct().getOperationType().equals(operationType) && boardHole.getStatus() == 0) {
+//					typeFlag = "0";
+//				}
 			}
 		}
 
@@ -1117,7 +1112,7 @@ public class SynthesisService {
 	//提交板編輯信息
     @Transactional(readOnly = false)
 	public String submitBoardEdit(String boardNo,
-			List<BoardHole> boardHoleList, PrimerStatusType operationType) {
+			List<BoardHole> boardHoleList, PrimerStatusType operationType) throws IOException {
     	
     	Map<String, BoardHole> bhMap = new HashMap<String, BoardHole>();
     	for(BoardHole bh:boardHoleList){
@@ -1130,6 +1125,8 @@ public class SynthesisService {
 		List<PrimerProductOperation> primerProductOperations = new ArrayList<PrimerProductOperation>();
 		PrimerOperationType type = null;
 		String typeDesc = "";
+		Map<PrimerStatusType, Integer> typeMap = this.getTypeOrder();
+		int boardOrder = typeMap.get(board.getOperationType());
 		
 		for (BoardHole boardHole:board.getBoardHoles()) {
 			
@@ -1160,24 +1157,35 @@ public class SynthesisService {
 						type = PrimerOperationType.packSuccess;
 						typeDesc = PrimerOperationType.packSuccess.desc();
 					}else if (operationType.equals(PrimerStatusType.bake)) {
-						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.detect);
+						//重新分装的烘干后不走检测环节,直接到发货
+						if (boardOrder <= typeMap.get(PrimerStatusType.bake)) {
+							boardHole.getPrimerProduct().setOperationType(PrimerStatusType.detect);
+						}else{
+							boardHole.getPrimerProduct().setOperationType(PrimerStatusType.delivery);
+						}
+						
 						type = PrimerOperationType.bakeSuccess;
 						typeDesc = PrimerOperationType.bakeSuccess.desc();
 					}else if (operationType.equals(PrimerStatusType.measure)) {
+						boardHole.getPrimerProduct().setMeasureVolume(boardHoleTemp.getPrimerProduct().getMeasureVolume());//测值体积
 						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.pack);
 						type = PrimerOperationType.measureSuccess;
 						typeDesc = PrimerOperationType.measureSuccess.desc();
 					}
-					
-					board.setOperationType(boardHole.getPrimerProduct().getOperationType());//板的状态赋值
+					//板的状态不往回走
+					int primerProductOrder = typeMap.get(boardHole.getPrimerProduct().getOperationType());
+					if (boardOrder < primerProductOrder) {
+						board.setOperationType(boardHole.getPrimerProduct().getOperationType());// 板的状态赋值
+					}
 					
 				} else if ("1".equals(failFlag) || "2".equals(failFlag) || "3".equals(failFlag)) { // fail
 					
 					if ("3".equals(failFlag)) {
-						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到分装
+						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.pack);//回到分装
 					}else{
 						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
 						boardHole.getPrimerProduct().setBoardNo("");//清空板号
+						boardHole.setStatus(1);//删除
 					}
 					if (boardHole.getPrimerProduct().getBackTimes() != null) {
 						boardHole.getPrimerProduct().setBackTimes(boardHole.getPrimerProduct().getBackTimes()+1);//循环重回次数+1
@@ -1185,7 +1193,6 @@ public class SynthesisService {
 						boardHole.getPrimerProduct().setBackTimes(1);
 					}
 					
-					boardHole.setStatus(1);//删除
 					
 					if (operationType.equals(PrimerStatusType.ammonia)) {
 						type = PrimerOperationType.ammoniaFailure;
@@ -1217,7 +1224,7 @@ public class SynthesisService {
 				primerProductOperation.setBackTimes(boardHole.getPrimerProduct().getBackTimes());
 				primerProductOperation.setFailReason(failReason);
 				
-				if ("1".equals(failFlag) || "2".equals(failFlag) || "3".equals(failFlag)) {
+				if ("1".equals(failFlag) || "2".equals(failFlag)) {
 					boardHole.setPrimerProductOperation(primerProductOperation);
 				}
 				
@@ -1412,6 +1419,22 @@ public class SynthesisService {
 
 	}
 		
+    //组织测值信息
+   	public Map<PrimerStatusType, Integer> getTypeOrder() throws IOException {
+   		
+   		Map<PrimerStatusType, Integer> typeMap = new HashMap<PrimerStatusType, Integer>();
+   		typeMap.put(PrimerStatusType.makeBoard, 1);
+   		typeMap.put(PrimerStatusType.synthesis, 2);
+   		typeMap.put(PrimerStatusType.modification, 3);
+   		typeMap.put(PrimerStatusType.ammonia, 3);
+   		typeMap.put(PrimerStatusType.purify, 4);
+   		typeMap.put(PrimerStatusType.measure, 5);
+   		typeMap.put(PrimerStatusType.pack, 6);
+   		typeMap.put(PrimerStatusType.bake, 7);
+   		typeMap.put(PrimerStatusType.detect, 8);
+   		typeMap.put(PrimerStatusType.delivery, 9);
 		
+   		return typeMap;
+   	}	
 		
 }

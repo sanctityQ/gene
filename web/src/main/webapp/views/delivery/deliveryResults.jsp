@@ -54,7 +54,9 @@ var ctx = '${ctx}';
 <div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
 <script src="${ctx}/views/delivery/js/delivery.js" ></script>
 <script type="text/javascript">
-orderInfoIni();
+
+//orderInfoIni();
+
 $(function(){
     var dg = $('#orderList');
     var opts = dg.datagrid('options');

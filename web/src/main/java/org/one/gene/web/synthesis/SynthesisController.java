@@ -105,7 +105,7 @@ public class SynthesisController {
         }
 
         if(pageSize == null){
-            pageSize = 10;
+            pageSize = 96;
         }
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         
@@ -123,10 +123,12 @@ public class SynthesisController {
      * */
     @Post("makeBoardEdit")
 	public Reply makeBoardEdit(@Param("flag") String flag,
-			                   @Param("boardNo") String boardNo,
-			                   @Param("productNoStr") String productNoStr, Invocation inv) throws IOException {
+			@Param("boardNo") String boardNo,
+			@Param("productNoStr") String productNoStr,
+			@Param("operationType") PrimerStatusType operationType, Invocation inv)
+			throws IOException {
     	
-    	String jsonStr = synthesisService.makeBoard(boardNo, flag, productNoStr, inv);
+    	String jsonStr = synthesisService.makeBoard(boardNo, flag, productNoStr, operationType, inv);
         
     	return Replys.with(jsonStr).as(Json.class);
     }
@@ -267,9 +269,8 @@ public class SynthesisController {
      * 进入修饰查询页面
      * 
      * */
-    @Get("preDecorateQuery")
-    public String preDecorateQuery(){
-    	
+    @Get("decorate")
+    public String decorate(){
     	return "decorate";
     }
     
@@ -347,12 +348,13 @@ public class SynthesisController {
     
     /**
      * 提交编辑板信息
+     * @throws IOException 
      * */
     @Post("submitBoardEdit")
 	public Reply submitBoardEdit(@Param("operationType") PrimerStatusType operationType,
 			                     @Param("boardHoles") List<BoardHole> boardHoles,
 			                     @Param("boardNo") String boardNo,
-			                     Invocation inv) {
+			                     Invocation inv) throws IOException {
     	
     	synthesisService.submitBoardEdit(boardNo, boardHoles, operationType);
     	
