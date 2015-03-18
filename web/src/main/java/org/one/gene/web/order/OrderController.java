@@ -379,4 +379,42 @@ public class OrderController {
     	 return "orderView";
     }
 
+    
+    /**
+     * 订单查询 用于发货处理列表
+     * @param orderNo
+     * @param customerCode
+     * @param pageNo
+     * @param pageSize
+     * @param inv
+     * @return
+     * @throws Exception
+     */
+    @Post("queryDeliveryDeal")
+	public Reply queryDeliveryDeal(@Param("orderNo") String orderNo,
+			@Param("customerCode") String customerCode,
+			@Param("pageNo") Integer pageNo,
+			@Param("pageSize") Integer pageSize, Invocation inv)
+			throws Exception {
+
+        if(pageNo == null || pageNo ==0){
+            pageNo = 1;
+        }
+
+        if(pageSize == null){
+            pageSize = 20;
+        }
+        Pageable pageable = new PageRequest(pageNo-1,pageSize);
+        
+        Page<Order> orderPage = orderRepository.queryDeliveryDeal(orderNo, customerCode, pageable);
+        //循环查询生产数据表
+        for (Order order : orderPage.getContent()) {
+        	order.setPrimerProducts(primerProductRepository.findByOrder(order));
+        }
+        Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
+        
+        return Replys.with(orderListPage).as(Json.class);
+    }
+    
+    
 }

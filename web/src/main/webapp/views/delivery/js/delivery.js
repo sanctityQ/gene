@@ -15,7 +15,7 @@ var orderInfoIni=function(){
 
 	$.ajax({
 		type : "post",
-		url : "/gene/order/query",
+		url : "/gene/order/queryDeliveryDeal",
 		dataType : "json",
 		success : function(data) {
 			if(data != null){
@@ -60,7 +60,7 @@ var getOrderInfo=function(){
 	var customerCode = $("#customerCode").val();
 	$.ajax({
 		type : "post",
-		url : "/gene/order/query",
+		url : "/gene/order/queryDeliveryDeal",
 		dataType : "json",
 		data:
 		{
@@ -140,6 +140,7 @@ var orderDetail=function(orderNo){
 	});
 }
 
+//发货保存
 function saveDelivery(){
 	
     var win = $.messager.progress({
@@ -155,17 +156,24 @@ function saveDelivery(){
     	$.messager.alert('系统提示','请选择需要进行发货处理的数据。')
     	return false;
     }
+    
+    var saveFlag = true;
+    
     for(var i = 0; i < rows.length; i++){
         var data = rows[i];
         if( data.operationType != 'delivery'){
         	$.messager.progress('close');
         	$.messager.alert('系统提示','您选择的生产编号:'+data.productNo+'的状态为:'+data.operationTypeDesc+'，不能进行发货处理。')
+        	saveFlag = false;
         	break;
-        	return false;
+        	
         }
         primerProducts.push(data);
     }
-    //alert(primerProducts);
+    //不是待发货状态的数据不允许提交
+    if(!saveFlag){
+    	return false;
+    }
     
     $.ajax({
     	url : "/gene/delivery/saveDelivery",
