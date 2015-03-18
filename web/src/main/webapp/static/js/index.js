@@ -92,3 +92,33 @@ function progress(){
         text:'页面载入中…'
     });
 }
+
+
+//序列有U I 的，背景置黄
+function cellStyler1(value,row,index){
+	var text = value.toString();
+    var iIndex = text.indexOf('I');
+    var uIndex = text.indexOf('U');
+    if(iIndex>0 || uIndex>0){
+      return 'background-color:#ffee00;';
+    }
+}
+
+//序列有U I 的,U I 变红
+function formatOper1(val,row,index){
+    var text = val.toString();
+    var iIndex = text.indexOf('I');
+    var uIndex = text.indexOf('U');
+    var span = null,newVal = null;
+    if(!iIndex){
+        span = '<span style="color: red;">I</span>';
+        newVal = span + val.slice(iIndex + 1);
+        return newVal;
+    }else if(!uIndex){
+        span = '<span style="color: red;">U</span>';
+        newVal = span + val.slice(uIndex + 1);
+        return newVal;
+    }else{
+        return val;
+    }
+}

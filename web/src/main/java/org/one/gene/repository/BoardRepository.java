@@ -30,9 +30,10 @@ public interface BoardRepository extends PagingAndSortingRepository<Board, Long>
 			" #if(:operationType != '') {  and c.`operation_type` = :operationType  } )")
 	List<Board> vagueSeachBoard(@Param("boardNo") String boardNo, @Param("operationType") String operationType);
 	
-	@SQL("select DISTINCT a.`id`,a.`board_no` from `board` a,`board_hole` b,`primer_product` c where " +
-			"a.`board_no`=b.`board_no` and b.`status`='0' and b.`product_id`=c.`id` " +
-			"and c.`operation_type` = :operationType  order by a.`create_time` desc ")
+	@SQL("select DISTINCT a.`id`,a.`board_no`,a.`board_type`,a.`create_time`,c.`operation_type` " +
+		 " from `board` a,`board_hole` b,`primer_product` c where " +
+		 " a.`board_no`=b.`board_no` and b.`status`='0' and b.`product_id`=c.`id` " +
+		 " and c.`operation_type` = :operationType  order by a.`create_time` desc ")
 	Page<Board> initBoardNo(@Param("operationType") String operationType, Pageable pageable);
 	
 }
