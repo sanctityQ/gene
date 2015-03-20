@@ -20,6 +20,7 @@
 
 	<!-- project default level -->
 	<logger name="org.one.gene" level="INFO" />
+    <logger name="com.sinosoft.one.mvc.controllers.ToolsController" level="DEBUG" />
 
 	<!--log4jdbc -->
 	<logger name="jdbc.sqlonly" level="OFF"/>
