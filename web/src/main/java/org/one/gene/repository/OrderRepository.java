@@ -4,6 +4,8 @@ package org.one.gene.repository;
 import java.util.List;
 
 import org.one.gene.domain.entity.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -27,6 +29,12 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
     
 	@SQL("select * from `order` where (`order_no` like :orderNoSQL or `out_order_no` like :orderNoSQL ) ")
 	List<Order> vagueSeachOrder(@Param("orderNoSQL") String orderNoSQL);
+	
+	@SQL("select * from `order` o  where exists (select 1 from `primer_product` p where o.`order_no` = p.`order_no` and p.`operation_type` = 'delivery' )"
+			+ "#if(:orderNo != '') { and o.`order_no` = :orderNo } "
+			+ "#if(:customerCode != '') { and o.`customer_code` = :customerCode }"
+			+ " order by o.`create_time` desc ")
+	Page<Order> queryDeliveryDeal(@Param("orderNo") String orderNo,@Param("customerCode") String customerCode, Pageable pageable);
 	
 }
 

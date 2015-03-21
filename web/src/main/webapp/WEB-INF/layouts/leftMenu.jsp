@@ -80,6 +80,11 @@
 			<li url="${ctx}/delivery/deliveryLabel" id="deliveryLabel"><i class="icon-bookmark-empty"></i>发货标签</li>
 		</ul>
 	</div>
+    <div title="用户管理" data-options="iconCls:'salesman'" style="height:200px;">
+        <ul class="sbu_menu">
+            <li url="${ctx}/user/manageQuery"><i class="icon-cogs"></i>用户管理</li>
+        </ul>
+    </div>
 	<div title="业务员管理" data-options="iconCls:'salesman'" style="height:200px;">
 		<ul class="sbu_menu">
 			<li url="${ctx}/user/prepareManageQuery"><i class="icon-cogs"></i>业务员管理</li>

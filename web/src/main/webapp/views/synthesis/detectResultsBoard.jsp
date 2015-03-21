@@ -66,7 +66,7 @@
 			<th data-options="field:'productNo',width:80,sortable:true">生产编号</th>
             <th data-options="field:'reviewFileName',width:120,sortable:true">文件</th>
 			<th data-options="field:'boardNo',width:80,sortable:true">板号</th>
-			<th data-options="field:'geneOrder',width:80,sortable:true">序列</th>
+			<th data-options="field:'geneOrder',width:80,sortable:true,styler:cellStyler1">序列</th>
 			<th data-options="field:'tbn',width:40,sortable:true">碱基数</th>
             <th data-options="field:'purifyType',width:50,sortable:true">纯化方式</th>
             <th data-options="field:'midi',width:80,sortable:true">修饰</th>

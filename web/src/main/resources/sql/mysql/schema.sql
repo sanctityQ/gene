@@ -18,7 +18,7 @@ CREATE TABLE `company` (
   `desc`          VARCHAR(511) COMMENT '描述',
   `validate`       TINYINT(1)  NOT NULL COMMENT '是否有效,0-无效，1-有效',
   `create_time` DATETIME NOT NULL COMMENT '创建时间',
-  `modify_time` DATETIME NOT NULL COMMENT '最后修改时间',
+  `modify_time` DATETIME COMMENT '最后修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_com_code` (`com_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='机构表';
