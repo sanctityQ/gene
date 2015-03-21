@@ -30,7 +30,8 @@ public class User extends IdEntity implements java.io.Serializable {
   /**
    * 机构代码.
    */
-  private String comCode;
+  //private String comCode;
+  private Company company;
   /**
    * 手机号.
    */
@@ -91,14 +92,24 @@ public class User extends IdEntity implements java.io.Serializable {
     this.password = password;
   }
 
-  @Column(name = "`com_code`", length = 10)
-  public String getComCode() {
-    return this.comCode;
+  @OneToOne
+  @JoinColumn(name = "`com_code`",referencedColumnName = "`com_code`")
+  public Company getCompany() {
+    return company;
   }
 
-  public void setComCode(String comCode) {
-    this.comCode = comCode;
+  public void setCompany(Company company) {
+    this.company = company;
   }
+
+//  @Column(name = "`com_code`", length = 10)
+//  public String getComCode() {
+//    return this.comCode;
+//  }
+//
+//  public void setComCode(String comCode) {
+//    this.comCode = comCode;
+//  }
 
   @Column(name = "`mobile`", length = 11)
   public String getMobile() {
@@ -188,6 +199,17 @@ public class User extends IdEntity implements java.io.Serializable {
   public void setModifyTime(Date modifyTime) {
     this.modifyTime = modifyTime;
   }
+
+  @PrePersist
+  public void generateUserTime() {
+    this.createTime = new Date();
+  }
+
+  @PreUpdate
+  public void generateModifyTime() {
+    this.modifyTime = new Date();
+  }
+
 }
 
 

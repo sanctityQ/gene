@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.one.gene.domain.entity.Company;
 import org.one.gene.domain.entity.User;
 import org.one.gene.domain.service.account.AccountService;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
+import org.one.gene.repository.CompanyRepository;
 import org.one.gene.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,9 @@ public class UserController {
   private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
   @Autowired
+  private CompanyRepository companyRepository;
+
+  @Autowired
   private UserRepository userRepository;
 
   @Autowired
@@ -53,9 +58,56 @@ public class UserController {
     return "userManageQuery";
   }
 
+  @Get("list")
+  public  Reply list(@Param("userName") String userName,
+                     @Param("comCode") String comCode,
+                     @Param("pageNo") Integer pageNo,
+                     @Param("pageSize") Integer pageSize, Invocation inv){
+    if(pageNo == null){
+      pageNo = 0;
+    }
+
+    if(pageSize == null){
+      pageSize = 10;
+    }
+
+    Sort sort = new Sort(Sort.Direction.DESC, "createTime");
+    Pageable pageable = new PageRequest(pageNo, pageSize, sort);
+    Map<String, Object> searchParams = Maps.newHashMap();
+    searchParams.put(SearchFilter.Operator.EQ + "_name", userName);
+    searchParams.put(SearchFilter.Operator.EQ + "_company.comCode", comCode);
+    Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
+    Specification<User> spec = DynamicSpecifications.bySearchFilter(filters.values(), User.class);
+
+    Page<User> userPage = userRepository.findAll(spec, pageable);
+
+    Map<String, Object> view = Maps.newHashMap();
+
+    view.put("total", userPage.getTotalElements());
+
+    List data = Lists.transform(userPage.getContent(), new Function<User, Map<String, Object>>() {
+      @Nullable
+      @Override
+      public Map<String, Object> apply(User input) {
+        Map<String,Object> back = Maps.newHashMap();
+        back.put("code",input.getCode());
+        back.put("name",input.getName());
+        back.put("comCode",input.getCompany().getComName());
+        back.put("mobile",input.getMobile());
+        back.put("email",input.getEmail());
+        back.put("staffFlag",input.isStaffFlag());
+        return back;
+      }
+    });
+
+    view.put("rows", data);
+    return Replys.with(view).as(Json.class);
+  }
+
   @Get("manageQuery")
   public String manageQuery(@Param("userName") String userName,
-                            @Param("comCode") String comCode, @Param("pageNo") Integer pageNo,
+                            @Param("comCode") String comCode,
+                            @Param("pageNo") Integer pageNo,
                             @Param("pageSize") Integer pageSize, Invocation inv) {
 
     if(pageNo == null){
@@ -63,14 +115,14 @@ public class UserController {
     }
 
     if(pageSize == null){
-      pageSize = 20;
+      pageSize = 10;
     }
 
     Sort sort = new Sort(Sort.Direction.DESC, "createTime");
     Pageable pageable = new PageRequest(pageNo, pageSize, sort);
     Map<String, Object> searchParams = Maps.newHashMap();
     searchParams.put(SearchFilter.Operator.EQ + "_name", userName);
-    searchParams.put(SearchFilter.Operator.EQ + "_comCode", comCode);
+    searchParams.put(SearchFilter.Operator.EQ + "_company.comCode", comCode);
     Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
     Specification<User> spec = DynamicSpecifications.bySearchFilter(filters.values(), User.class);
 
@@ -82,6 +134,7 @@ public class UserController {
     Map<String, Object> view = Maps.newHashMap();
     view.put("pageNumber", userPage.getNumber() + 1);
     view.put("pageSize", userPage.getSize());
+    view.put("total", userPage.getTotalElements());
 
 
     List data = Lists.transform(userPage.getContent(), new Function<User, Map<String, Object>>() {
@@ -92,31 +145,54 @@ public class UserController {
         Map<String,Object> back = Maps.newHashMap();
         back.put("code",input.getCode());
         back.put("name",input.getName());
-        //TODO@(chengQ)
-        back.put("comCode",input.getComCode());
+        back.put("comCode",input.getCompany().getComName());
         back.put("mobile",input.getMobile());
         back.put("email",input.getEmail());
         back.put("staffFlag",input.isStaffFlag());
         return back;
       }
     });
-    view.put("data", data);
+    view.put("rows", data);
+//    Map<String, Object> view = Maps.newHashMap();
+//
+//    view.put("total", userPage.getTotalElements());
+//
+//    List data = Lists.transform(userPage.getContent(), new Function<User, Map<String, Object>>() {
+//      @Nullable
+//      @Override
+//      public Map<String, Object> apply(User input) {
+//        Map<String,Object> back = Maps.newHashMap();
+//        back.put("code",input.getCode());
+//        back.put("name",input.getName());
+//        back.put("comCode",input.getCompany().getComName());
+//        back.put("mobile",input.getMobile());
+//        back.put("email",input.getEmail());
+//        back.put("staffFlag",input.isStaffFlag());
+//        return back;
+//      }
+//    });
+//
+//    view.put("rows", data);
     String pageJsonString = JSONObject.toJSONString(view);
-    logger.info(pageJsonString);
+    //logger.info(pageJsonString);
     inv.addModel("data", pageJsonString);
     return "userManageQuery";
   }
 
   @Post("addUser")
   public String addUser(@Param("user") User user, Invocation inv) {
+    Company company = companyRepository.findByComCode(user.getCompany().getComCode());
+    user.setCompany(company);
     accountService.registerUser(user);
-    return "f:/user/manageQuery";
+    return "r:/user/manageQuery";
   }
 
   @Post("update")
   public String updateUser(@Param("user") User user, Invocation inv) {
+    Company company = companyRepository.findByComCode(user.getCompany().getComCode());
+    user.setCompany(company);
     accountService.updateUser(user);
-    return "f:/user/manageQuery";
+    return "r:/user/manageQuery";
   }
 
 

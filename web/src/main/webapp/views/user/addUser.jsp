@@ -34,7 +34,7 @@
                     <td><input class="inp_text" type="text" id="name" name="user.name" value="${user.name}" style="width:150px"/></td>
                     <td align="right">部门:</td>
                     <td>
-                        <input class="inp_text" type="text" id="comCode" name="user.comCode" value="${user.comCode}" style="width: 80%"/>
+                        <input class="inp_text" type="text" id="comCode" name="user.company.comCode" value="${user.comCode}" style="width: 80%"/>
                     </td>
                 </tr>
                 <tr>

@@ -33,7 +33,6 @@ public class AccountService {
     }
 
     public void registerUser(User user) {
-        user.setCreateTime(DateTime.now().toDate());
         // 设定安全的密码，生成随机的salt并经过1024次 sha-1 hash
         if (StringUtils.isNotBlank(user.getPlainPassword())) {
             encryptPassword(user);
@@ -46,7 +45,6 @@ public class AccountService {
         user.setPassword(oldUser.getPassword());
         userRepository.save(user);
     }
-
 
     /**
      * 设定安全的密码，生成随机的salt并经过1024次 sha-1 hash

@@ -55,7 +55,7 @@
                 <input type="text" id="comCode" name="comCode" value="${comCode}"/>
             </td>
             <td>
-                <button type="button" class="btn" onclick="userQuery();">查询</button>
+                <button type="button" class="btn" onclick="rpcData();">查询</button>
             </td>
             <td align="right">
                 <button type="button" class="btn btn-primary"
@@ -68,7 +68,8 @@
         </tr>
     </table>
 </div>
-<table id="userList" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true">
+<table id="userList" class="easyui-datagrid"
+       data-options="striped:true,method:'get',pagination:true,fitColumns:true">
     <thead>
     <tr>
         <th data-options="field:'ck',checkbox:true"></th>
@@ -91,10 +92,9 @@
     }
 
 </script>
-<script src="${ctx}/views/user/js/user.js" type="application/javascript"></script>
+<script src="${ctx}/views/user/js/user.js?version=1" type="application/javascript"></script>
 <script language="JavaScript" type="application/javascript">
     $(function () {
-        //alert(${data});
         var data = ${data};
         userList(data);
     });

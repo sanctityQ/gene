@@ -1,18 +1,3 @@
-function userQuery(){
-    var userName = $.trim($('#userName').val());
-    var comCode = $.trim($('#comCode').val());
-
-    if(userName == "" && comCode == ""){
-        alert("请输入业务员姓名或选择机构。");
-        return;
-    }
-
-    $('#userList').datagrid('load', {
-        userName:$('#userName').val(),
-        comCode:$('#comCode').val()
-    });
-}
-
 function prepareAddUser(){
     goToPage(ctx+'/views/user/addUser.jsp');
 }
@@ -46,27 +31,67 @@ function addUserSubmit() {
 
 function userList(data){
     var dg = $('#userList');
-    //var opts = dg.datagrid('options');
-
 
     var pager = dg.datagrid('getPager');
-
-    //var pagination = pager.pagination({
-    //                                      pageSize: 20,
-    //                                      onSelectPage: function (pageNum, pageSize) {
-    //                                          opts.pageNumber = pageNum;
-    //                                          opts.pageSize = pageSize;
-    //
-    //                                          pager.pagination('refresh', {
-    //                                              pageNumber: pageNum,
-    //                                              pageSize: pageSize
-    //                                          });
-    //                                          //getOrderInfo();
-    //                                      }
-    //                                  });
     pager.pagination('loading', true);
-    dg.datagrid(data);
+    var opts = dg.datagrid('options');
+    //dg.datagrid(data);
+    $('#userList').datagrid("loadData", data);
 
+
+    pager.pagination({
+                         total: data.total,
+                         pageSize: data.pageSize,
+                         pageNumber: data.pageNumber,
+                         onSelectPage: function (pageNum, pageSize) {
+                             opts.pageNumber = pageNum;
+                             opts.pageSize = pageSize;
+
+                             pager.pagination('refresh', {
+                                 pageNumber: pageNum,
+                                 pageSize: pageSize
+                             });
+                             rpcData();
+                         }
+                     });
+
+}
+
+function rpcData() {
+    progress();
+    var gridOpts = $('#userList').datagrid('getPager').data("pagination").options;
+    var userName = $("#userName").val();
+    var comCode = $("#comCode").val();
+    $.ajax({
+               type : "get",
+               url : ctx+"/user/list",
+               dataType : "json",
+               data:
+               {
+                   userName:userName,
+                   comCode:comCode,
+                   pageNo: gridOpts.pageNumber - 1,
+                   pageSize: gridOpts.pageSize
+               },
+               success: function (data) {
+                   $.messager.progress('close');
+                   if (data != null) {
+                       var resultData = data.rows;
+                       for (var i = 0; i < resultData.length; i++) {
+                           if (resultData[i].staffFlag) {
+                               resultData[i].staffFlag = '是';
+                           } else {
+                               resultData[i].staffFlag = '否';
+                           }
+                       }
+                       $('#userList').datagrid("loadData", data);
+                   }
+               },
+               error:function(){
+                   $.messager.progress('close');
+                   alert("无法获取信息");
+               }
+           });
 }
 
 
@@ -102,25 +127,4 @@ $(function () {
 
     });
 
-    //var dg = $('#userList');
-    //var opts = dg.datagrid('options');
-    //var pager = dg.datagrid('getPager');
-    //
-    //var pagination = pager.pagination({
-    //    pageSize:20,
-    //    onSelectPage:function(pageNum, pageSize){
-    //        opts.pageNumber = pageNum;
-    //        opts.pageSize = pageSize;
-    //
-    //        pager.pagination('refresh',{
-    //            pageNumber:pageNum,
-    //            pageSize:pageSize
-    //        });
-    //        //getOrderInfo();
-    //    }
-    //});
-    //
-    //pager.pagination('loading',true);
-
-    //alert(pager.pagination('loading',true));
 });

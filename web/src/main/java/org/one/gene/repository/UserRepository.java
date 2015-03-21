@@ -13,18 +13,19 @@ import org.springframework.stereotype.Repository;
 import com.sinosoft.one.data.jade.annotation.SQL;
 
 @Repository
-public interface UserRepository extends PagingAndSortingRepository<User, Long> , JpaSpecificationExecutor<User> {
+public interface UserRepository
+    extends PagingAndSortingRepository<User, Long>, JpaSpecificationExecutor<User> {
 
 
-    User findByCode(String username);
+  User findByCode(String username);
 
-	List<User> findByName(String name);
-	
-	List<User> findByComCode(String comCode);
-	
-	List<User> findByNameAndComCode(String name, String comCode);
+  List<User> findByName(String name);
 
-	@SQL("select * from `user` where `staff_flag` = '0' and (`code` like :customerSQL or `name` like :customerSQL ) ")
-	List<User> vagueSeachCustomer(@Param("customerSQL") String customerSQL);
+  //List<User> findByComCode(String comCode);
+
+  //List<User> findByNameAndComCode(String name, String comCode);
+
+  @SQL("select * from `user` where `staff_flag` = '0' and (`code` like :customerSQL or `name` like :customerSQL ) ")
+  List<User> vagueSeachCustomer(@Param("customerSQL") String customerSQL);
 }
 
