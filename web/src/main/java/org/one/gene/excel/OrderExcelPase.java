@@ -4,13 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.service.PriceTool;
 import org.one.gene.repository.CustomerRepository;
 import org.one.gene.web.order.AtomicLongUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,8 @@ public class OrderExcelPase {
 	private OrderCaculate orderCaculate;
     @Autowired
     private AtomicLongUtil atomicLongUtil;
+    @Autowired
+    private PriceTool priceTool;
 	
 	/**
 	 * 组织解析excel验证异常信息
@@ -113,7 +115,7 @@ public class OrderExcelPase {
 					  if("".equals(v)){
 						  primerProduct.setProductNo(atomicLongUtil.getProductSerialNo(customer.getPrefix()));
 					  }else{
-						  primerProduct.setOutProductNo(v);
+						  primerProduct.setProductNo(v);
 					  }
 				  	break;
 				  case 2:
@@ -156,10 +158,12 @@ public class OrderExcelPase {
 					  primerProduct.setModiThreeType(v);
 					break;
 				  case 11:	
-					  primerProduct.setModiMidType(v);
+					  String modiMid = orderCaculate.getCountStr(orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),OrderCaculate.modiMidMap));
+					  primerProduct.setModiMidType(modiMid);
 					break;
 				  case 12:	
-					  primerProduct.setModiSpeType(v);
+					  String modiSpe = orderCaculate.getCountStr(orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),OrderCaculate.modiSpeMap));
+					  primerProduct.setModiSpeType(modiSpe);
 					break;
 				  /*case 13:	
 					  primerProduct.setModiPrice(new BigDecimal(v));
@@ -172,13 +176,22 @@ public class OrderExcelPase {
 					  break;*/
 				  case 13:	
 					  primerProduct.setRemark(v);
+					  //最后根据条件获取价格
+					  if(primerProduct.getOdTotal().intValue()<20){
+					    priceTool.getPrice(primerProduct);
+					    priceTool.getModiTypePrice(primerProduct);
+					  }else{
+						primerProduct.setModiPrice(new BigDecimal("0"));//修饰价格
+					    primerProduct.setBaseVal(new BigDecimal("0"));//碱基单价
+						primerProduct.setPurifyVal(new BigDecimal("0"));//纯化价格  
+					  }
 					break;	
 				  default:
 					break;
 				}
-				primerProduct.setModiPrice(customer.getCustomerPrice().getModifyPrice());
+				/*primerProduct.setModiPrice(customer.getCustomerPrice().getModifyPrice());
 				primerProduct.setBaseVal(customer.getCustomerPrice().getBaseVal());
-				primerProduct.setPurifyVal(customer.getCustomerPrice().getPurifyVal());
+				primerProduct.setPurifyVal(customer.getCustomerPrice().getPurifyVal());*/
 				index ++;
 			}
 			order.getPrimerProducts().add(primerProduct);

@@ -130,7 +130,7 @@ function printOutBound(){
         orderInfoList.push(outbound);
     }
     var path = ctx+'/print/printOutBound?orderInfoList='+JSON.stringify(orderInfoList); 
-    progress();
+    //progress();
 	 $('#printOutBoundfm').attr("action", path).submit();
 	 //window.location.href = path;
 }

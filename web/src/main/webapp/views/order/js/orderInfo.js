@@ -1,10 +1,15 @@
 var bigIndex = undefined,bigToSmall = $('#bigToSmall'),editIndex = 0;
+//中间修饰
+var modiMidArr = "Cy5,TAMRA,ROX,Dabcyl,Biotin,Digoxin,FAM,";
+//特殊单体
+var modiSpeArr = "dI,dU,dT-NH2,Spacer(C12),*,5-Methyl dC,";
 function cellStyler(value,row,index){
 	if(value!=''){
       return 'color:red;';
     }else{
       return '';	
     }
+	
 }
 function deletRow(index){
     var tr = bigToSmall.datagrid('selectRow',index);
@@ -84,6 +89,9 @@ function bindGridEvent(){
     var tbnObj = bigToSmall.datagrid('getEditor', {index:editIndex,field:'tbn'});
     var geneOrder = $(geneOrderObj.target).parent().find('input.datagrid-editable-input');
     var tbn = $(tbnObj.target).parent().find('input.datagrid-editable-input');
+    
+    var modiMidiObj = bigToSmall.datagrid('getEditor', {index:editIndex,field:'modiMidType'});
+    var modiSpeObj = bigToSmall.datagrid('getEditor', {index:editIndex,field:'modiSpeType'});
     //修饰单价
 	var row = bigToSmall.datagrid('getSelected');
 	var modiPriceVal = row.modiPrice;
@@ -92,8 +100,12 @@ function bindGridEvent(){
 	
 	geneOrderMidi.bind("keyup",function(){
 		var Str = getGeneOrder(geneOrderMidi.val());
+		var modiMidi = convertModi(getmodiType(geneOrderMidi.val(),modiMidArr));
+		var modiSpe = convertModi(getmodiType(geneOrderMidi.val(),modiSpeArr));
         var num = Str.length;
         $(geneOrderObj.target).val(Str);
+        $(modiMidiObj.target).val(modiMidi);
+        $(modiSpeObj.target).val(modiSpe);
         $(tbnObj.target).numberbox('setValue',num);
         calculateByGeneOrder(num,modiPriceVal,baseValVal,purifyValVal,editIndex);
      });
@@ -142,7 +154,7 @@ function getGeneOrder(str){
     var count=0
     
     if(str_repeat("(",str)!=str_repeat(")",str)){
-    	alert("您录入的修饰方式格式有误，请您核实()是否成对出现!");
+    	//alert("您录入的修饰方式格式有误，请您核实()是否成对出现!");
     	return str;
     }
     
@@ -177,6 +189,86 @@ function getGeneOrder(str){
 	return strout;
 }
 
+//获取序列中的修饰
+function getmodiStr(str){
+	var result = "";
+    var m=0, n=0; 
+    var count=0; 
+    if(str_repeat("(",str)!=str_repeat(")",str)){
+    	//alert("您录入的修饰方式格式有误，请您核实()是否成对出现!");
+    	return str;
+    }
+    
+	if(str.indexOf("(")<0 && str.indexOf(")")<0){
+		return str;
+	}
+    for(var i=0;i<str.length;i++){ 
+        if(str.charAt(i)=='('){ 
+            if(count==0){ 
+                m=i; 
+            } 
+            count++; 
+        } 
+        if(str.charAt(i)==')'){ 
+            count--; 
+            if(count==0){ 
+                n=i; 
+                result = result+str.substring(m+1,n)+",";
+            } 
+        } 
+    } 
+    return result;
+}
+
+//将修饰类型分类 field 基础数据串
+function getmodiType(str,field){
+	var type = "";
+	var moditype = getmodiStr(str);
+
+	var moditypes = moditype.split(",");
+	for(var i=0;i<moditypes.length;i++){
+		if(moditypes[i]==''){continue;}
+		if(field.indexOf(moditypes[i]+",")>-1){
+		  type = type+moditypes[i]+",";
+		}
+	}
+	
+	return type;
+}
+
+//统计某字符串出现次数 find 要查找字符串  ;
+function countModiType(find,str){
+	var reg = new RegExp(find,"g")
+	var c = str.match(reg);
+	return c.length;
+}
+
+//将某一类修饰中相同的修饰个数统计，拼接字符串
+function convertModi(str){
+	var strs = str.split(",")
+	var strArray = new Array();
+	var hashArray = new Array();
+	for(var i=0;i<strs.length;i++){
+		if(strs[i]==''){continue;}
+		strArray.push(strs[i])
+	}
+	var result="";
+	for(var j=0;j<strArray.length;j++){
+	  var counts = countModiType(strArray[j],str);
+	  var value = "";
+	  if(counts!=1){
+		  value = countModiType(strArray[j],str)+strArray[j];
+	  }else{
+		  value = strArray[j];
+	  }
+	  if(result.indexOf(value)<0){
+		result = result+value+",";
+	  }
+	} 
+	
+	return result;
+}
+
 function str_repeat(sub,geneOrder)
 {
    var sum=0;
@@ -191,9 +283,27 @@ function str_repeat(sub,geneOrder)
    return sum;
 }
 
+function isRepeat(arr){
+    var hash = {};
+    for(var i in arr) {
+        if(hash[arr[i]])
+             return true;
+        hash[arr[i]] = true;
+    }
+    return false;
+}
+
 function getChanesSave(){
 	bigToSmall.datagrid('endEdit',editIndex);
     var primerProducts = bigToSmall.datagrid('getData').rows;
+    var productNos = new Array();
+    for(var i=0;i<primerProducts.length;i++){
+    	productNos.push(primerProducts[i].productNo);
+    }
+    
+    if(isRepeat(productNos)){
+    	alert("您提交的生产编号存在重复，请修改后重新提交！");
+    }
 //    console.log(primerProducts);
     progress();
     $.ajax({
@@ -210,9 +320,13 @@ function getChanesSave(){
 				goToPage(ctx+'/views/order/orderList.jsp');
 			}
 		},
-		error:function(){
+		error:function(data){
 			$.messager.progress('close');
-			alert("数据保存失败，请重试！");
+			if(data.status==500){
+			  alert("您提交的生产编号存在重复，请修改后重新提交！")
+			}else{
+			  alert("数据保存失败，请重试！");
+		    }
 		}
 	});
     

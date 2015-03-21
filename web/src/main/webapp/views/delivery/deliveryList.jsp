@@ -44,10 +44,10 @@ var ctx = '${ctx}';
         </tr>
 	</table>
     <div class="btn_group">
-        <button id="makeBoard" type="button" class="btn btn-primary" disabled onclick="deliveryList()">导出订单</button>
+        <button id="makeBoard" type="button" class="btn btn-primary" disabled onclick="deliveryList()">导出发货清单</button>
     </div>
 </div>
-<table id="productionData" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true">
+<table id="productionData" class="easyui-datagrid" data-options="striped:true,singleSelect: true,method: 'get',pagination:true,fitColumns:true">
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>
@@ -55,7 +55,6 @@ var ctx = '${ctx}';
             <th data-options="field:'customerName',width:80,sortable:true">客户姓名</th>
 			<th data-options="field:'productNoMinToMax',width:80,sortable:true">生产编号</th>
 			<th data-options="field:'tbnTotal',width:80,sortable:true">碱基总数</th>
-            <th data-options="field:'status',width:80,sortable:true">状态</th>
             <th data-options="field:'createTime',width:80,sortable:true">导入时间</th>
             <th data-options="field:'modifyTime',width:80,sortable:true">修改时间</th>
 		</tr>
@@ -79,7 +78,7 @@ $(function(){
                 pageNumber:pageNum,
                 pageSize:pageSize
             });
-            //getProducts();
+            getProducts();
         }
     });
 })
