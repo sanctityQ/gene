@@ -11,14 +11,6 @@ function cellStyler(value,row,index){
     }
 	
 }
-function cellStyler1(value,row,index){
-	var text = value.toString();
-    var iIndex = text.indexOf('I');
-    var uIndex = text.indexOf('U');
-    if(iIndex>0 || uIndex>0){
-      return 'background-color:#ffee00;';
-    }
-}
 function deletRow(index){
     var tr = bigToSmall.datagrid('selectRow',index);
     var row = bigToSmall.datagrid('getSelections');
