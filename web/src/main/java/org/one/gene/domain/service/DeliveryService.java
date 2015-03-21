@@ -1,13 +1,17 @@
 package org.one.gene.domain.service;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -353,4 +357,126 @@ public class DeliveryService {
 		
     }
 		
+	
+    /**
+     * 导出发货清单文件
+     * @throws IOException 
+     * */
+	public void deliveryList( List<OrderInfo> orderInfos, Invocation inv) throws IOException {
+		
+		String companyName = "";//公司名称
+		String webSite     = "";//网址
+		String customerName     = "";//客户姓名
+		String orderDate     = "";//订货日期
+		String deliveryDate     = "";//发货日期
+		String unit     = "";//客户单位
+		String deliveryAddress     = "";//送货地址
+		String area     = "";//地区
+		String address     = "";//公司地址
+		String kaidan     = "";//开单员
+		String saler     = "";//销售员
+		String phoneNo     = "";//联系方式
+		String email     = "";//邮箱
+		String orderNo = "";//订单号
+		String productNoMinToMax = "";//序列范围
+		
+		for (OrderInfo orderInfo : orderInfos) {
+			orderNo = orderInfo.getOrderNo();
+			productNoMinToMax = orderInfo.getProductNoMinToMax();
+			
+		}
+		
+		Order order = orderRepository.findByOrderNo(orderNo);
+		String customerCode = "";
+		if( order != null ){
+			customerCode = order.getCustomerCode();//客户代码
+			orderDate = order.getCreateTime().toString();
+			
+		}
+		
+		if(orderDate.length()>10){
+			orderDate = orderDate.substring(0, 10);
+		}
+		
+		Customer customer = customerRepository.findByCode(customerCode);
+		
+		if (customer != null) {
+			companyName = customer.getUnit();
+			webSite     = customer.getWebSite();
+			customerName= customer.getName();
+			unit = customer.getUnit();
+			deliveryAddress = customer.getAddress();
+			address         = customer.getAddress();
+			phoneNo         = customer.getPhoneNo();
+			email           = customer.getEmail();
+		}
+		
+		
+		BigDecimal orderBaseCount = new BigDecimal(0);//订单碱基数总量
+		int geneCount = 0;//序列总条数
+
+		for (PrimerProduct primerProduct : order.getPrimerProducts()) {
+			geneCount += 1;
+			
+			for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
+				PrimerValueType type = primerProductValue.getType();
+				if (type.equals(PrimerValueType.baseCount)) {// 碱基数
+					orderBaseCount = orderBaseCount.add(primerProductValue.getValue());
+				}
+			}
+		  }
+	    
+		//形成Excel
+		String templetName = "deliveryListTemplate.xls";
+		String strFileName = orderNo+"-"+System.currentTimeMillis()+".xls";
+		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator;
+		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(templatePath+templetName));
+        HSSFSheet sheet = workbook.getSheetAt(0);
+		HSSFRow row = null;
+		HSSFCell cell = null;
+		
+		row = sheet.getRow(0);
+		cell = row.getCell(0);//得到单元格
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(companyName);//
+        
+		row = sheet.getRow(1);
+		cell = row.getCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(webSite+"   合成送货单");//网址
+		
+		row = sheet.getRow(2);
+		cell = row.getCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue("客户姓名："+customerName);
+		cell = row.getCell(4);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue("订货日期："+orderDate+"   发货日期："+deliveryDate);
+		
+		row = sheet.getRow(3);
+		cell = row.getCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue("客户单位："+unit);
+		cell = row.getCell(4);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue("订单号："+orderNo+"   序列范围："+productNoMinToMax);
+		
+		row = sheet.getRow(4);
+		cell = row.getCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue("送货地址："+deliveryAddress);
+		cell = row.getCell(4);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue("地区："+area+"   总条数："+geneCount+"条");
+		
+        //输出文件到客户端
+        HttpServletResponse response = inv.getResponse();
+        response.setContentType("application/x-msdownload");
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + strFileName + "\"");
+        OutputStream out=response.getOutputStream();
+        workbook.write(out);
+        out.flush();
+        out.close();
+    }
+	
 }

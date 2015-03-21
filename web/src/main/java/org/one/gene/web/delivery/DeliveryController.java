@@ -1,6 +1,7 @@
 package org.one.gene.web.delivery;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -226,22 +227,11 @@ public class DeliveryController {
     
     
     @Post("deliveryList")
-	public EntityReply<File> deliveryList(
-			@Param("primerProducts") String primerProductJson,
-			Invocation inv) {
-    	
-    	
-    	List<OrderInfo> orderInfos = JSON.parseArray(primerProductJson,OrderInfo.class);
-    	
-		List<PrimerProduct> primerProducts = printService.getDeliveryPrimerProducts(orderInfos, inv);
-		EntityReply<File> fileStr = null; //form 提交使用该类型返回
-		try {
-			fileStr = deliveryService.deliveryLabel(primerProducts, inv);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-    	
-    	return fileStr;
+	public void deliveryList(
+			@Param("orderInfos") String orderInfosJson,
+			Invocation inv) throws IOException {
+    	List<OrderInfo> orderInfos = JSON.parseArray(orderInfosJson,OrderInfo.class);
+    	deliveryService.deliveryList(orderInfos, inv);
     }
     
     

@@ -30,7 +30,7 @@ var getProducts=function(){
 
 	$.ajax({
 		type : "post",
-		url : "/gene/delivery/queryDeliveryList",
+		url : "/gene/order/queryDeliveryList",
 		dataType : "json",
 		data:{
 			orderNo:$("#orderNo").val(),
@@ -47,13 +47,15 @@ var getProducts=function(){
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#productionData').datagrid("loadData",jsonsource);
 			}
+			$.messager.progress('close');
 		},
 		error:function(){
+			$.messager.progress('close');
 			alert("无法获取信息");
 		}
 	});
 
-	$.messager.progress('close');
+	
 	
 };
 
@@ -61,11 +63,11 @@ var getProducts=function(){
 var deliveryList = function(){
 	
     var table = $('#productionData');
-    var primerProducts = table.datagrid('getSelections');
+    var orderInfos = table.datagrid('getSelections');
     var makeBoard = $('#makeBoard');
   
 	var url = $('#deliveryListfm').attr("action");
-	var path = url+"?primerProducts="+JSON.stringify(primerProducts);
+	var path = url+"?orderInfos="+JSON.stringify(orderInfos);
 	
 	makeBoard.attr('disabled','disabled');//按钮置灰
 	table.datagrid('loadData', { total: 0, rows: [] });//清空数据

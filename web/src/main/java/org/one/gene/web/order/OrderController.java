@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -424,6 +425,55 @@ public class OrderController {
         for (Order order : orderPage.getContent()) {
         	order.setPrimerProducts(primerProductRepository.findByOrder(order));
         }
+        Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
+        
+        return Replys.with(orderListPage).as(Json.class);
+    }
+    
+    /**
+     * 发货清单 查询列表
+     * @param orderNo
+     * @param customerCode
+     * @param createStartTime
+     * @param createEndTime
+     * @param pageNo
+     * @param pageSize
+     * @param inv
+     * @return
+     * @throws Exception
+     */
+    @Post("queryDeliveryList")
+    public Reply queryDeliveryList(
+			@Param("orderNo") String orderNo,
+			@Param("customerName") String customerName,
+			@Param("createStartTime") String createStartTime,
+			@Param("createEndTime") String createEndTime,
+    		@Param("pageNo")Integer pageNo,
+            @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
+
+        if(pageNo == null || pageNo ==0){
+            pageNo = 1;
+        }
+
+        if(pageSize == null){
+            pageSize = 20;
+        }
+        Sort s=new Sort(Direction.DESC, "createTime");
+        Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
+        Map<String,Object> searchParams = Maps.newHashMap();
+        searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
+        searchParams.put(SearchFilter.Operator.EQ+"_customerName",customerName);
+		if (!"".equals(createStartTime)) {
+        	searchParams.put(SearchFilter.Operator.GT+"__createTime",new Date(createStartTime+" 00:00:00"));
+        }
+		if (!"".equals(createEndTime)) {
+        	searchParams.put(SearchFilter.Operator.LT+"__createTime",new Date(createEndTime+" 59:59:59"));
+        }
+		
+        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
+        Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
+        
+        Page<Order> orderPage = orderRepository.findAll(spec,pageable);
         Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
         
         return Replys.with(orderListPage).as(Json.class);
