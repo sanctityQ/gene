@@ -413,6 +413,7 @@ public class DeliveryService {
 		
 		
 		BigDecimal orderBaseCount = new BigDecimal(0);//订单碱基数总量
+		BigDecimal odTotalCount = new BigDecimal(0);//OD总量
 		int geneCount = 0;//序列总条数
 
 		for (PrimerProduct primerProduct : order.getPrimerProducts()) {
@@ -422,10 +423,15 @@ public class DeliveryService {
 				PrimerValueType type = primerProductValue.getType();
 				if (type.equals(PrimerValueType.baseCount)) {// 碱基数
 					orderBaseCount = orderBaseCount.add(primerProductValue.getValue());
+				}else if(type.equals(PrimerValueType.odTotal)){//od总量
+					odTotalCount = odTotalCount.add(primerProductValue.getValue());
 				}
 			}
 		  }
 	    
+		//
+		
+		
 		//形成Excel
 		String templetName = "deliveryListTemplate.xls";
 		String strFileName = orderNo+"-"+System.currentTimeMillis()+".xls";
@@ -468,6 +474,17 @@ public class DeliveryService {
 		cell = row.getCell(4);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue("地区："+area+"   总条数："+geneCount+"条");
+		
+		row = sheet.getRow(6);
+		cell = row.getCell(2);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(geneCount);
+		cell = row.getCell(3);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(odTotalCount+"");
+		cell = row.getCell(5);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(orderBaseCount+"");
 		
         //输出文件到客户端
         HttpServletResponse response = inv.getResponse();
