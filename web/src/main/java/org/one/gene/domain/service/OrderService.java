@@ -60,11 +60,12 @@ public class OrderService {
 	 * 订单入库
 	 * @param order
 	 * @return
+	 * @throws Exception 
 	 * @throws IllegalStateException
 	 * @throws IOException
 	 */
 	@Transactional
-    public void save(Order order){
+    public void save(Order order) throws Exception{
 
     	//存储订单数据
 		if("".equals(order.getOutOrderNo())){
@@ -79,6 +80,10 @@ public class OrderService {
         }
     	//存储生产数据
         for (PrimerProduct primerProduct : order.getPrimerProducts()) {
+        	int count = primerProductRepository.countByProductNo(primerProduct.getProductNo());
+        	if(count>0&&primerProduct.getId()==null){
+        		throw new Exception("您提交的生产编号存在重复，请修改后重新提交！");
+        	}
 			//后续补充，获取登录操作人员的归属机构。
 			primerProduct.setComCode(order.getComCode());
 			primerProduct.setOperationType(PrimerType.PrimerStatusType.orderInit);//!!!是初始状态不是审核通过状态
@@ -326,7 +331,7 @@ public class OrderService {
   	}
 
 	@Transactional
-	public void saveOrderAndPrimerProduct(Order order, Collection<PrimerProduct> values) {
+	public void saveOrderAndPrimerProduct(Order order, Collection<PrimerProduct> values) throws Exception {
 		this.save(order);
 		//新增数据时comcode赋值
 		for (PrimerProduct primerProduct : values) {

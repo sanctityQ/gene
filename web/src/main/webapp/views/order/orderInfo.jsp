@@ -89,9 +89,9 @@ var ctx = '${ctx}';
 		<table id="bigToSmall" class="easyui-datagrid" data-options="fitColumns:true,singleSelect: true,striped:true,method: 'get',onClickRow: onClickRow">
 		<thead>
 			<tr>
-				<th data-options="field:'productNo',width:80,sortable:true">生产编号</th>
+				<th data-options="field:'productNo',width:80,sortable:true,editor:'text'">生产编号</th>
 				<th data-options="field:'primeName',width:80,sortable:true,editor:'text'">引物名称</th>
-				<th data-options="field:'geneOrderMidi',width:220,sortable:true,editor:'text'">序列</th>
+				<th data-options="field:'geneOrderMidi',width:220,sortable:true,styler:cellStyler1,editor:'text'">序列</th>
 				<th data-options="field:'geneOrder',width:80,hidden:true,sortable:true,editor:'text'">序列</th>
 				<th data-options="field:'tbn',width:40,sortable:true,editor:'numberbox'">碱基数</th>
 				<c:if test="${order.orderUpType=='nmol'}">
@@ -123,6 +123,7 @@ var ctx = '${ctx}';
 				<th data-options="field:'baseVal',width:40,sortable:true">碱基单价</th>
 				<th data-options="field:'purifyVal',width:40,sortable:true">纯化价格</th>
 				<th data-options="field:'totalVal',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">总价格</th>
+				<th data-options="field:'remark',width:80,sortable:true,editor:'text'">备注</th>
 				<th data-options="field:'fromProductNo',width:80,hidden:true,sortable:true,editor:'text'">来源生产编号</th>
 				<th data-options="field:'_operate',width:40,align:'center',formatter:formatOper">操作</th>
 			</tr>

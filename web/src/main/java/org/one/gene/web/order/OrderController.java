@@ -139,6 +139,8 @@ public class OrderController {
         	//获取客户信息
         	Customer customer = orderService.findCustomer(customerCode);
         	if(customer==null){
+        		//刷新时赋值客户类型
+        		inv.addModel("flag", "1");
         		inv.addModel("userExp", "无此客户信息，请您确认后重新上传！");
         		return "orderImport";
         		//throw new Exception("无此客户信息，请您确认后重新上传！");
@@ -151,7 +153,14 @@ public class OrderController {
         	order = orderService.ReadExcel(path, 0,"4-",order,customer);
         	orderService.convertOrder(customer,filename,order);
         	//保存订单信息
-        	orderService.save(order);
+        	try{
+        	  orderService.save(order);
+        	}catch(Exception e){
+        		//刷新时赋值客户类型
+        		inv.addModel("flag", "1");
+        		inv.addModel("userExp",e.getMessage());
+        		return "orderImport";
+        	}
         	inv.getResponse().setContentType("text/html");
     		inv.addModel("customer", customer);
     		inv.addModel("order", order);
@@ -230,10 +239,14 @@ public class OrderController {
     
     
     @Post("save")
-    public Reply save(@Param("primerProducts") List<PrimerProduct> primerProducts,@Param("orderNo") String orderNo,Invocation inv) throws IllegalStateException, IOException {
+    public Reply save(@Param("primerProducts") List<PrimerProduct> primerProducts,@Param("orderNo") String orderNo,Invocation inv) throws Exception{
     	Order order = orderRepository.findByOrderNo(orderNo);
         Map<Long, PrimerProduct> newPrimerProductMap = Maps.newHashMap();
         for (PrimerProduct primerProduct : primerProducts) {
+        	int count = primerProductRepository.countByProductNo(primerProduct.getProductNo());
+        	if(count>0&&primerProduct.getId()==null){
+        		throw new Exception("您提交的生产编号存在重复，请修改后重新提交！");
+        	}
             newPrimerProductMap.put(primerProduct.getId(),primerProduct);
         }
         for (PrimerProduct primerProduct : order.getPrimerProducts()) {
