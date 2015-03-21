@@ -177,20 +177,21 @@ public class OrderExcelPase {
 				  case 13:	
 					  primerProduct.setRemark(v);
 					  //最后根据条件获取价格
-					  /*if(primerProduct.getOdTotal().intValue()<20){
+					  if(primerProduct.getOdTotal().intValue()<20){
 					    priceTool.getPrice(primerProduct);
+					    priceTool.getModiTypePrice(primerProduct);
 					  }else{
 						primerProduct.setModiPrice(new BigDecimal("0"));//修饰价格
 					    primerProduct.setBaseVal(new BigDecimal("0"));//碱基单价
 						primerProduct.setPurifyVal(new BigDecimal("0"));//纯化价格  
-					  }*/
+					  }
 					break;	
 				  default:
 					break;
 				}
-				primerProduct.setModiPrice(customer.getCustomerPrice().getModifyPrice());
+				/*primerProduct.setModiPrice(customer.getCustomerPrice().getModifyPrice());
 				primerProduct.setBaseVal(customer.getCustomerPrice().getBaseVal());
-				primerProduct.setPurifyVal(customer.getCustomerPrice().getPurifyVal());
+				primerProduct.setPurifyVal(customer.getCustomerPrice().getPurifyVal());*/
 				index ++;
 			}
 			order.getPrimerProducts().add(primerProduct);

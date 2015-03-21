@@ -2,6 +2,7 @@ package org.one.gene.domain.service;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.lang.StringUtils;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.excel.OrderCaculate;
 import org.springframework.stereotype.Component;
@@ -122,7 +123,60 @@ public class PriceTool {
 		OrderCaculate orderCaculate = new OrderCaculate();
 		String modiFiveType = primerProduct.getModiFiveType();
 		String modiThreeType = primerProduct.getModiThreeType();
-		String modiSpeType = orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),OrderCaculate.modiSpeMap);
+		String modiSpeType = orderCaculate.getNoCountModiType(primerProduct.getGeneOrderMidi(),OrderCaculate.modiSpeMap);
+		
+		BigDecimal modiPrice = new BigDecimal("0");
+		String propertiesStr = "";
+		if(!"".equals(modiFiveType)){
+			propertiesStr = propertiesStr+"5'-"+modiFiveType;
+		}
+		if(!"".equals(modiThreeType)){
+			propertiesStr = propertiesStr+"3'-"+modiThreeType;
+		}
+		
+		modiPrice = modiPrice.add(new BigDecimal(ModiPropotiesService.getValue(propertiesStr)));
+		
+		String[] modiSpeTypes = modiSpeType.split(",");
+		for(int i=0;i<modiSpeTypes.length;i++){
+			if("".equals(modiSpeTypes[i]) || "dU".equals(modiSpeTypes[i])){continue;}
+			modiPrice = modiPrice.add(new BigDecimal(ModiPropotiesService.getValue(modiSpeTypes[i])));
+		}
+		//真屎
+		if(modiSpeType.indexOf("dU")>-1){
+			modiPrice = modiPrice.add(new BigDecimal(ModiPropotiesService.getValue("dU")));
+		}
+	
+		primerProduct.setModiPrice(modiPrice);
 	}
 	
+	
+	public static void main(String[] args) {
+		OrderCaculate orderCaculate = new OrderCaculate();
+		String modiFiveType = "Cy3";
+		String modiThreeType = "Cy3";
+		String modiSpeType = orderCaculate.getNoCountModiType("TCGAGAAGCTTGG(dI)C(dI)A(dI)GC(Cy5)GGGCCCC(dU)TAC(dU)CCCGCGGG",OrderCaculate.modiSpeMap);
+		
+		BigDecimal modiPrice = new BigDecimal("0");
+		String propertiesStr = "";
+		if(!"".equals(modiFiveType)){
+			propertiesStr = propertiesStr+"5'-"+modiFiveType;
+		}
+		if(!"".equals(modiThreeType)){
+			propertiesStr = propertiesStr+"3'-"+modiThreeType;
+		}
+		
+		modiPrice = modiPrice.add(new BigDecimal(ModiPropotiesService.getValue(propertiesStr)));
+		
+		String[] modiSpeTypes = modiSpeType.split(",");
+		for(int i=0;i<modiSpeTypes.length;i++){
+			if("".equals(modiSpeTypes[i]) || "dU".equals(modiSpeTypes[i])){continue;}
+			modiPrice = modiPrice.add(new BigDecimal(ModiPropotiesService.getValue(modiSpeTypes[i])));
+		}
+		//真屎
+		if(modiSpeType.indexOf("dU")>-1){
+			modiPrice = modiPrice.add(new BigDecimal(ModiPropotiesService.getValue("dU")));
+		}
+	
+		System.out.println(modiPrice);
+	}
 }

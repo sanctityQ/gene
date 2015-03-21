@@ -153,6 +153,19 @@ public class OrderCaculate {
 		
 		return getCountStr(type);
 	}
+	//不统计修饰个数
+	public String getNoCountModiType(String geneOrder,Map<String,String> modiMap){
+		String type = "";
+		String moditype = getModiStr(geneOrder);
+		String[] moditypes = moditype.split(",");
+		for(int i=0;i<moditypes.length;i++){
+			if(modiMap.containsKey(moditypes[i])){
+				type = type+moditypes[i]+",";
+			}
+		}
+		
+		return type;
+	}
 	
 	public String  getCountStr(String str) {
 		//将字符串拆分放到ArrayList集合中处理 begin

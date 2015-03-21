@@ -1,6 +1,7 @@
 package org.one.gene.web.order;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.io.Files;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
@@ -31,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
 import com.sinosoft.one.mvc.web.annotation.Path;
