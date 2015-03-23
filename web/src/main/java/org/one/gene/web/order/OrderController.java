@@ -314,9 +314,9 @@ public class OrderController {
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         
         Page<Order> orderPage = orderRepository.findAll(spec,pageable);
-        Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
+        //Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
         
-        return Replys.with(orderListPage).as(Json.class);
+        return Replys.with(orderPage).as(Json.class);
     }
     
     /**

@@ -230,7 +230,7 @@ public class Order extends IdEntity implements java.io.Serializable {
         this.primerProducts = primerProducts;
     }
 
-    @Transient
+    @Column(name = "`product_no_min_to_max`", length = 50)
 	public String getProductNoMinToMax() {
 		return productNoMinToMax;
 	}
@@ -238,7 +238,7 @@ public class Order extends IdEntity implements java.io.Serializable {
 	public void setProductNoMinToMax(String productNoMinToMax) {
 		this.productNoMinToMax = productNoMinToMax;
 	}
-	@Transient
+	@Column(name = "`tbn_total`", length = 10)
 	public String getTbnTotal() {
 		return tbnTotal;
 	}
