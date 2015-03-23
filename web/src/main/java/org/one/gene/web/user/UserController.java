@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.one.gene.domain.entity.Company;
 import org.one.gene.domain.entity.User;
 import org.one.gene.domain.service.account.AccountService;
@@ -53,9 +54,24 @@ public class UserController {
   @Autowired
   private AccountService accountService;
 
-  @Get("prepareManageQuery")
-  public String prepareManageQuery() {
-    return "userManageQuery";
+  @Get("")
+  public String index() {
+    return "f:/user/manageQuery";
+  }
+
+  @Get("preAdd")
+  public String prepareAddUser() {
+    return "user";
+  }
+
+  @Get("view/{id}")
+  public String view(@Param("id") Long id, @Param("op")String operation,Invocation inv) {
+    User user = userRepository.findOne(id);
+    inv.addModel("user", user);
+    if(StringUtils.isNotBlank(operation)){
+      inv.addModel("op", operation);
+    }
+    return "user";
   }
 
   @Get("list")
@@ -90,6 +106,7 @@ public class UserController {
       @Override
       public Map<String, Object> apply(User input) {
         Map<String,Object> back = Maps.newHashMap();
+        back.put("id",input.getId());
         back.put("code",input.getCode());
         back.put("name",input.getName());
         back.put("comCode",input.getCompany().getComName());
@@ -143,6 +160,7 @@ public class UserController {
       public Map<String, Object> apply(User input) {
 
         Map<String,Object> back = Maps.newHashMap();
+        back.put("id",input.getId());
         back.put("code",input.getCode());
         back.put("name",input.getName());
         back.put("comCode",input.getCompany().getComName());
@@ -153,33 +171,12 @@ public class UserController {
       }
     });
     view.put("rows", data);
-//    Map<String, Object> view = Maps.newHashMap();
-//
-//    view.put("total", userPage.getTotalElements());
-//
-//    List data = Lists.transform(userPage.getContent(), new Function<User, Map<String, Object>>() {
-//      @Nullable
-//      @Override
-//      public Map<String, Object> apply(User input) {
-//        Map<String,Object> back = Maps.newHashMap();
-//        back.put("code",input.getCode());
-//        back.put("name",input.getName());
-//        back.put("comCode",input.getCompany().getComName());
-//        back.put("mobile",input.getMobile());
-//        back.put("email",input.getEmail());
-//        back.put("staffFlag",input.isStaffFlag());
-//        return back;
-//      }
-//    });
-//
-//    view.put("rows", data);
-    String pageJsonString = JSONObject.toJSONString(view);
-    //logger.info(pageJsonString);
-    inv.addModel("data", pageJsonString);
+    inv.addModel("data", JSONObject.toJSONString(view));
     return "userManageQuery";
   }
 
-  @Post("addUser")
+
+  @Post("register")
   public String addUser(@Param("user") User user, Invocation inv) {
     Company company = companyRepository.findByComCode(user.getCompany().getComCode());
     user.setCompany(company);
@@ -196,13 +193,10 @@ public class UserController {
   }
 
 
-
-  @Post("batchDelete")
-  public String batchDelete(@Param("userInfoList") String userInfoList, Invocation inv)
-      throws Exception {
-    List<User> users = JSON.parseArray(userInfoList, User.class);
-
-    return "";
+  @Post("delete")
+  public Reply delete(@Param("id[]")List<Long> userId){
+    accountService.deleteUsers(userId);
+    return Replys.with(true).as(Json.class);
   }
 
   /**

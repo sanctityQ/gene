@@ -8,37 +8,7 @@
     <script type="text/javascript">
 
 
-        function ajaxBatchDelete() {
 
-            var userInfoList = new Array();
-            var selectFlag = false;
-
-            jQuery("input[name='userCheck']:checked").each(function (index) {
-                var outbound = {"id": ""};
-                outbound["id"] = "";
-                outbound["id"] = jQuery("input[name='users[" + index + "].id']")[0].value;
-                userInfoList.push(outbound);
-                selectFlag = true;
-            });
-
-            if (!selectFlag) {
-                alert("请选择要删除的业务员。");
-                return false;
-            }
-
-            $.ajax({
-                       async: false,
-                       url: "${ctx}/user/batchDelete/",
-                       type: "POST",
-                       data: "userInfoList=" + JSON.stringify(userInfoList),
-                       dataType: "json",
-                       success: function (data) {
-
-                       }
-
-                   });
-
-        }
     </script>
 </head>
 <body>
@@ -61,7 +31,7 @@
                 <button type="button" class="btn btn-primary"
                         onclick="javascript:void(prepareAddUser());">增加业务员
                 </button>
-                <button type="button" class="btn btn-primary submit" onclick="ajaxBatchDelete();">
+                <button type="button" class="btn btn-primary submit" onclick="batchDelete();">
                     批量删除
                 </button>
             </td>
@@ -72,7 +42,7 @@
        data-options="striped:true,method:'get',pagination:true,fitColumns:true">
     <thead>
     <tr>
-        <th data-options="field:'ck',checkbox:true"></th>
+        <th data-options="field:'id',checkbox:true"></th>
         <th data-options="field:'code',width:80,sortable:true">登陆名</th>
         <th data-options="field:'name',width:80,sortable:true">姓名</th>
         <th data-options="field:'comCode',width:80,sortable:true">机构名称</th>
@@ -85,10 +55,10 @@
 </table>
 <script>
     function formatOper(val, row, index) {
-        return '&nbsp;<a href="javascript:;" onclick="goToPage(\'${ctx}/user/prepareAddUser\')"><i class="icon-book"></i>查看</a>&nbsp; ' +
-               '<span class="gray">|</span> &nbsp;<a href="javascript:void(0);"  onclick="prepareAddUser()">' +
+        return '&nbsp;<a href="javascript:;" onclick="view(\'#userList\',\'' + index + '\')"><i class="icon-book"></i>查看</a>&nbsp; ' +
+               '<span class="gray">|</span> &nbsp;<a href="javascript:;"  onclick="update(\'#userList\',\'' + index + '\')"' +
                '<i class="icon-pencil"></i>修改</a>&nbsp; <span class="gray">|</span> &nbsp' +
-               ';<a href="javascript:;" onclick="delete(\'#orderList\',\'' + index + '\')"><i class="icon-trash"></i>删除</a>&nbsp;';
+               ';<a href="javascript:;" onclick="deleteUser(\'#userList\',\'' + index + '\')"><i class="icon-trash"></i>删除</a>&nbsp;';
     }
 
 </script>
