@@ -7,7 +7,7 @@
     <title></title>
 </head>
 <body>
-<form name="form" action="${ctx}/user/addUser" method="post">
+<form id="userForm" name="form" action="${ctx}/user/register" method="post">
     <div class="page_padding">
         <div class="content_box info margin_btoom">
             <h2>用户信息</h2>
@@ -34,12 +34,12 @@
                     <td><input class="inp_text" type="text" id="name" name="user.name" value="${user.name}" style="width:150px"/></td>
                     <td align="right">部门:</td>
                     <td>
-                        <input class="inp_text" type="text" id="comCode" name="user.company.comCode" value="${user.comCode}" style="width: 80%"/>
+                        <input class="inp_text" type="text" id="comCode" name="user.company.comCode" value="${user.company.comCode}" style="width: 80%"/>
                     </td>
                 </tr>
                 <tr>
                     <td align="right">手机号:</td>
-                    <td><input class="inp_text" type="text" id="mobile" name="user.mobile" required="required" style="width: 150px;"></td>
+                    <td><input class="inp_text" type="text" id="mobile" name="user.mobile" required="required" value="${user.mobile}" style="width: 150px;"></td>
                     <td align="right">邮箱:</td>
                     <td><input class="inp_text easyui-validatebox" id="email" type="text" name="user.email" value="${user.email}" style="width: 80%"
                                data-options="validType: 'email',invalidMessage:'email格式不正确'"/></td>
@@ -47,7 +47,8 @@
                 <tr>
                     <td align="right">是否本公司人员:</td>
                     <td colspan="3">
-                        <label><input type="radio" name="user.staffFlag" value="1"/> 是</label>&nbsp;&nbsp;
+                        <label><input type="radio" name="user.staffFlag"
+                                      value="1"/> 是</label>&nbsp;&nbsp;
                         <label><input type="radio" name="user.staffFlag" value="0"/> 否</label>
                     </td>
                 </tr>
@@ -63,5 +64,36 @@
     </div>
 </form>
 <script src="${ctx}/views/user/js/user.js"></script>
+<script>
+    <c:if test="${not empty user}">
+    $('input[name = "user.staffFlag"]').each(function (index, element) {
+        <c:if test="${user.staffFlag == true}">
+        if (element.value == 1) {
+            element.checked = "checked";
+        }
+        </c:if>
+        <c:if test="${user.staffFlag == false}">
+        if(element.value == 0){
+            element.checked = "checked";
+        }
+        </c:if>
+    });
+    </c:if>
+
+    <c:if test="${op == 'view'}">
+    $('input').each(function (index, element) {
+        $(element).attr('readonly',true);
+        $('input[name = "user.staffFlag"]').each(function (index, element) {
+           $(element).prop('disabled',true);
+        });
+    });
+    $('#addUserBtn').remove();
+    </c:if>
+
+    <c:if test="op == 'update'">
+        $('#userForm').attribute('action','${ctx}/user/register')
+    </c:if>
+
+</script>
 </body>
 </html>

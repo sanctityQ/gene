@@ -1,5 +1,52 @@
 function prepareAddUser(){
-    goToPage(ctx+'/views/user/addUser.jsp');
+    goToPage(ctx+'/user/preAdd');
+}
+
+
+var view = function (id,index){
+    var row = $(id).datagrid('getData').rows[index];
+    var id = row.id;
+    goToPage(ctx+'/user/view/'+id+'?op=view');
+}
+
+var update = function (id,index){
+    var row = $(id).datagrid('getData').rows[index];
+    var id = row.id;
+    goToPage(ctx+'/user/view/'+id+'?op=update');
+}
+
+var deleteUser = function (id, index) {
+    var row = $(id).datagrid('getData').rows[index];
+    var idArray = [row.id];
+    deleteRpc(idArray);
+}
+
+
+function deleteRpc(rpcDatas){
+    $.messager.confirm('系统消息', '确认删除选中的数据?', function (result) {
+        if (result) {
+            progress();
+            $.ajax({
+                       type: "post",
+                       url: ctx + "/user/delete",
+                       dataType: "html",
+                       data: {"id": rpcDatas},
+                       success: function (data) {
+                           $.messager.progress('close');
+                           if (data == "true") {
+                               $.messager.alert('结果', '删除用户成功', 'info');
+                           } else {
+                               $.messager.alert('结果', '删除用户失败', 'error');
+                           }
+                           rpcData();
+                       },
+                       error: function () {
+                           $.messager.progress('close');
+                           $.messager.alert('删除结果', '失败', 'error');
+                       }
+                   });
+        }
+    });
 }
 
 
@@ -31,13 +78,10 @@ function addUserSubmit() {
 
 function userList(data){
     var dg = $('#userList');
-
     var pager = dg.datagrid('getPager');
     pager.pagination('loading', true);
     var opts = dg.datagrid('options');
-    //dg.datagrid(data);
-    $('#userList').datagrid("loadData", data);
-
+    showData(data);
 
     pager.pagination({
                          total: data.total,
@@ -75,17 +119,7 @@ function rpcData() {
                },
                success: function (data) {
                    $.messager.progress('close');
-                   if (data != null) {
-                       var resultData = data.rows;
-                       for (var i = 0; i < resultData.length; i++) {
-                           if (resultData[i].staffFlag) {
-                               resultData[i].staffFlag = '是';
-                           } else {
-                               resultData[i].staffFlag = '否';
-                           }
-                       }
-                       $('#userList').datagrid("loadData", data);
-                   }
+                   showData(data);
                },
                error:function(){
                    $.messager.progress('close');
@@ -94,6 +128,35 @@ function rpcData() {
            });
 }
 
+function showData(data){
+    if (data != null) {
+        var resultData = data.rows;
+        for (var i = 0; i < resultData.length; i++) {
+            if (resultData[i].staffFlag) {
+                resultData[i].staffFlag = '是';
+            } else {
+                resultData[i].staffFlag = '否';
+            }
+        }
+        $('#userList').datagrid("loadData", data);
+    }
+}
+
+
+function batchDelete() {
+
+    var checkedIds = new Array();
+    var selectFlag = false;
+    $("input[name='id']:checked").each(function (index, element) {
+        checkedIds.push(element.value);
+        selectFlag = true;
+    });
+    if (!selectFlag) {
+        $.messager.alert('系统信息','请选择要删除的业务员','info');
+        return false;
+    }
+    deleteRpc(checkedIds);
+}
 
 $(function () {
 
