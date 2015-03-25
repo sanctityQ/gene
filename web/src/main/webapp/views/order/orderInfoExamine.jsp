@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%> 
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <c:set var="orderNo" value="${param.orderNo}" />
 <!DOCTYPE html>
@@ -16,8 +17,9 @@ var ctx = '${ctx}';
 <div class="page_padding">
 	<div class="content_box totle margin_btoom">
 		<b>订单号：</b>${orderNo}<br />
-		<div id="createTime"></div>
+		<b>订购日期：</b><fmt:formatDate value="${order.createTime}" pattern="yyyy-MM-dd HH:mm:ss" /><br/>
 		<div id="totalValue"></div>
+		<b>订单类型：</b>${order.orderUpType} 类型
 	</div>
 	<div class="content_box info margin_btoom">
 		<h2>客户信息</h2>

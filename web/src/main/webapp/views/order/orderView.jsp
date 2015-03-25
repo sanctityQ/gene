@@ -103,6 +103,7 @@ var ctx = '${ctx}';
 				<th data-options="field:'baseVal',width:40,sortable:true,editor:'text'">碱基单价</th>
 				<th data-options="field:'purifyVal',width:40,sortable:true,editor:'text'">纯化价格</th>
 				<th data-options="field:'totalVal',width:80,sortable:true,editor:'text'">总价格</th>
+				<th data-options="field:'operationTypeDesc',width:80,sortable:true,editor:'text',styler:cellStyler">状态</th>
 				<th data-options="field:'fromProductNo',width:80,hidden:true,sortable:true,editor:'text'">来源生产编号</th>
 
 			</tr>

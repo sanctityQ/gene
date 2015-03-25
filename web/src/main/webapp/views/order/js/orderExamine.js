@@ -85,7 +85,9 @@ var getExamineInfo=function(){
 //审核订单查询
 var checkOrder=function(id,index){
 	var row = $('#orderList').datagrid('getData').rows[index];
-	goToPage(ctx+'/views/order/orderInfoExamine.jsp?orderNo='+row.orderNo);
+//	goToPage(ctx+'/views/order/orderInfoExamine.jsp?orderNo='+row.orderNo);
+	var path = ctx+'/order/modifyQuery?orderNo='+row.orderNo;  
+	 window.location.href = path;
 }
 
 var examine=function(orderNo,failReason){
