@@ -11,4 +11,14 @@
             diskPersistent="false"
             diskExpiryThreadIntervalSeconds="120"
             />
+
+    <cache name="passwordRetryCache"
+           maxEntriesLocalHeap="2000"
+           eternal="false"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="0"
+           overflowToDisk="false"
+           statistics="true"/>
+
+
 </ehcache>

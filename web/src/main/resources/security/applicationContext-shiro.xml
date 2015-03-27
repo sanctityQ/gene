@@ -14,8 +14,16 @@
 	<!-- 項目自定义的Realm -->
 	<bean id="shiroDbRealm" class="org.one.gene.domain.service.account.ShiroDbRealm" depends-on="userRepository">
 		<property name="accountService" ref="accountService"/>
+		<property name="credentialsMatcher" ref="retryLimitCredentialsMatcher"/>
 	</bean>
-	
+
+    <bean id="retryLimitCredentialsMatcher" class="org.one.gene.domain.service.account.RetryLimitHashedCredentialsMatcher">
+        <property name="cacheManager"  ref="shiroEhcacheManager"/>
+        <property name="hashAlgorithmName" value="SHA-1"/>
+        <property name="hashIterations" value="1024"></property>
+    </bean>
+
+
 	<!-- Shiro Filter -->
 	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
 		<property name="securityManager" ref="securityManager" />
@@ -38,6 +46,7 @@
 	<bean id="shiroEhcacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
 		<property name="cacheManagerConfigFile" value="classpath:security/ehcache-shiro.xml"/>
 	</bean>
+
 	
 	<!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
 	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
