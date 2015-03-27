@@ -13,6 +13,7 @@ import java.util.Map;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.service.OrderService;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
@@ -231,6 +232,13 @@ public class OrderController {
 				midi = "("+midi.substring(0, midi.length()-1)+")";
 				primerProduct.setMidi(midi);
 			}
+			//状态处理
+			for (PrimerStatusType type : PrimerStatusType.values()) {
+				if (primerProduct.getOperationType() == type) {
+					primerProduct.setOperationTypeDesc(type.desc());
+					break;
+				}
+			}
     	 }
 
         OrderInfo orderInfo = new OrderInfo();
@@ -314,9 +322,9 @@ public class OrderController {
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         
         Page<Order> orderPage = orderRepository.findAll(spec,pageable);
-        Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
+        //Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
         
-        return Replys.with(orderListPage).as(Json.class);
+        return Replys.with(orderPage).as(Json.class);
     }
     
     /**

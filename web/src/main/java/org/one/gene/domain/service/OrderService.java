@@ -78,6 +78,12 @@ public class OrderService {
         if(order.getCreateTime() == null){
             order.setCreateTime(new Date());
         }
+        int index=0;
+        //定义订单集合中第一个生产代码
+  		String firstProductNO = "";
+  		//定义订单集合中最后一个生产代码
+  		String lastProductNO  = "";
+  		BigDecimal tbnTotal = new BigDecimal("0");
     	//存储生产数据
         for (PrimerProduct primerProduct : order.getPrimerProducts()) {
         	int count = primerProductRepository.countByProductNo(primerProduct.getProductNo());
@@ -97,8 +103,17 @@ public class OrderService {
 			//总价格:修饰单价+碱基单价*碱基数+纯化价格(9+10*碱基数+11)
 			BigDecimal totalVal = primerProduct.getModiPrice().add(primerProduct.getBaseVal().multiply(new BigDecimal(tbnStr))).add(primerProduct.getPurifyVal());
 			primerProduct.setTotalVal(totalVal);
-//			orderTotalValue = orderTotalValue.add(primerProduct.getTotalVal());
 
+			index++;
+			 if(index==1) {
+				 firstProductNO = primerProduct.getProductNo();
+		     }
+			 if(index==order.getPrimerProducts().size()) {
+				 lastProductNO = "~"+primerProduct.getProductNo();
+		     }
+			//汇总碱基数
+		    tbnTotal= tbnTotal.add(new BigDecimal(tbnStr));
+			
 			//初始化数据 先实现功能后续优化
 			if(primerProduct.getId() == null){
 				List<PrimerProductValue> primerProductValueList = new ArrayList<PrimerProductValue>();
@@ -120,6 +135,8 @@ public class OrderService {
 				po.setPrimerProduct(primerProduct);
 			}
 		}
+        order.setProductNoMinToMax(firstProductNO+lastProductNO);
+        order.setTbnTotal(tbnTotal.toString());
 		orderRepository.save(order);
 
     }
@@ -161,7 +178,6 @@ public class OrderService {
 	
 	public OrderInfo getOrderInfos(Order order){
 		OrderInfo orderInfo = new OrderInfo();
-		List<PrimerProduct> PrimerProducts = new ArrayList<PrimerProduct>();
 
 		//组织订单列表对象
 		orderInfo.setOrderNo(order.getOrderNo());
@@ -170,29 +186,8 @@ public class OrderService {
 		orderInfo.setCreateTime(order.getCreateTime());
 		orderInfo.setModifyTime(order.getModifyTime());
 		orderInfo.setStatus(String.valueOf(order.getStatus()));
-		PrimerProducts = order.getPrimerProducts();
-		BigDecimal tbnTotal = new BigDecimal("0");
-		//定义订单集合中第一个生产代码
-		String firstProductNO = "";
-		//定义订单集合中最后一个生产代码
-		String LastProductNO  = "";
-		int count = 0;
-		for(PrimerProduct primerProduct:PrimerProducts){
-			count++;
-			 if(count==1) {
-				 firstProductNO = primerProduct.getProductNo();
-		     }
-			 if(count==PrimerProducts.size()) {
-				 LastProductNO = "~"+primerProduct.getProductNo();
-		     }
-			 //计算每条生产数据的碱基数
-			String tbnStr = orderCaculate.getAnJiShu(primerProduct.getGeneOrder());
-			//汇总碱基数
-		    tbnTotal= tbnTotal.add(new BigDecimal(tbnStr));
-		    
-		}
-		orderInfo.setProductNoMinToMax(firstProductNO+LastProductNO);
-		orderInfo.setTbnTotal(tbnTotal.toString());
+		orderInfo.setProductNoMinToMax(order.getProductNoMinToMax());
+		orderInfo.setTbnTotal(order.getTbnTotal());
 		
 		return orderInfo;
 	}

@@ -77,6 +77,8 @@ CREATE TABLE `order` (
   `modify_time`       DATETIME NOT NULL COMMENT '修改时间',
   `order_up_type`      varchar(10)  NULL COMMENT '订单导入类型',
   `validate` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否有效,0-不是，1-是',
+  `product_no_min_to_max` varchar(50) DEFAULT NULL COMMENT '生产编号最小最大号',
+  `tbn_total` varchar(10) DEFAULT NULL COMMENT '碱基总数',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_order_no` (`order_no`),
   KEY `idx_create_time` (`create_time`)
