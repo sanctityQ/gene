@@ -34,10 +34,13 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
     Cache<String, AtomicInteger> passwordRetryCache = cacheManager.getCache(RETRY_CACHE_NAME);
     String username = (String)token.getPrincipal();
     AtomicInteger retryCount = passwordRetryCache.get(username);
+
     if(retryCount == null){
-      passwordRetryCache.put(username, new AtomicInteger(1));
+      retryCount = new AtomicInteger(0);
+      passwordRetryCache.put(username, retryCount);
     }
-    if(retryCount.incrementAndGet() > 1) {
+
+    if(retryCount.incrementAndGet() > 10) {
       throw new ExcessiveAttemptsException();
     }
 
