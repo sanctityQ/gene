@@ -32,7 +32,7 @@ public class OrderInfo {
 	private BigDecimal OdTB;
 	private String customerName;
 	private String productNoMinToMax;
-	private String tbnTotal;
+	private BigDecimal tbnTotal;
 	private String status;
 	private Date createTime;
 	private Date modifyTime;
@@ -78,10 +78,10 @@ public class OrderInfo {
 	public void setProductNoMinToMax(String productNoMinToMax) {
 		this.productNoMinToMax = productNoMinToMax;
 	}
-	public String getTbnTotal() {
+	public BigDecimal getTbnTotal() {
 		return tbnTotal;
 	}
-	public void setTbnTotal(String tbnTotal) {
+	public void setTbnTotal(BigDecimal tbnTotal) {
 		this.tbnTotal = tbnTotal;
 	}
 	public String getStatus() {

@@ -141,7 +141,7 @@ public class DeliveryService {
 			orderInfo.setCreateTime(primerProduct.getOrder().getCreateTime());
 			orderInfo.setModifyTime(primerProduct.getOrder().getModifyTime());
 			orderInfo.setStatus(primerProduct.getOperationType().desc());
-			orderInfo.setTbnTotal(primerProduct.getTbn()+"");
+			orderInfo.setTbnTotal(primerProduct.getTbn());
 			orderInfoList.add(orderInfo);
 		}
 		
@@ -259,7 +259,7 @@ public class DeliveryService {
 			}else{
 				orderInfo.setProductNo(primerProduct.getOutProductNo());
 			}
-			orderInfo.setTbnTotal(new BigDecimal(primerProduct.getGeneOrder().trim().length()).toString());
+			orderInfo.setTbnTotal(new BigDecimal(primerProduct.getGeneOrder().trim().length()));
 			//tbnTotal = tbnTotal.add(new BigDecimal(primerProduct.getGeneOrder().trim().length()));
 			
 			for(PrimerProductValue primerProductValue:primerProduct.getPrimerProductValues()){
@@ -323,7 +323,7 @@ public class DeliveryService {
 					value = orderInfoLable.getProductNo();
 					break;
 				  case 3:
-					value = orderInfoLable.getTbnTotal();
+					value = orderInfoLable.getTbnTotal().toString();
 					break;
 				  case 4:
 					value = orderInfoLable.getOdTotal().toString();

@@ -136,7 +136,7 @@ public class OrderService {
 			}
 		}
         order.setProductNoMinToMax(firstProductNO+lastProductNO);
-        order.setTbnTotal(tbnTotal.toString());
+        order.setTbnTotal(tbnTotal);
 		orderRepository.save(order);
 
     }

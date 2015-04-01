@@ -83,7 +83,7 @@ public class Order extends IdEntity implements java.io.Serializable {
     /**
      * 订单中所有生产数据碱基数汇总
      */
-	private String tbnTotal;
+	private BigDecimal tbnTotal;
 
     public Order() {
     }
@@ -239,11 +239,11 @@ public class Order extends IdEntity implements java.io.Serializable {
 		this.productNoMinToMax = productNoMinToMax;
 	}
 	@Column(name = "`tbn_total`", length = 10)
-	public String getTbnTotal() {
+	public BigDecimal getTbnTotal() {
 		return tbnTotal;
 	}
 
-	public void setTbnTotal(String tbnTotal) {
+	public void setTbnTotal(BigDecimal tbnTotal) {
 		this.tbnTotal = tbnTotal;
 	}
 
