@@ -47,8 +47,10 @@ function setResult(toggal){
             text:'确 定',
             handler:function(){
                 var text = $('#inputCause .inp_text').val();
-                //alert(title+ '：'+text);
-                //alert(row)
+                if($.trim(text)==""){
+                	$.messager.alert('系统提示','请填写失败原因。')
+                	return false;
+                }
                 $('#inputCause').dialog('close');
                 decorate.menubutton('disable');
                 saveBack(row,flag,text);

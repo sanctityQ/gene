@@ -74,7 +74,11 @@ function setResult(toggal){
             },{
                 text:'确 定',
                 handler:function(){
-                    var text = $('#inputCause.inp_text').val();
+                    var text = $('#inputCause .inp_text').val();
+                    if($.trim(text)==""){
+                    	$.messager.alert('系统提示','请填写失败原因。')
+                    	return false;
+                    }
 	               $.ajax({
 	            		type : "post",
 	            		url : "/gene/synthesis/resultsSelectSubmit",

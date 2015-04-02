@@ -28,7 +28,6 @@
 	<%@ include file="/views/synthesis/initBoardNo.jsp"%> <!--  未处理板号初始化页面 -->
 </div>
 <script src="${ctx}/static/js/vagueSeachBoard.js" ></script>
-<script src="${ctx}/static/js/initBoardNo.js" ></script>
 <script type="text/javascript">
 
 //initBoardNo("/gene/views/synthesis/synthesisResultsBoard.jsp?boardNo=");

@@ -13,7 +13,7 @@
 	<div class="content_box">
 		<h2>上传检测文件</h2>
 		<div class="import_box" style="line-height: 16px;">
-			<i class="icon-upload-alt"></i>请上传需要关联的文件(pdf,word)。
+			<i class="icon-upload-alt"></i>请上传需要关联的文件(pdf,word)【文件命名规则：生产编号-描述.pdf，例如：503223817-张三.pdf】。
 			<br /><br />
 			<div class="file_box">
 				<input name="file" type="file" onchange="document.getElementById('viewfile').value=this.value;" class="file" id="upload" /> 
