@@ -46,7 +46,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
     if (user != null) {
       byte[] salt = Encodes.decodeHex(user.getSalt());
       return new SimpleAuthenticationInfo(
-          new ShiroUser(user.getId(), user.getCode(), user.getName()),
+          new ShiroUser(user),
           user.getPassword(), ByteSource.Util.bytes(salt), getName());
     } else {
       return null;
@@ -78,18 +78,25 @@ public class ShiroDbRealm extends AuthorizingRealm {
   public static class ShiroUser implements Serializable {
 
     private static final long serialVersionUID = -1373760761780840081L;
+
+    private final User user;
     public Long id;
     public String loginName;
     public String name;
 
-    public ShiroUser(Long id, String loginName, String name) {
-      this.id = id;
-      this.loginName = loginName;
-      this.name = name;
+    public ShiroUser(User user) {
+      this.id = user.getId();
+      this.loginName = user.getCode();
+      this.name = user.getName();
+      this.user = user;
     }
 
     public String getName() {
       return name;
+    }
+
+    public final User getUser(){
+      return this.user;
     }
 
     /**
