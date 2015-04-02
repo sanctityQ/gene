@@ -66,14 +66,12 @@ var deliveryList = function(){
     var orderInfos = table.datagrid('getSelections');
     var makeBoard = $('#makeBoard');
   
-	var url = $('#deliveryListfm').attr("action");
-	var path = url+"?orderInfos="+JSON.stringify(orderInfos);
-	
 	makeBoard.attr('disabled','disabled');//按钮置灰
 	table.datagrid('loadData', { total: 0, rows: [] });//清空数据
 	
-	$('#deliveryListfm').attr("action", path).submit();//提交
-   
+	document.form.action = "/gene/delivery/deliveryList/"+JSON.stringify(orderInfos)+"/";
+	document.form.submit();
+	
 }
 
 

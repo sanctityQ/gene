@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import org.one.gene.repository.CustomerRepository;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductOperationRepository;
 import org.one.gene.repository.PrimerProductRepository;
+import org.one.gene.web.delivery.DeliveryInfo;
 import org.one.gene.web.order.OrderInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -382,7 +384,6 @@ public class DeliveryService {
 		
 		for (OrderInfo orderInfo : orderInfos) {
 			orderNo = orderInfo.getOrderNo();
-			productNoMinToMax = orderInfo.getProductNoMinToMax();
 			
 		}
 		
@@ -391,7 +392,7 @@ public class DeliveryService {
 		if( order != null ){
 			customerCode = order.getCustomerCode();//客户代码
 			orderDate = order.getCreateTime().toString();
-			
+			productNoMinToMax = order.getProductNoMinToMax();
 		}
 		
 		if(orderDate.length()>10){
@@ -412,25 +413,147 @@ public class DeliveryService {
 		}
 		
 		
-		BigDecimal orderBaseCount = new BigDecimal(0);//订单碱基数总量
-		BigDecimal odTotalCount = new BigDecimal(0);//OD总量
+		int orderBaseCount = 0;//订单碱基数总量
+		double odTotalCount = 0.0;//OD总量
 		int geneCount = 0;//序列总条数
 
+		int countNum_OPC  = 0;//订单碱基条数(OPC)
+		int baseCount_OPC  = 0;//订单碱基数总量(OPC)
+		double odTotalCount_OPC = 0.0;//OD总量(OPC)
+		double basePrice_OPC  = 0.0;//订单碱基价格(OPC)
+		int countNum_PAGE  = 0;//订单碱基条数(PAGE)
+		int baseCount_PAGE  = 0;//订单碱基数总量(PAGE)
+		double odTotalCount_PAGE = 0.0;//OD总量(PAGE)
+		double basePrice_PAGE  = 0.0;//订单碱基价格(PAGE)
+		int countNum_HPLC  = 0;//订单碱基条数(HPLC)
+		int baseCount_HPLC  = 0;//订单碱基数总量(HPLC)
+		double odTotalCount_HPLC = 0.0;//OD总量(HPLC)
+		double basePrice_HPLC  = 0.0;//订单碱基价格(HPLC)
+		String purifyType = "";//纯化类型
 		for (PrimerProduct primerProduct : order.getPrimerProducts()) {
 			geneCount += 1;
 			
+			purifyType = primerProduct.getPurifyType();
+			if ("OPC".equals(purifyType)) {
+				countNum_OPC += 1;
+			} else if ("PAGE".equals(purifyType)) {
+				countNum_PAGE += 1;
+			} else {
+				countNum_HPLC += 1;
+			}
 			for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
 				PrimerValueType type = primerProductValue.getType();
 				if (type.equals(PrimerValueType.baseCount)) {// 碱基数
-					orderBaseCount = orderBaseCount.add(primerProductValue.getValue());
+					orderBaseCount += primerProductValue.getValue().intValue();
+					if ("OPC".equals(purifyType)) {
+						baseCount_OPC += primerProductValue.getValue().intValue();
+					} else if ("PAGE".equals(purifyType)) {
+						baseCount_PAGE += primerProductValue.getValue().intValue();
+					} else {
+						baseCount_HPLC += primerProductValue.getValue().intValue();
+					}
 				}else if(type.equals(PrimerValueType.odTotal)){//od总量
-					odTotalCount = odTotalCount.add(primerProductValue.getValue());
+					odTotalCount += primerProductValue.getValue().doubleValue();
+					if ("OPC".equals(purifyType)) {
+						odTotalCount_OPC += primerProductValue.getValue().doubleValue();
+					} else if ("PAGE".equals(purifyType)) {
+						odTotalCount_PAGE += primerProductValue.getValue().doubleValue();
+					} else {
+						odTotalCount_HPLC += primerProductValue.getValue().doubleValue();
+					}
 				}
 			}
 		  }
 	    
+		if (baseCount_OPC < 60) {
+			if (odTotalCount_OPC <= 5) {
+				basePrice_OPC = 0.45;
+			} else if (odTotalCount_OPC > 5 && odTotalCount_OPC <= 10) {
+				basePrice_OPC = 0.8;
+			} else if (odTotalCount_OPC > 10 && odTotalCount_OPC <= 20) {
+				basePrice_OPC = 1.6;
+			}
+		}else if (baseCount_OPC >= 60) {
+			if (odTotalCount_OPC <= 5) {
+				basePrice_OPC = 0.8;
+			} else if (odTotalCount_OPC > 5 && odTotalCount_OPC <= 10) {
+				basePrice_OPC = 1.6;
+			} else if (odTotalCount_OPC > 10 && odTotalCount_OPC <= 20) {
+				basePrice_OPC = 3.2;
+			}
+		}
+		if (baseCount_PAGE < 60) {
+			if (odTotalCount_PAGE <= 5) {
+				basePrice_PAGE = 0.6;
+			} else if (odTotalCount_PAGE > 5 && odTotalCount_PAGE <= 10) {
+				basePrice_PAGE = 1.2;
+			} else if (odTotalCount_PAGE > 10 && odTotalCount_PAGE <= 20) {
+				basePrice_PAGE = 2.4;
+			}
+		}else if (baseCount_PAGE >= 60) {
+			if (odTotalCount_PAGE <= 5) {
+				basePrice_PAGE = 1.2;
+			} else if (odTotalCount_PAGE > 5 && odTotalCount_PAGE <= 10) {
+				basePrice_PAGE = 2.4;
+			} else if (odTotalCount_PAGE > 10 && odTotalCount_PAGE <= 20) {
+				basePrice_PAGE = 4.8;
+			}
+		}
+		if (baseCount_HPLC < 60) {
+			if (odTotalCount_HPLC <= 5) {
+				basePrice_HPLC = 0.45;
+			} else if (odTotalCount_HPLC > 5 && odTotalCount_HPLC <= 10) {
+				basePrice_HPLC = 0.8;
+			} else if (odTotalCount_HPLC > 10 && odTotalCount_HPLC <= 20) {
+				basePrice_HPLC = 1.6;
+			}
+		}else if (baseCount_HPLC >= 60) {
+			if (odTotalCount_HPLC <= 5) {
+				basePrice_HPLC = 0.8;
+			} else if (odTotalCount_HPLC > 5 && odTotalCount_HPLC <= 10) {
+				basePrice_HPLC = 1.6;
+			} else if (odTotalCount_HPLC > 10 && odTotalCount_HPLC <= 20) {
+				basePrice_HPLC = 3.2;
+			}
+		}
 		//
+		DecimalFormat df = new DecimalFormat("#.00");
+		DeliveryInfo deliveryInfo = new DeliveryInfo();
+		List<DeliveryInfo> deliveryInfos = new ArrayList<DeliveryInfo>();
 		
+		if (basePrice_OPC > 0) {
+			deliveryInfo = new DeliveryInfo();
+			deliveryInfo.setDeliveryName("DNA合成(OPC)");
+			deliveryInfo.setCountNum(countNum_OPC);
+			deliveryInfo.setOdTotal(odTotalCount_OPC);
+			deliveryInfo.setMeasurement("bp");
+			deliveryInfo.setCount(baseCount_OPC);
+			deliveryInfo.setPrice(basePrice_OPC);
+			deliveryInfo.setMoney(df.format(baseCount_OPC * basePrice_OPC));
+			deliveryInfos.add(deliveryInfo);
+		}
+		if (basePrice_PAGE > 0) {
+			deliveryInfo = new DeliveryInfo();
+			deliveryInfo.setDeliveryName("DNA合成(PAGE)");
+			deliveryInfo.setCountNum(countNum_PAGE);
+			deliveryInfo.setOdTotal(odTotalCount_PAGE);
+			deliveryInfo.setMeasurement("bp");
+			deliveryInfo.setCount(baseCount_PAGE);
+			deliveryInfo.setPrice(basePrice_PAGE);
+			deliveryInfo.setMoney(df.format(baseCount_PAGE * basePrice_PAGE));
+			deliveryInfos.add(deliveryInfo);
+		}
+		if (basePrice_HPLC > 0) {
+			deliveryInfo = new DeliveryInfo();
+			deliveryInfo.setDeliveryName("DNA合成(HPLC)");
+			deliveryInfo.setCountNum(countNum_HPLC);
+			deliveryInfo.setOdTotal(odTotalCount_HPLC);
+			deliveryInfo.setMeasurement("bp");
+			deliveryInfo.setCount(baseCount_HPLC);
+			deliveryInfo.setPrice(basePrice_HPLC);
+			deliveryInfo.setMoney(df.format(baseCount_HPLC * basePrice_HPLC));
+			deliveryInfos.add(deliveryInfo);
+		}
 		
 		//形成Excel
 		String templetName = "deliveryListTemplate.xls";
@@ -475,16 +598,41 @@ public class DeliveryService {
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue("地区："+area+"   总条数："+geneCount+"条");
 		
-		row = sheet.getRow(6);
+		int startRow = 6;//从第6行开始
+		int rowNo = 1;//行号
+		double totalMoney = 0.0;//合计
+		for (DeliveryInfo dis : deliveryInfos) {
+			row = sheet.getRow(startRow);
+			cell = row.getCell(0);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(rowNo);
+			cell = row.getCell(1);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(dis.getDeliveryName());
 		cell = row.getCell(2);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(geneCount);
+			cell.setCellValue(dis.getCountNum());
 		cell = row.getCell(3);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(odTotalCount+"");
+			cell.setCellValue(dis.getOdTotal()+"OD");
+			cell = row.getCell(4);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(dis.getMeasurement());
 		cell = row.getCell(5);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(orderBaseCount+"");
+			cell.setCellValue(dis.getCount());
+			cell = row.getCell(6);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(dis.getPrice());
+			cell = row.getCell(7);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(dis.getMoney());
+			startRow = startRow +1;
+			rowNo = rowNo +1;
+			if(!"".equals(dis.getMoney())){
+				totalMoney += Double.parseDouble(dis.getMoney());
+			}
+		}
 		
         //输出文件到客户端
         HttpServletResponse response = inv.getResponse();

@@ -4,15 +4,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link href="${ctx}/static/css/easyui.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/icon.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/perfect-scrollbar.min.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/master.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="${ctx}/static/css/font-awesome.min.css" />
-  <link rel="stylesheet" href="${ctx}/static/css/font-awesome-ie7.min.css">
-<script src="${ctx}/static/js/jquery.min.js" ></script>
-<script src="${ctx}/static/js/jquery.easyui.min.js" ></script>
-<script src="${ctx}/static/js/perfect-scrollbar.min.js" ></script>
 <script src="${ctx}/static/js/ajaxfileupload.js" ></script>
 <script src="${ctx}/static/js/index.js" ></script>
 </head>
@@ -22,7 +13,7 @@
 	<div class="content_box">
 		<h2>上传检测文件</h2>
 		<div class="import_box" style="line-height: 16px;">
-			<i class="icon-upload-alt"></i>请上传需要关联的文件(pdf,word)，可批量上传(压缩包)。
+			<i class="icon-upload-alt"></i>请上传需要关联的文件(pdf,word)。
 			<br /><br />
 			<div class="file_box">
 				<input name="file" type="file" onchange="document.getElementById('viewfile').value=this.value;" class="file" id="upload" /> 

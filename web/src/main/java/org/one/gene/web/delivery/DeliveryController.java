@@ -226,7 +226,7 @@ public class DeliveryController {
     }
     
     
-    @Post("deliveryList")
+    @Post("deliveryList/{orderInfos}/")
 	public void deliveryList(
 			@Param("orderInfos") String orderInfosJson,
 			Invocation inv) throws IOException {

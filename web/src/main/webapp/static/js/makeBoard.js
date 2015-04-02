@@ -26,7 +26,7 @@ function makeBoard(id,flag){
 			flag: flag,
 			boardNo: $('#boardNo').val(),
 			productNoStr: $('#productNoArray').val(),
-			operationType:'makeBoard'
+			operationType:'synthesis'
         },
         success: function(data){
             $('#boardType').val(data.boardType);

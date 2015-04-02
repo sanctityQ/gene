@@ -1,25 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
 <head>
 <title></title>
-<meta charset="utf-8">
-<link href="${ctx}/static/css/easyui.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/icon.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/perfect-scrollbar.min.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/master.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="${ctx}/static/css/font-awesome.min.css" />
-<script src="${ctx}/static/js/jquery.min.js" ></script>
-<script src="${ctx}/static/js/jquery.easyui.min.js" ></script>
-<script src="${ctx}/static/js/perfect-scrollbar.min.js" ></script>
-<script src="${ctx}/static/js/index.js" ></script>
-<script type="text/javascript">
-var ctx = '${ctx}';
-</script>
+<script src="${ctx}/static/js/json2.js"></script>
 </head>
-<form id="deliveryListfm"  action="${ctx}/delivery/deliveryList" method="post" class="form-horizontal">
 <body>
 <div class="tools">
 	<table width="100%">
@@ -61,6 +49,7 @@ var ctx = '${ctx}';
 	</thead>
 </table>
 <div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
+</form>
 <script src="${ctx}/views/delivery/js/deliveryList.js" ></script>
 <script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script type="text/javascript">
@@ -84,5 +73,4 @@ $(function(){
 })
 </script>
 </body>
-</form>
 </html>

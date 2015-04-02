@@ -8,7 +8,6 @@
              <th data-options="field:'boardType',width:50,sortable:true">板类型</th>
              <th data-options="field:'createTime',width:80,sortable:true">创建时间</th>
              <th data-options="field:'createUser',width:50,sortable:true">创建人</th>
-             <th data-options="field:'operationTypeDesc',width:50,sortable:true">状态</th>
              <th data-options="field:'_operate',align:'center',width:100,formatter:formatOper">操作</th>
          </tr>
          </thead>
@@ -51,8 +50,7 @@ function dealBoardNo(){
       url : "/gene/synthesis/initBoardNo",
       dataType:'json',
 		data:{
-			operationType: $("#operationType").val()
-			,
+			operationType: $("#operationType").val(),
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
       },
