@@ -9,6 +9,7 @@
 <script src="${ctx}/static/js/json2.js"></script>
 </head>
 <body>
+<form name="form" action="${ctx}/delivery/deliveryList/" method="post">
 <div class="tools">
 	<table width="100%">
 		<tr>
