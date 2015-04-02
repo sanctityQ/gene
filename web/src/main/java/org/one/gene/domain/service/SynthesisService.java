@@ -679,11 +679,26 @@ public class SynthesisService {
 						cell.setCellValue(pp.getOdTB()+""+pp.getOrder().getOrderUpType()+"*"+pp.getTb());
 					}
 					
-					// 体积:导入测试数据后显示体积
+					// 体积:导入测试数据后显示体积,如果在测试之前：显示级别顺序：1：修饰，2：HPLC，3：PAGE)
 					if (pp.getMeasureVolume() != null) {
-						cell = row.getCell(pthc.getColumn()+3);
+						cell = row.getCell(pthc.getColumn() + 3);
 						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-						cell.setCellValue(pp.getMeasureVolume()+"");
+						cell.setCellValue(pp.getMeasureVolume() + "");
+					} else if (!"".equals(pp.getModiFiveType())
+							|| !"".equals(pp.getModiThreeType())
+							|| !"".equals(pp.getModiMidType())
+							|| !"".equals(pp.getModiSpeType())) {
+						cell = row.getCell(pthc.getColumn() + 3);
+						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+						cell.setCellValue("修饰");
+					} else if ("HPLC".equals(pp.getPurifyType())) {
+						cell = row.getCell(pthc.getColumn() + 3);
+						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+						cell.setCellValue("HPLC");
+					} else if ("PAGE".equals(pp.getPurifyType())) {
+						cell = row.getCell(pthc.getColumn() + 3);
+						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+						cell.setCellValue("PAGE");
 					}
 					
 					ppLast = pp;
