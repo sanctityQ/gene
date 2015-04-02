@@ -7,18 +7,6 @@
 <html>
 <head>
 <title></title>
-<link href="${ctx}/static/css/easyui.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/icon.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/perfect-scrollbar.min.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/master.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="${ctx}/static/css/font-awesome.min.css" />
-<!--[if IE 7]>
-  <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
-<![endif]-->
-<script src="${ctx}/static/js/jquery.min.js" ></script>
-<script src="${ctx}/static/js/jquery.easyui.min.js" ></script>
-<script src="${ctx}/static/js/perfect-scrollbar.min.js" ></script>
-<script src="${ctx}/static/js/index.js" ></script>
 <script type="text/javascript">
 var orderNo = ${orderNo};
 var ctx = '${ctx}';

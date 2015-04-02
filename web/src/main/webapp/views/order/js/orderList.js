@@ -20,10 +20,15 @@ function formatOper(val,row,index){
  */
 var orderInfoIni=function(){
 	progress();
+	var orderNo = $("#seachOrder").val();
 	$.ajax({
 		type : "post",
 		url : ctx+"/order/query",
 		dataType : "json",
+		data:
+		{
+			orderNo:orderNo
+        },
 		success : function(data) {
 			$.messager.progress('close');
 			if(data != null){
@@ -136,7 +141,7 @@ var orderDetail=function(orderNo){
 //修改
 var modifyOrder=function(id,index){
 	var row = $('#orderList').datagrid('getData').rows[index];
-	 var path = ctx+'/order/modifyQuery?orderNo='+row.orderNo;  
+	 var path = ctx+'/order/modifyQuery?orderNo='+row.orderNo+'&forwordName=orderInfo';  
 	 //$('#queryForm').attr("action", path).submit();
 	 window.location.href = path;
 }

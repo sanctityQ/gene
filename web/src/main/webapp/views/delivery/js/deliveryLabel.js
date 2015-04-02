@@ -9,6 +9,5 @@ var deliveryLabelPrint = function(){
 	}
 	var url = $('#deliveryLabelfm').attr("action");
 	var path = url+'?boardNo='+boardNo+'&noType='+noType; 
-	$('#deliveryLabelfm').attr("action", path).submit();
-   
+	$('#deliveryLabelfm').attr("action", path).submit()
 }

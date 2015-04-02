@@ -29,37 +29,37 @@ var ctx = '${ctx}';
 			</tr>
 			<tr>
 				<td align="right">客户编号:</td>
-				<td><input id="code" name="customer.code" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
+				<td><input id="code" name="customer.code" class="readonly_inp" type="text"  style="width: 80%" value="${customer.code}" disabled/></td>
 				<td align="right">客户姓名:</td>
-				<td><input id="name" name="customer.name" class="readonly_inp" type="text" style="width: 80%" disabled/></td>
+				<td><input id="name" name="customer.name" class="readonly_inp" type="text" style="width: 80%" value="${customer.name}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">负责人姓名:</td>
-				<td><input id="leaderName" name="customer.leaderName" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
+				<td><input id="leaderName" name="customer.leaderName" class="readonly_inp" type="text"  style="width: 80%" value="${customer.leaderName}" disabled/></td>
 				<td align="right">客户单位:</td>
-				<td><input id="customerUnit" class="readonly_inp" type="text" value="" style="width: 80%" disabled/></td>
+				<td><input id="customerUnit" class="readonly_inp" type="text" style="width: 80%" value="${customer.invoiceTitle}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">发票抬头:</td>
-				<td><input id="invoiceTitle" name="customer.invoiceTitle" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
+				<td><input id="invoiceTitle" name="customer.invoiceTitle" class="readonly_inp" type="text"  style="width: 80%" value="${customer.invoiceTitle}" disabled/></td>
 				<td align="right">结账方式:</td>
-				<td><input id="payWays" name="customer.payWays" class="readonly_inp" type="text"  style="width: 80%" disabled/></td>
+				<td><input id="payWays" name="customer.payWays" class="readonly_inp" type="text"  style="width: 80%" value="${customer.payWays}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">客户地址:</td>
-				<td><input id="address" name="customer.address" class="readonly_inp" type="text"  style="width: 50%" disabled/></td>
+				<td><input id="address" name="customer.address" class="readonly_inp" type="text"  style="width: 50%" value="${customer.address}" disabled/></td>
 				<td align="right">传真:</td>
 				<td><input id="fax" name="customer.fax" class="readonly_inp" type="text"  style="width: 50%" value="${customer.fax}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">联系电话:</td>
-				<td><input id="phoneNo" name="customer.phoneNo" class="readonly_inp" type="text" style="width: 80%" disabled/></td>
+				<td><input id="phoneNo" name="customer.phoneNo" class="readonly_inp" type="text" style="width: 80%" value="${customer.phoneNo}" disabled/></td>
 				<td align="right">Email:</td>
-				<td><input id="email" name="customer.email" class="readonly_inp" type="text" style="width: 80%" disabled/></td>
+				<td><input id="email" name="customer.email" class="readonly_inp" type="text" style="width: 80%" value="${customer.email}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">网址:</td>
-				<td><input id="webSite" class="readonly_inp" type="text" value="" style="width: 50%" disabled/></td>
+				<td><input id="webSite" class="readonly_inp" type="text" style="width: 50%" value="${customer.webSite}" disabled/></td>
 				<td align="right">业务员:</td>
 				<td><input id="handlerCode" class="readonly_inp" type="text" style="width: 80%" value="${customer.handlerCode}" disabled/></td>
 			</tr>

@@ -10,11 +10,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.service.OrderService;
+import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.OrderRepository;
@@ -177,14 +179,14 @@ public class OrderController {
     
     @Post("modifyQuery")
     @Get("modifyQuery")
-    public String modifyQuery(@Param("orderNo") String orderNo, Invocation inv) throws Exception {
+    public String modifyQuery(@Param("orderNo") String orderNo, @Param("forwordName") String forwordName,Invocation inv) throws Exception {
     	 Order order = orderRepository.findByOrderNo(orderNo);
     	 String coustomerCode = "";
      	 coustomerCode = order.getCustomerCode();
      	 Customer customer = orderService.findCustomer(coustomerCode);
      	 inv.addModel("customer", customer);
 		 inv.addModel("order", order);
-    	 return "orderInfo";
+    	 return forwordName;
     }
 
     
@@ -312,13 +314,15 @@ public class OrderController {
         if(pageSize == null){
             pageSize = 20;
         }
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCode = user.getUser().getCompany().getComCode();
         Sort s=new Sort(Direction.DESC, "createTime");
         Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
         searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
         searchParams.put(SearchFilter.Operator.EQ+"_status",status);
-        searchParams.put(SearchFilter.Operator.EQ+"_comCode","11000000");
+        searchParams.put(SearchFilter.Operator.EQ+"_comCode",comCode);
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         

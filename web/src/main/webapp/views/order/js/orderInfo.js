@@ -317,7 +317,7 @@ function getChanesSave(){
 		success : function(data) {
 			$.messager.progress('close');
 			if(data == "sucess"){
-				goToPage(ctx+'/views/order/orderList.jsp');
+				goToPage(ctx+'/views/order/orderList.jsp?orderNo='+orderNo);
 			}
 		},
 		error:function(data){

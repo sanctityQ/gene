@@ -86,7 +86,7 @@ var getExamineInfo=function(){
 var checkOrder=function(id,index){
 	var row = $('#orderList').datagrid('getData').rows[index];
 //	goToPage(ctx+'/views/order/orderInfoExamine.jsp?orderNo='+row.orderNo);
-	var path = ctx+'/order/modifyQuery?orderNo='+row.orderNo;  
+	var path = ctx+'/order/modifyQuery?orderNo='+row.orderNo+'&forwordName=orderInfoExamine';  
 	 window.location.href = path;
 }
 

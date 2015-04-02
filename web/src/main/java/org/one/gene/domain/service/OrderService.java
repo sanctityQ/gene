@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
@@ -17,6 +18,7 @@ import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerProductValue;
 import org.one.gene.domain.entity.PrimerType;
 import org.one.gene.domain.entity.PrimerValueType;
+import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.excel.OrderCaculate;
 import org.one.gene.excel.OrderExcelPase;
 import org.one.gene.repository.CustomerRepository;
@@ -204,8 +206,9 @@ public class OrderService {
     	order.setOrderNo(atomicLongUtil.getOrderSerialNo());
 		order.setCustomerCode(customer.getCode());
 		order.setCustomerName(customer.getName());
-    	//后续补充，获取登录操作人员的归属机构。
-		order.setComCode("11000000");
+		ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+		String comCode = user.getUser().getCompany().getComCode();
+		order.setComCode(comCode);
     	order.setType("00");
     	order.setFileName(fileName);
     	order.setCreateTime(new Date());
@@ -221,9 +224,9 @@ public class OrderService {
     	primerProductOperation.setType(PrimerType.PrimerOperationType.orderInit);
     	primerProductOperation.setTypeDesc(PrimerType.PrimerOperationType.orderInit.desc());
     	primerProductOperation.setBackTimes(0);
-    	//默认值，后续调整
-    	primerProductOperation.setUserCode("19820833");
-    	primerProductOperation.setUserName("检查工2号");
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	primerProductOperation.setUserCode(user.getUser().getCode());
+    	primerProductOperation.setUserName(user.getUser().getName());
     	primerProductOperation.setCreateTime(new Date());
     	primerProductOperation.setFailReason("");
         return primerProductOperation;
