@@ -63,11 +63,7 @@ public class OrderController {
     public String orderImport(Invocation inv){
 		//获取客户代码，外部客户控制页面客户代码是否显示录入，并自动赋值客户代码
     	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
-    	String flag = "";
-    	if(user.getUser().isStaffFlag()){
-    		flag = "1";
-    	}
-		inv.addModel("flag", flag);
+		inv.addModel("flag", user.getUser().isStaffFlag());
 		inv.addModel("customerCode", user.getUser().getCustomer().getCode());
 		inv.addModel("customerName", user.getUser().getCustomer().getName());
         return "orderImport";
@@ -85,12 +81,12 @@ public class OrderController {
     
     @Post("upload")
     public String upload(@Param("customerCode") String customerCode, @Param("file") MultipartFile file, Invocation inv) throws Exception {
-
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
     	ArrayList<String> errors = new ArrayList<String>();
     	
     	if("".equals(customerCode)){
     		//刷新时赋值客户类型
-    		inv.addModel("flag", "1");
+    		inv.addModel("flag", user.getUser().isStaffFlag());
     		inv.addModel("userExp", "无此客户信息，请您确认后重新上传！");
     		return "orderImport";
     		//throw new Exception("客户代码或名称未录入，请您录入！");
@@ -98,13 +94,13 @@ public class OrderController {
     	try{
 	    	if (file.isEmpty()) {
 	    		//刷新时赋值客户类型
-	    		inv.addModel("flag", "1");
+	    		inv.addModel("flag", user.getUser().isStaffFlag());
 	    		inv.addModel("userExp", "请您选择要上传的文件！");
 	    		return "orderImport";
 	    	}
     	}catch(Exception e){
     		//刷新时赋值客户类型
-    		inv.addModel("flag", "1");
+    		inv.addModel("flag", user.getUser().isStaffFlag());
     		inv.addModel("userExp", "请您选择要上传的文件！");
     		return "orderImport";
     	}
@@ -147,7 +143,7 @@ public class OrderController {
         	Customer customer = orderService.findCustomer(customerCode);
         	if(customer==null){
         		//刷新时赋值客户类型
-        		inv.addModel("flag", "1");
+        		inv.addModel("flag", user.getUser().isStaffFlag());
         		inv.addModel("userExp", "无此客户信息，请您确认后重新上传！");
         		return "orderImport";
         		//throw new Exception("无此客户信息，请您确认后重新上传！");
@@ -164,7 +160,7 @@ public class OrderController {
         	  orderService.save(order);
         	}catch(Exception e){
         		//刷新时赋值客户类型
-        		inv.addModel("flag", "1");
+        		inv.addModel("flag", user.getUser().isStaffFlag());
         		inv.addModel("userExp",e.getMessage());
         		return "orderImport";
         	}

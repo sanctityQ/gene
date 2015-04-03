@@ -52,7 +52,7 @@
 <div class="page_padding">
 	<div class="content_box">
 		<h2>导入单订信息</h2>
-		<c:if test="${flag=='1'}">
+		<c:if test="${flag}">
 		<div class="import_box">
 			<i class="icon-group"></i>请输入客户姓名或客户代码。
 			<br />
@@ -78,7 +78,7 @@
 	</div>
 </div>
 </form>
-<c:if test="${flag=='1'}">
+<c:if test="${flag}">
 <script src="${ctx}/static/js/vagueSeach.js" ></script>
 </c:if>
 </body>
