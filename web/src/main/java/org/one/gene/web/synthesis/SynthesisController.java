@@ -71,8 +71,8 @@ public class SynthesisController {
      * 进入制板查询页面
      * 
      * */
-    @Get("preMakeBoardQuery")
-    public String preMakeBoardQuery(){
+    @Get("productionData")
+    public String productionData(){
     	
     	return "productionData";
     }
