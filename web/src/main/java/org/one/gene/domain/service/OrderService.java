@@ -209,6 +209,8 @@ public class OrderService {
 		ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
 		String comCode = user.getUser().getCompany().getComCode();
 		order.setComCode(comCode);
+		order.setHandlerCode(user.getUser().getCustomer().getHandlerCode());
+		order.setHandlerName(user.getUser().getCustomer().getHandlerName());
     	order.setType("00");
     	order.setFileName(fileName);
     	order.setCreateTime(new Date());

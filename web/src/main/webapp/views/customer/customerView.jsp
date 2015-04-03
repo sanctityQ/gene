@@ -23,14 +23,21 @@ var ctx = '${ctx}';
             <tr>
                 <td align="right">客户编号:</td>
                 <td><input class="readonly_inp" type="text" value="${customer.code}" disabled style="width:150px" /></td>
-                <td align="right">结算方式:</td>
-                <td colspan="3"><input class="readonly_inp" type="text" name="customer.payWays" value="${customer.payWays}" disabled style="width:150px" /></td>
+                <td align="right">姓名:</td>
+				<td colspan="3"><input class="readonly_inp" type="text" value="${customer.name}" disabled style="width:150px" /></td>
             </tr>
 			<tr>
-				<td align="right">姓名:</td>
-				<td><input class="readonly_inp" type="text" value="${customer.name}" disabled style="width:150px" /></td>
-				<td align="right">业务员:</td>
+				<td align="right">业务员代码:</td>
                 <td><input class="readonly_inp" disabled name="customer.handlerCode" type="text" value="${customer.handlerCode}"  style="width: 150px" /></td>
+				<td align="right">业务员姓名:</td>
+                <td><input class="readonly_inp" disabled name="customer.handlerName" type="text" value="${customer.handlerName}"  style="width: 150px" /></td>
+			</tr>
+			<tr>
+				 <td align="right">结算方式:</td>
+                <td><input class="readonly_inp" type="text" name="customer.payWays" value="${customer.payWays}" disabled style="width:150px" /></td>
+				<td align="right">&nbsp;</td>
+                <td colspan="3">&nbsp;</td>
+				
 			</tr>
 			<tr>
 				<td align="right">负责人姓名:</td>

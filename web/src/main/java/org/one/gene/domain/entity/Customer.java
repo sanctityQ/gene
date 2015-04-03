@@ -87,8 +87,12 @@ public class Customer extends IdEntity implements java.io.Serializable {
      * 业务员.
      */
     private String handlerCode;
+    /**
+     * 业务员姓名.
+     */
+    private String handlerName;
 
-    private CustomerPrice customerPrice;
+//    private CustomerPrice customerPrice;
     
     private List<PrimerProduct> primerProducts = Lists.newArrayList();
     
@@ -231,6 +235,16 @@ public class Customer extends IdEntity implements java.io.Serializable {
 		this.handlerCode = handlerCode;
 	}
 
+	@Column(name = "`handler_name`", length = 255)
+	public String getHandlerName() {
+		return handlerName;
+	}
+
+
+	public void setHandlerName(String handlerName) {
+		this.handlerName = handlerName;
+	}
+
 
 	@Transient
     public List<PrimerProduct> getPrimerProducts() {
@@ -251,7 +265,7 @@ public class Customer extends IdEntity implements java.io.Serializable {
         this.fax = fax;
     }
 
-    @OneToOne(cascade = CascadeType.ALL)
+    /*@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "`cp_id`",unique = true)
     public CustomerPrice getCustomerPrice() {
         return customerPrice;
@@ -259,7 +273,7 @@ public class Customer extends IdEntity implements java.io.Serializable {
 
     public void setCustomerPrice(CustomerPrice customerPrice) {
         this.customerPrice = customerPrice;
-    }
+    }*/
 }
 
 

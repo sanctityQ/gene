@@ -25,15 +25,23 @@ var ctx = '${ctx}';
             <tr>
                 <td align="right">客户编号:</td>
                 <td><input class="inp_text" type="text" name="customer.code" value="${customer.code}"  style="width:150px" /></td>
-                <td align="right">结算方式:</td>
-                <td colspan="3"><input class="inp_text" type="text" name="customer.payWays" value="${customer.payWays}"  style="width:150px" /></td>
+                <td align="right">姓名:</td>
+				<td colspan="3"><input class="inp_text" type="text" name="customer.name" value="${customer.name}"  style="width:150px" /></td>
             </tr>
-                
+             
+             <tr>
+				<td align="right">业务员代码:</td>
+				<td><input class="inp_text" type="text" name="customer.handlerCode" value="${customer.handlerCode}"  style="width:150px" /></td>
+				<td align="right">业务员姓名:</td>
+                <td><input class="inp_text" name="customer.handlerName" type="text" value="${customer.handlerName}"  style="width:150px" /></td>
+				
+			</tr>
+			   
 			<tr>
-				<td align="right">姓名:</td>
-				<td><input class="inp_text" type="text" name="customer.name" value="${customer.name}"  style="width:150px" /></td>
-				<td align="right">业务员:</td>
-                <td><input class="inp_text" name="customer.handlerCode" type="text" value="${customer.handlerCode}"  style="width:150px" /></td>
+				 <td align="right">结算方式:</td>
+                <td ><input class="inp_text" type="text" name="customer.payWays" value="${customer.payWays}"  style="width:150px" /></td>
+				<td align="right">&nbsp;</td>
+                <td colspan="3">&nbsp;</td>
 				
 			</tr>
 			<tr>

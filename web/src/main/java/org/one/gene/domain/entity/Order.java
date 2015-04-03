@@ -84,6 +84,14 @@ public class Order extends IdEntity implements java.io.Serializable {
      * 订单中所有生产数据碱基数汇总
      */
 	private BigDecimal tbnTotal;
+	/**
+     * 业务员.
+     */
+    private String handlerCode;
+    /**
+     * 业务员姓名.
+     */
+    private String handlerName;
 
     public Order() {
     }
@@ -215,6 +223,24 @@ public class Order extends IdEntity implements java.io.Serializable {
 
 	public void setTotalValue(BigDecimal totalValue) {
 		this.totalValue = totalValue;
+	}
+	
+	@Column(name = "`handler_code`", length = 30)
+	public String getHandlerCode() {
+		return handlerCode;
+	}
+	public void setHandlerCode(String handlerCode) {
+		this.handlerCode = handlerCode;
+	}
+
+	@Column(name = "`handler_name`", length = 255)
+	public String getHandlerName() {
+		return handlerName;
+	}
+
+
+	public void setHandlerName(String handlerName) {
+		this.handlerName = handlerName;
 	}
 
 	/**

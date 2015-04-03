@@ -15,14 +15,14 @@ public class CustomerService {
 	
 	@Transactional(readOnly = false)
 	public void save(Customer customer){
-		Customer customerOld = customerRepository.findByCode(customer.getCode());
+		//Customer customerOld = customerRepository.findByCode(customer.getCode());
 		//生产编号开头大写
-		customer.setPrefix(customer.getPrefix().toLowerCase());
+		customer.setPrefix(customer.getPrefix().toUpperCase());
 		customer.setModifyTime(new Date());
-		customer.getCustomerPrice().setCustomer(customer);
+		/*customer.getCustomerPrice().setCustomer(customer);
 		if(customerOld!=null){
 		  customer.getCustomerPrice().setId(customerOld.getCustomerPrice().getId());
-		}
+		}*/
 		customerRepository.save(customer);
 	}
 }

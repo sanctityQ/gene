@@ -61,13 +61,15 @@ public class OrderController {
 
     @Get("import")
     public String orderImport(Invocation inv){
-    	//输出模版下载地址
-    	String fileName = "orderTemplate.xls";
-		String templateFilePath= File.separator+"gene"+File.separator+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+fileName;
-		inv.addModel("templateFilePath", templateFilePath);
 		//获取客户代码，外部客户控制页面客户代码是否显示录入，并自动赋值客户代码
-		//实现功能代码暂时写死
-		inv.addModel("flag", "1");
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	String flag = "";
+    	if(user.getUser().isStaffFlag()){
+    		flag = "1";
+    	}
+		inv.addModel("flag", flag);
+		inv.addModel("customerCode", user.getUser().getCustomer().getCode());
+		inv.addModel("customerName", user.getUser().getCustomer().getName());
         return "orderImport";
     }
     @Get("orderList")

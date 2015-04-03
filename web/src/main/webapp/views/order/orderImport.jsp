@@ -56,8 +56,8 @@
 		<div class="import_box">
 			<i class="icon-group"></i>请输入客户姓名或客户代码。
 			<br />
-			<input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 300px" />
-			<input class="inp_text" id="customerCode" type="hidden" name="customerCode" value=""/>
+			<input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="${customerName}" style="width: 300px" />
+			<input class="inp_text" id="customerCode" type="hidden" name="customerCode" value="${customerCode}"/>
 			<ul id="seachList"></ul>
 		</div>
 		</c:if>

@@ -147,8 +147,8 @@ public class User extends IdEntity implements java.io.Serializable {
     this.validate = validate;
   }
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "`customer_id`")
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "`customer_id`",unique = true)
   public Customer getCustomer() {
     return customer;
   }

@@ -5,8 +5,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.service.CustomerService;
+import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.CustomerRepository;
@@ -53,8 +55,12 @@ public class CustomerController {
     }
 	@Get("addClient")
 	public String addClient(Invocation inv){
+		ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
 		Customer customer = new Customer();
 		customer.setCreateTime(new Date());
+		//业务员信息，默认带出登陆用户绑定客户下的业务员。
+		customer.setHandlerCode(user.getUser().getCustomer().getCode());
+		customer.setHandlerName(user.getUser().getCustomer().getName());
 		inv.addModel("customer", customer);
 		return "addClient";
 	}
