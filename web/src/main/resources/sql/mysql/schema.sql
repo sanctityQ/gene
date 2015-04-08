@@ -82,6 +82,8 @@ CREATE TABLE `order` (
   `tbn_total` decimal(10,0) DEFAULT NULL COMMENT '碱基总数',
   `handler_code` varchar(30)  COMMENT NOT NULL '业务员代码',
   `handler_name` varchar(255)  COMMENT NOT NULL '业务员名称',
+  
+  
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_order_no` (`order_no`),
   KEY `idx_create_time` (`create_time`)
@@ -207,3 +209,22 @@ CREATE TABLE `customer_price` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_plc_id_customer` (`customer_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户引物单价配置表';
+
+
+CREATE TABLE `product_molecular` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `product_categories` varchar(30) NOT NULL COMMENT '产品大类代码',
+  `product_code` varchar(30) NOT NULL COMMENT '产品小类代码',
+  `modified_molecular` decimal(10,2) NOT NULL COMMENT '修饰分子量',
+  `validate` varchar(1) NOT NULL COMMENT '有效标志',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='修饰分子量配置表';
+
+
+CREATE TABLE `modified_price` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `modi_type` varchar(30) NOT NULL COMMENT '修饰组合类型',
+  `modi_price` decimal(10,2) NOT NULL COMMENT '修饰价格',
+  `validate` varchar(1) NOT NULL COMMENT '有效标志',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='修饰价格表';
