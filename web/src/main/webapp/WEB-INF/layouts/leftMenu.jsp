@@ -82,7 +82,7 @@
 	</div>
     <div title="用户管理" data-options="iconCls:'salesman'" style="height:200px;">
         <ul class="sbu_menu">
-            <li url="${ctx}/user/manageQuery"><i class="icon-cogs"></i>用户管理</li>
+            <li url="${ctx}/user/manageQuery" id="manageQuery"><i class="icon-cogs"></i>用户管理</li>
         </ul>
     </div>
 	<%--<div title="业务员管理" data-options="iconCls:'salesman'" style="height:200px;">--%>
@@ -97,7 +97,8 @@
 	</div>
 	<div title="产品管理" data-options="iconCls:'product'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li><i class="icon-cogs"></i>产品管理</li>
+			<li url="${ctx}/productManage/productMolecularList" id="productMolecularList"><i class="icon-bookmark"></i>修饰分子量配置</li>
+			<%-- <li url="${ctx}/productManage/modifiePricedList" id="modifiePricedList"><i class="icon-bookmark"></i>修饰基础价格配置</li> --%>
 		</ul>
 	</div>
 </div>

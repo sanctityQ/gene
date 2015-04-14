@@ -92,6 +92,17 @@ function bindGridEvent(){
     
     var modiMidiObj = bigToSmall.datagrid('getEditor', {index:editIndex,field:'modiMidType'});
     var modiSpeObj = bigToSmall.datagrid('getEditor', {index:editIndex,field:'modiSpeType'});
+    
+    //修饰单价
+	var modiPriceObj = bigToSmall.datagrid('getEditor', {index:editIndex,field:'modiPrice'});
+	var modiPrice = $(modiPriceObj.target).parent().find('input.datagrid-editable-input'); 
+	//碱基单价
+    var baseValObj = bigToSmall.datagrid('getEditor', {index:editIndex,field:'baseVal'});
+    var baseVal = $(baseValObj.target).parent().find('input.datagrid-editable-input'); 
+    //纯化价格
+    var purifyValObj = bigToSmall.datagrid('getEditor', {index:editIndex,field:'purifyVal'});
+    var purifyVal = $(purifyValObj.target).parent().find('input.datagrid-editable-input'); 
+    
     //修饰单价
 	var row = bigToSmall.datagrid('getSelected');
 	var modiPriceVal = row.modiPrice;
@@ -119,19 +130,29 @@ function bindGridEvent(){
         calculateByGeneOrder(tbn.val(),modiPriceVal,baseValVal,purifyValVal,editIndex);
     });
     
+    modiPrice.bind("keyup",function(){
+        calculateByGeneOrder(tbn.val(),modiPrice.val(),baseVal.val(),purifyVal.val(),editIndex);
+    });
+    baseVal.bind("keyup",function(){
+        calculateByGeneOrder(tbn.val(),modiPrice.val(),baseVal.val(),purifyVal.val(),editIndex);
+    });
+    purifyVal.bind("keyup",function(){
+        calculateByGeneOrder(tbn.val(),modiPrice.val(),baseVal.val(),purifyVal.val(),editIndex);
+    });
+    
 }
 
 
 var calculateByGeneOrder=function(tbnVal,modiPriceVal,baseValVal,purifyValVal,index){
 	//总价格
     var totalObj = bigToSmall.datagrid('getEditor', {index:index,field:'totalVal'});
-    var inp = $(totalObj.target).parent().find('input.datagrid-editable-input');
+//    var inp = $(totalObj.target).parent().find('input.datagrid-editable-input');
     //修饰单价修改计算 修饰单价+碱基单价*碱基数+纯化价格
 	var mul = accMul(baseValVal,tbnVal);
 	var addOne = accAdd(mul,purifyValVal);
     var total = accAdd(addOne,modiPriceVal);
     $(totalObj.target).numberbox('setValue',total);
-    sumtotal(inp.val(),index);
+    sumtotal(total,index);
 }
 
 var sumtotal=function(newTotalVal,index){

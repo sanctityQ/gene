@@ -1,14 +1,11 @@
 package org.one.gene.domain.entity;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.one.gene.domain.CalculatePrimerValue;
-import org.one.gene.domain.service.PropotiesService;
-import org.one.gene.excel.OrderCaculate;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc {
 
@@ -513,19 +510,6 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
-        	BigDecimal modiMidVal = new BigDecimal("0");
-        	OrderCaculate orderCaculate = new OrderCaculate();
-        	String modiMidType = orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),OrderCaculate.modiMidMap);
-        	String[] moditypes = modiMidType.split(",");
-    		for(int i=0;i<moditypes.length;i++){
-    			modiMidVal = modiMidVal.add(new BigDecimal(PropotiesService.getValue(moditypes[i].trim()+"-m")));
-    		}
-    		BigDecimal modiSpeVal = new BigDecimal("0");
-        	String modiSpeType = orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),OrderCaculate.modiSpeMap);
-        	String[] modiSpeTypes = modiSpeType.split(",");
-    		for(int i=0;i<modiSpeTypes.length;i++){
-    			modiSpeVal = modiSpeVal.add(new BigDecimal(PropotiesService.getValue(modiSpeTypes[i].trim()+"-sp")));
-    		}
         	return new BigDecimal("313.2").multiply(av.value(primerProduct))
             		.add(new BigDecimal("289.2").multiply(cv.value(primerProduct)))
             		.add(new BigDecimal("329.2").multiply(gv.value(primerProduct)))
@@ -542,11 +526,6 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 					.add(new BigDecimal("308.7").multiply(wv.value(primerProduct)))
 					.add(new BigDecimal("296.7").multiply(yv.value(primerProduct)))
 					.subtract(new BigDecimal(61))
-					//临时处理方案，产品管理功能完成优化此处
-					.add(new BigDecimal(PropotiesService.getValue(primerProduct.getModiFiveType().trim()+"-5")))
-					.add(new BigDecimal(PropotiesService.getValue(primerProduct.getModiThreeType().trim()+"")))
-					.add(modiMidVal)
-					.add(modiSpeVal)
 					.setScale(1, RoundingMode.HALF_UP);
         }
     },

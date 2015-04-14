@@ -320,7 +320,9 @@ public class OrderController {
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
         searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
         searchParams.put(SearchFilter.Operator.EQ+"_status",status);
+        if(!"1".equals(user.getUser().getCompany().getComLevel())){
         searchParams.put(SearchFilter.Operator.EQ+"_comCode",comCode);
+        }
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         
