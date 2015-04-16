@@ -18,6 +18,7 @@ var ctx = '${ctx}';
 <div class="page_padding">
 	<div class="content_box totle margin_btoom">
 		<b>订单号：</b>${order.orderNo}<br />
+		<b>外部订单号：</b>${order.outOrderNo}<br />
 		<b>订购日期：</b><fmt:formatDate value="${order.createTime}" pattern="yyyy-MM-dd HH:mm:ss" /><br />
 		<%-- <b class="bule">订单总计：</b>￥ ${order.totalValue}<br /> --%>
 		<div id='totalValue'></div>
