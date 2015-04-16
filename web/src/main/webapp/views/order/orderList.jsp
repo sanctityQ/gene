@@ -39,7 +39,7 @@ var ctx = '${ctx}';
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>
 			<th data-options="field:'orderNo',width:80,sortable:true">订单号</th>
-			<th data-options="field:'outOrderNO',width:80,sortable:true">外部订单号</th>
+			<th data-options="field:'outOrderNo',width:80,sortable:true">外部订单号</th>
 			<th data-options="field:'customerName',width:80,sortable:true">客户姓名</th>
 			<th data-options="field:'productNoMinToMax',width:80,sortable:true">生产编号</th>
 			<th data-options="field:'tbnTotal',width:40,sortable:true">碱基总数</th>
