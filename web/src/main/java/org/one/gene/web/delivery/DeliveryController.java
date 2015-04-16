@@ -141,6 +141,10 @@ public class DeliveryController {
 
         deliveryService.saveBack(orderInfos, flag, text);
         
+        //发邮件
+        deliveryService.sendBackEmail(orderInfos, flag);
+        
+        
         return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
     } 
     
