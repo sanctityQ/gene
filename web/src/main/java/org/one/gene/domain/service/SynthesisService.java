@@ -84,10 +84,10 @@ public class SynthesisService {
 //    @Transactional(readOnly = false)
     //安排合成查询
 	public Page<PrimerProduct> makeBoardQuery(String customercode,
-			String modiFlag, String tbn1, String tbn2, String purifytype,
+			String modiFlag, String tbn1, String tbn2, String purifytype, String comCode,
 			Pageable pageable) {
 
-		Page<PrimerProduct> primerProductPage = primerProductRepository.selectPrimerProduct(customercode, modiFlag, tbn1, tbn2, purifytype, pageable);
+		Page<PrimerProduct> primerProductPage = primerProductRepository.selectPrimerProduct(customercode, modiFlag, tbn1, tbn2, purifytype, comCode, pageable);
 		
 		// 查询primer_product_value
 		for (PrimerProduct primerProduct : primerProductPage.getContent()) {
@@ -835,9 +835,10 @@ public class SynthesisService {
 	public Page<PrimerProduct> resultsSelectQuery(String boardNo,
 			String productNo, PrimerStatusType operationType,
 			String modiFiveType, String modiThreeType, String modiMidType,
-			String modiSpeType, String purifyType, Pageable pageable) {
+			String modiSpeType, String purifyType, String comCode,
+			Pageable pageable) {
 
-			Page<PrimerProduct> primerProductPage = primerProductRepository.resultsSelectQuery(boardNo,productNo,operationType.toString(), modiFiveType, modiThreeType, modiMidType, modiSpeType,purifyType, pageable);
+			Page<PrimerProduct> primerProductPage = primerProductRepository.resultsSelectQuery(boardNo,productNo,operationType.toString(), modiFiveType, modiThreeType, modiMidType, modiSpeType,purifyType,comCode, pageable);
 			
 			// 查询primer_product_value
 			for (PrimerProduct primerProduct : primerProductPage.getContent()) {

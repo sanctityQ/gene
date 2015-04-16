@@ -432,9 +432,16 @@ public class OrderController {
         if(pageSize == null){
             pageSize = 20;
         }
+        
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCode = user.getUser().getCompany().getComCode();
+        if("1".equals(user.getUser().getCompany().getComLevel())){
+          comCode = "";
+        }
+        
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         
-        Page<Order> orderPage = orderRepository.queryDeliveryDeal(orderNo, customerCode, pageable);
+        Page<Order> orderPage = orderRepository.queryDeliveryDeal(orderNo, customerCode, comCode, pageable);
         //循环查询生产数据表
         for (Order order : orderPage.getContent()) {
         	order.setPrimerProducts(primerProductRepository.findByOrder(order));
@@ -472,6 +479,10 @@ public class OrderController {
         if(pageSize == null){
             pageSize = 20;
         }
+        
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCode = user.getUser().getCompany().getComCode();
+        
         Sort s=new Sort(Direction.DESC, "createTime");
         Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
         Map<String,Object> searchParams = Maps.newHashMap();
@@ -483,7 +494,10 @@ public class OrderController {
 		if (!"".equals(createEndTime)) {
         	searchParams.put(SearchFilter.Operator.LT+"__createTime",new Date(createEndTime+" 59:59:59"));
         }
-		
+        if(!"1".equals(user.getUser().getCompany().getComLevel())){
+            searchParams.put(SearchFilter.Operator.EQ+"__comCode",comCode);
+         }
+        
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         
