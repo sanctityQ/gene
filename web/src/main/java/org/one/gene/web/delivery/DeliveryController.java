@@ -7,10 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.service.DeliveryService;
 import org.one.gene.domain.service.PrintService;
+import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.OrderRepository;
@@ -108,6 +110,9 @@ public class DeliveryController {
         if(pageSize == null){
             pageSize = 10;
         }
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCode = user.getUser().getCompany().getComCode();
+
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_order.customerCode",customerCode);
@@ -120,6 +125,9 @@ public class DeliveryController {
         searchParams.put(SearchFilter.Operator.EQ+"__boardNo",boardNo);
         searchParams.put(SearchFilter.Operator.EQ+"__productNo",productNo);
         searchParams.put(SearchFilter.Operator.EQ+"__operationType",PrimerStatusType.finish);
+        if(!"1".equals(user.getUser().getCompany().getComLevel())){
+        	searchParams.put(SearchFilter.Operator.EQ+"__comCode",comCode);
+        }
         
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<PrimerProduct> spec = DynamicSpecifications.bySearchFilter(filters.values(), PrimerProduct.class);
@@ -140,6 +148,10 @@ public class DeliveryController {
 			Invocation inv) throws Exception {
 
         deliveryService.saveBack(orderInfos, flag, text);
+        
+        //发邮件
+        deliveryService.sendBackEmail(orderInfos, flag);
+        
         
         return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
     } 
@@ -203,6 +215,10 @@ public class DeliveryController {
         if(pageSize == null){
             pageSize = 20;
         }
+        
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCode = user.getUser().getCompany().getComCode();
+        
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         Map<String,Object> searchParams = Maps.newHashMap();
         
@@ -214,7 +230,9 @@ public class DeliveryController {
 		if (!"".equals(createEndTime)) {
         	searchParams.put(SearchFilter.Operator.LT+"__order.createTime",new Date(createEndTime+" 59:59:59"));
         }
-//        searchParams.put(SearchFilter.Operator.EQ+"__operationType",PrimerStatusType.finish);
+        if(!"1".equals(user.getUser().getCompany().getComLevel())){
+           searchParams.put(SearchFilter.Operator.EQ+"__order.comCode",comCode);
+        }
         
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<PrimerProduct> spec = DynamicSpecifications.bySearchFilter(filters.values(), PrimerProduct.class);

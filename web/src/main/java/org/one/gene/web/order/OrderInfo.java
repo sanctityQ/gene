@@ -11,18 +11,6 @@ public class OrderInfo {
 	//订单导入属性
 	private Customer customer;
 	private Order order;
-	public Customer getCustomer() {
-		return customer;
-	}
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
-	public Order getOrder() {
-		return order;
-	}
-	public void setOrder(Order order) {
-		this.order = order;
-	}
 	
 	//订单信息列表属性
 	private String orderNo;
@@ -36,6 +24,23 @@ public class OrderInfo {
 	private String status;
 	private Date createTime;
 	private Date modifyTime;
+	
+	
+	
+	public Customer getCustomer() {
+		return customer;
+	}
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+	public Order getOrder() {
+		return order;
+	}
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+	
+	
 	public String getOrderNo() {
 		return orderNo;
 	}

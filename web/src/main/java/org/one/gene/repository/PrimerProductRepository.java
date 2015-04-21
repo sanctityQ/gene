@@ -24,6 +24,7 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			+ " and o.`status` = '1' and pp.`operation_type` = 'makeBoard' and pp.`board_no` is null "
 			+ "#if(:customercode != '') { and o.`customer_code` = :customercode } "
 			+ "#if(:purifytype != '') { and pp.`purify_type` = :purifytype }"
+			+ "#if(:comCode != '') { and pp.`com_code` = :comCode }"
 			+ "#if(:tbn1 != '') { and ppv.`value` >= :tbn1 }"
 			+ "#if(:tbn2 != '') { and ppv.`value` <= :tbn2 }"
 			+ "#if(:modiFlag == '0') { and ( pp.`modi_five_type` is null and pp.`modi_three_type` is null and pp.`modi_mid_type` is null and pp.`modi_spe_type` is null) }"
@@ -33,7 +34,8 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			@Param("customercode") String customercode,
 			@Param("modiFlag") String modiFlag, @Param("tbn1") String tbn1,
 			@Param("tbn2") String tbn2,
-			@Param("purifytype") String purifytype, Pageable pageable);
+			@Param("purifytype") String purifytype,
+			@Param("comCode") String comCode,Pageable pageable);
     
 	@SQL("select pp.* from `primer_product` pp where pp.`operation_type` = :operationType "
 			+ "#if(:boardNo != '') { and pp.`board_no` = :boardNo }"
@@ -47,6 +49,7 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			+ "#if(:modiSpeType == '1') { and pp.`modi_spe_type` is not null }"
 			+ "#if(:modiSpeType == '0') { and pp.`modi_spe_type` is null }"
 			+ "#if(:purifyType != '') { and pp.`purify_type` = :purifyType }"
+			+ "#if(:comCode != '') { and pp.`com_code` = :comCode }"
 			+ "")
 	Page<PrimerProduct> resultsSelectQuery(
 			@Param("boardNo") String boardNo,
@@ -57,6 +60,7 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			@Param("modiMidType") String modiMidType,
 			@Param("modiSpeType") String modiSpeType,
 			@Param("purifyType") String purifyType,
+			@Param("comCode") String comCode,
 			Pageable pageable);
 	
 	

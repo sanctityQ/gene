@@ -15,13 +15,16 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellRangeAddress;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
+import org.one.gene.domain.entity.PackTableHoleConfig;
 import org.one.gene.domain.entity.PrimerLabelConfigSub;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
@@ -30,11 +33,15 @@ import org.one.gene.domain.entity.PrimerType.PrimerOperationType;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.entity.PrimerValueType;
 import org.one.gene.domain.entity.PrintLabel;
+import org.one.gene.domain.entity.User;
+import org.one.gene.excel.OrderCaculate;
 import org.one.gene.repository.BoardRepository;
 import org.one.gene.repository.CustomerRepository;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductOperationRepository;
 import org.one.gene.repository.PrimerProductRepository;
+import org.one.gene.repository.UserRepository;
+import org.one.gene.util.mail.MailSenderInfo;
 import org.one.gene.web.delivery.DeliveryInfo;
 import org.one.gene.web.order.OrderInfo;
 import org.slf4j.Logger;
@@ -76,6 +83,9 @@ public class DeliveryService {
     
     @Autowired
     private BoardRepository boardRepository;
+    @Autowired
+    private UserRepository userRepository;
+    
     
 	//保存发货信息
     @Transactional(readOnly = false)
@@ -230,7 +240,50 @@ public class DeliveryService {
     	return "";
     }
     
-    
+	//发召回邮件
+	public String sendBackEmail(List<OrderInfo> orderInfos, String flag) {
+    	
+		PrimerProduct primerProduct = new PrimerProduct(); 
+		
+		for (OrderInfo orderInfo : orderInfos) {
+			primerProduct = primerProductRepository.findByProductNoOrOutProductNo(orderInfo.getProductNoMinToMax(), orderInfo.getProductNoMinToMax());
+			if (primerProduct != null) {
+				Order order = primerProduct.getOrder();
+				if (order!=null && !"".equals(order.getHandlerCode())){
+					
+					User user = userRepository.findByCode(order.getHandlerCode());
+					if (user != null && !"".equals(user.getEmail())) {
+						
+						String orderNo = order.getOrderNo();
+						if ("".equals(orderNo)) {
+							orderNo = order.getOutOrderNo();
+						}
+						String productNo = primerProduct.getProductNo();
+						if ("".equals(productNo)) {
+							productNo = primerProduct.getOutProductNo();
+						}
+						
+						MailSenderInfo mailInfo = new MailSenderInfo();
+						mailInfo.setToAddress(user.getEmail());// 获取地址
+						mailInfo.setSubject("[发货召回] 订单号:"+orderNo+"  生产编号:"+productNo);
+						mailInfo.setContent(user.getName()+"，您好：<br>&nbsp&nbsp&nbsp&nbsp"
+						                       +"订单号:"+orderNo+"  生产编号:"+productNo+" 已发货召回，回到"+primerProduct.getOperationType().desc()+",请了解。");
+						
+						if (("1".equals(flag) && primerProduct
+								.getOperationType() == PrimerStatusType.synthesis)
+								|| ("2".equals(flag) && primerProduct
+										.getOperationType() == PrimerStatusType.pack)) {// 状态正确才发送
+                            new SendEmailService().sendEmail(mailInfo);
+							
+						}
+					}
+				}
+			}
+    	}
+		
+    	
+    	return "";
+    }    
     
 	/**
      * 导出打印标签文件
@@ -393,6 +446,7 @@ public class DeliveryService {
 			customerCode = order.getCustomerCode();//客户代码
 			orderDate = order.getCreateTime().toString();
 			productNoMinToMax = order.getProductNoMinToMax();
+			saler = order.getHandlerName();
 		}
 		
 		if(orderDate.length()>10){
@@ -413,147 +467,113 @@ public class DeliveryService {
 		}
 		
 		
-		int orderBaseCount = 0;//订单碱基数总量
-		double odTotalCount = 0.0;//OD总量
 		int geneCount = 0;//序列总条数
+		double odTotal = 0.0;//每条OD总量
+		int    tbn = 0;//每条碱基的数量
 
-		int countNum_OPC  = 0;//订单碱基条数(OPC)
-		int baseCount_OPC  = 0;//订单碱基数总量(OPC)
-		double odTotalCount_OPC = 0.0;//OD总量(OPC)
-		double basePrice_OPC  = 0.0;//订单碱基价格(OPC)
-		int countNum_PAGE  = 0;//订单碱基条数(PAGE)
-		int baseCount_PAGE  = 0;//订单碱基数总量(PAGE)
-		double odTotalCount_PAGE = 0.0;//OD总量(PAGE)
-		double basePrice_PAGE  = 0.0;//订单碱基价格(PAGE)
-		int countNum_HPLC  = 0;//订单碱基条数(HPLC)
-		int baseCount_HPLC  = 0;//订单碱基数总量(HPLC)
-		double odTotalCount_HPLC = 0.0;//OD总量(HPLC)
-		double basePrice_HPLC  = 0.0;//订单碱基价格(HPLC)
+		double baseVal  = 0.0;//订单碱基价格
+		double modiPrice  = 0.0;//修饰价格
+		double purifyVal  = 0.0;//纯化价格
 		String purifyType = "";//纯化类型
-		for (PrimerProduct primerProduct : order.getPrimerProducts()) {
-			geneCount += 1;
-			
-			purifyType = primerProduct.getPurifyType();
-			if ("OPC".equals(purifyType)) {
-				countNum_OPC += 1;
-			} else if ("PAGE".equals(purifyType)) {
-				countNum_PAGE += 1;
-			} else {
-				countNum_HPLC += 1;
-			}
-			for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
-				PrimerValueType type = primerProductValue.getType();
-				if (type.equals(PrimerValueType.baseCount)) {// 碱基数
-					orderBaseCount += primerProductValue.getValue().intValue();
-					if ("OPC".equals(purifyType)) {
-						baseCount_OPC += primerProductValue.getValue().intValue();
-					} else if ("PAGE".equals(purifyType)) {
-						baseCount_PAGE += primerProductValue.getValue().intValue();
-					} else {
-						baseCount_HPLC += primerProductValue.getValue().intValue();
-					}
-				}else if(type.equals(PrimerValueType.odTotal)){//od总量
-					odTotalCount += primerProductValue.getValue().doubleValue();
-					if ("OPC".equals(purifyType)) {
-						odTotalCount_OPC += primerProductValue.getValue().doubleValue();
-					} else if ("PAGE".equals(purifyType)) {
-						odTotalCount_PAGE += primerProductValue.getValue().doubleValue();
-					} else {
-						odTotalCount_HPLC += primerProductValue.getValue().doubleValue();
-					}
-				}
-			}
-		  }
-	    
-		if (baseCount_OPC < 60) {
-			if (odTotalCount_OPC <= 5) {
-				basePrice_OPC = 0.45;
-			} else if (odTotalCount_OPC > 5 && odTotalCount_OPC <= 10) {
-				basePrice_OPC = 0.8;
-			} else if (odTotalCount_OPC > 10 && odTotalCount_OPC <= 20) {
-				basePrice_OPC = 1.6;
-			}
-		}else if (baseCount_OPC >= 60) {
-			if (odTotalCount_OPC <= 5) {
-				basePrice_OPC = 0.8;
-			} else if (odTotalCount_OPC > 5 && odTotalCount_OPC <= 10) {
-				basePrice_OPC = 1.6;
-			} else if (odTotalCount_OPC > 10 && odTotalCount_OPC <= 20) {
-				basePrice_OPC = 3.2;
-			}
-		}
-		if (baseCount_PAGE < 60) {
-			if (odTotalCount_PAGE <= 5) {
-				basePrice_PAGE = 0.6;
-			} else if (odTotalCount_PAGE > 5 && odTotalCount_PAGE <= 10) {
-				basePrice_PAGE = 1.2;
-			} else if (odTotalCount_PAGE > 10 && odTotalCount_PAGE <= 20) {
-				basePrice_PAGE = 2.4;
-			}
-		}else if (baseCount_PAGE >= 60) {
-			if (odTotalCount_PAGE <= 5) {
-				basePrice_PAGE = 1.2;
-			} else if (odTotalCount_PAGE > 5 && odTotalCount_PAGE <= 10) {
-				basePrice_PAGE = 2.4;
-			} else if (odTotalCount_PAGE > 10 && odTotalCount_PAGE <= 20) {
-				basePrice_PAGE = 4.8;
-			}
-		}
-		if (baseCount_HPLC < 60) {
-			if (odTotalCount_HPLC <= 5) {
-				basePrice_HPLC = 0.45;
-			} else if (odTotalCount_HPLC > 5 && odTotalCount_HPLC <= 10) {
-				basePrice_HPLC = 0.8;
-			} else if (odTotalCount_HPLC > 10 && odTotalCount_HPLC <= 20) {
-				basePrice_HPLC = 1.6;
-			}
-		}else if (baseCount_HPLC >= 60) {
-			if (odTotalCount_HPLC <= 5) {
-				basePrice_HPLC = 0.8;
-			} else if (odTotalCount_HPLC > 5 && odTotalCount_HPLC <= 10) {
-				basePrice_HPLC = 1.6;
-			} else if (odTotalCount_HPLC > 10 && odTotalCount_HPLC <= 20) {
-				basePrice_HPLC = 3.2;
-			}
-		}
-		//
+		String modiFiveType = "";//5修饰
+		String modiThreeType = "";//3修饰
+		String modiMidType = "";//中间修饰
+		String modiSpeType = "";//特殊单体
+		
+		
 		DecimalFormat df = new DecimalFormat("#.00");
 		DeliveryInfo deliveryInfo = new DeliveryInfo();
 		List<DeliveryInfo> deliveryInfos = new ArrayList<DeliveryInfo>();
+		Map<String, DeliveryInfo> deliveryInfoMap = new HashMap<String, DeliveryInfo>();//数据库中的板孔信息
 		
-		if (basePrice_OPC > 0) {
-			deliveryInfo = new DeliveryInfo();
-			deliveryInfo.setDeliveryName("DNA合成(OPC)");
-			deliveryInfo.setCountNum(countNum_OPC);
-			deliveryInfo.setOdTotal(odTotalCount_OPC);
-			deliveryInfo.setMeasurement("bp");
-			deliveryInfo.setCount(baseCount_OPC);
-			deliveryInfo.setPrice(basePrice_OPC);
-			deliveryInfo.setMoney(df.format(baseCount_OPC * basePrice_OPC));
-			deliveryInfos.add(deliveryInfo);
-		}
-		if (basePrice_PAGE > 0) {
-			deliveryInfo = new DeliveryInfo();
-			deliveryInfo.setDeliveryName("DNA合成(PAGE)");
-			deliveryInfo.setCountNum(countNum_PAGE);
-			deliveryInfo.setOdTotal(odTotalCount_PAGE);
-			deliveryInfo.setMeasurement("bp");
-			deliveryInfo.setCount(baseCount_PAGE);
-			deliveryInfo.setPrice(basePrice_PAGE);
-			deliveryInfo.setMoney(df.format(baseCount_PAGE * basePrice_PAGE));
-			deliveryInfos.add(deliveryInfo);
-		}
-		if (basePrice_HPLC > 0) {
-			deliveryInfo = new DeliveryInfo();
-			deliveryInfo.setDeliveryName("DNA合成(HPLC)");
-			deliveryInfo.setCountNum(countNum_HPLC);
-			deliveryInfo.setOdTotal(odTotalCount_HPLC);
-			deliveryInfo.setMeasurement("bp");
-			deliveryInfo.setCount(baseCount_HPLC);
-			deliveryInfo.setPrice(basePrice_HPLC);
-			deliveryInfo.setMoney(df.format(baseCount_HPLC * basePrice_HPLC));
-			deliveryInfos.add(deliveryInfo);
-		}
+		for (PrimerProduct primerProduct : order.getPrimerProducts()) {
+			geneCount += 1;
+			odTotal = 0.0;
+			tbn = 0;
+			
+			for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
+				PrimerValueType type = primerProductValue.getType();
+				if (type.equals(PrimerValueType.baseCount)) {// 碱基数
+					tbn = primerProductValue.getValue().intValue();
+				}else if(type.equals(PrimerValueType.odTotal)){//od总量
+					odTotal = primerProductValue.getValue().doubleValue();
+				}
+			}
+			
+			baseVal      = primerProduct.getBaseVal().doubleValue();//订单碱基价格
+			modiPrice    = primerProduct.getModiPrice().doubleValue();//修饰价格
+			purifyVal    = primerProduct.getPurifyVal().doubleValue();//纯化价格
+			modiFiveType = primerProduct.getModiFiveType();
+			modiThreeType= primerProduct.getModiThreeType();
+			modiMidType  = primerProduct.getModiMidType();
+			modiSpeType  = primerProduct.getModiSpeType();
+			purifyType   = primerProduct.getPurifyType();
+			
+			//DNA合成
+			String dnaSrt = "DNA合成_"+df.format(baseVal);
+			
+			if (deliveryInfoMap.get(dnaSrt) != null) {
+				deliveryInfo = (DeliveryInfo)deliveryInfoMap.get(dnaSrt);
+				deliveryInfo.setCountNum(deliveryInfo.getCountNum()+1);
+				deliveryInfo.setCount(deliveryInfo.getCount() + tbn);
+				deliveryInfo.setMoney(df.format(deliveryInfo.getCount() * deliveryInfo.getPrice()));
+						
+				deliveryInfoMap.put(dnaSrt, deliveryInfo);
+			}else{
+				deliveryInfo = new DeliveryInfo();
+				deliveryInfo.setDeliveryName("DNA合成");
+				deliveryInfo.setCountNum(1);
+				deliveryInfo.setOdTotal(odTotal);
+				deliveryInfo.setMeasurement("bp");
+				deliveryInfo.setCount(tbn);
+				deliveryInfo.setPrice(baseVal);
+				deliveryInfo.setMoney(df.format(deliveryInfo.getCount() * deliveryInfo.getPrice()));
+				
+				deliveryInfoMap.put(dnaSrt, deliveryInfo);
+			}
+			
+			//修饰和纯化
+			String modiStr    = "";
+			String modiStrKey = "";
+			double price = 0.0;
+			if (!"".equals(modiFiveType) && !"".equals(modiThreeType) && !"".equals(modiMidType) && !"".equals(modiSpeType)) {
+				modiStr = "(" + modiFiveType + "," + modiThreeType + "," + modiMidType+ "," + modiSpeType+")";
+				modiStrKey = modiStr + "_" + df.format(modiPrice);
+				price = Double.parseDouble(df.format(modiPrice));
+			} else {
+				if (purifyVal > 0) {
+					modiStr      = purifyType;
+					modiStrKey = purifyType + "_" + df.format(purifyVal);
+					price = Double.parseDouble(df.format(purifyVal));
+				}
+			}
+			
+			if (!"".equals(modiStrKey)) {
+				
+				if (deliveryInfoMap.get(modiStrKey) != null) {
+					deliveryInfo = (DeliveryInfo)deliveryInfoMap.get(modiStrKey);
+					deliveryInfo.setCountNum(deliveryInfo.getCountNum()+1);
+					deliveryInfo.setCount(deliveryInfo.getCountNum());
+					deliveryInfo.setMoney(df.format(deliveryInfo.getCount() * deliveryInfo.getPrice()));
+					
+					deliveryInfoMap.put(modiStrKey, deliveryInfo);
+				}else{
+					deliveryInfo = new DeliveryInfo();
+					deliveryInfo.setDeliveryName(modiStr);
+					deliveryInfo.setCountNum(1);
+					deliveryInfo.setOdTotal(odTotal);
+					deliveryInfo.setMeasurement("条");
+					deliveryInfo.setCount(deliveryInfo.getCountNum());
+					deliveryInfo.setPrice(price);
+					deliveryInfo.setMoney(df.format(deliveryInfo.getCount() * deliveryInfo.getPrice()));
+					
+					deliveryInfoMap.put(modiStrKey, deliveryInfo);
+				}
+			}
+			
+		  }
+	    
+		
 		
 		//形成Excel
 		String templetName = "deliveryListTemplate.xls";
@@ -561,6 +581,7 @@ public class DeliveryService {
 		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator;
 		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(templatePath+templetName));
         HSSFSheet sheet = workbook.getSheetAt(0);
+		HSSFRow rowFirst = null;
 		HSSFRow row = null;
 		HSSFCell cell = null;
 		
@@ -598,34 +619,58 @@ public class DeliveryService {
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue("地区："+area+"   总条数："+geneCount+"条");
 		
+    	HSSFCellStyle style_center = workbook.createCellStyle();
+    	style_center.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+    	style_center.setBorderBottom(HSSFCellStyle.BORDER_THIN); // 下边框  
+    	style_center.setBorderLeft(HSSFCellStyle.BORDER_THIN);// 左边框  
+    	style_center.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框  
+    	style_center.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框  
+		
 		int startRow = 6;//从第6行开始
 		int rowNo = 1;//行号
 		double totalMoney = 0.0;//合计
-		for (DeliveryInfo dis : deliveryInfos) {
+		for (String key : deliveryInfoMap.keySet()) {
+			DeliveryInfo dis = (DeliveryInfo)deliveryInfoMap.get(key);
+			
 			row = sheet.getRow(startRow);
 			cell = row.getCell(0);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
 			cell.setCellValue(rowNo);
+			
 			cell = row.getCell(1);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
 			cell.setCellValue(dis.getDeliveryName());
-		cell = row.getCell(2);
-		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		    
+			cell = row.getCell(2);
+		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		    cell.setCellStyle(style_center);
 			cell.setCellValue(dis.getCountNum());
-		cell = row.getCell(3);
-		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		    
+			cell = row.getCell(3);
+		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		    cell.setCellStyle(style_center);
 			cell.setCellValue(dis.getOdTotal()+"OD");
+			
 			cell = row.getCell(4);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
 			cell.setCellValue(dis.getMeasurement());
-		cell = row.getCell(5);
-		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		    
+			cell = row.getCell(5);
+		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		    cell.setCellStyle(style_center);
 			cell.setCellValue(dis.getCount());
+			
 			cell = row.getCell(6);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
 			cell.setCellValue(dis.getPrice());
+			
 			cell = row.getCell(7);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
 			cell.setCellValue(dis.getMoney());
 			startRow = startRow +1;
 			rowNo = rowNo +1;
@@ -633,6 +678,83 @@ public class DeliveryService {
 				totalMoney += Double.parseDouble(dis.getMoney());
 			}
 		}
+		//合计
+    	CellRangeAddress range1 = new CellRangeAddress(startRow,startRow,0,7);
+    	CellRangeAddress range2 = new CellRangeAddress(startRow+1,startRow+1,0,4);
+    	CellRangeAddress range3 = new CellRangeAddress(startRow+1,startRow+1,5,7);
+    	CellRangeAddress range4 = new CellRangeAddress(startRow+2,startRow+2,0,1);
+    	CellRangeAddress range5 = new CellRangeAddress(startRow+2,startRow+2,2,4);
+    	CellRangeAddress range6 = new CellRangeAddress(startRow+2,startRow+2,5,7);
+    	
+    	sheet.addMergedRegion(range2);
+    	sheet.addMergedRegion(range3);
+    	sheet.addMergedRegion(range4);
+    	sheet.addMergedRegion(range5);
+    	sheet.addMergedRegion(range6);
+    	
+    	HSSFCellStyle style_right = workbook.createCellStyle();
+    	style_right.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+    	style_right.setBorderBottom(HSSFCellStyle.BORDER_THIN); // 下边框  
+    	style_right.setBorderLeft(HSSFCellStyle.BORDER_THIN);// 左边框  
+    	style_right.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框  
+    	style_right.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框  
+    	
+    	HSSFCellStyle style_left = workbook.createCellStyle();
+    	style_left.setAlignment(HSSFCellStyle.ALIGN_LEFT);
+    	 
+		row = sheet.getRow(startRow);
+		cell = row.getCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_right);
+		cell.setCellValue("合计: "+totalMoney);
+		cell = row.getCell(1);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_right);
+		cell = row.getCell(2);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_right);
+		cell = row.getCell(3);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_right);
+		cell = row.getCell(4);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_right);
+		cell = row.getCell(5);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_right);
+		cell = row.getCell(6);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_right);
+		cell = row.getCell(7);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_right);
+		
+		sheet.addMergedRegion(range1);//合并单元格
+		
+		row = sheet.getRow(startRow+1);
+		cell = row.getCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_left);
+		cell.setCellValue("公司地址："+address);
+		cell = row.getCell(5);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_left);
+		cell.setCellValue("开单员：  "+kaidan+"     销售员： "+saler);
+		
+		row = sheet.getRow(startRow+2);
+		cell = row.getCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_left);
+		cell.setCellValue("联系方式："+phoneNo);
+		cell = row.getCell(2);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_left);
+		cell.setCellValue("E-mail：  "+email);
+		cell = row.getCell(5);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_left);
+		cell.setCellValue("送货员：                   客户签收：  ");
+		
 		
         //输出文件到客户端
         HttpServletResponse response = inv.getResponse();

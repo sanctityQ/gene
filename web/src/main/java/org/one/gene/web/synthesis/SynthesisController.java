@@ -5,12 +5,14 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerValueType;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.service.SynthesisService;
+import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.repository.BoardHoleRepository;
 import org.one.gene.repository.BoardRepository;
 import org.one.gene.repository.OrderRepository;
@@ -107,9 +109,15 @@ public class SynthesisController {
         if(pageSize == null){
             pageSize = 96;
         }
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCode = user.getUser().getCompany().getComCode();
+        if("1".equals(user.getUser().getCompany().getComLevel())){
+          comCode = "";
+        }
+        
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         
-        Page<PrimerProduct> primerProductPage = synthesisService.makeBoardQuery(customercode, modiFlag, tbn1, tbn2, purifytype, pageable);
+        Page<PrimerProduct> primerProductPage = synthesisService.makeBoardQuery(customercode, modiFlag, tbn1, tbn2, purifytype, comCode, pageable);
     	
     	return Replys.with(primerProductPage).as(Json.class);
     }
@@ -261,7 +269,13 @@ public class SynthesisController {
 		if (operationType != null) {
 			strOperationType = operationType.toString();
 		}
-		List<Board> boards = boardRepository.vagueSeachBoard(boardNo, strOperationType);
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCode = user.getUser().getCompany().getComCode();
+        if("1".equals(user.getUser().getCompany().getComLevel())){
+          comCode = "";
+        }
+        
+		List<Board> boards = boardRepository.vagueSeachBoard(boardNo, strOperationType, comCode);
     	return Replys.with(boards).as(Json.class);
     }
     
@@ -296,9 +310,19 @@ public class SynthesisController {
         if(pageSize == null){
             pageSize = 10;
         }
+        
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCode = user.getUser().getCompany().getComCode();
+        if("1".equals(user.getUser().getCompany().getComLevel())){
+          comCode = "";
+        }
+        
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         
-        Page<PrimerProduct> primerProductPage = synthesisService.resultsSelectQuery(boardNo,productNo,operationType, modiFiveType, modiThreeType, modiMidType, modiSpeType,purifyType, pageable);
+		Page<PrimerProduct> primerProductPage = synthesisService
+				.resultsSelectQuery(boardNo, productNo, operationType,
+						modiFiveType, modiThreeType, modiMidType, modiSpeType,
+						purifyType, comCode, pageable);
     	
     	return Replys.with(primerProductPage).as(Json.class);
     }
@@ -464,7 +488,13 @@ public class SynthesisController {
 		if (operationType != null) {
 			strOperationType = operationType.toString();
 		}
-		List<Board> boards = boardRepository.vagueSeachBoard(boardNo,strOperationType);
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCode = user.getUser().getCompany().getComCode();
+        if("1".equals(user.getUser().getCompany().getComLevel())){
+          comCode = "";
+        }
+        
+		List<Board> boards = boardRepository.vagueSeachBoard(boardNo,strOperationType,comCode);
 		for(Board board:boards){
 			board.setType("1");//板
 		}
@@ -506,9 +536,15 @@ public class SynthesisController {
 			pageSize = 20;
 		}
 
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCode = user.getUser().getCompany().getComCode();
+        if("1".equals(user.getUser().getCompany().getComLevel())){
+          comCode = "";
+        }
+        
 		Pageable pageable = new PageRequest(pageNo-1,pageSize);
 		
-		Page<Board> boards = boardRepository.initBoardNo(operationType.toString(), pageable);
+		Page<Board> boards = boardRepository.initBoardNo(operationType.toString(), comCode, pageable);
 		for (Board board : boards) {
 			for (PrimerStatusType type : PrimerStatusType.values()) {
 				if (board.getOperationType() == type) {
