@@ -25,6 +25,13 @@ var ctx = '${ctx}';
                     <option value="modiSpeType">特殊单体</option>
                 </select>
 			</td>
+			<td align="right">状态:</td>
+			<td>
+			   <select id="validate" name="productMolecular.validate" class="my_select" style="width: 150px;">
+                   <option value="1">有效</option>
+                   <option value="0">无效</option>
+               </select>
+			</td>
 			<td><button type="button" class="btn" onclick="getProductInfo();">查询</button></td>
 			<td align="right">
 				<button type="button" class="btn btn-primary" onclick="goToPage('${ctx}/productManage/addproductMolecular')">添加产品</button>

@@ -1,14 +1,14 @@
 package org.one.gene.web.productManage;
 
+import java.util.List;
 import java.util.Map;
 
-import org.one.gene.domain.entity.Order;
+import org.one.gene.domain.entity.ModifiedPrice;
 import org.one.gene.domain.entity.ProductMolecular;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
+import org.one.gene.repository.ModifiedPriceRepository;
 import org.one.gene.repository.ProductMolecularRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,8 +31,9 @@ public class ProductManageController {
 	
 	@Autowired
 	private ProductMolecularRepository productMolecularRepository;
+	@Autowired
+	private ModifiedPriceRepository modifiedPriceRepository;
 
-    private static Logger logger = LoggerFactory.getLogger(ProductManageController.class);
     
     @Get("productMolecularList")
     @Post("productMolecularList")
@@ -52,8 +53,15 @@ public class ProductManageController {
         return "addproductMolecular";
     }
     
+    //新增修饰价格
+    @Get("addmodifiePrice")
+    @Post("addmodifiePrice")
+    public String addmodifiePrice(){
+        return "addmodifiePrice";
+    }
+    
     @Post("query")
-    public Reply query(@Param("productCode") String productCode,@Param("productCategories") String productCategories,@Param("pageNo")Integer pageNo,
+    public Reply query(@Param("productCode") String productCode,@Param("productCategories") String productCategories,@Param("validate") String validate,@Param("pageNo")Integer pageNo,
                         @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
 
         if(pageNo == null || pageNo ==0){
@@ -67,6 +75,7 @@ public class ProductManageController {
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_productCode",productCode);
         searchParams.put(SearchFilter.Operator.EQ+"_productCategories",productCategories);
+        searchParams.put(SearchFilter.Operator.EQ+"_validate",validate);
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<ProductMolecular> spec = DynamicSpecifications.bySearchFilter(filters.values(), ProductMolecular.class);
         
@@ -103,5 +112,69 @@ public class ProductManageController {
     	ProductMolecular productMolecular = productMolecularRepository.findById(id);
     	productMolecularRepository.delete(productMolecular);
     	return Replys.with("sucess").as(Text.class);  
+    }
+    
+    
+    @Post("queryModiPrice")
+    public Reply queryModiPrice(@Param("modiType") String modiType,@Param("validate") String validate,@Param("pageNo")Integer pageNo,
+                        @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
+
+        if(pageNo == null || pageNo ==0){
+            pageNo = 1;
+        }
+
+        if(pageSize == null){
+            pageSize = 20;
+        }
+        Pageable pageable = new PageRequest(pageNo-1,pageSize);
+        Map<String,Object> searchParams = Maps.newHashMap();
+        searchParams.put(SearchFilter.Operator.EQ+"_modiType",modiType);
+        searchParams.put(SearchFilter.Operator.EQ+"_validate",validate);
+        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
+        Specification<ModifiedPrice> spec = DynamicSpecifications.bySearchFilter(filters.values(), ModifiedPrice.class);
+        
+        Page<ModifiedPrice> modifiedPrices = modifiedPriceRepository.findAll(spec,pageable);
+        
+        return Replys.with(modifiedPrices).as(Json.class);
+    }
+    
+    
+    @Post("modifyModiPrice")
+    @Get("modifyModiPrice")
+    public String modifyModiPrice(@Param("id") Integer id,Invocation inv) throws Exception {
+    	ModifiedPrice modifiedPrice = modifiedPriceRepository.findById(id);
+     	inv.addModel("modifiedPrice", modifiedPrice);
+    	return "addmodifiePrice";
+    }
+    
+    /**
+     * 删除
+     * @param orderNo
+     * @param inv
+     * @return
+     */
+    @Post("deleteModiPrice") 
+    public Object deleteModiPrice(@Param("id") Integer id,Invocation inv){
+    	ModifiedPrice modifiedPrice = modifiedPriceRepository.findById(id);
+    	modifiedPriceRepository.delete(modifiedPrice);
+    	return Replys.with("sucess").as(Text.class);  
+    }
+    
+    @Post("saveModiPrice")
+    public String saveModiPrice(@Param("modifiedPrice") ModifiedPrice modifiedPrice ,Invocation inv){
+    	
+    	modifiedPriceRepository.save(modifiedPrice);
+    	
+    	return "modifiePriceManage";
+    }
+    
+    
+    @Post("selectQuery")
+    public Reply selectQuery(@Param("productCategories") String productCategories,Invocation inv) throws Exception {
+
+       
+        List<ProductMolecular> productMoleculars = productMolecularRepository.findByProductCategories(productCategories);
+        
+        return Replys.with(productMoleculars).as(Json.class);
     }
 }

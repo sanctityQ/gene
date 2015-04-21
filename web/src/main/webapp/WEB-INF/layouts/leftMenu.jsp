@@ -98,7 +98,7 @@
 	<div title="产品管理" data-options="iconCls:'product'" style="height:200px;">
 		<ul class="sbu_menu">
 			<li url="${ctx}/productManage/productMolecularList" id="productMolecularList"><i class="icon-bookmark"></i>修饰分子量配置</li>
-			<%-- <li url="${ctx}/productManage/modifiePricedList" id="modifiePricedList"><i class="icon-bookmark"></i>修饰基础价格配置</li> --%>
+			<li url="${ctx}/productManage/modifiePricedList" id="modifiePricedList"><i class="icon-bookmark"></i>修饰基础价格配置</li>
 		</ul>
 	</div>
 </div>

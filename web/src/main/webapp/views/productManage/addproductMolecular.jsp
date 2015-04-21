@@ -61,7 +61,7 @@ var ctx = '${ctx}';
 		</table>
 	</div>
 	<div class="tools_bar">
-		<button type="" class="btn" onclick="goToPage('${ctx}/productManage/productMolecularList');">取 消</button>
+		<button type="button" class="btn" onclick="goToPage('${ctx}/productManage/productMolecularList');">取 消</button>
 		<button type="button" class="btn btn-primary" onclick="productMolecularSave();">保 存</button>
 	</div>
 </div>
