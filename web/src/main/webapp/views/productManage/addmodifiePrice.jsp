@@ -84,6 +84,25 @@ var modifyFlag = '${modifyFlag}';
 <script src="${ctx}/views/productManage/js/productManage.js" ></script>
 <script type="text/javascript">
 
+$(document).ready(function(){ 
+	if(modifyFlag){
+		$("#modiPriceCategories").val($("#categoriesType").val());
+		if($("#categoriesType").val()!='groupType'){
+			//加载下拉选择项
+			getselectInfo();
+			//赋值下来
+			$("#modiTypeTemp").val($("#modiType").val());
+	    }else{
+	    	$("#modiPriceCategories").val('modiThreeType');
+	    	getselectInfo();
+			getselectGroup();
+			$("#modiPriceCategories").val($("#categoriesType").val());
+			var textVal = $("#modiType").val();
+			$("#modiTypegroup5").val(textVal.split("and")[0].trim());
+			$("#modiTypeTemp").val(textVal.split("and")[1].trim());
+	    }
+	}
+})
 
 </script>
 </body>
