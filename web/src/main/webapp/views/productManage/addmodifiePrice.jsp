@@ -43,8 +43,8 @@ var modifyFlag = '${modifyFlag}';
 			<tr>
                 <td align="right">修饰类别:</td>
 				<td>
-				    <input type="hidden" id="categoriesType" name="modifiedPrice.productCategories" value="${modifiedPrice.productCategories}" />
-                    <select id="modiPriceCategories" class="my_select" style="width: 150px;">
+				    <input type="hidden" id="categoriesType" value="${modifiedPrice.productCategories}" />
+                    <select id="modiPriceCategories" name="modifiedPrice.productCategories" class="my_select" style="width: 150px;">
                         <option value="">请选择</option>
                         <option value="groupType">5'and 3'端修饰</option>
                         <option value="modiThreeType">3'端修饰</option>

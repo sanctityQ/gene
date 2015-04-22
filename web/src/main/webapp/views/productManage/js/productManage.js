@@ -127,7 +127,7 @@ var deleteModiPrice=function(id,index){
 					$.messager.progress('close');
 					if(data == "sucess"){
 						alert("删除成功！")
-						getProductInfo();
+						getModiPriceInfo();
 					}
 				},
 				error:function(){
