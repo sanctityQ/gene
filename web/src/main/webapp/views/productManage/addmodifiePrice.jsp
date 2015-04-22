@@ -8,6 +8,7 @@
 <meta charset="utf-8">
 <script type="text/javascript">
 var ctx = '${ctx}';
+var modifyFlag = '${modifyFlag}';
 </script>
 </head>
 <body>
@@ -42,7 +43,8 @@ var ctx = '${ctx}';
 			<tr>
                 <td align="right">修饰类别:</td>
 				<td>
-                    <select id="productCategories"  class="my_select" style="width: 150px;">
+				    <input type="hidden" id="categoriesType" name="modifiedPrice.productCategories" value="${modifiedPrice.productCategories}" />
+                    <select id="modiPriceCategories" class="my_select" style="width: 150px;">
                         <option value="">请选择</option>
                         <option value="groupType">5'and 3'端修饰</option>
                         <option value="modiThreeType">3'端修饰</option>
@@ -80,5 +82,9 @@ var ctx = '${ctx}';
 </div>
 </form>
 <script src="${ctx}/views/productManage/js/productManage.js" ></script>
+<script type="text/javascript">
+
+
+</script>
 </body>
 </html>

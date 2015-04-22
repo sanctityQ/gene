@@ -174,7 +174,7 @@ var getModiPriceInfo=function(){
 
 
 var modiPriceSave=function(){
-	if($("#productCategories").val()==''){
+	if($("#modiPriceCategories").val()==''){
 		alert("请选择修饰类别！");
 		return false;
 	}
@@ -186,7 +186,7 @@ var modiPriceSave=function(){
 		alert("请录入修饰价格！");
 		return false;
 	}
-	if($("#productCategories").val()=='groupType'){
+	if($("#modiPriceCategories").val()=='groupType'){
 		$("#modiType").val($("#modiTypegroup5").val()+" and " +$("#modiTypeTemp").val());
 	}else{
 		$("#modiType").val($("#modiTypeTemp").val())
@@ -194,13 +194,13 @@ var modiPriceSave=function(){
 	$("#modiPricefm").submit();
 }
 
-$("#productCategories").change(function(event){
+$("#modiPriceCategories").change(function(event){
 	if(this.value=='groupType'){
-		$("#productCategories").val('modiThreeType');
+		$("#modiPriceCategories").val('modiThreeType');
 		getselectInfo();
-		$("#productCategories").val('modiFiveType');
+		$("#modiPriceCategories").val('modiFiveType');
 		getselectGroup();
-		$("#productCategories").val('groupType');
+		$("#modiPriceCategories").val('groupType');
 	}else{
 		getselectInfo();
 	}
@@ -210,10 +210,11 @@ $("#productCategories").change(function(event){
 
 //下拉查询
 var getselectInfo=function(){
-	var productCategories = $("#productCategories").val();
+	var productCategories = $("#modiPriceCategories").val();
 	progress();
 	$.ajax({
 		type : "post",
+		async: false,
 		url : ctx+"/productManage/selectQuery",
 		dataType : "json",
 		data:
@@ -247,10 +248,11 @@ var getselectInfo=function(){
 }
 
 var getselectGroup=function(){
-	var productCategories = $("#productCategories").val();
+	var productCategories = 'modiFiveType';
 	progress();
 	$.ajax({
 		type : "post",
+		async: false,
 		url : ctx+"/productManage/selectQuery",
 		dataType : "json",
 		data:
@@ -261,10 +263,7 @@ var getselectGroup=function(){
 			$.messager.progress('close');
 			if(data != null){
         		var options_str = "";
-        		var flag = "";
-        		if(productCategories=='modiFiveType'){
-        			flag="5'-";
-        		}
+        		var flag="5'-";
         		$("#modiTypegroup5").html("");
         		for(var i=0;i<data.length;i++){
         			options_str += "<option value=\"" +flag+ data[i].productCode + "\" >"+ flag + data[i].productCode + "</option>";
@@ -279,3 +278,23 @@ var getselectGroup=function(){
 		}
 	});
 }
+var modifyFlag = true;
+$(document).ready(function(){ 
+	if(modifyFlag){
+		$("#modiPriceCategories").val($("#categoriesType").val());
+		if($("#categoriesType").val()!='groupType'){
+			//加载下拉选择项
+			getselectInfo();
+			//赋值下来
+			$("#modiTypeTemp").val($("#modiType").val());
+	    }else{
+	    	$("#modiPriceCategories").val('modiThreeType');
+	    	getselectInfo();
+			getselectGroup();
+			$("#modiPriceCategories").val($("#categoriesType").val());
+			var textVal = $("#modiType").val();
+			$("#modiTypegroup5").val(textVal.split("and")[0].trim());
+			$("#modiTypeTemp").val(textVal.split("and")[1].trim());
+	    }
+	}
+})

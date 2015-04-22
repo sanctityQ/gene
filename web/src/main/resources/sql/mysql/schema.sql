@@ -221,6 +221,7 @@ CREATE TABLE `product_molecular` (
 
 CREATE TABLE `modified_price` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `product_categories` VARCHAR(31)      NOT NULL COMMENT '修饰类别',
   `modi_type` VARCHAR(31)      NOT NULL COMMENT '修饰组合类型',
   `modi_price`   DECIMAL(10,2) COMMENT '修饰价格',
   `validate`     VARCHAR(7) COMMENT '有效标志',

@@ -27,6 +27,10 @@ public class ModifiedPrice implements java.io.Serializable {
    */
   private Integer id;
   /**
+   * 修饰类别.
+   */
+  private String productCategories;
+  /**
    * 修饰组合类型.
    */
   private String modiType;
@@ -55,6 +59,15 @@ public class ModifiedPrice implements java.io.Serializable {
     this.id = id;
   }
 
+  @Column(name = "product_categories", length = 31)
+  public String getProductCategories() {
+    return this.productCategories;
+  }
+
+  public void setProductCategories(String productCategories) {
+    this.productCategories = productCategories;
+  }
+  
   @Column(name = "modi_type", length = 31)
   public String getModiType() {
     return this.modiType;

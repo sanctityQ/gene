@@ -144,6 +144,7 @@ public class ProductManageController {
     public String modifyModiPrice(@Param("id") Integer id,Invocation inv) throws Exception {
     	ModifiedPrice modifiedPrice = modifiedPriceRepository.findById(id);
      	inv.addModel("modifiedPrice", modifiedPrice);
+     	inv.addModel("modifyFlag", true);
     	return "addmodifiePrice";
     }
     

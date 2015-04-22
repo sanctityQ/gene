@@ -2,9 +2,11 @@ package org.one.gene.domain.service;
 
 import java.math.BigDecimal;
 
-import org.apache.commons.lang.StringUtils;
+import org.one.gene.domain.entity.ModifiedPrice;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.excel.OrderCaculate;
+import org.one.gene.repository.ModifiedPriceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PriceTool {
 
+	@Autowired
+	private ModifiedPriceRepository modifiedPriceRepository;
 	//int tbn,BigDecimal odTotal,String purifyType
 	public void getPrice(PrimerProduct primerProduct){
 		
@@ -123,27 +127,54 @@ public class PriceTool {
 		OrderCaculate orderCaculate = new OrderCaculate();
 		String modiFiveType = primerProduct.getModiFiveType();
 		String modiThreeType = primerProduct.getModiThreeType();
+		String modimidType = primerProduct.getModiMidType();
 		String modiSpeType = orderCaculate.getNoCountModiType(primerProduct.getGeneOrderMidi(),OrderCaculate.modiSpeMap);
 		
 		BigDecimal modiPrice = new BigDecimal("0");
 		String propertiesStr = "";
 		if(!"".equals(modiFiveType)){
-			propertiesStr = propertiesStr+"5'-"+modiFiveType;
+			propertiesStr += "5'-"+modiFiveType;
+		}
+		if(!"".equals(modiFiveType)&&!"".equals(modiThreeType)){
+			propertiesStr += " and ";
 		}
 		if(!"".equals(modiThreeType)){
-			propertiesStr = propertiesStr+"3'-"+modiThreeType;
+			propertiesStr += "3'-"+modiThreeType;
+		}
+		ModifiedPrice mpGroup = modifiedPriceRepository.findByModiType(propertiesStr);
+		if(mpGroup!=null){
+			modiPrice = modiPrice.add(mpGroup.getModiPrice());
+		}
+		//如果5端和3端修饰组合没有修饰价格，分别单独获取
+		ModifiedPrice mpFive = modifiedPriceRepository.findByModiType("5'-"+modiFiveType);
+		if(mpFive!=null){
+			modiPrice = modiPrice.add(mpFive.getModiPrice());
+		}
+		ModifiedPrice mpThree = modifiedPriceRepository.findByModiType("3'-"+modiThreeType);
+		if(mpThree!=null){
+			modiPrice = modiPrice.add(mpThree.getModiPrice());
 		}
 		
-		modiPrice = modiPrice.add(new BigDecimal(ModiPropotiesService.getValue(propertiesStr)));
+		
+		ModifiedPrice mpMid = modifiedPriceRepository.findByModiType(modimidType);
+		if(mpMid!=null){
+			modiPrice = modiPrice.add(mpMid.getModiPrice());
+		}
 		
 		String[] modiSpeTypes = modiSpeType.split(",");
 		for(int i=0;i<modiSpeTypes.length;i++){
 			if("".equals(modiSpeTypes[i]) || "dU".equals(modiSpeTypes[i])){continue;}
-			modiPrice = modiPrice.add(new BigDecimal(ModiPropotiesService.getValue(modiSpeTypes[i])));
+			ModifiedPrice mpSpe = modifiedPriceRepository.findByModiType(modiSpeTypes[i]);
+			if(mpSpe!=null){
+				modiPrice = modiPrice.add(mpSpe.getModiPrice());
+			}
 		}
 		//真屎
 		if(modiSpeType.indexOf("dU")>-1){
-			modiPrice = modiPrice.add(new BigDecimal(ModiPropotiesService.getValue("dU")));
+			ModifiedPrice mpDu = modifiedPriceRepository.findByModiType("dU");
+			if(mpDu!=null){
+				modiPrice = modiPrice.add(mpDu.getModiPrice());
+			}
 		}
 	
 		primerProduct.setModiPrice(modiPrice);

@@ -11,6 +11,6 @@ public interface ModifiedPriceRepository
     extends PagingAndSortingRepository<ModifiedPrice, Long> , JpaSpecificationExecutor<ModifiedPrice>{
 
 	public ModifiedPrice findById(Integer id);
-	
+	public ModifiedPrice findByModiType(String modiType);
 }
 
