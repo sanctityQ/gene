@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html>
@@ -12,46 +13,63 @@
         <div class="content_box info margin_btoom">
             <h2>用户信息</h2>
             <table width="100%" class="order_info">
-                <input class="inp_text" type="hidden" name="id" value="${id}" style="width:150px" />
+                <input class="inp_text" type="hidden" id="userid" name="user.id" value="${id}" style="width:150px" />
                 <tr>
                     <td colspan="4" height="10"></td>
                 </tr>
                 <tr>
                     <td align="right">登陆名:</td>
-                    <td colspan="3"> <input class="inp_text easyui-validatebox" type="text" id="code" name="user.code" value="${user.code}" style="width:340px" data-options="required:true,missingMessage:'必录项'"/></td>
-
+                    <td> <input class="inp_text easyui-validatebox" type="text" id="code" name="user.code" value="${user.code}" style="width:240px" data-options="required:true,missingMessage:'必录项'"/></td>
+                    <td align="right">姓名:</td>
+                    <td><input class="inp_text" type="text" id="name" name="user.name" value="${user.name}" style="width:240px"/></td>
                 </tr>
                 <tr>
                     <td align="right">密码:</td>
-                    <td> <input class="inp_text" type="password" id="plainPassword" name="user.plainPassword" value="${user.plainPassword}" style="width: 80%"/></td>
+                    <td> <input class="inp_text" type="password" id="plainPassword" name="user.plainPassword" value="${user.plainPassword}" style="width:240px"/></td>
                     <td align="right">确认密码:</td>
                     <td>
-                        <input class="inp_text" type="password" id="plainPasswordConfirm" value="${user.plainPassword}" style="width: 80%"/>
+                        <input class="inp_text" type="password" id="plainPasswordConfirm" value="${user.plainPassword}" style="width:240px"/>
                     </td>
                 </tr>
                 <tr>
-                    <td align="right">姓名:</td>
-                    <td><input class="inp_text" type="text" id="name" name="user.name" value="${user.name}" style="width:150px"/></td>
                     <td align="right">部门:</td>
                     <td>
-                        <input class="inp_text" type="text" id="comCode" name="user.company.comCode" value="${user.company.comCode}" style="width: 80%"/>
+                        <input class="inp_text" type="text" id="comCode" name="user.company.comCode" value="${user.company.comCode}" style="width:240px"/>
                     </td>
+                    <td align="right">手机号:</td>
+                    <td><input class="inp_text" type="text" id="mobile" name="user.mobile" required="required" value="${user.mobile}" style="width:240px"></td>
                 </tr>
                 <tr>
-                    <td align="right">手机号:</td>
-                    <td><input class="inp_text" type="text" id="mobile" name="user.mobile" required="required" value="${user.mobile}" style="width: 150px;"></td>
                     <td align="right">邮箱:</td>
-                    <td><input class="inp_text easyui-validatebox" id="email" type="text" name="user.email" value="${user.email}" style="width: 80%"
+                    <td><input class="inp_text easyui-validatebox" id="email" type="text" name="user.email" value="${user.email}" style="width:240px"
                                data-options="validType: 'email',invalidMessage:'email格式不正确'"/></td>
+                    <td align="right">是否有效:</td>
+                    <td colspan="3">
+                        <label><input type="radio" name="user.validate" value="1"/> 是</label>&nbsp;&nbsp;
+                        <label><input type="radio" name="user.validate" value="0"/> 否</label>
+                    </td>
                 </tr>
                 <tr>
                     <td align="right">是否本公司人员:</td>
-                    <td colspan="3">
-                        <label><input type="radio" name="user.staffFlag"
-                                      value="1"/> 是</label>&nbsp;&nbsp;
-                        <label><input type="radio" name="user.staffFlag" value="0"/> 否</label>
+                    <td>
+                        <label><input type="radio" name="user.staffFlag" value="1" onClick="clearCustomer();"/> 是</label>&nbsp;&nbsp;
+                        <label><input type="radio" name="user.staffFlag" value="0" onClick="clearCustomer();"/> 否</label>
                     </td>
-                </tr>
+                    <td align="right">客户姓名:</td>
+					<td><input type="hidden" id="customerid" name="user.customer.id" value="${user.customer.id}"/>
+					<input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="user.customer.name" value="${user.customer.name}" onblur="clearCustomerId()" style="width: 240px" />
+					    <ul id="seachCustomList"></ul>
+					</td>
+            </tr>
+                <tr>
+
+                    <td align="right">创建时间:</td>
+                    <td>
+                        <input class="inp_text" type="text" id="createTime" name="user.createTime" value="<fmt:formatDate value="${user.createTime}" pattern="yyyy-MM-dd HH:mm:ss" />" style="width:240px" readonly='true'/>
+                    </td>
+                    <td align="right">修改时间:</td>
+                        <td><input class="inp_text" type="text" id="modifyTime" name="user.modifyTime" value="<fmt:formatDate value="${user.modifyTime}" pattern="yyyy-MM-dd HH:mm:ss" />" style="width:240px"  readonly='true'></td>
+                </tr>                
                 <tr>
                     <td colspan="4" height="10"></td>
                 </tr>
@@ -64,6 +82,7 @@
     </div>
 </form>
 <script src="${ctx}/views/user/js/user.js"></script>
+<script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script>
     <c:if test="${not empty user}">
     $('input[name = "user.staffFlag"]').each(function (index, element) {
@@ -73,6 +92,18 @@
         }
         </c:if>
         <c:if test="${user.staffFlag == false}">
+        if(element.value == 0){
+            element.checked = "checked";
+        }
+        </c:if>
+    });
+    $('input[name = "user.validate"]').each(function (index, element) {
+        <c:if test="${user.validate == true}">
+        if (element.value == 1) {
+            element.checked = "checked";
+        }
+        </c:if>
+        <c:if test="${user.validate == false}">
         if(element.value == 0){
             element.checked = "checked";
         }

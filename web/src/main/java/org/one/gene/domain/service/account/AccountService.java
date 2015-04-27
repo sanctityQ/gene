@@ -2,7 +2,9 @@ package org.one.gene.domain.service.account;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.User;
+import org.one.gene.repository.CustomerRepository;
 import org.one.gene.repository.UserRepository;
 import org.one.gene.utils.Digests;
 import org.one.gene.utils.Encodes;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -30,7 +33,6 @@ public class AccountService {
   @Autowired
   private UserRepository userRepository;
 
-
   public User findUserByLoginName(String username) {
     return userRepository.findByCode(username);
   }
@@ -39,7 +41,18 @@ public class AccountService {
     // 设定安全的密码，生成随机的salt并经过1024次 sha-1 hash
     if (StringUtils.isNotBlank(user.getPlainPassword())) {
       encryptPassword(user);
+    }else{
+        User oldUser = userRepository.findByCode(user.getCode());
+        user.setPassword(oldUser.getPassword());
+        user.setSalt(oldUser.getSalt());
     }
+    //
+	if (user.getId() == null) {
+		user.setCreateTime(new Date());
+    }else{
+    	user.setModifyTime(new Date());
+    }
+
     userRepository.save(user);
   }
 

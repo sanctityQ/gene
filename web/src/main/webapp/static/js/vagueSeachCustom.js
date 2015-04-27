@@ -55,9 +55,10 @@ function seachCustomChange(){
                             list.show(100);
                         }
                         for(var i = 0; i < data.length; i++){
+                            var id   = data[i].id;
                             var code = data[i].code;
                             var name = data[i].name;
-                            li += '<li id="'+code+'">'+name+'</li>';
+                            li += '<li id="'+id+'" code="'+code+'">'+name+'</li>';
                         };
                         list.append(li);
                     }
@@ -70,9 +71,12 @@ function seachCustomChange(){
 }
 function seachCustomSelect(){
     var seach = $("#seachCustom");
+    var customerid = $("#customerid");
     var list = $("#seachCustomList");
     var id = $(this).attr("id");
+    var code = $(this).attr("code");
     var val = $(this).text();
-    seach.val(val).attr("tagId",id);
+    seach.val(val).attr("tagId",code);
+    customerid.val(id)
     list.hide(100);
 };

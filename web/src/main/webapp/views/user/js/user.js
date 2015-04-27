@@ -119,6 +119,7 @@ function rpcData() {
                },
                success: function (data) {
                    $.messager.progress('close');
+                   alert(date);
                    showData(data);
                },
                error:function(){
@@ -168,6 +169,10 @@ $(function () {
             alert("不是本公司用户，必须选择外部客户信息数据!");
             return false;
         }
+        if(staffFlag == "1" && $.trim($("#customerid").val()) != ""){
+            alert("是本公司用户，请清空外部客户信息数据!");
+            return false;
+        }
         if ($.trim($("#code").val()) == "") {
             alert("用户工号必须填写！");
             return false;
@@ -176,13 +181,15 @@ $(function () {
             alert("用户姓名必须填写！");
             return false;
         }
-        else if ($.trim($("#plainPassword").val()) == "") {
+        
+        if ($.trim($("#userid").val()) == "" && $.trim($("#plainPassword").val()) == "") {
             alert("用户密码必须填写！");
             return false;
         }
 
         if ($("#plainPassword").val() != $('#plainPasswordConfirm').val()) {
-            alert("用户密码必须填写！");
+            alert("用户密码必须一致！");
+            return false;
         }
 
         document.form.submit();
@@ -191,3 +198,18 @@ $(function () {
     });
 
 });
+
+
+function clearCustomer(){
+	
+	document.getElementById("customerid").value = "";
+	document.getElementById("seachCustom").value = "";
+	
+}
+function clearCustomerId(){
+	
+	if(document.getElementById("seachCustom").value == ""){
+		document.getElementById("customerid").value = "";
+	}
+	
+}

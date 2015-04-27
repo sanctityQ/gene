@@ -180,7 +180,7 @@ public class User extends IdEntity implements java.io.Serializable {
     this.plainPassword = plainPassword;
   }
 
-  @Column(name = "`create_time`")
+  @Column(name = "`create_time`", length = 19)
   @Temporal(TemporalType.TIMESTAMP)
   public Date getCreateTime() {
     return createTime;
@@ -190,7 +190,7 @@ public class User extends IdEntity implements java.io.Serializable {
     this.createTime = createTime;
   }
 
-  @Column(name = "`modify_time`")
+  @Column(name = "`modify_time`", length = 19)
   @Temporal(TemporalType.TIMESTAMP)
   public Date getModifyTime() {
     return modifyTime;

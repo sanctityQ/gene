@@ -6,11 +6,13 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.one.gene.domain.entity.Company;
+import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.User;
 import org.one.gene.domain.service.account.AccountService;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.CompanyRepository;
+import org.one.gene.repository.CustomerRepository;
 import org.one.gene.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,9 @@ public class UserController {
   @Autowired
   private AccountService accountService;
 
+  @Autowired
+  private CustomerRepository customerRepository;
+  
   @Get("")
   public String index() {
     return "f:/user/manageQuery";
@@ -113,6 +118,7 @@ public class UserController {
         back.put("mobile",input.getMobile());
         back.put("email",input.getEmail());
         back.put("staffFlag",input.isStaffFlag());
+        back.put("validate",input.isValidate());
         return back;
       }
     });
@@ -180,6 +186,16 @@ public class UserController {
   public String addUser(@Param("user") User user, Invocation inv) {
     Company company = companyRepository.findByComCode(user.getCompany().getComCode());
     user.setCompany(company);
+	if (!user.isStaffFlag() && user.getCustomer()!=null) {
+		Customer customer = customerRepository.findOne(user.getCustomer().getId());
+			if (customer != null) {
+				user.setCustomer(customer);
+			}
+	}
+	
+	if (user.isStaffFlag()) {
+		user.setCustomer(null);
+	}
     accountService.registerUser(user);
     return "r:/user/manageQuery";
   }
