@@ -64,8 +64,10 @@ public class OrderController {
 		//获取客户代码，外部客户控制页面客户代码是否显示录入，并自动赋值客户代码
     	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
 		inv.addModel("flag", user.getUser().isStaffFlag());
-		inv.addModel("customerCode", user.getUser().getCustomer().getCode());
-		inv.addModel("customerName", user.getUser().getCustomer().getName());
+		if(!"1".equals(user.getUser().isStaffFlag())){
+		  inv.addModel("customerCode", user.getUser().getCustomer().getCode());
+		  inv.addModel("customerName", user.getUser().getCustomer().getName());
+		}
         return "orderImport";
     }
     @Get("orderList")
