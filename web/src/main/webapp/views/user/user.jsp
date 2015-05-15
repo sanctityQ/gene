@@ -76,7 +76,7 @@
             </table>
         </div>
         <div class="tools_bar">
-            <button type="button" class="btn" onclick="goToPage('${ctx}/user/prepareManageQuery');">取 消</button>
+            <button type="button" class="btn" onclick="goToPage('${ctx}/user/manageQuery');">取 消</button>
             <button type="button" id="addUserBtn" class="btn btn-primary">保 存</button>
         </div>
     </div>

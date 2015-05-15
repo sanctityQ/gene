@@ -40,8 +40,8 @@ CREATE TABLE `customer` (
   `create_time` DATETIME NOT NULL COMMENT '创建时间',
   `modify_time` DATETIME NOT NULL COMMENT '最后修改时间',
   `prefix` varchar(2)  COMMENT '生产编号开头标识',
-  `handler_code` varchar(30)  COMMENT NOT NULL '业务员代码',
-  `handler_name` varchar(255)  COMMENT NOT NULL '业务员姓名',
+  `handler_code` varchar(30) NOT NULL COMMENT  '业务员代码',
+  `handler_name` varchar(255) NOT NULL COMMENT '业务员姓名',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_customer_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户信息表';
@@ -80,10 +80,8 @@ CREATE TABLE `order` (
   `validate` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否有效,0-不是，1-是',
   `product_no_min_to_max` varchar(50) DEFAULT NULL COMMENT '生产编号最小最大号',
   `tbn_total` decimal(10,0) DEFAULT NULL COMMENT '碱基总数',
-  `handler_code` varchar(30)  COMMENT NOT NULL '业务员代码',
-  `handler_name` varchar(255)  COMMENT NOT NULL '业务员名称',
-  
-  
+  `handler_code` varchar(30) NOT NULL COMMENT  '业务员代码',
+  `handler_name` varchar(255) NOT NULL COMMENT  '业务员名称',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_order_no` (`order_no`),
   KEY `idx_create_time` (`create_time`)
@@ -140,11 +138,11 @@ CREATE TABLE `board_hole` (
   `product_id`        BIGINT(20) COMMENT '生产数据ID',
   `create_time`       DATETIME NOT NULL COMMENT '创建时间',
   `create_user`       INT(11) NOT NULL COMMENT '创建user',
-  `modify_time`       DATETIME NOT NULL COMMENT '修改时间',
-  `modify_user`       INT(11) NOT NULL COMMENT '修改user',
-  `status`            TINYINT(2)  COMMENT '状态:0正常，1删除',
+  `modify_time`       DATETIME  COMMENT '修改时间',
+  `modify_user`       INT(11)  COMMENT '修改user',
   `ppo_id` INT(11) COMMENT '引物操作ID',
   `sorting` TINYINT(2) DEFAULT '0' COMMENT '排序',
+  `status`            TINYINT(2)  COMMENT '状态:0正常，1删除',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_board_no_hole_no` (`board_no`,`hole_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='合成板表';
