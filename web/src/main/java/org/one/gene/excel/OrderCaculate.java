@@ -39,6 +39,7 @@ public class OrderCaculate {
 		modiSpeMap.put("Spacer(C12)", "263.3");
 		modiSpeMap.put("*", "16");
 		modiSpeMap.put("5-Methyl dC", "303.18");
+		modiSpeMap.put("Spacer(C3)", "137");
 	} 
 
 	//获取字符串长度

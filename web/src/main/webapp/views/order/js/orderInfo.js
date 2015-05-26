@@ -2,7 +2,7 @@ var bigIndex = undefined,bigToSmall = $('#bigToSmall'),editIndex = 0;
 //中间修饰
 var modiMidArr = "Cy5,TAMRA,ROX,Dabcyl,Biotin,Digoxin,FAM,";
 //特殊单体
-var modiSpeArr = "dI,dU,dT-NH2,Spacer(C12),*,5-Methyl dC,";
+var modiSpeArr = "dI,dU,dT-NH2,Spacer(C12),*,5-Methyl dC,Spacer(C3),";
 function cellStyler(value,row,index){
 	if(value!=''){
       return 'color:red;';
@@ -338,7 +338,8 @@ function getChanesSave(){
 		success : function(data) {
 			$.messager.progress('close');
 			if(data == "sucess"){
-				goToPage(ctx+'/views/order/orderList.jsp?orderNo='+orderNo);
+//				goToPage(ctx+'/views/order/orderList.jsp?orderNo='+orderNo);
+				goToPage(ctx+'/order/import');
 			}
 		},
 		error:function(data){
