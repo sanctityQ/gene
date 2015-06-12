@@ -11,6 +11,7 @@
 </head>
 <body>
 <form name="form" action="${ctx}/synthesis/exportPackTable/" method="post">
+<input type="hidden" id="btnFlag" name="btnFlag" value="PackTable"/>
 	<div class="page_padding">
 		<div class="content_box">
 			<h2>导出分装表</h2>
@@ -26,6 +27,7 @@
 			</div>
 		</div>
 	</div>
+	<%@ include file="/views/synthesis/initBoardNo.jsp"%> <!--  未处理板号初始化页面 -->
 </form>
 <script src="${ctx}/static/js/packTable.js" ></script>
 <script src="${ctx}/static/js/vagueSeachBoard.js"></script>

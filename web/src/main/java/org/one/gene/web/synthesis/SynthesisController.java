@@ -225,7 +225,14 @@ public class SynthesisController {
     public void exportMachineTable(@Param("boardNo") String boardNo, Invocation inv) throws IOException{
     	synthesisService.exportMachineTable(boardNo, inv);
     }
-
+    /**
+     * 导出上机表文件（从列表中）
+     * @throws IOException 
+     * */
+    @Post("exMachineTable/{boardNoStr}/")
+    public void exMachineTable(@Param("boardNoStr") String boardNo, Invocation inv) throws IOException{
+    	synthesisService.exportMachineTable(boardNo, inv);
+    }
     /**
      * 进入导出分装表页面
      * */
@@ -241,7 +248,14 @@ public class SynthesisController {
     public void exportPackTable(@Param("boardNo") String boardNo, Invocation inv) throws IOException{
     	synthesisService.exportPackTable(boardNo, inv);
     }
-    
+    /**
+     * 导出分装表文件（从列表中）
+     * @throws IOException 
+     * */
+    @Post("exPackTable/{boardNoStr}/")
+    public void exPackTable(@Param("boardNoStr") String boardNo, Invocation inv) throws IOException{
+    	synthesisService.exportPackTable(boardNo, inv);
+    }
     /**
      * 查看生产数据信息
      * */
@@ -543,8 +557,11 @@ public class SynthesisController {
         }
         
 		Pageable pageable = new PageRequest(pageNo-1,pageSize);
-		
-		Page<Board> boards = boardRepository.initBoardNo(operationType.toString(), comCode, pageable);
+		String operationTypeStr = "";
+		if (operationType != null) {
+			operationTypeStr = operationType.toString();
+		}
+		Page<Board> boards = boardRepository.initBoardNo(operationTypeStr, comCode, pageable);
 		for (Board board : boards) {
 			for (PrimerStatusType type : PrimerStatusType.values()) {
 				if (board.getOperationType() == type) {

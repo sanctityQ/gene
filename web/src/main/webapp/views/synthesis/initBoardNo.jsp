@@ -89,8 +89,29 @@ $(function(){
 function formatOper(val,row,index){
 	var row = $('#boardData').datagrid('getData').rows[index];
 	var operationType = $("#operationType").val();
-	var url = "'/gene/views/synthesis/"+operationType+"ResultsBoard.jsp?boardNo="+row.boardNo+"'";
-  return '<a href="javascript:;"  onclick="goToPage('+url+')"><i class="icon-pencil"></i>录入结果</a>';
+	var btnFlag = $("#btnFlag").val();
+	if(typeof(operationType) != 'undefined'){
+		var url = "'/gene/views/synthesis/"+operationType+"ResultsBoard.jsp?boardNo="+row.boardNo+"'";
+	    return '<a href="javascript:;"  onclick="goToPage('+url+')"><i class="icon-pencil"></i>录入结果</a>';
+	}
+	if(typeof(btnFlag) != 'undefined' && btnFlag =="MachineTable"){
+		var url = "'/gene/synthesis/exMachineTable/"+row.boardNo+"/'";
+	    return '<a href="javascript:;"  onclick="exMachineTable('+url+')"><i class="icon-pencil"></i>导出上机表</a>';
+	}
+	if(typeof(btnFlag) != 'undefined' && btnFlag =="PackTable"){
+		var url = "'/gene/synthesis/exPackTable/"+row.boardNo+"/'";
+	    return '<a href="javascript:;"  onclick="exPackTable('+url+')"><i class="icon-pencil"></i>导出分装表</a>';
+	}
 };
 
+function exMachineTable(url){
+	document.form.action = url;
+	document.form.submit();
+	document.form.action = "";
+}
+function exPackTable(url){
+	document.form.action = url;
+	document.form.submit();
+	document.form.action = "";
+}
 </script>

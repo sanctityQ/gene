@@ -88,7 +88,7 @@ var ctx = '${ctx}';
 	</table>
 	</div>
 	<div class="tools_bar">
-        <button type="" class="btn" onclick="goToPage('/gene/views/delivery/deliveryResults.jsp');">取 消</button>
+        <button type="" class="btn" onclick="window.history.back();">取 消</button>
 		<button type="" class="btn btn-primary" onclick="saveDelivery();">发 货</button>
 	</div>
 </div>

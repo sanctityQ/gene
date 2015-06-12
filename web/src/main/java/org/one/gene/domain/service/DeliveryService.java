@@ -593,7 +593,7 @@ public class DeliveryService {
 		row = sheet.getRow(1);
 		cell = row.getCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(webSite+"   合成送货单");//网址
+		cell.setCellValue(webSite+"   合成发货清单");//网址
 		
 		row = sheet.getRow(2);
 		cell = row.getCell(0);

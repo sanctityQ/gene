@@ -212,6 +212,9 @@ public class OrderController {
     	order.setTotalValue(orderTotalValue);
     	
 	    Customer customer = orderService.findCustomer(coustomerCode);
+	    if(customer==null){
+	    	customer = new Customer();
+	    }
 	    
     	 for(PrimerProduct primerProduct:order.getPrimerProducts()){
     		orderService.addNewValue(primerProduct);
@@ -304,8 +307,14 @@ public class OrderController {
      * @throws Exception
      */
     @Post("query")
-    public Reply query(@Param("orderNo") String orderNo, @Param("customerCode") String customerCode,@Param("status") String status,@Param("pageNo")Integer pageNo,
-                        @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
+    public Reply query(@Param("orderNo") String orderNo, 
+    		@Param("customerCode") String customerCode,
+			@Param("createStartTime") String createStartTime,
+			@Param("createEndTime") String createEndTime,
+			@Param("status") String status,
+    		@Param("pageNo")Integer pageNo,
+            @Param("pageSize")Integer pageSize,
+            Invocation inv) throws Exception {
 
         if(pageNo == null || pageNo ==0){
             pageNo = 1;
@@ -325,6 +334,13 @@ public class OrderController {
         if(!"1".equals(user.getUser().getCompany().getComLevel())){
         searchParams.put(SearchFilter.Operator.EQ+"_comCode",comCode);
         }
+		if (createStartTime != null && !"".equals(createStartTime)) {
+        	searchParams.put(SearchFilter.Operator.GT+"_createTime",new Date(createStartTime+" 00:00:00"));
+        }
+		if (createEndTime != null && !"".equals(createEndTime)) {
+        	searchParams.put(SearchFilter.Operator.LT+"_createTime",new Date(createEndTime+" 59:59:59"));
+        }
+		
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         

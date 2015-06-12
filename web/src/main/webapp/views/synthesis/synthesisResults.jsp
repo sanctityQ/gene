@@ -30,8 +30,6 @@
 <script src="${ctx}/static/js/vagueSeachBoard.js" ></script>
 <script type="text/javascript">
 
-//initBoardNo("/gene/views/synthesis/synthesisResultsBoard.jsp?boardNo=");
-
 function goToResultsBoard(){
 	var boardNo = $.trim($('#boardNo').val());
 	

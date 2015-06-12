@@ -496,7 +496,7 @@ public class SynthesisService {
 					
 					boardHole.setStatus(1);//删除
 					boardHole.getPrimerProduct().setBoardNo("");//清空板号
-					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
+					boardHole.getPrimerProduct().setOperationType(PrimerStatusType.makeBoard);//回到待制板
 					
 					type = PrimerOperationType.synthesisFailure;
 					typeDesc = PrimerOperationType.synthesisFailure.desc();
@@ -566,7 +566,7 @@ public class SynthesisService {
 		}
     	
 		//输出文件到客户端
-		String fileName = boardNo + "_MachineTable.SEQ";
+		String fileName = boardNo + ".SEQ";
         HttpServletResponse response = inv.getResponse();
         response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
         response.setContentType("application/text");
@@ -674,9 +674,9 @@ public class SynthesisService {
 					cell = row.getCell(pthc.getColumn()+2);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					if (pp.getOrder().getOrderUpType() == OrderType.nmol) {
-						cell.setCellValue(pp.getNmolTB()+""+pp.getOrder().getOrderUpType()+"*"+pp.getTb());
+						cell.setCellValue(pp.getNmolTB().toBigInteger()+""+pp.getOrder().getOrderUpType()+"*"+pp.getTb().toBigInteger());
 					}else{
-						cell.setCellValue(pp.getOdTB()+""+pp.getOrder().getOrderUpType()+"*"+pp.getTb());
+						cell.setCellValue(pp.getOdTB().toBigInteger()+""+pp.getOrder().getOrderUpType()+"*"+pp.getTb().toBigInteger());
 					}
 					
 					// 体积:导入测试数据后显示体积,如果在测试之前：显示级别顺序：1：修饰，2：HPLC，3：PAGE)

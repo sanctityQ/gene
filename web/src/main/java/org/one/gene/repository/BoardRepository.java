@@ -33,7 +33,8 @@ public interface BoardRepository extends PagingAndSortingRepository<Board, Long>
 	
 	@SQL("select a.*  from `board` a " +
 		 " where exists (select 1 from `board_hole` b,`primer_product` c where a.`board_no`=b.`board_no` and b.`status`='0' " +
-		 " and b.`product_id`=c.`id` and c.`operation_type` = :operationType" +
+		 " and b.`product_id`=c.`id` " +
+		 "#if(:operationType != '') { and c.`operation_type` = :operationType }" +
 		 "#if(:comCode != '') { and c.`com_code` = :comCode }" +
 		 " ) order by a.`create_time` desc ")
 	Page<Board> initBoardNo(@Param("operationType") String operationType,@Param("comCode") String comCode, Pageable pageable);

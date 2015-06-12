@@ -25,6 +25,12 @@ var ctx = '${ctx}';
 			    <input class="inp_text" type="hidden" id="customercode" name="customercode" />
 			    <ul id="seachCustomList"></ul>
 			</td>
+		    <td align="right">订单日期:</td>
+            <td>
+                <input type="text" class="easyui-datebox" id="createStartTime" required="required" style="width: 90px;">
+                -
+                <input type="text" class="easyui-datebox" id="createEndTime" required="required" style="width: 90px;">
+            </td>
 			<td><button type="button" class="btn" onclick="getOrderInfo();">查询</button></td>
 			<td align="right">
 				<!-- <button type="button" class="btn btn-primary" onclick="goToPage('addOrder.html')">增加订单</button>

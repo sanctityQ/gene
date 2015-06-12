@@ -73,6 +73,8 @@ var getOrderInfo=function(){
 		{
 			orderNo:orderNo,
 	        customerCode:customerCode,
+			createStartTime: $('#createStartTime').datebox('getValue'),
+			createEndTime: $('#createEndTime').datebox('getValue'),
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
         },

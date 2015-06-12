@@ -7,19 +7,11 @@
 <html>
 <head>
 <title></title>
-<link href="${ctx}/static/css/easyui.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/icon.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/perfect-scrollbar.min.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/master.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="${ctx}/static/css/font-awesome.min.css" />
-<script src="${ctx}/static/js/jquery.min.js" ></script>
-<script src="${ctx}/static/js/jquery.easyui.min.js" ></script>
-<script src="${ctx}/static/js/perfect-scrollbar.min.js" ></script>
-<script src="${ctx}/static/js/index.js" ></script>
 <script src="${ctx}/static/js/json2.js"></script>
 </head>
 <body>
 <form name="form" action="${ctx}/synthesis/exportMachineTable/" method="post">
+<input type="hidden" id="btnFlag" name="btnFlag" value="MachineTable"/>
 	<div class="page_padding">
 		<div class="content_box">
 			<h2>导出上机表</h2>
@@ -35,6 +27,7 @@
 			</div>
 		</div>
 	</div>
+		<%@ include file="/views/synthesis/initBoardNo.jsp"%> <!--  未处理板号初始化页面 -->
 </form>
 <script src="${ctx}/static/js/machineTable.js" ></script>
 <script src="${ctx}/static/js/vagueSeachBoard.js"></script>

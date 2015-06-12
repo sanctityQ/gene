@@ -456,7 +456,7 @@ public class PrintService {
 			if (jwzh) {
 				templetName = "genewiz.xls";
 			}else{
-				templetName = customerCode+".xls";
+				templetName = "comonTemplate.xls";
 			}
 			
 			String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+"report"+File.separator;

@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.alibaba.fastjson.JSON;
@@ -113,7 +115,8 @@ public class DeliveryController {
         ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
         String comCode = user.getUser().getCompany().getComCode();
 
-        Pageable pageable = new PageRequest(pageNo-1,pageSize);
+        Sort s=new Sort(Direction.DESC, "order.createTime");
+        Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_order.customerCode",customerCode);
 		if (!"".equals(createStartTime)) {
