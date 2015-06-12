@@ -138,7 +138,7 @@ function searchConfigure(){
 			}
 		},
 		error:function(data){
-			alert("配置保存失败，请重试！");
+			alert("未查到该客户的配置信息，请配置！");
 		}
 	});
 }
