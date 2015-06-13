@@ -259,6 +259,7 @@ function getmodiType(str,field){
 
 //统计某字符串出现次数 find 要查找字符串  ;
 function countModiType(find,str){
+	find = find.replace('(', '\\(').replace(')', '\\)');//转义括号
 	var reg = new RegExp(find,"g")
 	var c = str.match(reg);
 	return c.length;
