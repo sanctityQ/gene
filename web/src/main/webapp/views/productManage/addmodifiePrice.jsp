@@ -102,6 +102,10 @@ $(document).ready(function(){
 			$("#modiTypeTemp").val(textVal.split("and")[1].trim());
 	    }
 	}
+    var validate = "${modifiedPrice.validate}";
+    if(validate!=""){
+   	 $("#validate").val(validate);
+    }
 })
 
 </script>

@@ -67,5 +67,19 @@ var ctx = '${ctx}';
 </div>
 </form>
 <script src="${ctx}/views/productManage/js/productManage.js" ></script>
+<script type="text/javascript">
+
+//用已有的值进行初始化
+$(function(){
+     var productCategories = "${productMolecular.productCategories}";
+     if(productCategories!=""){
+    	 $("#productCategories").val(productCategories);
+     }
+     var validate = "${productMolecular.validate}";
+     if(validate!=""){
+    	 $("#validate").val(validate);
+     }
+})
+ </script>
 </body>
 </html>
