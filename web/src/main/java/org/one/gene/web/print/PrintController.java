@@ -196,7 +196,7 @@ public class PrintController {
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
         searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customercode);
-        searchParams.put(SearchFilter.Operator.EQ+"_status","1");//审核通过
+        searchParams.put(SearchFilter.Operator.EQ+"_status","1");//订单审核通过
 		if (!"".equals(modifyTime)) {
         	searchParams.put(SearchFilter.Operator.GT+"_modifyTime",new Date(modifyTime));
         	searchParams.put(SearchFilter.Operator.LT+"_modifyTime",new Date(modifyTime+" 59:59:59"));

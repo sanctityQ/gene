@@ -71,6 +71,7 @@
 	<div title="出库单打印" data-options="iconCls:'outbound'" style="height:200px;">
 		<ul class="sbu_menu">
 			<li url="${ctx}/print/printOutBoundList" id="printOutBoundList"><i class="icon-print"></i>出库单打印</li>
+			<li url="${ctx}/delivery/chukuList" id="chukuList"><i class="icon-file-text-alt"></i>出库单打印(新)</li>
 		</ul>
 	</div>
 	<div title="打印标签" data-options="iconCls:'print'" style="height:200px;">

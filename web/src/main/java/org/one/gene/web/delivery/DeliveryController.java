@@ -246,11 +246,28 @@ public class DeliveryController {
         return Replys.with(primerProductListPage).as(Json.class);
     }
     
-    
-    @Post("deliveryList/{orderInfos}/")
-	public void deliveryList(
+    /**
+     * 进入出库单查询页面
+     * 
+     * */
+    @Get("chukuList")
+    public String chukuList(){
+    	
+    	return "chukuList";
+    }
+    //出库单导出
+    @Post("exportChuku/{orderInfos}/")
+	public void exportChuku(
 			@Param("orderInfos") String orderInfosJson,
 			Invocation inv) throws IOException {
+    	List<OrderInfo> orderInfos = JSON.parseArray(orderInfosJson,OrderInfo.class);
+    	deliveryService.exportChuku(orderInfos, inv);
+    }
+    
+    
+    //发货清单 导出
+    @Post("deliveryList/{orderInfos}/")
+	public void deliveryList(@Param("orderInfos") String orderInfosJson ,Invocation inv) throws IOException {
     	List<OrderInfo> orderInfos = JSON.parseArray(orderInfosJson,OrderInfo.class);
     	deliveryService.deliveryList(orderInfos, inv);
     }

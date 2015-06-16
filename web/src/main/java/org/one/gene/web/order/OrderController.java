@@ -506,6 +506,7 @@ public class OrderController {
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
         searchParams.put(SearchFilter.Operator.EQ+"_customerName",customerName);
+        searchParams.put(SearchFilter.Operator.EQ+"_status","1");//订单审核通过
 		if (!"".equals(createStartTime)) {
         	searchParams.put(SearchFilter.Operator.GT+"__createTime",new Date(createStartTime+" 00:00:00"));
         }

@@ -9,7 +9,7 @@
 <script src="${ctx}/static/js/json2.js"></script>
 </head>
 <body>
-<form name="form" action="${ctx}/delivery/deliveryList/" method="post">
+<form name="form" action="${ctx}/delivery/exportChuku/" method="post">
 <div class="tools">
 	<table width="100%">
 		<tr>
@@ -33,10 +33,10 @@
         </tr>
 	</table>
     <div class="btn_group">
-        <button id="makeBoard" type="button" class="btn btn-primary" disabled onclick="deliveryList()">导出发货清单</button>
+        <button id="makeBoard" type="button" class="btn btn-primary" disabled onclick="deliveryList()">导出出库单</button>
     </div>
 </div>
-<table id="productionData" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true">
+<table id="productionData" class="easyui-datagrid" data-options="striped:true,singleSelect: true,method: 'get',pagination:true,fitColumns:true">
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>
@@ -51,7 +51,7 @@
 </table>
 <div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
 </form>
-<script src="${ctx}/views/delivery/js/deliveryList.js" ></script>
+<script src="${ctx}/views/delivery/js/chukuList.js" ></script>
 <script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script type="text/javascript">
 $(function(){

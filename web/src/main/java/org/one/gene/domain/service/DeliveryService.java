@@ -29,6 +29,7 @@ import org.one.gene.domain.entity.PrimerLabelConfigSub;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerProductValue;
+import org.one.gene.domain.entity.Order.OrderType;
 import org.one.gene.domain.entity.PrimerType.PrimerOperationType;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.entity.PrimerValueType;
@@ -414,10 +415,10 @@ public class DeliveryService {
 		
 	
     /**
-     * 导出发货清单文件
+     * 导出出库单文件
      * @throws IOException 
      * */
-	public void deliveryList( List<OrderInfo> orderInfos, Invocation inv) throws IOException {
+	public void exportChuku( List<OrderInfo> orderInfos, Invocation inv) throws IOException {
 		
 		String companyName = "";//公司名称
 		String webSite     = "";//网址
@@ -576,7 +577,7 @@ public class DeliveryService {
 		
 		
 		//形成Excel
-		String templetName = "deliveryListTemplate.xls";
+		String templetName = "chukudanTemplate.xls";
 		String strFileName = orderNo+"-"+System.currentTimeMillis()+".xls";
 		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator;
 		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(templatePath+templetName));
@@ -593,7 +594,7 @@ public class DeliveryService {
 		row = sheet.getRow(1);
 		cell = row.getCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(webSite+"   合成发货清单");//网址
+		cell.setCellValue(webSite+"   合成出库单");//网址
 		
 		row = sheet.getRow(2);
 		cell = row.getCell(0);
@@ -755,6 +756,157 @@ public class DeliveryService {
 		cell.setCellStyle(style_left);
 		cell.setCellValue("送货员：                   客户签收：  ");
 		
+		
+        //输出文件到客户端
+        HttpServletResponse response = inv.getResponse();
+        response.setContentType("application/x-msdownload");
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + strFileName + "\"");
+        OutputStream out=response.getOutputStream();
+        workbook.write(out);
+        out.flush();
+        out.close();
+    }
+	
+	/**
+     * 导出发货清单
+     * @throws IOException 
+     * */
+	public void deliveryList( List<OrderInfo> orderInfos, Invocation inv) throws IOException {
+		
+		String companyName = "";//公司名称
+		String customerName     = "";//客户姓名
+		String orderDate     = "";//订货日期
+		String deliveryDate     = "";//发货日期
+		String unit     = "";//客户单位
+		String orderNo = "";//订单号
+		String productNoMinToMax = "";//序列范围
+		DeliveryInfo deliveryInfo = new DeliveryInfo();
+		List<DeliveryInfo> deliveryInfos = new ArrayList<DeliveryInfo>();
+		
+		for (OrderInfo orderInfo : orderInfos) {
+			
+			orderNo = orderInfo.getOrderNo();
+			
+			Order order = orderRepository.findByOrderNo(orderNo);
+			String customerCode = "";
+			if( order != null ){
+				customerCode = order.getCustomerCode();//客户代码
+				orderDate = order.getCreateTime().toString();
+				productNoMinToMax = order.getProductNoMinToMax();
+				
+				if(orderDate.length()>10){
+					orderDate = orderDate.substring(0, 10);
+				}
+				
+				Customer customer = customerRepository.findByCode(customerCode);
+				
+				if (customer != null) {
+					companyName = customer.getUnit();
+					customerName= customer.getName();
+					unit = customer.getUnit();
+				}
+				
+				
+				int tbnTotal = order.getTbnTotal().intValue();//碱基总数
+				int orderOdTotal = 0;//订单的OD总量
+				int    odTB      = 0;//OD/Tube
+				int orderNmolTotal = 0;//订单的nmole总量
+				int    nmolTB      = 0;// nmole/Tube
+				int geneOrderCount = 0 ;//序列条数
+				OrderType orderUpType = order.getOrderUpType();
+				
+				for (PrimerProduct primerProduct : order.getPrimerProducts()) {
+					
+					geneOrderCount += 1;
+					for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
+						PrimerValueType type = primerProductValue.getType();
+						if (type.equals(PrimerValueType.odTB)) {// OD/Tube
+							odTB = primerProductValue.getValue().intValue();
+						}else if(type.equals(PrimerValueType.odTotal)){//od总量
+							orderOdTotal += primerProductValue.getValue().intValue();
+						}else if(type.equals(PrimerValueType.nmolTB)){//nmole/Tube
+							nmolTB = primerProductValue.getValue().intValue();
+						}else if(type.equals(PrimerValueType.nmolTotal)){//订单的nmole总量
+							orderNmolTotal += primerProductValue.getValue().intValue();
+						}
+					}
+				}
+				
+				
+				deliveryInfo = new DeliveryInfo();
+				deliveryInfo.setExtendStr1(orderDate);//订货日期
+				deliveryInfo.setExtendStr2(unit);//单位
+				deliveryInfo.setExtendStr3(customerName);//客户姓名
+				deliveryInfo.setExtendStr4(productNoMinToMax);//生产编号
+				deliveryInfo.setExtendStr5(tbnTotal+"");//碱基数
+				if(orderUpType == OrderType.od){
+					deliveryInfo.setExtendStr6(orderOdTotal+"OD*"+geneOrderCount);//OD/Tube
+					deliveryInfo.setExtendStr7(orderOdTotal+"OD");//OD总量
+				}else{
+					deliveryInfo.setExtendStr6(nmolTB+"nmol*"+geneOrderCount);//nmol/Tube
+					deliveryInfo.setExtendStr7(orderNmolTotal+"nmol");//nmol总量
+				}
+				deliveryInfo.setExtendStr8("");//出货日期
+				
+				deliveryInfos.add(deliveryInfo);
+			}
+		}
+		
+
+	    
+		
+		
+		//形成Excel
+		String templetName = "deliveryListTemplate.xls";
+		String strFileName = "deliveryList.xls";
+		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator;
+		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(templatePath+templetName));
+        HSSFSheet sheet = workbook.getSheetAt(0);
+		HSSFRow rowFirst = null;
+		HSSFRow row = null;
+		HSSFCell cell = null;
+		
+		int startRow = 1;//从第6行开始
+		int rowNo = 1;//行号
+		double totalMoney = 0.0;//合计
+		for (DeliveryInfo dis : deliveryInfos) {
+			
+			row = sheet.getRow(startRow);
+			cell = row.getCell(0);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(dis.getExtendStr1());//订货日期
+			
+			cell = row.getCell(1);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(dis.getExtendStr2());//单位
+		    
+			cell = row.getCell(2);
+		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(dis.getExtendStr3());//客户姓名
+		    
+			cell = row.getCell(3);
+		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(dis.getExtendStr4());//生产编号
+			
+			cell = row.getCell(4);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(dis.getExtendStr5());//碱基数
+		    
+			cell = row.getCell(5);
+		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(dis.getExtendStr6());//OD/Tube
+			
+			cell = row.getCell(6);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(dis.getExtendStr7());//OD总量
+			
+			cell = row.getCell(7);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue("");//出货日期
+			
+			startRow = startRow +1;
+
+		}
 		
         //输出文件到客户端
         HttpServletResponse response = inv.getResponse();
