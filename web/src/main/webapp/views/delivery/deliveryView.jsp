@@ -63,10 +63,11 @@ var ctx = '${ctx}';
 	</div>
 	<div class="content_box info margin_btoom">
 		<h2>生产数据</h2>
-		<table id="bigToSmall" class="easyui-datagrid" data-options="fitColumns:true,striped:true,method: 'get'">
+		<table id="bigToSmall" class="easyui-datagrid" data-options="fitColumns:true,striped:true,method: 'post'">
 		<thead>
 			<tr>
 			    <th data-options="field:'ck',checkbox:true"></th>
+			    <th data-options="field:'id',width:80,hidden:true,sortable:true,editor:'text'">生产id</th>
 				<th data-options="field:'productNo',width:80,sortable:true,editor:'text'">生产编号</th>
 				<th data-options="field:'primeName',width:80,sortable:true,editor:'text'">引物名称</th>
 				<th data-options="field:'geneOrder',width:80,sortable:true,editor:'text'">序列</th>

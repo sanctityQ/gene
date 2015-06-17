@@ -168,7 +168,11 @@ function saveDelivery(){
         	break;
         	
         }
-        primerProducts.push(data);
+        primerProducts.push(
+          {
+        	"id":data.id
+          }
+        );
     }
     //不是待发货状态的数据不允许提交
     if(!saveFlag){

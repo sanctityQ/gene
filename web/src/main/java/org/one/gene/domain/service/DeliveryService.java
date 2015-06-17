@@ -90,7 +90,7 @@ public class DeliveryService {
     
 	//保存发货信息
     @Transactional(readOnly = false)
-	public String saveDelivery(List<PrimerProduct> primerProducts) {
+	public String saveDelivery(List<PrimerProduct> primerProducts ,User user) {
     	
 		PrimerProduct primerProduct = new PrimerProduct(); 
 		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
@@ -109,8 +109,8 @@ public class DeliveryService {
 				//组装操作信息
 				primerProductOperation = new PrimerProductOperation();
 				primerProductOperation.setPrimerProduct(primerProduct);
-				primerProductOperation.setUserCode("123");//后续从session取得
-				primerProductOperation.setUserName("张三");//后续从session取得
+				primerProductOperation.setUserCode(user.getCode());
+				primerProductOperation.setUserName(user.getName());
 				primerProductOperation.setCreateTime(new Date());
 				primerProductOperation.setType(type);
 				primerProductOperation.setTypeDesc(typeDesc);

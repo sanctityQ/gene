@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
+import org.one.gene.domain.entity.User;
 import org.one.gene.domain.service.DeliveryService;
 import org.one.gene.domain.service.PrintService;
 import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
@@ -75,7 +76,10 @@ public class DeliveryController {
     @Post("saveDelivery")
 	public Reply saveDelivery(@Param("primerProducts") List<PrimerProduct> primerProducts, Invocation inv) {
     	
-    	deliveryService.saveDelivery(primerProducts);
+        ShiroUser shiroUser = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        User user = shiroUser.getUser();
+        
+    	deliveryService.saveDelivery(primerProducts ,user);
     	
     	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
     }
