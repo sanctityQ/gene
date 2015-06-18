@@ -64,6 +64,8 @@ var getOrderInfo=function(){
     var gridOpts = $('#orderList').datagrid('getPager').data("pagination").options;
 	var orderNo = $("#seachOrder").val();
 	var customerCode = $("#customerCode").val();
+	var productNo = $.trim($("#productNo").val());
+	
 	progress();
 	$.ajax({
 		type : "post",
@@ -75,26 +77,64 @@ var getOrderInfo=function(){
 	        customerCode:customerCode,
 			createStartTime: $('#createStartTime').datebox('getValue'),
 			createEndTime: $('#createEndTime').datebox('getValue'),
+			productNo: productNo,
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
         },
 		success : function(data) {
 			$.messager.progress('close');
 			if(data != null){
-				var total = data.totalElements;
-        		var reSultdata = data.content;
-        		for(var i=0;i<reSultdata.length;i++){
-        			if(reSultdata[i].status=='0'){
-          			  reSultdata[i].status = '订单初始化';
-          			}else if(reSultdata[i].status=='1'){
-          			  reSultdata[i].status = '订单审核通过';
-          			}else if(reSultdata[i].status=='2'){
-          			  reSultdata[i].status = '订单审核不通过';	
-          			}
-        			
-        		}
-        		var jsonsource = {total: total, rows: reSultdata};
-        		$('#orderList').datagrid("loadData",jsonsource);
+				if(productNo == ""){
+					$("#orderDiv").show();
+					$("#productDiv").hide();
+					
+					var total = data.totalElements;
+					var reSultdata = data.content;
+					for(var i=0;i<reSultdata.length;i++){
+						if(reSultdata[i].status=='0'){
+							reSultdata[i].status = '订单初始化';
+						}else if(reSultdata[i].status=='1'){
+							reSultdata[i].status = '订单审核通过';
+						}else if(reSultdata[i].status=='2'){
+							reSultdata[i].status = '订单审核不通过';	
+						}
+						
+					}
+					var jsonsource = {total: total, rows: reSultdata};
+					$('#orderList').datagrid("loadData",jsonsource);
+				}else{
+					$("#orderDiv").hide();
+					$("#productDiv").show();
+					
+					$("#product_No").val(data.productNo);
+					$("#orderNo").val(data.order.orderNo);
+					$("#outProductNo").val(data.outProductNo);
+					$("#primeName").val(data.primeName);
+					$("#geneOrderMidi").val(data.geneOrderMidi);
+					$("#purifyType").val(data.purifyType);
+					$("#modiFiveType").val(data.modiFiveType);
+					$("#modiThreeType").val(data.modiThreeType);
+					$("#modiMidType").val(data.modiMidType);
+					$("#modiSpeType").val(data.modiSpeType);
+					$("#odTotal").val(data.odTotal);
+					$("#odTB").val(data.odTB);
+					$("#nmolTotal").val(data.nmolTotal);
+					$("#nmolTB").val(data.nmolTB);
+					$("#tbn").val(data.tbn);
+					$("#tb").val(data.tb);
+					$("#modiPrice").val(data.modiPrice);
+					$("#baseVal").val(data.baseVal);
+					$("#purifyVal").val(data.purifyVal);
+					$("#totalVal").val(data.totalVal);
+					$("#remark").val(data.remark);
+					$("#operationType").val(data.operationTypeDesc);
+					$("#boardNo").val(data.boardNo);
+					$("#comCode").val(data.comCode);
+					$("#backTimes").val(data.backTimes);
+					$("#measureVolume").val(data.measureVolume);
+					$("#modifyTime").val(data.modifyTime);
+					
+				}
 			}
 		},
 		error:function(){

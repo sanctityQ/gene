@@ -311,6 +311,7 @@ public class OrderController {
     		@Param("customerCode") String customerCode,
 			@Param("createStartTime") String createStartTime,
 			@Param("createEndTime") String createEndTime,
+			@Param("productNo") String productNo,
 			@Param("status") String status,
     		@Param("pageNo")Integer pageNo,
             @Param("pageSize")Integer pageSize,
@@ -323,31 +324,44 @@ public class OrderController {
         if(pageSize == null){
             pageSize = 20;
         }
-        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
-        String comCode = user.getUser().getCompany().getComCode();
-        Sort s=new Sort(Direction.DESC, "createTime");
-        Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
-        Map<String,Object> searchParams = Maps.newHashMap();
-        searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
-        searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
-        searchParams.put(SearchFilter.Operator.EQ+"_status",status);
-        if(!"1".equals(user.getUser().getCompany().getComLevel())){
-        searchParams.put(SearchFilter.Operator.EQ+"_comCode",comCode);
+        if(productNo == null || "".equals(productNo)){
+        	
+        	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        	String comCode = user.getUser().getCompany().getComCode();
+        	Sort s=new Sort(Direction.DESC, "createTime");
+        	Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
+        	Map<String,Object> searchParams = Maps.newHashMap();
+        	searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
+        	searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
+        	searchParams.put(SearchFilter.Operator.EQ+"_status",status);
+        	if(!"1".equals(user.getUser().getCompany().getComLevel())){
+        		searchParams.put(SearchFilter.Operator.EQ+"_comCode",comCode);
+        	}
+        	if (createStartTime != null && !"".equals(createStartTime)) {
+        		searchParams.put(SearchFilter.Operator.GT+"_createTime",new Date(createStartTime+" 00:00:00"));
+        	}
+        	if (createEndTime != null && !"".equals(createEndTime)) {
+        		searchParams.put(SearchFilter.Operator.LT+"_createTime",new Date(createEndTime+" 59:59:59"));
+        	}
+        	
+        	Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
+        	Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
+        	
+        	Page<Order> orderPage = orderRepository.findAll(spec,pageable);
+        	//Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
+        	
+        	return Replys.with(orderPage).as(Json.class);
+        }else{
+        	 //生产编码不为空，只查询生产信息表的数据
+        	PrimerProduct primerProduct = primerProductRepository.findByProductNo(productNo);
+			if (primerProduct != null) {
+				orderService.addNewValue(primerProduct);
+				primerProduct.setOperationTypeDesc(primerProduct.getOperationType().desc());
+				return Replys.with(primerProduct).as(Json.class);
+			} else {
+				return Replys.with("error").as(Json.class);
+			}
         }
-		if (createStartTime != null && !"".equals(createStartTime)) {
-        	searchParams.put(SearchFilter.Operator.GT+"_createTime",new Date(createStartTime+" 00:00:00"));
-        }
-		if (createEndTime != null && !"".equals(createEndTime)) {
-        	searchParams.put(SearchFilter.Operator.LT+"_createTime",new Date(createEndTime+" 59:59:59"));
-        }
-		
-        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
-        Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
-        
-        Page<Order> orderPage = orderRepository.findAll(spec,pageable);
-        //Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
-        
-        return Replys.with(orderPage).as(Json.class);
     }
     
     /**
