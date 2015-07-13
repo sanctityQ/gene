@@ -27,9 +27,10 @@
 	    <input type="hidden" id="operationType" name="operationType" value="synthesis"/>
 		<tr>
 			<td align="right" width="100">合成板名称:</td>
-			<td><input class="inp_text" type="text" id="boardNo" name="boardNo" value="" style="width: 50%" />
+			<td><input class="inp_text" type="text" id="boardNo" name="boardNo" value="" style="width: 100%" />
 			    <ul id="seachBoardList"></ul>
 			</td>
+			<td><font size="2" color="red">提示：如您计划录入的合成板名称在模糊查询下拉列表中，请点击下拉列表的合成板名称进行选择使用。</font></td> 
 		</tr>
         <tr>
             <td colspan="2" height="10"></td>
@@ -38,8 +39,8 @@
     <div class="btn_group">
         <button class="btn btn-primary" id="mutualBtn" disabled onclick="exchangePosition();">交换位置</button>
         <ul class="right board_sequence" id="boardSequence">
-            <li title="横排" onclick="makeBoard('holeList','0','0');" id="boardType0"></li>
-            <li title="竖排" class="vertical selected" onclick="makeBoard('holeList','1','0');" id="boardType1"></li>
+            <li title="横排" onclick="makeBoard('holeList','0','1');" id="boardType0"></li>
+            <li title="竖排" class="vertical selected" onclick="makeBoard('holeList','1','1');" id="boardType1"></li>
             <li class="notes">排列方式：</li>
         </ul>
         <p class="right pipe_number"><span id="totals"></span></p>

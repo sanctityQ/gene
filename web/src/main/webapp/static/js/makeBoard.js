@@ -13,7 +13,7 @@ function setBoardHeight(){
     var h = $(document).height() - 117;
     $('#board_box').height(h);
 }
-function makeBoard(id,flag){
+function makeBoard(id,flag,orderFlag){
 	
 	var board = $('#'+id);
     var tBody = '';
@@ -26,7 +26,8 @@ function makeBoard(id,flag){
 			flag: flag,
 			boardNo: $('#boardNo').val(),
 			productNoStr: $('#productNoArray').val(),
-			operationType:'synthesis'
+			operationType:'synthesis',
+			orderFlag: orderFlag
         },
         success: function(data){
             $('#boardType').val(data.boardType);
@@ -82,9 +83,14 @@ function saveBoard(){
 			boardType: $('#boardType').val()
         },
 		success:function(data) {
-			    $.messager.alert('系统提示','合成板数据已保存！','',function(){
-		           goToPage('/gene/views/synthesis/productionData.jsp');
-		        });
+			$.messager.progress('close');
+			if(data.success){
+				$.messager.alert('系统提示',data.mess,'',function(){
+					goToPage('/gene/views/synthesis/productionData.jsp');
+				});
+			}else{
+				alert(data.mess);
+			}
 		},
 		error:function(){
 			$.messager.progress('close');

@@ -133,10 +133,12 @@ public class SynthesisController {
 	public Reply makeBoardEdit(@Param("flag") String flag,
 			@Param("boardNo") String boardNo,
 			@Param("productNoStr") String productNoStr,
-			@Param("operationType") PrimerStatusType operationType, Invocation inv)
+			@Param("operationType") PrimerStatusType operationType, 
+			@Param("orderFlag") String orderFlag,
+			Invocation inv)
 			throws IOException {
     	
-    	String jsonStr = synthesisService.makeBoard(boardNo, flag, productNoStr, operationType, inv);
+    	String jsonStr = synthesisService.makeBoard(boardNo, flag, productNoStr, operationType, orderFlag, inv);
         
     	return Replys.with(jsonStr).as(Json.class);
     }
@@ -150,9 +152,15 @@ public class SynthesisController {
 			                 @Param("boardNo") String boardNo,
 			                 @Param("boardType") String boardType, Invocation inv) {
     	
-    	synthesisService.submitBoard(holeStr, boardNo, boardType, inv);
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	try {
+			synthesisService.submitBoard(holeStr, boardNo, boardType, user, inv);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Replys.with("{\"success\":false,\"mess\":\""+e.getMessage()+"\"}").as(Json.class);
+		}
     	
-    	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
+    	return Replys.with("{\"success\":true,\"mess\":\"合成板数据已保存！\"}").as(Json.class);
     }
     
     @Post("queryBoard")

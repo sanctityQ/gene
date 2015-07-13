@@ -37,6 +37,7 @@ import org.one.gene.domain.entity.PrimerType;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.entity.PrimerType.PrimerOperationType;
 import org.one.gene.domain.entity.PrimerValueType;
+import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.repository.BoardHoleRepository;
 import org.one.gene.repository.BoardRepository;
 import org.one.gene.repository.OrderRepository;
@@ -135,7 +136,7 @@ public class SynthesisService {
 
     //到制板页面
 	public String makeBoard(String boardNo, String flag, String productNoStr,
-			PrimerStatusType operationType, Invocation inv) throws IOException {
+			PrimerStatusType operationType, String orderFlag, Invocation inv) throws IOException {
 		
 		System.out.println("=====页面选择的生产编号=" + productNoStr);
 		int totalCount = 0;
@@ -158,7 +159,10 @@ public class SynthesisService {
 					orderUpType = boardHole.getPrimerProduct().getOrder().getOrderUpType();
 				}
 			}
-			flag = board.getBoardType();
+			//默认是使用原板号的排序，手动页面选择排序时不使用原有方式
+			if ("0".equals(orderFlag)) {
+				flag = board.getBoardType();
+			}
 		}
 		
 		if(totalCount>96){
@@ -320,16 +324,30 @@ public class SynthesisService {
 	
 	//提交制表信息
     @Transactional(readOnly = false)
-	public String submitBoard(String holeStr, String boardNo, String boardType, Invocation inv) {
+	public String submitBoard(String holeStr, String boardNo, String boardType,  ShiroUser user, Invocation inv) throws Exception {
     	
     	Board board = boardRepository.findByBoardNo(boardNo);
     	List<PrimerProductOperation> primerProductOperationList = null;
     	if( board == null ){
     		board = new Board();
+    	}else{
+			if (board.getOperationType() != PrimerStatusType.synthesis) {
+				throw new Exception("您提交的板号在系统中已存在，但不是待合成状态。不允许提交！");
+			}
+			boolean haveFlag = false;
+			for (BoardHole boardHoleTemp : board.getBoardHoles()) {
+				if (holeStr.indexOf(boardHoleTemp.getPrimerProduct().getProductNo()) > 0) {
+				} else {
+					haveFlag = true;
+				}
+			}
+			if (haveFlag) {
+				throw new Exception("您提交的板号在系统中已存在，但已有板号的生产编号不在提交信息中。不允许提交！");
+			}
     	}
     	board.setBoardNo(boardNo);
     	board.setBoardType(boardType);
-		board.setCreateUser(123);//后续需要调整到从session取值
+		board.setCreateUser(Integer.parseInt(user.getUser().getId()+""));
 		board.setCreateTime(new Date());
 		board.setOperationType(PrimerStatusType.synthesis);//待合成
     	
@@ -360,6 +378,18 @@ public class SynthesisService {
 			String[] holeNoArray = holeNoStr.split(":");
 			
 			primerProduct = primerProductRepository.findByProductNo(holeNoArray[1]);
+			if (primerProduct != null && primerProduct.getBoardNo() != null
+					&& !"".equals(primerProduct.getBoardNo())
+					&& !boardNo.equals(primerProduct.getBoardNo())) {
+				throw new Exception("您提交的生产编号" + holeNoArray[1] + "已在板号"+ primerProduct.getBoardNo() + "中。不允许提交！");
+			}
+		}
+		
+		for (int i = 0; i < holeStrArray.length; i++) {
+			String holeNoStr = holeStrArray[i];
+			String[] holeNoArray = holeNoStr.split(":");
+			
+			primerProduct = primerProductRepository.findByProductNo(holeNoArray[1]);
 			primerProduct.setModifyTime(new Date());
 			
 			addNewValue(primerProduct);
@@ -380,7 +410,7 @@ public class SynthesisService {
 			boardHole.setBoard(board);
 			boardHole.setHoleNo(holeNoArray[0]);
 			boardHole.setPrimerProduct(primerProduct);
-			boardHole.setCreateUser(123L);//后续需要调整到从session取值
+			boardHole.setCreateUser(user.getUser().getId());
 			boardHole.setCreateTime(new Date());
 			boardHole.setStatus(0);//0 正常 1 删除
 			boardHole.setModifyTime(new Date());
@@ -409,8 +439,8 @@ public class SynthesisService {
 					primerProductOperation = ppo;
 				}
 			}
-			primerProductOperation.setUserCode("123");//后续从session取得
-			primerProductOperation.setUserName("张三");//后续从session取得
+			primerProductOperation.setUserCode(user.getUser().getCode());
+			primerProductOperation.setUserName(user.getUser().getName());
 			primerProductOperation.setCreateTime(new Date());
 			primerProductOperation.setFailReason("");
 			primerProductOperations.add(primerProductOperation);
