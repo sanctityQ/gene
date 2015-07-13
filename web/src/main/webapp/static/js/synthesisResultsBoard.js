@@ -45,7 +45,7 @@ function synthesisBoard(id){
         dataType:'json',
 		data:{
 			flag: '',
-			oldFlag:'1',
+			orderFlag:'0',
 			boardNo: $('#boardNo').val(),
 			productNoStr: '',
 			operationType:'synthesis'
