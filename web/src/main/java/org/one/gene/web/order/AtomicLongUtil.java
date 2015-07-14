@@ -30,12 +30,19 @@ public class AtomicLongUtil {
 	@Autowired
 	private PrimerProductRepository primerProductRepository;
 	
-	// 用于时间的格式化
-	SimpleDateFormat sFormat = new SimpleDateFormat("yyyyMMdd");
- 	// 用于时间的处理
-	Calendar calendar = Calendar.getInstance();
-	// 格式化新的时间
-	String dateString = sFormat.format(calendar.getTime());
+	 /**
+	  * 获取当前时间年月日
+	  * @return
+	  */
+	 public String getFormatDate(){
+		 
+		 // 用于时间的格式化
+		 SimpleDateFormat sFormat = new SimpleDateFormat("yyyyMMdd");
+		 // 用于时间的处理
+		 Calendar calendar = Calendar.getInstance();
+		 // 格式化新的时间
+		 return sFormat.format(calendar.getTime());
+	 }
 	 
 	 /**
 	  * 获取订单号
@@ -146,7 +153,7 @@ public class AtomicLongUtil {
 		java.text.DecimalFormat df = new java.text.DecimalFormat(sb.toString());
 		//当前的流水号
 		String current_serial_number = df.format(sn);
-		
+		String dateString = this.getFormatDate();
 		String current_number = dateString+current_serial_number;
 		return current_number;
 	 }
@@ -169,6 +176,7 @@ public class AtomicLongUtil {
 		//当前的流水号
 		String current_serial_number = df.format(sn);
 		if(prefix==null){prefix="";}
+		String dateString = this.getFormatDate();
 		String current_number = prefix+dateString.substring(3)+current_serial_number;
 		return current_number;
 	 }
