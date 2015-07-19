@@ -2,17 +2,24 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="msg" uri="http://mvc.one.sinosoft.com/validation/msg" %>
+<%@page import="org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser"%>
+<%@page import="org.apache.shiro.SecurityUtils"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
 <head>
 <title></title>
 <script src="${ctx}/static/js/json2.js"></script>
+<%
+ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+%>
 </head>
 <body>
 <div class="tools">
 	<table width="100%">
 		    <input type="hidden" id="operationType" name="operationType" value="detect"/>
+		    <input type="hidden" id="customerFlag" name="customerFlag" value="<%=customerFlag %>"/>
 		<tr>
 			<td align="right">板号:</td>
 			<td><input class="inp_text" type="text" autocomplete="off" id="boardNo" name="boardNo" value="" style="width: 80%" />

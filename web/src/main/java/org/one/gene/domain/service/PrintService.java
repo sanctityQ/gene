@@ -753,7 +753,7 @@ public class PrintService {
 	        Cell cell33 = sheet.getRow(2).getCell(2);  
 	        cell33.setCellValue(customer.getName());  
 	        Cell cell36 = sheet.getRow(2).getCell(5);  
-	        cell36.setCellValue(customer.getUnit()); 
+	        cell36.setCellValue(customer.getName()); 
 	        Cell cell43 = sheet.getRow(3).getCell(2);  
 	        cell43.setCellValue(sf.format(new Date()));  
 	        Cell cell46 = sheet.getRow(3).getCell(5);  
@@ -855,7 +855,7 @@ public class PrintService {
 		orderInfo.setOperatorCode("34343434");
 		//联系人（客户管理中的负责人） 调整值获取
 		orderInfo.setLinkName(customer.getLeaderName());
-		orderInfo.setUnit(customer.getUnit());
+		orderInfo.setUnit(customer.getName());
 		//制单日期
 		orderInfo.setMakingDate(new Date());
 		//商品编码 默认赋值

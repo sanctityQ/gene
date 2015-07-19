@@ -20,7 +20,7 @@
                 <input type="text" class="inp_text" style="width:80%" id="userName" name="userName"
                        value="${userName}"/>
             </td>
-            <td align="right">部门：</td>
+            <td align="right">归属机构：</td>
             <td>
                 <input type="text" id="comCode" name="comCode" value="${comCode}"/>
             </td>
@@ -29,7 +29,7 @@
             </td>
             <td align="right">
                 <button type="button" class="btn btn-primary"
-                        onclick="javascript:void(prepareAddUser());">增加业务员
+                        onclick="javascript:void(prepareAddUser());">增加用户
                 </button>
                 <button type="button" class="btn btn-primary submit" onclick="batchDelete();">
                     批量删除
@@ -43,12 +43,14 @@
     <thead>
     <tr>
         <th data-options="field:'id',checkbox:true"></th>
-        <th data-options="field:'code',width:80,sortable:true">登陆名</th>
-        <th data-options="field:'name',width:80,sortable:true">姓名</th>
-        <th data-options="field:'comCode',width:80,sortable:true">机构名称</th>
-        <th data-options="field:'mobile',width:80,sortable:true">手机号</th>
-        <th data-options="field:'email',width:80,sortable:true">Email</th>
-        <th data-options="field:'staffFlag',width:80,sortable:true">是否本公司</th>
+        <th data-options="field:'code',width:60,sortable:true">工号</th>
+        <th data-options="field:'name',width:60,sortable:true">姓名</th>
+        <th data-options="field:'comCode',width:80,sortable:true">归属机构名称</th>
+        <th data-options="field:'mobile',width:70,sortable:true">手机号</th>
+        <th data-options="field:'email',width:50,sortable:true">Email</th>
+        <th data-options="field:'userFlag',width:40,sortable:true">用户标志</th>
+        <th data-options="field:'customerName',width:40,sortable:true">归属公司名称</th>
+        <th data-options="field:'customerFlag',width:40,sortable:true">归属公司性质</th>
         <th data-options="field:'_operate',align:'center',formatter:formatOper">操作</th>
     </tr>
     </thead>

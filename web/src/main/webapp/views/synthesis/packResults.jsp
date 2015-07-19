@@ -2,17 +2,24 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="msg" uri="http://mvc.one.sinosoft.com/validation/msg" %>
+<%@page import="org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser"%>
+<%@page import="org.apache.shiro.SecurityUtils"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
 <head>
 <title></title>
 <script src="${ctx}/static/js/json2.js"></script>
+<%
+ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+%>
 </head>
 <body>
 <div class="page_padding">
 	<div class="content_box margin_btoom">
 	    <input type="hidden" id="operationType" name="operationType" value="pack"/>
+	    <input type="hidden" id="customerFlag" name="customerFlag" value="<%=customerFlag %>"/>
 		<h2>录入分装结果</h2>
 		<div class="import_box" style="padding-top: 20px;">
 			<i class="icon-pencil"></i>请输入板号，点击“分装结果”按钮，进入结果录入页面。
@@ -30,6 +37,12 @@
 <script src="${ctx}/static/js/vagueSeachBoard.js"></script>
 <script type="text/javascript">
 function goToResultsBoard(){
+	
+	if($("#customerFlag").val()!='0'){
+		alert("只有梓熙生物公司的用户才可以使用此功能。");
+		return false;
+	}
+	
 	var boardNo = $.trim($('#boardNo').val());
 	
 	if(boardNo == ""){

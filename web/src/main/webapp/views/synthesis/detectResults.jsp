@@ -1,14 +1,21 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page import="org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser"%>
+<%@page import="org.apache.shiro.SecurityUtils"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
 <head>
 <script src="${ctx}/static/js/ajaxfileupload.js" ></script>
 <script src="${ctx}/static/js/index.js" ></script>
+<%
+ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+%>
 </head>
 <body>
 <form name="form" action="${ctx}/synthesis/uploadDetect" method="post" enctype="multipart/form-data" class="form-horizontal">
+<input type="hidden" id="customerFlag" name="customerFlag" value="<%=customerFlag %>"/>
 <div class="page_padding">
 	<div class="content_box">
 		<h2>上传检测文件</h2>
@@ -29,6 +36,12 @@
 </form>
 <script type="text/javascript">
 function goToResultsBoard(){
+	
+	if($("#customerFlag").val()!='0'){
+		alert("只有梓熙生物公司的用户才可以使用此功能。");
+		return false;
+	}
+	
 	var viewfile = $.trim($('#viewfile').val());
 
 	if(viewfile == "请选择文件…"){

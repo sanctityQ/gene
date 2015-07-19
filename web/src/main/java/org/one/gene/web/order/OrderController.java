@@ -19,6 +19,7 @@ import org.one.gene.domain.service.OrderService;
 import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
+import org.one.gene.repository.CustomerRepository;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.slf4j.Logger;
@@ -57,38 +58,44 @@ public class OrderController {
     private OrderRepository orderRepository;
     @Autowired
     private PrimerProductRepository primerProductRepository;
-
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Get("import")
     public String orderImport(Invocation inv){
-		//获取客户代码，外部客户控制页面客户代码是否显示录入，并自动赋值客户代码
     	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
-		inv.addModel("flag", user.getUser().isStaffFlag());
-		if(!"1".equals(user.getUser().isStaffFlag())){
-		  inv.addModel("customerCode", user.getUser().getCustomer().getCode());
-		  inv.addModel("customerName", user.getUser().getCustomer().getName());
-		}
+    	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+		inv.addModel("customerFlag", customerFlag);// 用户归属公司标识，0-梓熙，1-代理公司，2-直接客户
         return "orderImport";
     }
+    
     @Get("orderList")
     @Post("orderList")
-    public String orderList(){
+    public String orderList(Invocation inv){
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+		inv.addModel("customerFlag", customerFlag);// 用户归属公司标识，0-梓熙，1-代理公司，2-直接客户
         return "orderList";
     }
+    
     @Get("orderExamine")
-    public String orderExamine(){
+    public String orderExamine(Invocation inv){
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+		inv.addModel("customerFlag", customerFlag);// 用户归属公司标识，0-梓熙，1-代理公司，2-直接客户
         return "orderExamine";
     }
     
-    
     @Post("upload")
-    public String upload(@Param("customerCode") String customerCode, @Param("file") MultipartFile file, Invocation inv) throws Exception {
+    public String upload(@Param("customerid") String customerid, @Param("file") MultipartFile file, Invocation inv) throws Exception {
     	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+    	
     	ArrayList<String> errors = new ArrayList<String>();
     	
-    	if("".equals(customerCode)){
+		if ("".equals(customerid) && "0".equals(customerFlag)) {
     		//刷新时赋值客户类型
-    		inv.addModel("flag", user.getUser().isStaffFlag());
+    		inv.addModel("customerFlag", customerFlag);
     		inv.addModel("userExp", "无此客户信息，请您确认后重新上传！");
     		return "orderImport";
     		//throw new Exception("客户代码或名称未录入，请您录入！");
@@ -96,13 +103,13 @@ public class OrderController {
     	try{
 	    	if (file.isEmpty()) {
 	    		//刷新时赋值客户类型
-	    		inv.addModel("flag", user.getUser().isStaffFlag());
+	    		inv.addModel("customerFlag", customerFlag);
 	    		inv.addModel("userExp", "请您选择要上传的文件！");
 	    		return "orderImport";
 	    	}
     	}catch(Exception e){
     		//刷新时赋值客户类型
-    		inv.addModel("flag", user.getUser().isStaffFlag());
+    		inv.addModel("customerFlag", customerFlag);
     		inv.addModel("userExp", "请您选择要上传的文件！");
     		return "orderImport";
     	}
@@ -142,10 +149,16 @@ public class OrderController {
         	return "importError";
         }else{
         	//获取客户信息
-        	Customer customer = orderService.findCustomer(customerCode);
+        	Customer customer = null;
+			if ("0".equals(customerFlag)) {
+        		customer = customerRepository.findOne(Long.parseLong(customerid));
+        	}else{
+        		customer = user.getUser().getCustomer();
+        	}
+        			
         	if(customer==null){
         		//刷新时赋值客户类型
-        		inv.addModel("flag", user.getUser().isStaffFlag());
+        		inv.addModel("customerFlag", customerFlag);
         		inv.addModel("userExp", "无此客户信息，请您确认后重新上传！");
         		return "orderImport";
         		//throw new Exception("无此客户信息，请您确认后重新上传！");
@@ -162,7 +175,7 @@ public class OrderController {
         	  orderService.save(order);
         	}catch(Exception e){
         		//刷新时赋值客户类型
-        		inv.addModel("flag", user.getUser().isStaffFlag());
+        		inv.addModel("customerFlag", customerFlag);
         		inv.addModel("userExp",e.getMessage());
         		return "orderImport";
         	}
@@ -181,8 +194,7 @@ public class OrderController {
     @Get("modifyQuery")
     public String modifyQuery(@Param("orderNo") String orderNo, @Param("forwordName") String forwordName,Invocation inv) throws Exception {
     	 Order order = orderRepository.findByOrderNo(orderNo);
-    	 String coustomerCode = "";
-     	 coustomerCode = order.getCustomerCode();
+    	 String coustomerCode = order.getCustomerCode();
      	 Customer customer = orderService.findCustomer(coustomerCode);
      	 inv.addModel("customer", customer);
 		 inv.addModel("order", order);
@@ -324,15 +336,21 @@ public class OrderController {
         if(pageSize == null){
             pageSize = 20;
         }
+        
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	String comCode = user.getUser().getCompany().getComCode();
+    	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+    	
         if(productNo == null || "".equals(productNo)){
-        	
-        	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
-        	String comCode = user.getUser().getCompany().getComCode();
         	Sort s=new Sort(Direction.DESC, "createTime");
         	Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
         	Map<String,Object> searchParams = Maps.newHashMap();
         	searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
-        	searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
+			if (!"0".equals(customerFlag)) {//代理公司和直接客户，只能查自己公司的业务
+				searchParams.put(SearchFilter.Operator.EQ+"_customerCode",user.getUser().getCustomer().getCode());
+			} else {
+				searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
+			}
         	searchParams.put(SearchFilter.Operator.EQ+"_status",status);
         	if(!"1".equals(user.getUser().getCompany().getComLevel())){
         		searchParams.put(SearchFilter.Operator.EQ+"_comCode",comCode);
@@ -348,19 +366,37 @@ public class OrderController {
         	Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
         	
         	Page<Order> orderPage = orderRepository.findAll(spec,pageable);
-        	//Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
         	
         	return Replys.with(orderPage).as(Json.class);
         }else{
         	 //生产编码不为空，只查询生产信息表的数据
         	PrimerProduct primerProduct = primerProductRepository.findByProductNo(productNo);
-			if (primerProduct != null) {
-				orderService.addNewValue(primerProduct);
-				primerProduct.setOperationTypeDesc(primerProduct.getOperationType().desc());
-				return Replys.with(primerProduct).as(Json.class);
-			} else {
-				return Replys.with("error").as(Json.class);
-			}
+        	if (!"0".equals(customerFlag)) {//代理公司和直接客户，只能查自己公司的业务
+        		if (primerProduct != null && primerProduct.getOrder().getCustomerCode().equals(user.getUser().getCustomer().getCode())) {
+        			orderService.addNewValue(primerProduct);
+        			primerProduct.setOperationTypeDesc(primerProduct.getOperationType().desc());
+        			return Replys.with(primerProduct).as(Json.class);
+        		} else {
+        			return Replys.with("error").as(Json.class);
+        		}
+        	} else {
+        		if (primerProduct != null) {
+        			orderService.addNewValue(primerProduct);
+        			primerProduct.setOperationTypeDesc(primerProduct.getOperationType().desc());
+        			if(!"1".equals(user.getUser().getCompany().getComLevel())){//梓熙 总公司，可以查
+        				return Replys.with(primerProduct).as(Json.class);
+        			}else{
+						if (primerProduct.getComCode().equals(comCode)) {//梓熙 分公司，只可以查分公司的业务
+							return Replys.with(primerProduct).as(Json.class);
+        				}else{
+        					return Replys.with("error").as(Json.class);
+        				}
+        			}
+        		} else {
+        			return Replys.with("error").as(Json.class);
+        		}
+        		
+        	}
         }
     }
     
@@ -514,12 +550,17 @@ public class OrderController {
         
         ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
         String comCode = user.getUser().getCompany().getComCode();
+        String customerFlag = user.getUser().getCustomer().getCustomerFlag();
         
         Sort s=new Sort(Direction.DESC, "createTime");
         Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
-        searchParams.put(SearchFilter.Operator.EQ+"_customerName",customerName);
+		if (!"0".equals(customerFlag)) {//代理公司和直接客户，只能查自己公司的业务
+			searchParams.put(SearchFilter.Operator.EQ+"_customerCode",user.getUser().getCustomer().getCode());
+		} else {
+			searchParams.put(SearchFilter.Operator.EQ+"_customerName",customerName);
+		}
         searchParams.put(SearchFilter.Operator.EQ+"_status","1");//订单审核通过
 		if (!"".equals(createStartTime)) {
         	searchParams.put(SearchFilter.Operator.GT+"__createTime",new Date(createStartTime+" 00:00:00"));

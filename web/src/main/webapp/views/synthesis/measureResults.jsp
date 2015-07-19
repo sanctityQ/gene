@@ -1,17 +1,24 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page import="org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser"%>
+<%@page import="org.apache.shiro.SecurityUtils"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <!DOCTYPE html>
 <html>
 <head>
 <script src="${ctx}/static/js/ajaxfileupload.js" ></script>
+<%
+ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+%>
 </head>
 <body>
 <form id="form" modelAttribute="user" action="${ctx}/synthesis/uploadMeasure" method="post" enctype="multipart/form-data" class="form-horizontal">
 <div class="page_padding">
 	<div class="content_box">
 	    <input type="hidden" id="operationType" name="operationType" value="measure"/>
+	    <input type="hidden" id="customerFlag" name="customerFlag" value="<%=customerFlag %>"/>
 		<h2>测值结果</h2>
 		<div class="import_box">
 			<i class="icon-group"></i>请输入需要导入的板号。
@@ -39,6 +46,12 @@
 <script src="${ctx}/static/js/vagueSeachBoard.js"></script>
 <script type="text/javascript">
 function goToResultsBoard(){
+	
+	if($("#customerFlag").val()!='0'){
+		alert("只有梓熙生物公司的用户才可以使用此功能。");
+		return false;
+	}
+	
 	var boardNo = $.trim($('#boardNo').val());
 	var viewfile = $.trim($('#viewfile').val());
 

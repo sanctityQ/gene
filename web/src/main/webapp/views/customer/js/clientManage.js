@@ -13,7 +13,7 @@ var lookCustomer=function(index){
 //修改
 var modifyCustomer=function(index){
 	var row = $('#customerList').datagrid('getData').rows[index];
-	var path = ctx+'/customer/modifyCustomer?customerCode='+row.code;  
+	var path = ctx+'/customer/modifyCustomer?customerCode='+row.code;
 	window.location.href = path;
 }
 //删除
@@ -45,7 +45,7 @@ var deleteCustomer=function(index){
 var getCustomerList=function(){
 	var gridOpts = $('#customerList').datagrid('getPager').data("pagination").options;
 	var customerName = $("#seachCustom").val();
-	var unitName = $("#seachUnitName").val();
+	var customerFlag = $("#customerFlag").val();
 	$.ajax({
 		type : "post",
 		url : ctx+"/customer/query",
@@ -53,7 +53,7 @@ var getCustomerList=function(){
 		data:
 		{
 			customerName:customerName,
-			unitName:unitName,
+			customerFlag:customerFlag,
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
         },
@@ -61,6 +61,15 @@ var getCustomerList=function(){
 			if(data != null){
 				var total = data.totalElements;
         		var reSultdata = data.content;
+        		for(var i=0;i<reSultdata.length;i++){
+        			if(reSultdata[i].customerFlag=='0'){
+        			  reSultdata[i].customerFlag = '梓熙';
+        			}else if(reSultdata[i].customerFlag=='1'){
+        			  reSultdata[i].customerFlag = '代理公司';
+        			}else if(reSultdata[i].customerFlag=='2'){
+        			  reSultdata[i].customerFlag = '直接客户';	
+        			}
+        		}
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#customerList').datagrid("loadData",jsonsource);
 			}
@@ -80,6 +89,15 @@ var getCustomerini=function(){
 			if(data != null){
 				var total = data.totalElements;
         		var reSultdata = data.content;
+        		for(var i=0;i<reSultdata.length;i++){
+        			if(reSultdata[i].customerFlag=='0'){
+        			  reSultdata[i].customerFlag = '梓熙';
+        			}else if(reSultdata[i].customerFlag=='1'){
+        			  reSultdata[i].customerFlag = '代理公司';
+        			}else if(reSultdata[i].customerFlag=='2'){
+        			  reSultdata[i].customerFlag = '直接客户';	
+        			}
+        		}
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#customerList').datagrid("loadData",jsonsource);
 			}

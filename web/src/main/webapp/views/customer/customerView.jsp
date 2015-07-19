@@ -23,9 +23,17 @@ var ctx = '${ctx}';
             <tr>
                 <td align="right">客户编号:</td>
                 <td><input class="readonly_inp" type="text" value="${customer.code}" disabled style="width:150px" /></td>
-                <td align="right">姓名:</td>
-				<td colspan="3"><input class="readonly_inp" type="text" value="${customer.name}" disabled style="width:150px" /></td>
+                <td align="right">客户公司:</td>
+				<td colspan="3"><input class="readonly_inp" type="text" value="${customer.name}" disabled style="width:200px" /></td>
             </tr>
+			<tr>
+				<td align="right">客户性质:</td>
+				<td>
+                    <input class="readonly_inp" type="text" value="${customer.customerFlag}" disabled style="width:150px" />
+                </td>
+				<td align="right">负责人姓名:</td>
+				<td><input class="readonly_inp" type="text" value="${customer.leaderName}" disabled style="width:150px" /></td>
+			</tr>
 			<tr>
 				<td align="right">业务员代码:</td>
                 <td><input class="readonly_inp" disabled name="customer.handlerCode" type="text" value="${customer.handlerCode}"  style="width: 150px" /></td>
@@ -33,22 +41,12 @@ var ctx = '${ctx}';
                 <td><input class="readonly_inp" disabled name="customer.handlerName" type="text" value="${customer.handlerName}"  style="width: 150px" /></td>
 			</tr>
 			<tr>
-				 <td align="right">结算方式:</td>
+				<td align="right">结算方式:</td>
                 <td><input class="readonly_inp" type="text" name="customer.payWays" value="${customer.payWays}" disabled style="width:150px" /></td>
-				<td align="right">&nbsp;</td>
-                <td colspan="3">&nbsp;</td>
-				
+                <td align="right">发票抬头:</td>
+				<td><input class="readonly_inp" type="text" value="${customer.invoiceTitle}" disabled style="width: 80%" /></td>
 			</tr>
 			<tr>
-				<td align="right">负责人姓名:</td>
-				<td><input class="readonly_inp" type="text" value="${customer.leaderName}" disabled style="width:150px" /></td>
-				<td align="right">客户单位:</td>
-				<td>
-                    <input class="readonly_inp" type="text" value="${customer.unit}" disabled style="width:150px" />
-                </td>
-			</tr>
-			<tr>
-				
 				<td align="right">生产编号开头:</td>
 				<td>
                     <input class="readonly_inp" type="text" name="customer.prefix" value="${customer.prefix}" disabled style="width:150px" />
@@ -67,8 +65,8 @@ var ctx = '${ctx}';
 				</td>
             </tr>
             <tr>
-                <td align="right">发票抬头:</td>
-				<td><input class="readonly_inp" type="text" value="${customer.invoiceTitle}" disabled style="width: 80%" /></td>
+                <td align="right">办事处:</td>
+                <td ><input class="readonly_inp" type="text" value="${customer.office}" disabled style="width: 50%" /></td>
                 <td align="right">传真:</td>
 				<td>
                     <input class="readonly_inp" type="text" name="customer.fax" value="${customer.fax}" disabled style="width:150px" />
@@ -80,10 +78,6 @@ var ctx = '${ctx}';
                     <input class="readonly_inp" type="text" value="${customer.address}" disabled style="width: 50%" />
                 </td>
 			</tr>
-            <tr>
-                <td align="right">办事处:</td>
-                <td colspan="3"><input class="readonly_inp" type="text" value="${customer.office}" disabled style="width: 50%" /></td>
-            </tr>
             <%-- <tr>
 				<td align="right">修饰价格:</td>
 				<td><input class="readonly_inp" disabled type="text" name="customer.customerPrice.modifyPrice" value="${customer.customerPrice.modifyPrice}"  style="width:150px" /></td>

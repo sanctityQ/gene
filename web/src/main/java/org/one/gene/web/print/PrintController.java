@@ -6,10 +6,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.service.OrderService;
 import org.one.gene.domain.service.PrintService;
+import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.OrderRepository;
@@ -160,7 +162,10 @@ public class PrintController {
      * 
      * */
     @Get("createReport")
-    public String createReport(){
+    public String createReport(Invocation inv){
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+		inv.addModel("customerFlag", customerFlag);// 用户归属公司标识，0-梓熙，1-代理公司，2-直接客户
     	return "createReport";
     }
 
@@ -169,7 +174,10 @@ public class PrintController {
      * 
      * */
     @Get("envelopePrint")
-    public String envelopePrint(){
+    public String envelopePrint(Invocation inv){
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+		inv.addModel("customerFlag", customerFlag);// 用户归属公司标识，0-梓熙，1-代理公司，2-直接客户
     	return "envelopePrint";
     }
     
@@ -191,12 +199,23 @@ public class PrintController {
         if(pageSize == null){
             pageSize = 20;
         }
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	String comCode = user.getUser().getCompany().getComCode();
+    	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+    	
         Sort s=new Sort(Direction.DESC, "createTime");
         Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
-        searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customercode);
+		if (!"0".equals(customerFlag)) {//代理公司和直接客户，只能查自己公司的业务
+			searchParams.put(SearchFilter.Operator.EQ+"_customerCode",user.getUser().getCustomer().getCode());
+		} else {
+			searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customercode);
+		}
         searchParams.put(SearchFilter.Operator.EQ+"_status","1");//订单审核通过
+    	if(!"1".equals(user.getUser().getCompany().getComLevel())){
+    		searchParams.put(SearchFilter.Operator.EQ+"_comCode",comCode);
+    	}
 		if (!"".equals(modifyTime)) {
         	searchParams.put(SearchFilter.Operator.GT+"_modifyTime",new Date(modifyTime));
         	searchParams.put(SearchFilter.Operator.LT+"_modifyTime",new Date(modifyTime+" 59:59:59"));

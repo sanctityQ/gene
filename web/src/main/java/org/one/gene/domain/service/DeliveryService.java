@@ -306,7 +306,7 @@ public class DeliveryService {
 					
 			orderInfo = new OrderInfo();
 			//单位
-			orderInfo.setUnit(customer.getUnit());
+			orderInfo.setUnit("");
 			//订单号
 			orderInfo.setOrderNo(primerProduct.getOrder().getOrderNo());
 			//生产编号
@@ -457,10 +457,10 @@ public class DeliveryService {
 		Customer customer = customerRepository.findByCode(customerCode);
 		
 		if (customer != null) {
-			companyName = customer.getUnit();
+			companyName = customer.getName();
 			webSite     = customer.getWebSite();
 			customerName= customer.getName();
-			unit = customer.getUnit();
+			unit = "";
 			deliveryAddress = customer.getAddress();
 			address         = customer.getAddress();
 			phoneNo         = customer.getPhoneNo();
@@ -801,9 +801,9 @@ public class DeliveryService {
 				Customer customer = customerRepository.findByCode(customerCode);
 				
 				if (customer != null) {
-					companyName = customer.getUnit();
+					companyName = customer.getName();
 					customerName= customer.getName();
-					unit = customer.getUnit();
+					unit = customer.getName();
 				}
 				
 				

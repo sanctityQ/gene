@@ -25,7 +25,7 @@ public interface UserRepository
 
   //List<User> findByNameAndComCode(String name, String comCode);
 
-  @SQL("select * from `user` where `staff_flag` = '0' and (`code` like :customerSQL or `name` like :customerSQL ) ")
-  List<User> vagueSeachCustomer(@Param("customerSQL") String customerSQL);
+  @SQL("select * from `user` where `validate` = '1' and (`code` like :userSQL or `name` like :userSQL ) ")
+  List<User> vagueSeachUser(@Param("userSQL") String userSQL);
 }
 

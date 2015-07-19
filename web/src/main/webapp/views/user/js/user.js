@@ -49,7 +49,6 @@ function deleteRpc(rpcDatas){
     });
 }
 
-
 function addUserSubmit() {
     var staffFlag = $('input:radio[name="user.staffFlag"]:checked').val();
     if (staffFlag == "0" && $.trim($("#customerid").val()) == "") {
@@ -74,7 +73,6 @@ function addUserSubmit() {
 
     document.form.submit();
 }
-
 
 function userList(data){
     var dg = $('#userList');
@@ -119,7 +117,6 @@ function rpcData() {
                },
                success: function (data) {
                    $.messager.progress('close');
-                   alert(date);
                    showData(data);
                },
                error:function(){
@@ -132,11 +129,26 @@ function rpcData() {
 function showData(data){
     if (data != null) {
         var resultData = data.rows;
-        for (var i = 0; i < resultData.length; i++) {
-            if (resultData[i].staffFlag) {
-                resultData[i].staffFlag = '是';
+        
+        for (var i = 0; i<resultData.length; i++) {
+            if (resultData[i].userFlag == '0') {
+                resultData[i].userFlag = '系统管理员';
+            } else if (resultData[i].userFlag == '1') {
+                resultData[i].userFlag = '管理层';
+            } else if (resultData[i].userFlag == '2') {
+                resultData[i].userFlag = '使用者';
             } else {
-                resultData[i].staffFlag = '否';
+            	resultData[i].userFlag = '';
+            }
+            
+            if (resultData[i].customerFlag == '0') {
+                resultData[i].customerFlag = '梓熙';
+            } else if (resultData[i].customerFlag == '1') {
+                resultData[i].customerFlag = '代理公司';
+            } else if (resultData[i].customerFlag == '2') {
+                resultData[i].customerFlag = '直接客户';
+            } else {
+            	resultData[i].customerFlag = '';
             }
         }
         $('#userList').datagrid("loadData", data);
@@ -153,7 +165,7 @@ function batchDelete() {
         selectFlag = true;
     });
     if (!selectFlag) {
-        $.messager.alert('系统信息','请选择要删除的业务员','info');
+        $.messager.alert('系统信息','请选择要删除的用户','info');
         return false;
     }
     deleteRpc(checkedIds);
@@ -161,37 +173,46 @@ function batchDelete() {
 
 $(function () {
 
-
     $("#addUserBtn").click(function () {
 
-        var staffFlag=$('input:radio[name="user.staffFlag"]:checked').val();
-        if(staffFlag == "0" && $.trim($("#customerid").val()) == ""){
-            alert("不是本公司用户，必须选择外部客户信息数据!");
-            return false;
-        }
-        if(staffFlag == "1" && $.trim($("#customerid").val()) != ""){
-            alert("是本公司用户，请清空外部客户信息数据!");
-            return false;
-        }
-        if ($.trim($("#code").val()) == "") {
-            alert("用户工号必须填写！");
-            return false;
-        }
-        else if ($.trim($("#name").val()) == "") {
-            alert("用户姓名必须填写！");
-            return false;
+    	var message = '';
+    	if ($.trim($("#code").val()) == "") {
+    		message += '用户工号必须填写！\n';
+    	}
+    	if ($.trim($("#name").val()) == "") {
+    		message += '用户姓名必须填写！\n';
+    	}
+    	
+    	if ($.trim($("#userid").val()) == "" && $.trim($("#plainPassword").val()) == "") {
+    		message += '用户密码必须填写！\n';
+    	}
+    	
+    	if ($("#plainPassword").val() != $('#plainPasswordConfirm').val()) {
+    		message += '用户密码必须一致！。\n';
+    	}
+    	
+        var userFlag=$('input:radio[name="user.userFlag"]:checked').val();
+        if( typeof(userFlag)=='undefined'){
+        	message += '需要选择用户标志。\n';
         }
         
-        if ($.trim($("#userid").val()) == "" && $.trim($("#plainPassword").val()) == "") {
-            alert("用户密码必须填写！");
-            return false;
+        if($.trim($("#customerid").val()) == ""){
+        	message += '需要选择归属公司名称(从查询下拉列表的结果中选择)。\n';
         }
 
-        if ($("#plainPassword").val() != $('#plainPasswordConfirm').val()) {
-            alert("用户密码必须一致！");
+        if($.trim($("#companyId").val()) == ""){
+        	message += '需要选择梓熙总/分公司机构名称(从查询下拉列表的结果中选择)。\n';
+        }
+        
+        var validate =$('input:radio[name="user.validate"]:checked').val();
+        if( typeof(validate)=='undefined'){
+        	message += '需要选择是否有效。\n';
+        }
+        
+        if (message!=''){
+            alert(message);
             return false;
         }
-
         document.form.submit();
 
 

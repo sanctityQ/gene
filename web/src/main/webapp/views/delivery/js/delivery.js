@@ -49,6 +49,11 @@ var orderInfoIni=function(){
  */
 var getOrderInfo=function(){
 	
+	if($("#customerFlag").val()!='0'){
+		alert("只有梓熙生物公司的用户才可以使用此功能。");
+		return false;
+	}
+	
     var win = $.messager.progress({
         title:'系统消息',
         msg:'请稍候…',

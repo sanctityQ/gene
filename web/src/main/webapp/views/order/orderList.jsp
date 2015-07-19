@@ -20,11 +20,13 @@ var ctx = '${ctx}';
 			<input class="inp_text" type="text" id="seachOrder" name="orderNo" value="" style="width:120px"/>
 			<ul id="seachOrderList"></ul>
 			</td>
-			<td>客户代码:</td>
-			<td><input class="inp_text" type="text" id="seachCustom" name="customerName" style="width:150px" />
-			    <input class="inp_text" type="hidden" id="customercode" name="customercode" />
-			    <ul id="seachCustomList"></ul>
-			</td>
+			<c:if test="${customerFlag=='0'}">
+				<td>客户代码:</td>
+				<td><input class="inp_text" type="text" id="seachCustom" name="customerName" style="width:150px" />
+				    <input class="inp_text" type="hidden" id="customercode" name="customercode" />
+				    <ul id="seachCustomList"></ul>
+				</td>
+			</c:if>
 		    <td align="right">订单日期:</td>
             <td>
                 <input type="text" class="easyui-datebox" id="createStartTime" required="required" style="width: 90px;">

@@ -40,7 +40,7 @@ public class Company extends IdEntity implements java.io.Serializable {
     /**
      * 机构级别.
      */
-    private byte comLevel;
+    private String comLevel;
     /**
      * 电话号码.
      */
@@ -70,7 +70,7 @@ public class Company extends IdEntity implements java.io.Serializable {
     }
 
 
-    public Company(String comCode, String comName, String upperComCode, String comType, byte comLevel, boolean validate) {
+    public Company(String comCode, String comName, String upperComCode, String comType, String comLevel, boolean validate) {
         this.comCode = comCode;
         this.comName = comName;
         this.upperComCode = upperComCode;
@@ -119,11 +119,11 @@ public class Company extends IdEntity implements java.io.Serializable {
     }
 
     @Column(name = "`com_level`")
-    public byte getComLevel() {
+    public String getComLevel() {
         return this.comLevel;
     }
 
-    public void setComLevel(byte comLevel) {
+    public void setComLevel(String comLevel) {
         this.comLevel = comLevel;
     }
 

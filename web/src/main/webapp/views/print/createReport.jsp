@@ -18,11 +18,13 @@
 			<td><input class="inp_text" type="text" id="seachOrder" name="orderNo" value="" style="width:80%"/>
 			    <ul id="seachOrderList"></ul>
 			</td>
-            <td align="right">客户代码:</td>
-            <td><input class="inp_text" type="text" id="seachCustom" name="customerName" value="" style="width:150px" />
-			    <input class="inp_text" type="hidden" id="customercode" name="customercode" value=""/>
-			    <ul id="seachCustomList"></ul>
-			</td>
+			<c:if test="${customerFlag=='0'}">
+	            <td align="right">客户代码:</td>
+	            <td><input class="inp_text" type="text" id="seachCustom" name="customerName" value="" style="width:150px" />
+				    <input class="inp_text" type="hidden" id="customercode" name="customercode" value=""/>
+				    <ul id="seachCustomList"></ul>
+				</td>
+			</c:if>
             <td><button type="button" class="btn" onclick="getOrderInfos();">查询</button></td>
 		</tr>
 	</table>

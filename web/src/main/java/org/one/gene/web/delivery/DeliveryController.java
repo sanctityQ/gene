@@ -255,8 +255,10 @@ public class DeliveryController {
      * 
      * */
     @Get("chukuList")
-    public String chukuList(){
-    	
+    public String chukuList(Invocation inv){
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+		inv.addModel("customerFlag", customerFlag);// 用户归属公司标识，0-梓熙，1-代理公司，2-直接客户
     	return "chukuList";
     }
     //出库单导出

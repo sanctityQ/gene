@@ -27,6 +27,10 @@ public class Customer extends IdEntity implements java.io.Serializable {
      */
     private String name;
     /**
+     * 客户标识，0-梓熙，1-代理公司，2-直接客户
+     */
+    private String customerFlag;
+    /**
      * 负责人姓名.
      */
     private String leaderName;
@@ -61,10 +65,6 @@ public class Customer extends IdEntity implements java.io.Serializable {
      */
     private String webSite;
     
-    /**
-     * 客户单位
-     */
-    private String unit;
     
     /**
      * 办事处
@@ -123,7 +123,16 @@ public class Customer extends IdEntity implements java.io.Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
+    
+    @Column(name = "`customer_flag`", length = 3)
+    public String getCustomerFlag() {
+        return this.customerFlag;
+    }
+    
+    public void setCustomerFlag(String customerFlag) {
+        this.customerFlag = customerFlag;
+    }
+    
     @Column(name = "`leader_name`", length = 127)
     public String getLeaderName() {
         return this.leaderName;
@@ -184,14 +193,6 @@ public class Customer extends IdEntity implements java.io.Serializable {
 	}
 	public void setWebSite(String webSite) {
 		this.webSite = webSite;
-	}
-
-	@Column(name = "`unit`", length = 255)
-    public String getUnit() {
-		return unit;
-	}
-	public void setUnit(String unit) {
-		this.unit = unit;
 	}
 
 	@Column(name = "`office`", length = 255)

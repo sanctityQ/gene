@@ -65,14 +65,21 @@ public class UserController {
   }
 
   @Get("preAdd")
-  public String prepareAddUser() {
+  public String prepareAddUser(Invocation inv) {
+	    //查询总公司信息，如果不是梓熙的用户，机构默认为总公司
+	    Company topCompany = companyRepository.findByComCode("00000000");
+	    inv.addModel("topCompany", topCompany);
     return "user";
   }
 
   @Get("view/{id}")
   public String view(@Param("id") Long id, @Param("op")String operation,Invocation inv) {
     User user = userRepository.findOne(id);
+    //查询总公司信息，如果不是梓熙的用户，机构默认为总公司
+    Company topCompany = companyRepository.findByComCode("00000000");
+    
     inv.addModel("user", user);
+    inv.addModel("topCompany", topCompany);
     if(StringUtils.isNotBlank(operation)){
       inv.addModel("op", operation);
     }
@@ -117,7 +124,9 @@ public class UserController {
         back.put("comCode",input.getCompany().getComName());
         back.put("mobile",input.getMobile());
         back.put("email",input.getEmail());
-        back.put("staffFlag",input.isStaffFlag());
+        back.put("userFlag",input.getUserFlag());
+        back.put("customerName",input.getCustomer().getName());
+        back.put("customerFlag",input.getCustomer().getCustomerFlag());
         back.put("validate",input.isValidate());
         return back;
       }
@@ -172,7 +181,10 @@ public class UserController {
         back.put("comCode",input.getCompany().getComName());
         back.put("mobile",input.getMobile());
         back.put("email",input.getEmail());
-        back.put("staffFlag",input.isStaffFlag());
+        back.put("userFlag",input.getUserFlag());
+        back.put("customerName",input.getCustomer().getName());
+        back.put("customerFlag",input.getCustomer().getCustomerFlag());
+        back.put("validate",input.isValidate());
         return back;
       }
     });
@@ -184,18 +196,15 @@ public class UserController {
 
   @Post("register")
   public String addUser(@Param("user") User user, Invocation inv) {
-    Company company = companyRepository.findByComCode(user.getCompany().getComCode());
+    Company company = companyRepository.findOne(user.getCompany().getId());
     user.setCompany(company);
-	if (!user.isStaffFlag() && user.getCustomer()!=null) {
+	if (user.getCustomer()!=null) {
 		Customer customer = customerRepository.findOne(user.getCustomer().getId());
 			if (customer != null) {
 				user.setCustomer(customer);
 			}
 	}
 	
-	if (user.isStaffFlag()) {
-		user.setCustomer(null);
-	}
     accountService.registerUser(user);
     return "r:/user/manageQuery";
   }
@@ -216,12 +225,12 @@ public class UserController {
   }
 
   /**
-   * 模糊查询客户信息
+   * 模糊查询用户信息
    */
-  @Post("vagueSeachCustomer")
-  public Reply vagueSeachCustomer(@Param("customercode") String customercode, Invocation inv) {
-    String customerSQL = "%" + customercode + "%";
-    List<User> users = userRepository.vagueSeachCustomer(customerSQL);
+  @Post("vagueSeachUser")
+  public Reply vagueSeachUser(@Param("userName") String userName, Invocation inv) {
+    String userSQL = "%" + userName + "%";
+    List<User> users = userRepository.vagueSeachUser(userSQL);
     return Replys.with(users).as(Json.class);
   }
 }

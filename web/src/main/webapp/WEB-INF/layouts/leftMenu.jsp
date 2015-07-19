@@ -86,11 +86,6 @@
             <li url="${ctx}/user/manageQuery" id="manageQuery"><i class="icon-cogs"></i>用户管理</li>
         </ul>
     </div>
-	<%--<div title="业务员管理" data-options="iconCls:'salesman'" style="height:200px;">--%>
-		<%--<ul class="sbu_menu">--%>
-			<%--<li url="${ctx}/user/prepareManageQuery"><i class="icon-cogs"></i>业务员管理</li>--%>
-		<%--</ul>--%>
-	<%--</div>--%>
 	<div title="客户管理" data-options="iconCls:'custom'" style="height:200px;">
 		<ul class="sbu_menu">
 			<li url="${ctx}/customer/clientManage" id="clientManage"><i class="icon-cogs"></i>客户管理</li>

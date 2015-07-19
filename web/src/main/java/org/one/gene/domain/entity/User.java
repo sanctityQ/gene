@@ -30,7 +30,6 @@ public class User extends IdEntity implements java.io.Serializable {
   /**
    * 机构代码.
    */
-  //private String comCode;
   private Company company;
   /**
    * 手机号.
@@ -40,17 +39,17 @@ public class User extends IdEntity implements java.io.Serializable {
    * 邮箱.
    */
   private String email;
+
   /**
-   * 是否本公司用户标识,0-不是，1-是.
+   * 用户标志,0-系统管理员，1-管理层，2-使用者
    */
-  private boolean staffFlag;
+  private String userFlag;
   /**
    * 是否有效,0-不是，1-是.
    */
   private boolean validate;
 
   private Customer customer;
-
 
   private String salt;
 
@@ -59,7 +58,6 @@ public class User extends IdEntity implements java.io.Serializable {
   private Date createTime;
 
   private Date modifyTime;
-
 
 
   public User() {
@@ -102,15 +100,6 @@ public class User extends IdEntity implements java.io.Serializable {
     this.company = company;
   }
 
-//  @Column(name = "`com_code`", length = 10)
-//  public String getComCode() {
-//    return this.comCode;
-//  }
-//
-//  public void setComCode(String comCode) {
-//    this.comCode = comCode;
-//  }
-
   @Column(name = "`mobile`", length = 11)
   public String getMobile() {
     return this.mobile;
@@ -129,15 +118,15 @@ public class User extends IdEntity implements java.io.Serializable {
     this.email = email;
   }
 
-  @Column(name = "`staff_flag`")
-  public boolean isStaffFlag() {
-    return this.staffFlag;
+  @Column(name = "`user_flag`")
+  public String getUserFlag() {
+    return this.userFlag;
   }
 
-  public void setStaffFlag(boolean staffFlag) {
-    this.staffFlag = staffFlag;
+  public void setUserFlag(String userFlag) {
+    this.userFlag = userFlag;
   }
-
+  
   @Column(name = "`validate`")
   public boolean isValidate() {
     return this.validate;

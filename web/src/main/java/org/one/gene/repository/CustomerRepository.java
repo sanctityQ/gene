@@ -23,5 +23,9 @@ public interface CustomerRepository extends PagingAndSortingRepository<Customer,
 	
 	@SQL("select * from `customer` where `unit` like :unitSQL")
 	List<Customer> vagueSeachUnit(@Param("unitSQL") String unitSQL);
+	
+	@SQL("select * from `customer` where `customer_Flag` ='0'")
+	List<Customer> seachHaveZiXi();
+	
 }
 

@@ -15,8 +15,10 @@
 		<tr>
 			<td align="right">订单号:</td>
 			<td><input id="orderNo" class="inp_text" type="text" value="" style="width: 60%" /></td>
-			<td align="right">客户代码:</td>
-			<td><input id="customerCode" class="inp_text" type="text" value="" style="width: 60%" /></td>
+			<c:if test="${customerFlag=='0'}">
+				<td align="right">客户代码:</td>
+				<td><input id="customerCode" class="inp_text" type="text" value="" style="width: 60%" /></td>
+			</c:if>
 			<td><button type="button" class="btn" onclick="getExamineInfo()">查询</button></td>
 
 		</tr>

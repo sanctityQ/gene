@@ -21,7 +21,8 @@
 <script type="text/javascript">
  var ctx = '${ctx}';
  function uploadSubmit(){
-	 if($("#seachCustom").val()==""){
+	 //只有梓熙的用户才要修选择客户，其他公司的用户默认为自己的公司
+	 if($("#customerid").val()=="" && $("#customerFlagOld").val()=="0"){
 		 alert("请录入客户姓名或客户代码！");
 		 return false;
 	 }
@@ -47,20 +48,21 @@
 </script>
 </head>
 <body>
-<form id="inputForm" modelAttribute="user" action="${ctx}/order/upload" method="post" enctype="multipart/form-data"
-	class="form-horizontal">
+<form id="inputForm" modelAttribute="user" action="${ctx}/order/upload" method="post" enctype="multipart/form-data" class="form-horizontal">
+          <input type="hidden" id="customerFlagOld" name="customerFlagOld" value="${customerFlag}"/>
 <div class="page_padding">
 	<div class="content_box">
 		<h2>导入单订信息</h2>
-		<%-- <c:if test="${flag}"> --%>
+		<c:if test="${customerFlag=='0'}">
 		<div class="import_box">
-			<i class="icon-group"></i>请输入客户姓名或客户代码。
-			<br />
-			<input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="${customerName}" style="width: 300px" />
-			<input class="inp_text" id="customerCode" type="hidden" name="customerCode" value="${customerCode}"/>
-			<ul id="seachList"></ul>
+			<i class="icon-group"></i>请输入客户姓名或客户代码。(从查询的结果列表中选择)
+			<br/>
+		    <input type="hidden" id="customerid" name="user.customer.id" value=""/>
+		    <input type="hidden" id="customerFlag" name="user.customer.customerFlag" value=""/>
+		    <input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="user.customer.name" value="" onblur="clearCustomerId()" style="width: 240px" />
+		    <ul id="seachCustomList"></ul>
 		</div>
-		<%-- </c:if> --%>
+		</c:if>
 		<div class="import_box" style="line-height: 16px;">
 			<i class="icon-upload-alt"></i>上传您的excel模板，系统将根据您导入的信息生成订单。
 			<br />
@@ -68,8 +70,6 @@
 			<br /><br />
 			<div class="file_box">
 				<input name="file" type="file" id="upload" /> 
-<!-- 				<input name="file" type="text" id="viewfile" class="inp_text" value="请选择文件…" style="width: 220px;" /> 
-				<label class="btn" for="unload">浏览…</label> -->
 			</div>
 		</div>
 		<div class="import_box" style="padding-bottom: 50px;">
@@ -78,8 +78,6 @@
 	</div>
 </div>
 </form>
-<c:if test="${flag}">
-<script src="${ctx}/static/js/vagueSeach.js" ></script>
-</c:if>
+<script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 </body>
 </html>

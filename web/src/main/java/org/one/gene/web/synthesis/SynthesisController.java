@@ -75,7 +75,6 @@ public class SynthesisController {
      * */
     @Get("productionData")
     public String productionData(){
-    	
     	return "productionData";
     }
     

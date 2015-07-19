@@ -44,12 +44,26 @@ public class CustomerController {
 	@Get("customerView")
     public String customerView(@Param("customerCode") String customerCode,Invocation inv){
 		Customer customer = customerRepository.findByCode(customerCode);
+		if ("0".equals(customer.getCustomerFlag())) {
+			customer.setCustomerFlag("梓熙");
+		}else if ("1".equals(customer.getCustomerFlag())) {
+			customer.setCustomerFlag("代理公司");
+		}else if ("2".equals(customer.getCustomerFlag())) {
+			customer.setCustomerFlag("直接客户");
+		}
 		inv.addModel("customer", customer);
         return "customerView";
     }
 	@Get("modifyCustomer")
     public String modifyCustomer(@Param("customerCode") String customerCode,Invocation inv){
 		Customer customer = customerRepository.findByCode(customerCode);
+		String haveZiXi = "";//是否有梓熙
+		List<Customer> customers = customerRepository.seachHaveZiXi();
+		if (customers != null && customers.size() > 0) {
+			haveZiXi = "1";
+		}
+		
+		inv.addModel("haveZiXi", haveZiXi);
 		inv.addModel("customer", customer);
         return "addClient";
     }
@@ -58,9 +72,12 @@ public class CustomerController {
 		ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
 		Customer customer = new Customer();
 		customer.setCreateTime(new Date());
-		//业务员信息，默认带出登陆用户绑定客户下的业务员。
-		customer.setHandlerCode(user.getUser().getCustomer().getCode());
-		customer.setHandlerName(user.getUser().getCustomer().getName());
+		String haveZiXi = "";//是否有梓熙
+		List<Customer> customers = customerRepository.seachHaveZiXi();
+		if (customers != null && customers.size() > 0) {
+			haveZiXi = "1";
+		}
+		inv.addModel("haveZiXi", haveZiXi);
 		inv.addModel("customer", customer);
 		return "addClient";
 	}
@@ -72,7 +89,7 @@ public class CustomerController {
 	
 	@Post("query")
 	public Reply query(@Param("customerName") String customerName,
-			@Param("unitName") String unitName,
+			@Param("customerFlag") String customerFlag,
 			@Param("pageNo")Integer pageNo,
             @Param("pageSize")Integer pageSize,Invocation inv){
 		
@@ -87,7 +104,7 @@ public class CustomerController {
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_name",customerName);
-        searchParams.put(SearchFilter.Operator.EQ+"_unit",unitName);
+        searchParams.put(SearchFilter.Operator.EQ+"_customerFlag",customerFlag);
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<Customer> spec = DynamicSpecifications.bySearchFilter(filters.values(), Customer.class);
         

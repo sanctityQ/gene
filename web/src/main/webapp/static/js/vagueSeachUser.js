@@ -1,18 +1,17 @@
 $(function(){
-
-    $("#seachCustom")
+    $("#seachUserName")
         .focus(function(){$(this).addClass("fouse");})  
         .blur(function(){$(this).removeClass("fouse");});
     
-    seachCustomChange();
+    seachUserChange();
 });
-function seachCustomChange(){
-    var seach = $("#seachCustom");
+function seachUserChange(){
+    var seach = $("#seachUserName");
     var left = seach.offset().left;
     var top = seach.offset().top + 30;
-    var list = $("#seachCustomList");
+    var list = $("#seachUserList");
     list.css({'left':left,'top':top});
-    list.on("click",'li',seachCustomSelect);
+    list.on("click",'li',seachUserSelect);
     seach.bind('keydown',function(event){
         var select = $('li.selected',list);
         if(event.keyCode == 40){
@@ -39,19 +38,15 @@ function seachCustomChange(){
         }
     });
     function ajaxSeach(){
-    	
-    	//重新模糊查询时清空
-    	$("#customerid").val("");
-    	$("#customerFlag").val("");
-        
-    	setTimeout(function(){
+    	$("#vagueUserCode").val("");//清空用户代码
+        setTimeout(function(){
             if(seach.val() != ''){
                 $.ajax({
                     type: "post",
-                    url: "/gene/customer/vagueSeachCustomer",
+                    url: "/gene/user/vagueSeachUser",
                     dataType: "json",
             		data:{
-            			customercode: seach.val()
+            			userName: seach.val()
                     },
                     success:function(data){
                         list.empty();
@@ -63,8 +58,7 @@ function seachCustomChange(){
                             var id   = data[i].id;
                             var code = data[i].code;
                             var name = data[i].name;
-                            var custFlag = data[i].customerFlag;
-                            li += '<li id="'+id+'" custFlag="'+custFlag+'" code="'+code+'">'+name+'</li>';
+                            li += '<li id="'+id+'" code="'+code+'">'+name+'</li>';
                         };
                         list.append(li);
                     }
@@ -75,46 +69,14 @@ function seachCustomChange(){
         },500);
     };
 }
-function seachCustomSelect(){
-    var seach = $("#seachCustom");
-    var customerid = $("#customerid");
-    var customerFlag = $("#customerFlag");
-    var list = $("#seachCustomList");
-    var val = $(this).text();
+function seachUserSelect(){
+    var seach = $("#seachUserName");
+    var vagueUserCode = $("#vagueUserCode");
+    var list = $("#seachUserList");
     var id = $(this).attr("id");
     var code = $(this).attr("code");
-    var custFlag = $(this).attr("custFlag");
+    var val = $(this).text();
     seach.val(val).attr("tagId",code);
-    customerid.val(id)
-    customerFlag.val(custFlag);
+    vagueUserCode.val(code)
     list.hide(100);
-
-    //如果需要赋总公司值
-    if(typeof($("#needTopCom").val()) != 'undefind'){
-    	addTopComInfo( custFlag );
-    }
-    
 };
-
-function addTopComInfo( custFlag ){
-
-    if(custFlag =='0'){
-    	//梓熙
-    	$("#companyId").val("");
-    	$("#companyComCode").val("");
-    	$("#seachCompany").val("");
-    	$("#tdComCode").show();
-    	$("#tdComName").show();
-    	$("#tdComCodeHidden").hide();
-    }else{
-    	//外部客户，需要赋值总公司值
-    	$("#companyId").val($("#topComid").val());
-    	$("#companyComCode").val($("#topComCode").val());
-    	$("#seachCompany").val($("#topComName").val());
-    	$("#tdComCode").hide();
-    	$("#tdComName").hide();
-    	$("#tdComCodeHidden").show();
-    }
-	
-};	
-
