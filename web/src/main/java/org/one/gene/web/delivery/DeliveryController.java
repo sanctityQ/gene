@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
+import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.entity.User;
@@ -174,12 +175,15 @@ public class DeliveryController {
     }
     
     @Post("deliveryLabelPrint")
-    public Object deliveryLabelPrint(@Param("boardNo") String boardNo,@Param("noType") String noType, Invocation inv) {
+    public Object deliveryLabelPrint(@Param("orderNo") String orderNo, Invocation inv) {
     	
-		List<PrimerProduct> primerProducts = printService.getPrimerProducts(boardNo, noType, inv);
+		Order order = printService.getPrintOrder(orderNo, inv);
 		EntityReply<File> fileStr = null; //form 提交使用该类型返回
 		try {
-			fileStr = deliveryService.deliveryLabel(primerProducts, inv);
+			if (order == null) {
+				throw new Exception("您录入发货标签查询条件无信息，请您核对后重新查询!");
+			}
+			fileStr = deliveryService.deliveryLabel(order, inv);
 		} catch (Exception e) {
 			e.printStackTrace();
 			inv.addModel("userExp","您录入发货标签查询条件无信息，请您核对后重新查询!");

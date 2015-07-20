@@ -1,13 +1,13 @@
 
 var deliveryLabelPrint = function(){
-	var boardNo = $.trim($('#boardNoOrProductNo').val());
-	var noType = $.trim($('#noType').val());
+	var orderNo = $.trim($('#orderNo').val());
 	
-	if(boardNo == ""){
-		alert("请输入板号或生产编号。");
+	if(orderNo == ""){
+		alert("请输入订单号或生产编号。");
 		return;
 	}
 	var url = $('#deliveryLabelfm').attr("action");
-	var path = url+'?boardNo='+boardNo+'&noType='+noType; 
-	$('#deliveryLabelfm').attr("action", path).submit()
+	var path = url+'?orderNo='+orderNo; 
+	$('#deliveryLabelfm').attr("action", path).submit();
+	$('#deliveryLabelfm').attr("action", url);
 }

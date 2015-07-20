@@ -290,9 +290,10 @@ public class DeliveryService {
      * 导出打印标签文件
      * @throws Exception 
      * */
-	public EntityReply<File> deliveryLabel(List<PrimerProduct> primerProducts, Invocation inv) throws Exception {
-		//打印单位、订单号、生产编号、碱基数（总和）、od/tube、od总量
-		String customerCode = primerProducts.get(0).getOrder().getCustomerCode();
+	public EntityReply<File> deliveryLabel(Order order, Invocation inv) throws Exception {
+		
+		//打印  公司名称、订单号、生产编号、分装规则、碱基数（总和）
+		String customerCode = order.getCustomerCode();
 		String strFilePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"upExcel"+File.separator+"deliveryLabel"+File.separator;
 		String strFileName = customerCode+"-"+System.currentTimeMillis()+".xls";
 		
@@ -301,12 +302,12 @@ public class DeliveryService {
 		Customer customer = customerRepository.findByCode(customerCode);
 		
 		
-		for (PrimerProduct primerProduct : primerProducts) {
+		for (PrimerProduct primerProduct : order.getPrimerProducts()) {
 			
 					
 			orderInfo = new OrderInfo();
-			//单位
-			orderInfo.setUnit("");
+			//公司名称
+			orderInfo.setUnit(order.getCustomerName());
 			//订单号
 			orderInfo.setOrderNo(primerProduct.getOrder().getOrderNo());
 			//生产编号
@@ -362,8 +363,8 @@ public class DeliveryService {
 			}else{
 				row = sheet.getRow(rowNumForpage);
 			}
-			for (int k=0;k<6;k++){
-				HSSFCell cell = row.createCell((short) ((columNum-1)*6+k));//产生单元格
+			for (int k=0;k<5;k++){
+				HSSFCell cell = row.createCell((short) ((columNum-1)*5+k));//产生单元格
 				//设置单元格内容为字符串型
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				//往单元格中写入信息

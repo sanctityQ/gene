@@ -33,14 +33,14 @@ var ctx = '${ctx}';
 			<tr>
 				<td align="right">客户编号:</td>
 				<td><input id="code" name="customer.code" class="readonly_inp" type="text"  style="width: 80%" value="${customer.code}" disabled/></td>
-				<td align="right">客户姓名:</td>
+				<td align="right">客户名称:</td>
 				<td><input id="name" name="customer.name" class="readonly_inp" type="text" style="width: 80%" value="${customer.name}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">负责人姓名:</td>
 				<td><input id="leaderName" name="customer.leaderName" class="readonly_inp" type="text"  style="width: 80%" value="${customer.leaderName}" disabled/></td>
-				<td align="right">客户单位:</td>
-				<td><input id="customerUnit" class="readonly_inp" type="text" style="width: 80%" value="${customer.invoiceTitle}" disabled/></td>
+				<td align="right">业务员:</td>
+				<td><input id="handlerName" class="readonly_inp" type="text" style="width: 80%" value="${customer.handlerName}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">发票抬头:</td>
@@ -63,8 +63,6 @@ var ctx = '${ctx}';
 			<tr>
 				<td align="right">网址:</td>
 				<td><input id="webSite" class="readonly_inp" type="text" style="width: 50%" value="${customer.webSite}" disabled/></td>
-				<td align="right">业务员:</td>
-				<td><input id="handlerCode" class="readonly_inp" type="text" style="width: 80%" value="${customer.handlerCode}" disabled/></td>
 			</tr>
 			<tr>
 				<td colspan="4" height="10"></td>

@@ -23,7 +23,7 @@
  function uploadSubmit(){
 	 //只有梓熙的用户才要修选择客户，其他公司的用户默认为自己的公司
 	 if($("#customerid").val()=="" && $("#customerFlagOld").val()=="0"){
-		 alert("请录入客户姓名或客户代码！");
+		 alert("请录入客户公司代码或名称！");
 		 return false;
 	 }
 	 if($("#upload").val()==""){
@@ -55,11 +55,11 @@
 		<h2>导入单订信息</h2>
 		<c:if test="${customerFlag=='0'}">
 		<div class="import_box">
-			<i class="icon-group"></i>请输入客户姓名或客户代码。(从查询的结果列表中选择)
+			<i class="icon-group"></i>请输入客户公司代码或名称。(从查询的结果列表中选择)
 			<br/>
-		    <input type="hidden" id="customerid" name="user.customer.id" value=""/>
-		    <input type="hidden" id="customerFlag" name="user.customer.customerFlag" value=""/>
-		    <input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="user.customer.name" value="" onblur="clearCustomerId()" style="width: 240px" />
+		    <input type="hidden" id="customerid" name="customerid" value=""/>
+		    <input type="hidden" id="customerFlag" name="customerFlag" value=""/>
+		    <input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="user.customer.name" value="" style="width: 240px" />
 		    <ul id="seachCustomList"></ul>
 		</div>
 		</c:if>

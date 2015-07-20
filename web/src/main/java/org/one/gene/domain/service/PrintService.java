@@ -55,6 +55,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.instruction.reply.EntityReply;
 import com.sinosoft.one.mvc.web.instruction.reply.Replys;
@@ -91,31 +92,34 @@ public class PrintService {
     
     @Autowired
     private PrimerLabelConfigRepository primerLabelConfigRepository;
+    
     /**
-     * 得到导出打印标签的生产数据
+     * 得到导出打印标签的生产数据的订单对象
      * */
-	public List<PrimerProduct> getPrimerProducts(String boardNo, String noType, Invocation inv) {
+	public Order getPrintOrder(String orderNo, Invocation inv) {
 		
-		List<PrimerProduct> primerProducts = new ArrayList<PrimerProduct>();
-		List<PrimerProduct> primerProductBoardNOs =  new ArrayList<PrimerProduct>();
-		if (!"".equals(boardNo)) {
-			if ("1".equals(noType)) {
-				primerProductBoardNOs = primerProductRepository.findByBoardNo(boardNo);
-				if (primerProductBoardNOs != null && primerProductBoardNOs.size()>0) {
-					primerProducts.addAll(primerProductBoardNOs);
+		Order order = null;
+		List<PrimerProduct> primerProducts = Lists.newArrayList();
+		if (!"".equals(orderNo)) {
+			//先按订单号查
+			order = orderRepository.findByOutOrderNo(orderNo);
+			if (order != null) {
+				primerProducts = primerProductRepository.findByOrder(order);
+				if (primerProducts != null) {
+					order.setPrimerProducts(primerProducts);
 				}
-			}else if("2".equals(noType)){
-				PrimerProduct primerProduct = primerProductRepository.findByProductNoOrOutProductNo(boardNo, boardNo);
-				Order order = orderRepository.findByOrderNo(primerProduct.getOrder().getOrderNo());
-				if (order != null&order.getPrimerProducts().size()>0) {
-					for(PrimerProduct pp:order.getPrimerProducts()){
-						primerProducts.add(pp);
-					}
+			} else {
+				//再按生产编号查
+				PrimerProduct primerProduct = primerProductRepository.findByProductNoOrOutProductNo(orderNo, orderNo);
+				order = orderRepository.findByOutOrderNo(primerProduct.getOrder().getOrderNo());
+				if (order != null && primerProduct != null) {
+					primerProducts.add(primerProduct);
+					order.setPrimerProducts(primerProducts);
 				}
 			}
 		}
 		
-		return primerProducts;
+		return order;
 	}
 	
     /**

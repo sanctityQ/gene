@@ -23,6 +23,8 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
     public Order getLastOrder();
     
     public Order findByOrderNo(String orderNo);
+    
+    public Order findByOutOrderNo(String outOrderNo);
 
     public List<Order> findByCustomerCode(String customerCode);
 
