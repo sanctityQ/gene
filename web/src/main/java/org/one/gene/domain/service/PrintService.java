@@ -123,6 +123,34 @@ public class PrintService {
 	}
 	
     /**
+     * 得到导出打印标签的生产数据
+     * */
+	public List<PrimerProduct> getPrimerProducts(String boardNo, String noType, Invocation inv) {
+		List<PrimerProduct> primerProducts = new ArrayList<PrimerProduct>();
+		List<PrimerProduct> primerProductBoardNOs =  new ArrayList<PrimerProduct>();
+		if (!"".equals(boardNo)) {
+			if ("1".equals(noType)) {
+				primerProductBoardNOs = primerProductRepository.findByBoardNo(boardNo);
+				if (primerProductBoardNOs != null && primerProductBoardNOs.size()>0) {
+					primerProducts.addAll(primerProductBoardNOs);
+				}
+				
+			}else if("2".equals(noType)){
+				PrimerProduct primerProduct = primerProductRepository.findByProductNoOrOutProductNo(boardNo, boardNo);
+				Order order = orderRepository.findByOrderNo(primerProduct.getOrder().getOrderNo());
+				if (order != null&order.getPrimerProducts().size()>0) {
+					for(PrimerProduct pp:order.getPrimerProducts()){
+						primerProducts.add(pp);
+					}
+				}
+				
+			}
+		}
+			
+		return primerProducts;
+			
+	}
+    /**
      * 从生产数据得到订单List
      * @throws Exception 
      * */
