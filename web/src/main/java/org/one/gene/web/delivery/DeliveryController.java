@@ -174,16 +174,20 @@ public class DeliveryController {
     	return "deliveryLabel";
     }
     
+    /**
+     * 导出发货标签文件（从按钮中导出）
+     * @throws IOException 
+     * */
     @Post("deliveryLabelPrint")
-    public Object deliveryLabelPrint(@Param("orderNo") String orderNo, Invocation inv) {
+    public Object deliveryLabelPrint(@Param("boardNo") String  boardNo, Invocation inv) {
     	
-		Order order = printService.getPrintOrder(orderNo, inv);
+    	List<OrderInfo> orderInfos = deliveryService.getPrintOrders(boardNo, inv);
 		EntityReply<File> fileStr = null; //form 提交使用该类型返回
 		try {
-			if (order == null) {
+			if (orderInfos == null || orderInfos.size()==0) {
 				throw new Exception("您录入发货标签查询条件无信息，请您核对后重新查询!");
 			}
-			fileStr = deliveryService.deliveryLabel(order, inv);
+			fileStr = deliveryService.deliveryLabel(orderInfos, inv);
 		} catch (Exception e) {
 			e.printStackTrace();
 			inv.addModel("userExp","您录入发货标签查询条件无信息，请您核对后重新查询!");
@@ -193,6 +197,17 @@ public class DeliveryController {
     	return fileStr;
     }
     
+    /**
+     * 导出发货标签文件（从列表中导出）
+     * @throws Exception 
+     * @throws IOException 
+     * */
+    @Post("exDeliveryLabel/{boardNoStr}/")
+    public void exDeliveryLabel(@Param("boardNoStr") String  boardNo, Invocation inv) throws Exception {
+    	
+    	List<OrderInfo> orderInfos = deliveryService.getPrintOrders(boardNo, inv);
+    	deliveryService.exDeliveryLabel(orderInfos, inv);
+    }
     
     /**
      * 进入发货清单查询页面

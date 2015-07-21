@@ -128,6 +128,8 @@ public class OrderInfo {
 	private String commodityCode;
 	//货物名称
 	private String commodityName;
+	
+	
 	public String getCustomerPhoneNm() {
 		return customerPhoneNm;
 	}

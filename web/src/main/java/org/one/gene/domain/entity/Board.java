@@ -47,6 +47,7 @@ public class Board extends IdEntity implements java.io.Serializable {
     
     private String operationTypeDesc;//操作类型描述
     
+	private String createUserName;//创建人姓名
     
     
     public Board() {
@@ -139,6 +140,14 @@ public class Board extends IdEntity implements java.io.Serializable {
 		this.operationTypeDesc = operationTypeDesc;
 	}
     
+	@Transient
+    public String getCreateUserName() {
+		return createUserName;
+	}
+
+	public void setCreateUserName(String createUserName) {
+		this.createUserName = createUserName;
+	}
 }
 
 

@@ -45,6 +45,7 @@ import org.one.gene.repository.PrimerLabelConfigRepository;
 import org.one.gene.repository.PrimerProductOperationRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.repository.PrimerProductValueRepository;
+import org.one.gene.web.delivery.DeliveryInfo;
 import org.one.gene.web.order.OrderInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,34 +94,6 @@ public class PrintService {
     @Autowired
     private PrimerLabelConfigRepository primerLabelConfigRepository;
     
-    /**
-     * 得到导出打印标签的生产数据的订单对象
-     * */
-	public Order getPrintOrder(String orderNo, Invocation inv) {
-		
-		Order order = null;
-		List<PrimerProduct> primerProducts = Lists.newArrayList();
-		if (!"".equals(orderNo)) {
-			//先按订单号查
-			order = orderRepository.findByOutOrderNo(orderNo);
-			if (order != null) {
-				primerProducts = primerProductRepository.findByOrder(order);
-				if (primerProducts != null) {
-					order.setPrimerProducts(primerProducts);
-				}
-			} else {
-				//再按生产编号查
-				PrimerProduct primerProduct = primerProductRepository.findByProductNoOrOutProductNo(orderNo, orderNo);
-				order = orderRepository.findByOutOrderNo(primerProduct.getOrder().getOrderNo());
-				if (order != null && primerProduct != null) {
-					primerProducts.add(primerProduct);
-					order.setPrimerProducts(primerProducts);
-				}
-			}
-		}
-		
-		return order;
-	}
 	
     /**
      * 得到导出打印标签的生产数据

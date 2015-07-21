@@ -7,7 +7,7 @@
              <th data-options="field:'boardNo',width:100,sortable:true">板号</th>
              <th data-options="field:'boardType',width:50,sortable:true">板类型</th>
              <th data-options="field:'createTime',width:80,sortable:true">创建时间</th>
-             <th data-options="field:'createUser',width:50,sortable:true">创建人</th>
+             <th data-options="field:'createUserName',width:50,sortable:true">创建人</th>
              <th data-options="field:'_operate',align:'center',width:100,formatter:formatOper">操作</th>
          </tr>
          </thead>
@@ -99,22 +99,23 @@ function formatOper(val,row,index){
 	}
 	if(typeof(btnFlag) != 'undefined' && btnFlag =="MachineTable"){
 		var url = "'/gene/synthesis/exMachineTable/"+row.boardNo+"/'";
-	    return '<a href="javascript:;"  onclick="exMachineTable('+url+')"><i class="icon-pencil"></i>导出上机表</a>';
+	    return '<a href="javascript:;"  onclick="executeUrl('+url+')"><i class="icon-pencil"></i>导出上机表</a>';
 	}
 	if(typeof(btnFlag) != 'undefined' && btnFlag =="PackTable"){
 		var url = "'/gene/synthesis/exPackTable/"+row.boardNo+"/'";
-	    return '<a href="javascript:;"  onclick="exPackTable('+url+')"><i class="icon-pencil"></i>导出分装表</a>';
+	    return '<a href="javascript:;"  onclick="executeUrl('+url+')"><i class="icon-pencil"></i>导出分装表</a>';
+	}
+	if(typeof(btnFlag) != 'undefined' && btnFlag =="DeliveryLabel"){
+		var url = "'/gene/delivery/exDeliveryLabel/"+row.boardNo+"/'";
+	    return '<a href="javascript:;"  onclick="executeUrl('+url+')"><i class="icon-pencil"></i>发货标签</a>';
 	}
 };
 
-function exMachineTable(url){
+function executeUrl(url){
+	var oldUrl = document.form.action;
 	document.form.action = url;
 	document.form.submit();
-	document.form.action = "";
+	document.form.action = oldUrl;
 }
-function exPackTable(url){
-	document.form.action = url;
-	document.form.submit();
-	document.form.action = "";
-}
+
 </script>

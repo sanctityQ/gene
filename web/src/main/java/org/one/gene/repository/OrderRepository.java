@@ -41,5 +41,12 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 			@Param("customerCode") String customerCode,
 			@Param("comCode") String comCode, Pageable pageable);
 	
+	@SQL("select * from `order` where `order_no` in (select distinct `order_no` from `primer_product` where `board_no`= :boardNo )")
+	List<Order> getOrdersByBoardNo(@Param("boardNo") String boardNo);
+	
+	@SQL("select * from `order` where `order_no` in " +
+			"(select distinct `order_no` from `primer_product` where (`product_no`= :productNo or `out_product_no`= :productNo ))")
+	List<Order> getOrdersByProductNo(@Param("productNo") String productNo);
+	
 }
 

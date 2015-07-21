@@ -41,6 +41,7 @@ import org.one.gene.repository.CustomerRepository;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductOperationRepository;
 import org.one.gene.repository.PrimerProductRepository;
+import org.one.gene.repository.PrimerProductValueRepository;
 import org.one.gene.repository.UserRepository;
 import org.one.gene.util.mail.MailSenderInfo;
 import org.one.gene.web.delivery.DeliveryInfo;
@@ -73,6 +74,9 @@ public class DeliveryService {
 
     @Autowired
     private PrimerProductRepository primerProductRepository;
+    
+    @Autowired
+    private PrimerProductValueRepository primerProductValueRepository;
     
     @Autowired
     private PrimerProductOperationRepository primerProductOperationRepository;
@@ -286,127 +290,83 @@ public class DeliveryService {
     	return "";
     }    
     
-	/**
-     * 导出打印标签文件
-     * @throws Exception 
+	   /**
+     * 得到导出打印标签的生产数据的订单对象
      * */
-	public EntityReply<File> deliveryLabel(Order order, Invocation inv) throws Exception {
+	public List<OrderInfo> getPrintOrders(String boardNo, Invocation inv) {
 		
-		//打印  公司名称、订单号、生产编号、分装规则、碱基数（总和）
-		String customerCode = order.getCustomerCode();
-		String strFilePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"upExcel"+File.separator+"deliveryLabel"+File.separator;
-		String strFileName = customerCode+"-"+System.currentTimeMillis()+".xls";
-		
+		List<Order> orders = orderRepository.getOrdersByBoardNo(boardNo);
 		OrderInfo orderInfo = null;
 		List<OrderInfo> orderInfos = new ArrayList<OrderInfo>();
-		Customer customer = customerRepository.findByCode(customerCode);
+		String orderNo = "";
 		
-		
-		for (PrimerProduct primerProduct : order.getPrimerProducts()) {
-			
-					
-			orderInfo = new OrderInfo();
-			//公司名称
-			orderInfo.setUnit(order.getCustomerName());
-			//订单号
-			orderInfo.setOrderNo(primerProduct.getOrder().getOrderNo());
-			//生产编号
-			if(!"".equals(primerProduct.getProductNo())){
-				orderInfo.setProductNo(primerProduct.getProductNo());
-			}else{
-				orderInfo.setProductNo(primerProduct.getOutProductNo());
+		//先按板号查
+		if (orders != null && orders.size()>0) {
+			for(Order order:orders){
+				orderNo = order.getOrderNo();
+				orderInfo = new OrderInfo();
+				orderInfo.setUnit(order.getCustomerName());//客户名称
+				orderInfo.setOutOrderNO(order.getOutOrderNo());//外部订单号
+				orderInfo.setProductNoMinToMax(order.getProductNoMinToMax());//生产编号
+				orderInfo.setTbnTotal(order.getTbnTotal());//碱基总数
+				String odTb = "";
+				String tb = "";
+				PrimerProduct ppTemp = primerProductRepository.getpPmerProductByBoardNoAndOrderNo(boardNo, orderNo);
+				if (ppTemp != null) {
+					List<PrimerProductValue> primerProductValues = primerProductValueRepository.selectValueByPrimerProductId(ppTemp.getId());
+					for (PrimerProductValue ppv : primerProductValues) {
+						if (ppv.getType().equals(PrimerValueType.odTB)) {
+							odTb = ppv.getValue()+"";
+						} else if (ppv.getType().equals(PrimerValueType.tb)) {
+							tb = ppv.getValue()+"";
+						}
+					}
+					orderInfo.setMakingNo(odTb+"OD*"+tb);
+				}
+				orderInfos.add(orderInfo);
 			}
-			orderInfo.setTbnTotal(new BigDecimal(primerProduct.getGeneOrder().trim().length()));
-			//tbnTotal = tbnTotal.add(new BigDecimal(primerProduct.getGeneOrder().trim().length()));
-			
-			for(PrimerProductValue primerProductValue:primerProduct.getPrimerProductValues()){
-				PrimerValueType type = primerProductValue.getType();
-				if(type.equals(PrimerValueType.odTotal)){//OD总量
-					orderInfo.setOdTotal(primerProductValue.getValue());
-				}else if(type.equals(PrimerValueType.odTB)){//OD/TB
-					orderInfo.setOdTB(primerProductValue.getValue());
+		} else {
+			//再按生产编号查
+			PrimerProduct primerProduct = primerProductRepository.findByProductNoOrOutProductNo(boardNo, boardNo);
+			if( primerProduct != null){
+				orders = orderRepository.getOrdersByProductNo(boardNo);
+				if (orders != null && orders.size()>0) {
+					Order order = (Order)orders.get(0);
+					orderInfo = new OrderInfo();
+					orderInfo.setUnit(order.getCustomerName());//客户名称
+					orderInfo.setOutOrderNO(order.getOutOrderNo());//外部订单号
+					orderInfo.setProductNoMinToMax(order.getProductNoMinToMax());//生产编号
+					orderInfo.setTbnTotal(order.getTbnTotal());//碱基总数
+					String odTb = "";
+					String tb = "";
+					List<PrimerProductValue> primerProductValues = primerProductValueRepository.selectValueByPrimerProductId(primerProduct.getId());
+					for (PrimerProductValue ppv : primerProductValues) {
+						if (ppv.getType().equals(PrimerValueType.odTB)) {
+							odTb = ppv.getValue()+"";
+						} else if (ppv.getType().equals(PrimerValueType.tb)) {
+							tb = ppv.getValue()+"";
+						}
+					}
+					orderInfo.setMakingNo(odTb+"OD*"+tb);
+					orderInfos.add(orderInfo);
 				}
 			}
-			
-			orderInfos.add(orderInfo);
 		}
+		
+		return orderInfos;
+	}
+	
+	/**
+     * 导出发货标签文件
+     * @throws Exception 
+     * */
+	public EntityReply<File> deliveryLabel(List<OrderInfo> orderInfos, Invocation inv) throws Exception {
+		
+		//打印  公司名称、订单号、生产编号、分装规则、碱基数（总和）
+		String strFilePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"upExcel"+File.separator+"deliveryLabel"+File.separator;
+		String strFileName = System.currentTimeMillis()+".xls";
 			
-		//形成Excel
-
-
-		//计算第一列多少行
-		BigDecimal totalListCount = new BigDecimal(orderInfos.size());//本excel的条数
-		int totalcolumns = totalListCount.divide(new BigDecimal(3), 0, BigDecimal.ROUND_UP).intValue();//总共的行数
-		
-		
-		FileOutputStream fos = null;
-		
-		HSSFWorkbook workbook = new HSSFWorkbook(); //产生工作簿对象
-		
-		//每行逐行放数据
-		int rowNum = 0;
-		int rowNumForpage  = 0;
-		int columNum = 1;
-		int sheetNum = -1;
-		HSSFSheet sheet = null;
-		for (OrderInfo orderInfoLable : orderInfos) {
-			
-			if(rowNum==0){
-				sheetNum +=1;
-				sheet = workbook.createSheet(); //产生工作表对象
-				//设置工作表的名称
-				workbook.setSheetName(sheetNum,"第"+(sheetNum+1)+"页");
-			}
-			HSSFRow row = null;
-			if(columNum ==1){
-				row = sheet.createRow((short)rowNum);//从第一行开始记录
-			}else{
-				row = sheet.getRow(rowNumForpage);
-			}
-			for (int k=0;k<5;k++){
-				HSSFCell cell = row.createCell((short) ((columNum-1)*5+k));//产生单元格
-				//设置单元格内容为字符串型
-				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				//往单元格中写入信息
-				String value = "";
-				switch(k){
-				  case 0:
-					value = orderInfoLable.getUnit();
-				  	break;
-				  case 1:
-					value = orderInfoLable.getOrderNo();
-					break;
-				  case 2:
-					value = orderInfoLable.getProductNo();
-					break;
-				  case 3:
-					value = orderInfoLable.getTbnTotal().toString();
-					break;
-				  case 4:
-					value = orderInfoLable.getOdTotal().toString();
-					break;
-				  case 5:
-					value = orderInfoLable.getOdTB().toString();
-					break;
-				  default:
-					break;
-				}
-				
-				if (!"null".equals(value)) {
-					cell.setCellValue(value);
-				}
-		    }
-			rowNum+=1;
-			rowNumForpage+=1;
-			if(totalcolumns == (rowNumForpage)){
-				columNum+=1;
-				rowNumForpage = 0;
-			}
-			
-		}
-		fos = new FileOutputStream(strFilePath + strFileName);
-		// 把相应的Excel 工作簿存盘
-		workbook.write(fos);
+		this.deliveryLabelMain(strFilePath, strFileName, orderInfos);
     
         File file = new File(strFilePath, strFileName); 
 		
@@ -414,7 +374,107 @@ public class DeliveryService {
 		
     }
 		
+	/**
+     * 导出发货标签文件(从列表中选择的)
+     * @throws Exception 
+     * */
+	public void exDeliveryLabel(List<OrderInfo> orderInfos, Invocation inv) throws Exception {
+		
+		String strFilePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"upExcel"+File.separator+"deliveryLabel"+File.separator;
+		String strFileName = System.currentTimeMillis()+".xls";
+
+		HSSFWorkbook workbook = this.deliveryLabelMain(strFilePath, strFileName, orderInfos);
+
+        //输出文件到客户端
+        HttpServletResponse response = inv.getResponse();
+        response.setContentType("application/x-msdownload");
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + strFileName + "\"");
+        OutputStream out=response.getOutputStream();
+        workbook.write(out);
+        out.flush();
+        out.close();
+		
+    }
 	
+	/**
+     * 导出发货标签文件 主体方法
+     * @throws Exception 
+     * */
+	public HSSFWorkbook deliveryLabelMain(String strFilePath, String strFileName, List<OrderInfo> orderInfos) throws Exception {
+
+		// 打印 公司名称、订单号、生产编号、分装规则、碱基数（总和）
+
+		// 计算第一列多少行
+		BigDecimal totalListCount = new BigDecimal(orderInfos.size());// 本excel的条数
+		int totalcolumns = totalListCount.divide(new BigDecimal(3), 0, BigDecimal.ROUND_UP).intValue();// 总共的行数,一共3大列
+
+		FileOutputStream fos = null;
+		HSSFWorkbook workbook = new HSSFWorkbook(); // 产生工作簿对象
+
+		// 每行逐行放数据
+		int rowNum = 0;
+		int rowNumForpage = 0;
+		int columNum = 1;
+		int sheetNum = -1;
+		HSSFSheet sheet = null;
+		for (OrderInfo orderInfo : orderInfos) {
+
+			if (rowNum == 0) {
+				sheetNum += 1;
+				sheet = workbook.createSheet(); // 产生工作表对象
+				// 设置工作表的名称
+				workbook.setSheetName(sheetNum, "第" + (sheetNum + 1) + "页");
+			}
+			HSSFRow row = null;
+			if (columNum == 1) {
+				row = sheet.createRow((short) rowNum);// 从第一行开始记录
+			} else {
+				row = sheet.getRow(rowNumForpage);
+			}
+			for (int k = 0; k < 5; k++) {
+				HSSFCell cell = row.createCell((short) ((columNum - 1) * 5 + k));// 产生单元格
+				// 设置单元格内容为字符串型
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				// 往单元格中写入信息
+				String value = "";
+				switch (k) {
+				case 0:
+					value = orderInfo.getUnit();
+					break;
+				case 1:
+					value = orderInfo.getOutOrderNO();
+					break;
+				case 2:
+					value = orderInfo.getProductNoMinToMax();
+					break;
+				case 3:
+					value = orderInfo.getMakingNo();
+					break;
+				case 4:
+					value = orderInfo.getTbnTotal()+"";
+					break;
+				default:
+					break;
+				}
+
+				if (!"null".equals(value)) {
+					cell.setCellValue(value);
+				}
+			}
+			rowNum += 1;
+			rowNumForpage += 1;
+			if (totalcolumns == (rowNumForpage)) {
+				columNum += 1;
+				rowNumForpage = 0;
+			}
+		}
+		fos = new FileOutputStream(strFilePath + strFileName);
+		// 把相应的Excel 工作簿存盘
+		workbook.write(fos);
+
+		return workbook;
+	}
+
     /**
      * 导出出库单文件
      * @throws IOException 

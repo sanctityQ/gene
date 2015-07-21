@@ -81,5 +81,8 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 	
 	 @SQL("select count(*) from `primer_product` where `product_no`=:productNo")
 	int countByProductNo(@Param("productNo") String productNo);
+	 
+	@SQL("select * from `primer_product` where `board_no` = :boardNo and `order_no` = :orderNo order by product_no limit 1")
+	public PrimerProduct getpPmerProductByBoardNoAndOrderNo(@Param("boardNo") String boardNo,@Param("orderNo") String orderNo);
 }
 

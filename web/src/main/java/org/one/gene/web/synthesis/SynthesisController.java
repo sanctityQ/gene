@@ -11,6 +11,7 @@ import org.one.gene.domain.entity.BoardHole;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerValueType;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
+import org.one.gene.domain.entity.User;
 import org.one.gene.domain.service.SynthesisService;
 import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.repository.BoardHoleRepository;
@@ -19,6 +20,7 @@ import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductOperationRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.repository.PrimerProductValueRepository;
+import org.one.gene.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -58,6 +60,10 @@ public class SynthesisController {
     
     @Autowired
     private SynthesisService synthesisService;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
     
     
     /**
@@ -580,6 +586,10 @@ public class SynthesisController {
 				board.setBoardType("横排");
 			} else if("1".equals(board.getBoardType())){
 				board.setBoardType("竖排");
+			}
+			User user1 = userRepository.findOne(Long.parseLong(board.getCreateUser()+""));
+			if (user1 != null) {
+				board.setCreateUserName(user1.getName());
 			}
 		}
 
