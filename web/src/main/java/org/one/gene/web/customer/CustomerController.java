@@ -7,11 +7,14 @@ import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.entity.User;
 import org.one.gene.domain.service.CustomerService;
 import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.CustomerRepository;
+import org.one.gene.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +39,8 @@ public class CustomerController {
     private CustomerService customerService;
 	@Autowired
     private CustomerRepository customerRepository;
+	@Autowired
+    private UserRepository userRepository;
 	
 	@Get("clientManage")
     public String clientManage(){
@@ -110,6 +115,14 @@ public class CustomerController {
         
         Page<Customer> customerPage = customerRepository.findAll(spec, pageable);
         
+        for(Customer customer:customerPage.getContent()){
+        	List<User> users = userRepository.getUserByCustomerId(customer.getId()+"");
+			if (users != null && users.size()>0) {
+				customer.setHaveUserFlag("0");//挂有用户，不能删除
+			} else {
+				customer.setHaveUserFlag("1");//未挂用户，可以删除
+			}
+        }
     	inv.addModel("page", customerPage);
     	inv.addModel("pageSize", pageSize);
 		

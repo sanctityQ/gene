@@ -10,6 +10,7 @@ import com.google.common.base.Objects;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -44,6 +45,9 @@ public class ShiroDbRealm extends AuthorizingRealm {
     UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
     User user = accountService.findUserByLoginName(token.getUsername());
     if (user != null) {
+        if(!user.isValidate()){
+            throw new LockedAccountException(); 
+          }
       byte[] salt = Encodes.decodeHex(user.getSalt());
       return new SimpleAuthenticationInfo(
           new ShiroUser(user),

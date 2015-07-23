@@ -405,31 +405,32 @@ public class DeliveryService {
 		// 打印 公司名称、订单号、生产编号、分装规则、碱基数（总和）
 
 		// 计算第一列多少行
+		int totalcolumns = 3;//总列数
 		BigDecimal totalListCount = new BigDecimal(orderInfos.size());// 本excel的条数
-		int totalcolumns = totalListCount.divide(new BigDecimal(3), 0, BigDecimal.ROUND_UP).intValue();// 总共的行数,一共3大列
+		int totalrows = totalListCount.divide(new BigDecimal(totalcolumns), 0, BigDecimal.ROUND_UP).intValue();// 总共的行数,一共3大列
 
 		FileOutputStream fos = null;
 		HSSFWorkbook workbook = new HSSFWorkbook(); // 产生工作簿对象
 
 		// 每行逐行放数据
 		int rowNum = 0;
-		int rowNumForpage = 0;
-		int columNum = 1;
+		int columNum = 1;//第几列
 		int sheetNum = -1;
+		
 		HSSFSheet sheet = null;
 		for (OrderInfo orderInfo : orderInfos) {
 
-			if (rowNum == 0) {
+			if (rowNum == 0 && columNum ==1) {
 				sheetNum += 1;
 				sheet = workbook.createSheet(); // 产生工作表对象
 				// 设置工作表的名称
 				workbook.setSheetName(sheetNum, "第" + (sheetNum + 1) + "页");
 			}
 			HSSFRow row = null;
-			if (columNum == 1) {
-				row = sheet.createRow((short) rowNum);// 从第一行开始记录
-			} else {
-				row = sheet.getRow(rowNumForpage);
+			if (columNum ==1) {
+				row = sheet.createRow((short) rowNum);
+			}else{
+				row = sheet.getRow((short) rowNum);
 			}
 			for (int k = 0; k < 5; k++) {
 				HSSFCell cell = row.createCell((short) ((columNum - 1) * 5 + k));// 产生单元格
@@ -461,11 +462,11 @@ public class DeliveryService {
 					cell.setCellValue(value);
 				}
 			}
-			rowNum += 1;
-			rowNumForpage += 1;
-			if (totalcolumns == (rowNumForpage)) {
-				columNum += 1;
-				rowNumForpage = 0;
+			
+			columNum += 1;
+			if (totalcolumns == (columNum-1)) {
+				rowNum += 1;
+				columNum = 1;
 			}
 		}
 		fos = new FileOutputStream(strFilePath + strFileName);

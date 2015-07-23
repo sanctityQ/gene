@@ -52,6 +52,9 @@
                                 else if(error.contains("ExcessiveAttemptsException")){
                                     out.print("账户密码尝试次数过多，请稍后再试.");
                                 }
+                                else if(error.contains("LockedAccountException")){
+									out.print("账户为无效账户.");
+								}
 								else{
 									out.print("账号或密码错误，请重试.");
 								}

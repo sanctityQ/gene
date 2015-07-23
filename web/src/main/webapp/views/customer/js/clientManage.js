@@ -1,6 +1,6 @@
 var bigIndex = undefined,orderList = $('#orderList');
 function formatOper(val,row,index){
-    return '&nbsp;<a href="javascript:;" onclick="lookCustomer('+index+')"><i class="icon-book"></i>查看</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;"  onclick="modifyCustomer('+index+')"><i class="icon-pencil"></i>修改</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;" onclick="deleteCustomer('+index+')"><i class="icon-trash"></i>删除</a>&nbsp;';
+    return '&nbsp;<a href="javascript:;" onclick="lookCustomer('+index+')"><i class="icon-book"></i>查看</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;"  onclick="modifyCustomer('+index+')"><i class="icon-pencil"></i>修改</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;" onclick="deleteCustomer('+index+','+row.haveUserFlag+')"><i class="icon-trash"></i>删除</a>&nbsp;';
 }
 
 //查看
@@ -17,7 +17,12 @@ var modifyCustomer=function(index){
 	window.location.href = path;
 }
 //删除
-var deleteCustomer=function(index){
+var deleteCustomer=function(index,haveUserFlag){
+	
+	if (haveUserFlag == '0'){
+		alert("该客户存在用户，不允许删除。\n 想要删除，需要先删除该客户下的用户。");
+	}
+	
     $.messager.confirm('系统消息','确认删除选中的数据?',function(data){
     	if(data){
 	    	var row = $('#customerList').datagrid('getData').rows[index];

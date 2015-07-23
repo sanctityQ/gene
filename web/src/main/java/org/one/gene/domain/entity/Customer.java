@@ -96,7 +96,9 @@ public class Customer extends IdEntity implements java.io.Serializable {
     
     private List<PrimerProduct> primerProducts = Lists.newArrayList();
     
-
+    private String haveUserFlag;//是否含有用户
+    
+    
 	public Customer() {
     }
 
@@ -266,15 +268,15 @@ public class Customer extends IdEntity implements java.io.Serializable {
         this.fax = fax;
     }
 
-    /*@OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "`cp_id`",unique = true)
-    public CustomerPrice getCustomerPrice() {
-        return customerPrice;
-    }
+    @Transient
+	public String getHaveUserFlag() {
+		return haveUserFlag;
+	}
 
-    public void setCustomerPrice(CustomerPrice customerPrice) {
-        this.customerPrice = customerPrice;
-    }*/
+
+	public void setHaveUserFlag(String haveUserFlag) {
+		this.haveUserFlag = haveUserFlag;
+	}
 }
 
 

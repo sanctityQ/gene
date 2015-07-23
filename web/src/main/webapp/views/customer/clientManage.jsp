@@ -50,6 +50,7 @@ var ctx = '${ctx}';
 			<th data-options="field:'phoneNo',width:60,sortable:true">联系电话</th>
 			<th data-options="field:'email',width:80,sortable:true">Email</th>
             <th data-options="field:'payWays',width:80,sortable:true">结算方式</th>
+            <th data-options="field:'haveUserFlag',width:80,hidden:true,sortable:true"></th>
 			<th data-options="field:'_operate',align:'center',formatter:formatOper">操作</th>
 		</tr>
 	</thead>
