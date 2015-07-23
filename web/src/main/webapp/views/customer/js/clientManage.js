@@ -21,6 +21,7 @@ var deleteCustomer=function(index,haveUserFlag){
 	
 	if (haveUserFlag == '0'){
 		alert("该客户存在用户，不允许删除。\n 想要删除，需要先删除该客户下的用户。");
+		return false;
 	}
 	
     $.messager.confirm('系统消息','确认删除选中的数据?',function(data){
