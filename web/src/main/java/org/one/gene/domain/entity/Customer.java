@@ -31,6 +31,10 @@ public class Customer extends IdEntity implements java.io.Serializable {
      */
     private String customerFlag;
     /**
+     * 机构代码.
+     */
+    private Company company;
+    /**
      * 负责人姓名.
      */
     private String leaderName;
@@ -133,6 +137,16 @@ public class Customer extends IdEntity implements java.io.Serializable {
     
     public void setCustomerFlag(String customerFlag) {
         this.customerFlag = customerFlag;
+    }
+    
+    @OneToOne
+    @JoinColumn(name = "`com_code`",referencedColumnName = "`com_code`")
+    public Company getCompany() {
+      return company;
+    }
+
+    public void setCompany(Company company) {
+      this.company = company;
     }
     
     @Column(name = "`leader_name`", length = 127)

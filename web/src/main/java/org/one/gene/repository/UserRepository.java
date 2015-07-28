@@ -25,8 +25,9 @@ public interface UserRepository
 
   //List<User> findByNameAndComCode(String name, String comCode);
 
-  @SQL("select * from `user` where `validate` = '1' and (`code` like :userSQL or `name` like :userSQL ) ")
-  List<User> vagueSeachUser(@Param("userSQL") String userSQL);
+  @SQL("select * from `user` where `validate` = '1' and (`code` like :userSQL or `name` like :userSQL ) " +
+  		"#if(:comCodeSQL != '') { and `com_code` = :comCodeSQL }")
+  List<User> vagueSeachUser(@Param("userSQL") String userSQL,@Param("comCodeSQL") String comCodeSQL);
   
   @SQL("select * from `user` where `customer_id` = :customerId ")
   List<User> getUserByCustomerId(@Param("customerId") String customerId);

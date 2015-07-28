@@ -49,5 +49,12 @@ public class CompanyController {
 		List<Company> companys = companyRepository.vagueSeachCompany(companySQL);
     	return Replys.with(companys).as(Json.class);
     }
-    
+    /**
+     * 查询机构信息列表
+     * */
+    @Post("seachCompanyList")
+    public Reply seachCompanyList(Invocation inv){
+		List<Company> companys = companyRepository.seachCompanyList();
+    	return Replys.with(companys).as(Json.class);
+    }
 }

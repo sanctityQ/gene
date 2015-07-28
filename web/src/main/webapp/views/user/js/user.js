@@ -199,9 +199,11 @@ $(function () {
         if($.trim($("#customerid").val()) == ""){
         	message += '需要选择归属公司名称(从查询下拉列表的结果中选择)。\n';
         }
-
-        if($.trim($("#companyId").val()) == ""){
-        	message += '需要选择梓熙总/分公司机构名称(从查询下拉列表的结果中选择)。\n';
+        //总公司用户 & 梓熙，需要选择机构
+        if($("#operateUserComLevel").val() == '1' && $("#customerFlag").val() == '0'){
+        	if($.trim($("#companyId").val()) == ""){
+        		message += '需要选择梓熙总/分公司机构名称(从查询下拉列表的结果中选择)。\n';
+        	}
         }
         
         var validate =$('input:radio[name="user.validate"]:checked').val();

@@ -19,5 +19,8 @@ public interface CompanyRepository extends PagingAndSortingRepository<Company, L
 	@SQL("select * from `company` where `com_code` like :companySQL or `com_name` like :companySQL ")
 	List<Company> vagueSeachCompany(@Param("companySQL") String companySQL);
 	
+	@SQL("select * from `company` where `validate` ='1' order by `com_level` ")
+	List<Company> seachCompanyList();
+	
 }
 

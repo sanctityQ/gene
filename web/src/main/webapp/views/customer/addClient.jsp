@@ -2,6 +2,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="msg" uri="http://mvc.one.sinosoft.com/validation/msg" %>
+<%@page import="org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser"%>
+<%@page import="org.apache.shiro.SecurityUtils"%>
+
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
@@ -11,6 +14,13 @@
 <script type="text/javascript">
 var ctx = '${ctx}';
 </script>
+<%
+ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+String comCode = user.getUser().getCompany().getComCode();
+//System.out.println("============"+user.getUser().getCompany().getComCode());
+
+%>
 </head>
 <body>
 <form id="customerfm" action="${ctx}/customer/save" method="post">
@@ -35,7 +45,10 @@ var ctx = '${ctx}';
 	                    <option value="">请选择</option>
 	                    <option value="1">代理公司</option>
 	                    <option value="2">直接客户</option>
-	                    <option value="0">梓熙</option>
+		                 <% //总公司才能选择和维护梓熙 
+		                     if(comCode.startsWith("0")){%>
+		                    <option value="0">梓熙</option>
+		                    <% }%>
 	                </select>
                 </td>
                 <td align="right">负责人姓名:</td>
@@ -109,7 +122,7 @@ var ctx = '${ctx}';
 				<td colspan="3" height="10"></td>
 			</tr>
 			<input type="hidden" name="customer.createTime" value="<fmt:formatDate value="${customer.createTime}" pattern="yyyy-MM-dd HH:mm:ss" />"/>
-			<input type="hidden" name="customer.id" value="${customer.id}"/>
+			<input type="hidden" id="customerid" name="customer.id" value="${customer.id}"/>
 			<input type="hidden" id="haveZiXi" value="${haveZiXi}"/>
 		</table>
 	</div>
@@ -140,7 +153,7 @@ var customerSave=function(){
 		messAge += "请选择客户性质。\n";
 	}
 	if($("#customerFlag").val()=='0'){
-		if($("#haveZiXi").val()=='1'){
+		if($("#haveZiXi").val()!='' && $("#haveZiXi").val()!=$("#customerid").val()){
     		messAge += "系统中客户性质已存在‘梓熙’。\n";
 		}
 		if($("#seachUserName").val()!=''){

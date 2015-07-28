@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Company;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.User;
 import org.one.gene.domain.service.account.AccountService;
+import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.CompanyRepository;
@@ -66,20 +68,14 @@ public class UserController {
 
   @Get("preAdd")
   public String prepareAddUser(Invocation inv) {
-	    //查询总公司信息，如果不是梓熙的用户，机构默认为总公司
-	    Company topCompany = companyRepository.findByComCode("00000000");
-	    inv.addModel("topCompany", topCompany);
     return "user";
   }
 
   @Get("view/{id}")
   public String view(@Param("id") Long id, @Param("op")String operation,Invocation inv) {
     User user = userRepository.findOne(id);
-    //查询总公司信息，如果不是梓熙的用户，机构默认为总公司
-    Company topCompany = companyRepository.findByComCode("00000000");
     
     inv.addModel("user", user);
-    inv.addModel("topCompany", topCompany);
     if(StringUtils.isNotBlank(operation)){
       inv.addModel("op", operation);
     }
@@ -99,11 +95,22 @@ public class UserController {
       pageSize = 10;
     }
 
+    ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    String comCodeTemp = user.getUser().getCompany().getComCode();
+    
     Sort sort = new Sort(Sort.Direction.DESC, "createTime");
     Pageable pageable = new PageRequest(pageNo, pageSize, sort);
     Map<String, Object> searchParams = Maps.newHashMap();
     searchParams.put(SearchFilter.Operator.EQ + "_name", userName);
-    searchParams.put(SearchFilter.Operator.EQ + "_company.comCode", comCode);
+    if(!"1".equals(user.getUser().getCompany().getComLevel())){//分公司
+    	searchParams.put(SearchFilter.Operator.EQ + "_company.comCode", comCodeTemp);
+    }else{
+    	if (comCode != null) {//总公司
+    		searchParams.put(SearchFilter.Operator.EQ + "_company.comCode", comCode);
+    	}else{
+    		searchParams.put(SearchFilter.Operator.EQ + "_company.comCode", "00000000");
+    	}
+    }
     Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
     Specification<User> spec = DynamicSpecifications.bySearchFilter(filters.values(), User.class);
 
@@ -149,12 +156,22 @@ public class UserController {
     if(pageSize == null){
       pageSize = 10;
     }
-
+    ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    String comCodeTemp = user.getUser().getCompany().getComCode();
+    
     Sort sort = new Sort(Sort.Direction.DESC, "createTime");
     Pageable pageable = new PageRequest(pageNo, pageSize, sort);
     Map<String, Object> searchParams = Maps.newHashMap();
     searchParams.put(SearchFilter.Operator.EQ + "_name", userName);
-    searchParams.put(SearchFilter.Operator.EQ + "_company.comCode", comCode);
+    if(!"1".equals(user.getUser().getCompany().getComLevel())){//分公司
+    	searchParams.put(SearchFilter.Operator.EQ + "_company.comCode", comCodeTemp);
+    }else{
+    	if (comCode != null) {//总公司
+    		searchParams.put(SearchFilter.Operator.EQ + "_company.comCode", comCode);
+    	}else{
+    		searchParams.put(SearchFilter.Operator.EQ + "_company.comCode", "00000000");
+    	}
+    }
     Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
     Specification<User> spec = DynamicSpecifications.bySearchFilter(filters.values(), User.class);
 
@@ -188,6 +205,10 @@ public class UserController {
         return back;
       }
     });
+    
+	List<Company> companys = companyRepository.seachCompanyList();
+	inv.addModel("companys", companys);
+	
     view.put("rows", data);
     inv.addModel("data", JSONObject.toJSONString(view));
     return "userManageQuery";
@@ -196,14 +217,27 @@ public class UserController {
 
   @Post("register")
   public String addUser(@Param("user") User user, Invocation inv) {
-    Company company = companyRepository.findOne(user.getCompany().getId());
-    user.setCompany(company);
-	if (user.getCustomer()!=null) {
+	  
+
 		Customer customer = customerRepository.findOne(user.getCustomer().getId());
-			if (customer != null) {
-				user.setCustomer(customer);
+		if (customer != null) {
+			user.setCustomer(customer);
+		}
+	    //操作员总公司：选择的是梓熙，则从页面取得编辑用户的归属机构，选择不是梓熙，则从客户的comcode赋值给编辑用户的归属机构
+	    //操作员分公司：直接用操作员的comcode赋值给编辑用户的归属机构
+	    Company company = null;
+	    ShiroUser userOp = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+		if ("1".equals(userOp.getUser().getCompany().getComLevel())) {
+			if("0".equals(user.getCustomer().getCustomerFlag())){
+				company = companyRepository.findOne(user.getCompany().getId());
+			}else{
+				company = companyRepository.findOne(customer.getCompany().getId());
 			}
-	}
+		}else{
+			company = companyRepository.findOne(userOp.getUser().getCompany().getId());
+		}
+    
+        user.setCompany(company);
 	
     accountService.registerUser(user);
     return "r:/user/manageQuery";
@@ -229,8 +263,13 @@ public class UserController {
    */
   @Post("vagueSeachUser")
   public Reply vagueSeachUser(@Param("userName") String userName, Invocation inv) {
+    ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    String comCodeSQL = user.getUser().getCompany().getComCode();
+    if("1".equals(user.getUser().getCompany().getComLevel())){
+    	comCodeSQL = "";
+    }
     String userSQL = "%" + userName + "%";
-    List<User> users = userRepository.vagueSeachUser(userSQL);
+    List<User> users = userRepository.vagueSeachUser(userSQL, comCodeSQL);
     return Replys.with(users).as(Json.class);
   }
 }

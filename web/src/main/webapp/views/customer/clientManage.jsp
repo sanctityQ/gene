@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="msg" uri="http://mvc.one.sinosoft.com/validation/msg" %>
+<%@page import="org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser"%>
+<%@page import="org.apache.shiro.SecurityUtils"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
@@ -11,6 +13,13 @@
 <script type="text/javascript">
 var ctx = '${ctx}';
 </script>
+<%
+ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+String comCode = user.getUser().getCompany().getComCode();
+
+
+%>
 </head>
 <body>
 <div class="tools">
@@ -28,9 +37,23 @@ var ctx = '${ctx}';
                     <option value="">请选择</option>
                     <option value="1">代理公司</option>
                     <option value="2">直接客户</option>
+                   <% //总公司才能选择和维护梓熙 
+                     if(comCode.startsWith("0")){%>
                     <option value="0">梓熙</option>
+                    <% }%>
                 </select>
 			</td>
+              <% //总公司才能选择分公司
+               if(comCode.startsWith("0")){%>
+			<td align="right">归属机构:</td>
+			<td>
+                <select id="companyList" class="my_select" style="width: 100px;">
+				<c:forEach items="${companys}" var="company"  varStatus="status">
+				  <option value="${company.comCode}">${company.comName}</option>
+				</c:forEach>
+                </select>
+			</td>
+              <% }%>
 			<td align="left"><button type="button" class="btn" onclick="getCustomerList()">查询</button></td>
 			<td align="left">
 				<button type="button" class="btn btn-primary" onclick="goToPage('${ctx}/customer/addClient')">添加客户</button>

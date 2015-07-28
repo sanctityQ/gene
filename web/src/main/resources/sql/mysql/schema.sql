@@ -28,6 +28,7 @@ CREATE TABLE `customer` (
   `code`    VARCHAR(15) NOT NULL COMMENT '客户代码',
   `name` VARCHAR(127) NOT NULL COMMENT '客户名称',
   `customer_flag`    TINYINT(1) NOT NULL DEFAULT 1 COMMENT '客户标识，0-梓熙，1-代理公司，2-直接客户',
+  `com_code`    VARCHAR(15) NOT NULL DEFAULT '' COMMENT '机构代码',
   `leader_name` VARCHAR(127) COMMENT '负责人姓名',
   `invoice_title` VARCHAR(127) COMMENT '发票抬头',
   `pay_ways` VARCHAR(15) COMMENT '结账方式',

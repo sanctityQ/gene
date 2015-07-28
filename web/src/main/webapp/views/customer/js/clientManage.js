@@ -20,7 +20,7 @@ var modifyCustomer=function(index){
 var deleteCustomer=function(index,haveUserFlag){
 	
 	if (haveUserFlag == '0'){
-		alert("该客户存在用户，不允许删除。\n 想要删除，需要先删除该客户下的用户。");
+		alert("该客户存在用户，不允许删除。\n想要删除，需要先删除该客户下的用户。");
 		return false;
 	}
 	
@@ -52,6 +52,7 @@ var getCustomerList=function(){
 	var gridOpts = $('#customerList').datagrid('getPager').data("pagination").options;
 	var customerName = $("#seachCustom").val();
 	var customerFlag = $("#customerFlag").val();
+	var companyList  = $("#companyList").val();
 	$.ajax({
 		type : "post",
 		url : ctx+"/customer/query",
@@ -60,6 +61,7 @@ var getCustomerList=function(){
 		{
 			customerName:customerName,
 			customerFlag:customerFlag,
+			companyList:companyList,
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
         },
@@ -87,10 +89,15 @@ var getCustomerList=function(){
 }
 
 var getCustomerini=function(){
+	var companyList  = $("#companyList").val();
 	$.ajax({
 		type : "post",
 		url : ctx+"/customer/query",
 		dataType : "json",
+		data:
+		{
+			companyList:companyList
+        },
 		success : function(data) {
 			if(data != null){
 				var total = data.totalElements;

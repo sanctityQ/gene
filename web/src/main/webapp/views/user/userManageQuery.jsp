@@ -12,7 +12,7 @@
 <%
 ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
 String customerFlag = user.getUser().getCustomer().getCustomerFlag();
-String level = user.getUser().getCustomer().getCustomerFlag();
+String level = user.getUser().getCompany().getComLevel();
 %>
 </head>
 <body>
@@ -24,10 +24,17 @@ String level = user.getUser().getCustomer().getCustomerFlag();
                 <input type="text" class="inp_text" style="width:80%" id="userName" name="userName"
                        value="${userName}"/>
             </td>
-            <td align="right">归属机构：</td>
-            <td>
-                <input type="text" id="comCode" name="comCode" value="${comCode}"/>
-            </td>
+              <% //总公司才能选择分公司
+               if("1".equals(level)){%>
+			<td align="right">归属机构:</td>
+			<td>
+                <select id="comCode" class="my_select" style="width: 100px;">
+				<c:forEach items="${companys}" var="company"  varStatus="status">
+				  <option value="${company.comCode}">${company.comName}</option>
+				</c:forEach>
+                </select>
+			</td>
+              <% }%>
             <td>
                 <button type="button" class="btn" onclick="rpcData();">查询</button>
             </td>

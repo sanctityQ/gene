@@ -98,8 +98,8 @@ function seachCustomSelect(){
 
 function addTopComInfo( custFlag ){
 
-    if(custFlag =='0'){
-    	//梓熙
+    if(custFlag =='0' && $("#operateUserComLevel").val() == '1'){//梓熙  & 操作员是总公司
+    	
     	$("#companyId").val("");
     	$("#companyComCode").val("");
     	$("#seachCompany").val("");
@@ -107,10 +107,9 @@ function addTopComInfo( custFlag ){
     	$("#tdComName").show();
     	$("#tdComCodeHidden").hide();
     }else{
-    	//外部客户，需要赋值总公司值
-    	$("#companyId").val($("#topComid").val());
-    	$("#companyComCode").val($("#topComCode").val());
-    	$("#seachCompany").val($("#topComName").val());
+    	$("#companyId").val("");
+    	$("#companyComCode").val("");
+    	$("#seachCompany").val("");
     	$("#tdComCode").hide();
     	$("#tdComName").hide();
     	$("#tdComCodeHidden").show();

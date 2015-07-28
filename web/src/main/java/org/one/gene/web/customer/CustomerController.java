@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
+import org.one.gene.domain.entity.Company;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.User;
@@ -13,6 +14,7 @@ import org.one.gene.domain.service.CustomerService;
 import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
+import org.one.gene.repository.CompanyRepository;
 import org.one.gene.repository.CustomerRepository;
 import org.one.gene.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +43,13 @@ public class CustomerController {
     private CustomerRepository customerRepository;
 	@Autowired
     private UserRepository userRepository;
+	@Autowired
+    private CompanyRepository companyRepository;
 	
 	@Get("clientManage")
-    public String clientManage(){
+    public String clientManage(Invocation inv){
+		List<Company> companys = companyRepository.seachCompanyList();
+		inv.addModel("companys", companys);
         return "clientManage";
     }
 	@Get("customerView")
@@ -65,7 +71,8 @@ public class CustomerController {
 		String haveZiXi = "";//是否有梓熙
 		List<Customer> customers = customerRepository.seachHaveZiXi();
 		if (customers != null && customers.size() > 0) {
-			haveZiXi = "1";
+			Customer customerTemp = (Customer)customers.get(0);
+			haveZiXi = customerTemp.getId()+"";
 		}
 		
 		inv.addModel("haveZiXi", haveZiXi);
@@ -80,7 +87,8 @@ public class CustomerController {
 		String haveZiXi = "";//是否有梓熙
 		List<Customer> customers = customerRepository.seachHaveZiXi();
 		if (customers != null && customers.size() > 0) {
-			haveZiXi = "1";
+			Customer customerTemp = (Customer)customers.get(0);
+			haveZiXi = customerTemp.getId()+"";
 		}
 		inv.addModel("haveZiXi", haveZiXi);
 		inv.addModel("customer", customer);
@@ -88,13 +96,27 @@ public class CustomerController {
 	}
 	@Post("save")
 	public String save(@Param("customer") Customer customer,Invocation inv) throws IllegalStateException, IOException{
+		Company company = null;
+		if(customer.getHandlerCode()==null || "".equals(customer.getHandlerCode())){//客户是梓熙，不需要选择业务员
+			company = companyRepository.findByComCode("00000000");
+		}else{
+			User user = userRepository.findByCode(customer.getHandlerCode());
+			company = user.getCompany();
+		}
+		
+		customer.setCompany(company);
 		customerService.save(customer);
+		
+		List<Company> companys = companyRepository.seachCompanyList();
+		inv.addModel("companys", companys);
+		
 		return "clientManage";
 	}
 	
 	@Post("query")
 	public Reply query(@Param("customerName") String customerName,
 			@Param("customerFlag") String customerFlag,
+			@Param("companyList") String companyList,
 			@Param("pageNo")Integer pageNo,
             @Param("pageSize")Integer pageSize,Invocation inv){
 		
@@ -106,10 +128,19 @@ public class CustomerController {
             pageSize = 10;
         }
 
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCode = user.getUser().getCompany().getComCode();
+        
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_name",customerName);
         searchParams.put(SearchFilter.Operator.EQ+"_customerFlag",customerFlag);
+        if(!"1".equals(user.getUser().getCompany().getComLevel())){//分公司
+        	searchParams.put(SearchFilter.Operator.EQ+"_company.comCode",comCode);
+        }
+		if (companyList != null) {//总公司
+			searchParams.put(SearchFilter.Operator.EQ+"_company.comCode",companyList);
+		}
         Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
         Specification<Customer> spec = DynamicSpecifications.bySearchFilter(filters.values(), Customer.class);
         
@@ -125,7 +156,7 @@ public class CustomerController {
         }
     	inv.addModel("page", customerPage);
     	inv.addModel("pageSize", pageSize);
-		
+
     	return Replys.with(customerPage).as(Json.class);
 	}
 	
@@ -134,8 +165,13 @@ public class CustomerController {
      * */
     @Post("vagueSeachCustomer")
     public Reply vagueSeachCustomer(@Param("customercode") String customercode, Invocation inv){
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCodeSQL = user.getUser().getCompany().getComCode();
+        if("1".equals(user.getUser().getCompany().getComLevel())){
+        	comCodeSQL = "";
+        }
 		String customerSQL = "%" + customercode + "%";
-		List<Customer> customers = customerRepository.vagueSeachCustomer(customerSQL);
+		List<Customer> customers = customerRepository.vagueSeachCustomer(customerSQL,comCodeSQL);
     	return Replys.with(customers).as(Json.class);
     }
     
