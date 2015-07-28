@@ -173,12 +173,12 @@ public class OrderService {
 
     }
 
-	public List<Customer> vagueSeachCustomer(String customerCode){
+	public List<Customer> vagueSeachCustomer(String customerCode, String comCodeSQL){
     	String sql="";
     	if (!StringUtils.isBlank(customerCode)) {
     	  sql = "%" + customerCode + "%";
         }
-		List<Customer> customers = customerRepository.vagueSeachCustomer(sql);
+		List<Customer> customers = customerRepository.vagueSeachCustomer(sql, comCodeSQL);
 		return customers;
 	}
 	

@@ -428,7 +428,12 @@ public class OrderController {
     
     @Post("vagueSeachCustomer") 
     public Reply vagueSeachCustomer( @Param("seachCustom") String customerCode,Invocation inv){
-    	List<Customer> customers = orderService.vagueSeachCustomer(customerCode);
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCodeSQL = user.getUser().getCompany().getComCode();
+        if("1".equals(user.getUser().getCompany().getComLevel())){
+        	comCodeSQL = "";
+        }
+    	List<Customer> customers = orderService.vagueSeachCustomer(customerCode,comCodeSQL);
     	return Replys.with(customers).as(Json.class);
     }
     
