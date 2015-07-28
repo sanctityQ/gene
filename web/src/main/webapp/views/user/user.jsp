@@ -22,10 +22,10 @@ String operateUserComName = user.getUser().getCompany().getComName();
         <div class="content_box info margin_btoom">
             <h2>用户信息</h2>
             <table width="100%" class="order_info">
-                <input type="text" id="operateUserComID" name="operateUserComID" value="<%=operateUserComID %>"/>
-                <input type="text" id="operateUserComLevel" name="operateUserComLevel" value="<%=operateUserComLevel %>"/>
-                <input type="text" id="operateUserComCode" name="operateUserComCode" value="<%=operateUserComCode %>"/>
-                <input type="text" id="operateUserComName" name="operateUserComName" value="<%=operateUserComName %>"/>
+                <input type="hidden" id="operateUserComID" name="operateUserComID" value="<%=operateUserComID %>"/>
+                <input type="hidden" id="operateUserComLevel" name="operateUserComLevel" value="<%=operateUserComLevel %>"/>
+                <input type="hidden" id="operateUserComCode" name="operateUserComCode" value="<%=operateUserComCode %>"/>
+                <input type="hidden" id="operateUserComName" name="operateUserComName" value="<%=operateUserComName %>"/>
               
                 <input type="hidden" id="userid" name="user.id" value="${id}"/>
                 <input type="hidden" id="needTopCom" name="needTopCom" value=""/>
@@ -55,8 +55,8 @@ String operateUserComName = user.getUser().getCompany().getComName();
                     </td>
                     <td align="right">归属公司名称:</td>
 					<td>
-					    <input type="text" id="customerid" name="user.customer.id" value="${user.customer.id}"/>
-					    <input type="text" id="customerFlag" name="user.customer.customerFlag" value="${user.customer.customerFlag}"/>
+					    <input type="hidden" id="customerid" name="user.customer.id" value="${user.customer.id}"/>
+					    <input type="hidden" id="customerFlag" name="user.customer.customerFlag" value="${user.customer.customerFlag}"/>
 					    <input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="user.customer.name" value="${user.customer.name}" onblur="clearCustomerId()" style="width: 240px" />
 					    <ul id="seachCustomList"></ul>
 					</td>
