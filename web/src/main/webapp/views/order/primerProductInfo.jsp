@@ -16,7 +16,7 @@ ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
 <form id="orderForm" name="form" action="${ctx}/order/primerProductInfo" method="post">
     <div class="page_padding">
         <div class="content_box info margin_btoom">
-            <h2>用户信息</h2>
+            <h2>引物生产数据信息</h2>
             <table width="100%" class="order_info">
                 <tr>
                     <td colspan="4" height="10"></td>
