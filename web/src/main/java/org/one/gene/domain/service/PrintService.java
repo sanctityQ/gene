@@ -295,7 +295,7 @@ public class PrintService {
 					value = printLabelExcel.getPrimeName();
 				}else if("orderNo".equals(type)){
 					value = printLabelExcel.getOrderNo();
-				}else if("tube".equals(type)){
+				}else if("tb".equals(type)){
 					value = printLabelExcel.getTube()+"";
 				}else if("odTotal".equals(type)){
 					value = printLabelExcel.getOdTotal()+"";
@@ -307,15 +307,15 @@ public class PrintService {
 					value = printLabelExcel.getNmolTB()+"";
 				}else if("tbn".equals(type)){
 					value = printLabelExcel.getTbn()+"";
-				}else if("mw".equals(type)){
+				}else if("MW".equals(type)){
 					value = printLabelExcel.getMw()+"";
-				}else if("tm".equals(type)){
+				}else if("TM".equals(type)){
 					value = printLabelExcel.getTm()+"";
-				}else if("gc".equals(type)){
+				}else if("GC".equals(type)){
 					value = printLabelExcel.getGc()+"";
 				}else if("ugTB".equals(type)){
 					value = printLabelExcel.getUgTB()+"";
-				}else if("pmole".equals(type)){
+				}else if("100pmoleμl".equals(type)){
 					value = printLabelExcel.getPmole()+"";
 				}else if("remark".equals(type)){
 					value = printLabelExcel.getRemark();
@@ -524,11 +524,11 @@ public class PrintService {
 			
 			
         	for (PrintLabel printLabelExcel:printLabels) {
-        		row = sheet.getRow(startRowNum);
+        		row = sheet.createRow(startRowNum);
          		
         		if(jwzh){
         			for (int k=1;k<13;k++){
-        				cell = row.getCell(k);//产生单元格
+        				cell = row.createCell(k);//产生单元格
         				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
         				//往单元格中写入信息
         				String value = "";
@@ -564,7 +564,7 @@ public class PrintService {
         				
         			}else{
         				for (int k=0;k<12;k++){
-            				cell = row.getCell(k);//产生单元格
+            				cell = row.createCell(k);//产生单元格
             				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
             				//往单元格中写入信息
             				String value = "";
@@ -610,8 +610,8 @@ public class PrintService {
 	        	sheet.addMergedRegion(range);
 	        	
 	        	//放入公司的相关信息
-	        	row = sheet.getRow(startRowNum);
-	        	cell = row.getCell(1);//产生单元格
+	        	row = sheet.createRow(startRowNum);
+	        	cell = row.createCell(1);//产生单元格
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellValue("金唯智生物科技（北京）有限公司         电话："+customer.getPhoneNo()+"      传真：010-59458058         "+customer.getWebSite());
 			}else{
@@ -619,8 +619,8 @@ public class PrintService {
 	        	sheet.addMergedRegion(range);
 	        	
 	        	//放入公司的相关信息
-	        	row = sheet.getRow(startRowNum);
-	        	cell = row.getCell(0);//产生单元格
+	        	row = sheet.createRow(startRowNum);
+	        	cell = row.createCell(0);//产生单元格
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellValue("     Release by _________      Phone : "+customer.getPhoneNo()+"     "+customer.getWebSite()+"    "+customer.getEmail());
 			}

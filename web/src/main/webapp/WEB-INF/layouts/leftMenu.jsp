@@ -1,6 +1,16 @@
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page import="org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser"%>
+<%@page import="org.apache.shiro.SecurityUtils"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<%
+ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+boolean isZiXi = false;
+if ("0".equals(customerFlag)){
+	isZiXi = true;
+}
+%>
 <div id="scllor">
 <div class="content">
 <div class="easyui-accordion">
@@ -8,9 +18,12 @@
 		<ul class="sbu_menu">
 			<li url="${ctx}/order/import" id="orderImport"><i class="icon-upload-alt"></i>订单导入</li>
 			<li url="${ctx}/order/orderList" id="orderList"><i class="icon-file-text"></i>订单信息</li>
+<% if (isZiXi){%>
 			<li url="${ctx}/order/orderExamine" id="orderExamine"><i class="icon-thumbs-up-alt"></i>订单审核</li>
+<% }%>
 		</ul>
 	</div>
+<% if (isZiXi){%>
 	<div title="安排合成" data-options="iconCls:'compound'" style="height:200px;">
 		<ul class="sbu_menu">
 			<li url="${ctx}/synthesis/productionData" id="productionData"><i class="icon-keyboard"></i>制作合成板</li>
@@ -58,6 +71,7 @@
 			<li url="${ctx}/delivery/deliveryRecall" id="deliveryRecall"><i class="icon-retweet"></i>发货召回</li>
 		</ul>
 	</div>
+<% }%>
 	<div title="报告单" data-options="iconCls:'report'" style="height:200px;">
 		<ul class="sbu_menu">
 			<li url="${ctx}/print/createReport" id="createReport"><i class="icon-file-text"></i>生成报告单</li>
@@ -70,10 +84,10 @@
 	</div>
 	<div title="出库单打印" data-options="iconCls:'outbound'" style="height:200px;">
 		<ul class="sbu_menu">
-			<li url="${ctx}/print/printOutBoundList" id="printOutBoundList"><i class="icon-print"></i>出库单打印</li>
-			<li url="${ctx}/delivery/chukuList" id="chukuList"><i class="icon-file-text-alt"></i>出库单打印(新)</li>
+			<li url="${ctx}/delivery/chukuList" id="chukuList"><i class="icon-file-text-alt"></i>出库单打印</li>
 		</ul>
 	</div>
+<% if (isZiXi){%>
 	<div title="打印标签" data-options="iconCls:'print'" style="height:200px;">
 		<ul class="sbu_menu">
 			<li url="${ctx}/print/productionLabel" id="productionLabel"><i class="icon-bookmark"></i>生产标签</li>
@@ -97,6 +111,7 @@
 			<li url="${ctx}/productManage/modifiePricedList" id="modifiePricedList"><i class="icon-bookmark"></i>修饰基础价格配置</li>
 		</ul>
 	</div>
+<% }%>
 </div>
 </div>
 </div>
