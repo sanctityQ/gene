@@ -14,6 +14,7 @@ import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.service.OrderService;
 import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
@@ -21,6 +22,7 @@ import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.CustomerRepository;
 import org.one.gene.repository.OrderRepository;
+import org.one.gene.repository.PrimerProductOperationRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +62,8 @@ public class OrderController {
     private PrimerProductRepository primerProductRepository;
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private PrimerProductOperationRepository primerProductOperationRepository;
 
     @Get("import")
     public String orderImport(Invocation inv){
@@ -323,7 +327,6 @@ public class OrderController {
     		@Param("customerCode") String customerCode,
 			@Param("createStartTime") String createStartTime,
 			@Param("createEndTime") String createEndTime,
-			@Param("productNo") String productNo,
 			@Param("status") String status,
     		@Param("pageNo")Integer pageNo,
             @Param("pageSize")Integer pageSize,
@@ -341,63 +344,86 @@ public class OrderController {
     	String comCode = user.getUser().getCompany().getComCode();
     	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
     	
-        if(productNo == null || "".equals(productNo)){
-        	Sort s=new Sort(Direction.DESC, "createTime");
-        	Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
-        	Map<String,Object> searchParams = Maps.newHashMap();
-        	searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
-			if (!"0".equals(customerFlag)) {//代理公司和直接客户，只能查自己公司的业务
-				searchParams.put(SearchFilter.Operator.EQ+"_customerCode",user.getUser().getCustomer().getCode());
-			} else {
-				searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
-			}
-        	searchParams.put(SearchFilter.Operator.EQ+"_status",status);
-        	if(!"1".equals(user.getUser().getCompany().getComLevel())){
-        		searchParams.put(SearchFilter.Operator.EQ+"_comCode",comCode);
-        	}
-        	if (createStartTime != null && !"".equals(createStartTime)) {
-        		searchParams.put(SearchFilter.Operator.GT+"_createTime",new Date(createStartTime+" 00:00:00"));
-        	}
-        	if (createEndTime != null && !"".equals(createEndTime)) {
-        		searchParams.put(SearchFilter.Operator.LT+"_createTime",new Date(createEndTime+" 59:59:59"));
-        	}
-        	
-        	Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
-        	Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
-        	
-        	Page<Order> orderPage = orderRepository.findAll(spec,pageable);
-        	
-        	return Replys.with(orderPage).as(Json.class);
-        }else{
-        	 //生产编码不为空，只查询生产信息表的数据
-        	PrimerProduct primerProduct = primerProductRepository.findByProductNo(productNo);
-        	if (!"0".equals(customerFlag)) {//代理公司和直接客户，只能查自己公司的业务
-        		if (primerProduct != null && primerProduct.getOrder().getCustomerCode().equals(user.getUser().getCustomer().getCode())) {
-        			orderService.addNewValue(primerProduct);
-        			primerProduct.setOperationTypeDesc(primerProduct.getOperationType().desc());
-        			return Replys.with(primerProduct).as(Json.class);
-        		} else {
-        			return Replys.with("error").as(Json.class);
-        		}
-        	} else {
-        		if (primerProduct != null) {
-        			orderService.addNewValue(primerProduct);
-        			primerProduct.setOperationTypeDesc(primerProduct.getOperationType().desc());
-        			if(!"1".equals(user.getUser().getCompany().getComLevel())){//梓熙 总公司，可以查
-        				return Replys.with(primerProduct).as(Json.class);
-        			}else{
-						if (primerProduct.getComCode().equals(comCode)) {//梓熙 分公司，只可以查分公司的业务
-							return Replys.with(primerProduct).as(Json.class);
-        				}else{
-        					return Replys.with("error").as(Json.class);
-        				}
-        			}
-        		} else {
-        			return Replys.with("error").as(Json.class);
-        		}
-        		
-        	}
-        }
+    	Sort s=new Sort(Direction.DESC, "createTime");
+    	Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
+    	Map<String,Object> searchParams = Maps.newHashMap();
+    	searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
+		if (!"0".equals(customerFlag)) {//代理公司和直接客户，只能查自己公司的业务
+			searchParams.put(SearchFilter.Operator.EQ+"_customerCode",user.getUser().getCustomer().getCode());
+		} else {
+			searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
+		}
+    	searchParams.put(SearchFilter.Operator.EQ+"_status",status);
+    	if(!"1".equals(user.getUser().getCompany().getComLevel())){
+    		searchParams.put(SearchFilter.Operator.EQ+"_comCode",comCode);
+    	}
+    	if (createStartTime != null && !"".equals(createStartTime)) {
+    		searchParams.put(SearchFilter.Operator.GT+"_createTime",new Date(createStartTime+" 00:00:00"));
+    	}
+    	if (createEndTime != null && !"".equals(createEndTime)) {
+    		searchParams.put(SearchFilter.Operator.LT+"_createTime",new Date(createEndTime+" 59:59:59"));
+    	}
+    	
+    	Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
+    	Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
+    	
+    	Page<Order> orderPage = orderRepository.findAll(spec,pageable);
+    	
+    	return Replys.with(orderPage).as(Json.class);
+    }
+
+    /**
+     * 查询生产数据信息
+     * @param productNo
+     * @param inv
+     * @return
+     * @throws Exception
+     */
+    @Post("primerProductInfo/{productNoStr}/")
+    public String primerProductInfo(@Param("productNoStr") String productNo,Invocation inv) throws Exception {
+
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	String comCode = user.getUser().getCompany().getComCode();
+    	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+    	String userExp = "无此生产编号信息，请您重新输入条件！";
+    	
+    	PrimerProduct primerProduct = primerProductRepository.findByProductNo(productNo);
+    	if (!"0".equals(customerFlag)) {//代理公司和直接客户，只能查自己公司的业务
+    		if (primerProduct != null && primerProduct.getOrder().getCustomerCode().equals(user.getUser().getCustomer().getCode())) {
+    			List<PrimerProductOperation> ppos= primerProductOperationRepository.getInfoByPrimerProductID(primerProduct.getId());
+    			primerProduct.setPrimerProductOperations(ppos);
+    			orderService.addNewValue(primerProduct);
+    			primerProduct.setOperationTypeDesc(primerProduct.getOperationType().desc());
+    			inv.addModel("primerProduct", primerProduct);
+    			return "primerProductInfo";
+    		} else {
+    			inv.addModel("userExp", userExp);
+    			return "orderList";
+    		}
+    	} else {
+    		if (primerProduct != null) {
+    			List<PrimerProductOperation> ppos= primerProductOperationRepository.getInfoByPrimerProductID(primerProduct.getId());
+    			primerProduct.setPrimerProductOperations(ppos);
+    			orderService.addNewValue(primerProduct);
+    			primerProduct.setOperationTypeDesc(primerProduct.getOperationType().desc());
+    			if(!"1".equals(user.getUser().getCompany().getComLevel())){//梓熙 总公司，可以查
+    				inv.addModel("primerProduct", primerProduct);
+    				return "primerProductInfo";
+    			}else{
+					if (primerProduct.getComCode().equals(comCode)) {//梓熙 分公司，只可以查分公司的业务
+						inv.addModel("primerProduct", primerProduct);
+						return "primerProductInfo";
+    				}else{
+    	    			inv.addModel("userExp", userExp);
+    	    			return "orderList";
+    				}
+    			}
+    		} else {
+    			inv.addModel("userExp", userExp);
+    			return "orderList";
+    		}
+    		
+    	}
     }
     
     /**

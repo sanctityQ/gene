@@ -7,12 +7,14 @@
 <html>
 <head>
 <title></title>
+<script src="${ctx}/static/js/json2.js"></script>
 <script type="text/javascript">
 var orderNo = ${orderNo};
 var ctx = '${ctx}';
 </script>
 </head>
 <body>
+<form action="/gene/order/primerProductInfo" id='queryForm' method="post">
 <div class="page_padding">
 	<div class="content_box totle margin_btoom">
 		<b>订单号：</b>${order.orderNo}<br />
@@ -72,7 +74,7 @@ var ctx = '${ctx}';
 		<table id="bigToSmall" class="easyui-datagrid" data-options="fitColumns:true,singleSelect: true,striped:true,method: 'get'">
 		<thead>
 			<tr>
-				<th data-options="field:'productNo',width:80,sortable:true,editor:'text'">生产编号</th>
+				<th data-options="field:'productNo',width:80,sortable:true,editor:'text',formatter:viewProduectInfo">生产编号</th>
 				<th data-options="field:'primeName',width:80,sortable:true,editor:'text'">引物名称</th>
 				<th data-options="field:'geneOrder',width:80,sortable:true,editor:'text'">序列</th>
 				<th data-options="field:'tbn',width:80,sortable:true,editor:'text'">碱基数</th>
@@ -101,9 +103,22 @@ var ctx = '${ctx}';
 		<button type="" class="btn btn-primary" onclick="goToPage('${ctx}/order/orderList');">确 定</button>
 	</div>
 </div>
+</form>
 <script src="${ctx}/views/order/js/orderList.js" ></script>
 <script type="text/javascript">
 orderDetail(${orderNo});
+
+function viewProduectInfo(val,row,index){
+	var row = $('#bigToSmall').datagrid('getData').rows[index];
+		var url = "'/gene/order/primerProductInfo/"+row.productNo+"/'";
+	    return '<a href="javascript:;"onclick="executeUrl('+url+')"><i></i>'+row.productNo+'</a>';
+};
+
+function executeUrl(url){
+	var oldurl = $('#queryForm').attr("action");
+	$('#queryForm').attr("action", url).submit();
+	$('#queryForm').attr("action", oldurl);
+}
 </script>
 </body>
 </html>
