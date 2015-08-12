@@ -24,9 +24,9 @@ function formatOper(val,row,index){
     if(toggle){
         return '<a href="javascript:;" onclick="deletRow('+index+')">删除</a>';
     }else{
-    	if(row.nmolTotal>=50 || row.odTotal>=10){
+    	//if(row.nmolTotal>=50 || row.odTotal>=10){
 	      return '<a href="javascript:;" onclick="copyRow(this)">复制</a>';
-	    }
+	    //}
     }
 	
 }
@@ -48,6 +48,7 @@ function appendRow(){
         	 del:true,
         	 productNo              :"",
              primeName              :"",
+             geneOrderMidi          :"",
              geneOrder              :"",
              tbn                    :"",
              nmolTotal              :"",
@@ -360,7 +361,7 @@ function copyRow(e){
     var ind = tr.index() + 1;
     var next = $(tr.clone());
     var row = $('#bigToSmall').datagrid('getData').rows[tr.index()];
-    
+
     bigToSmall.datagrid('insertRow',{
         index: ind, // index start with 0
         row: {
@@ -368,6 +369,7 @@ function copyRow(e){
         //复制页面展示数据
         productNo              :row.productNo+"1",
         primeName              :row.primeName,
+        geneOrderMidi          :row.geneOrderMidi,
         geneOrder              :row.geneOrder,
         tbn                    :row.tbn,
         nmolTotal              :"",

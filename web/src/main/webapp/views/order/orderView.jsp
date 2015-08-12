@@ -14,7 +14,7 @@ var ctx = '${ctx}';
 </script>
 </head>
 <body>
-<form action="/gene/order/primerProductInfo" id='queryForm' method="post">
+<form action="" id='queryForm' method="post">
 <div class="page_padding">
 	<div class="content_box totle margin_btoom">
 		<b>订单号：</b>${order.orderNo}<br />
@@ -76,7 +76,7 @@ var ctx = '${ctx}';
 			<tr>
 				<th data-options="field:'productNo',width:80,sortable:true,editor:'text',formatter:viewProduectInfo">生产编号</th>
 				<th data-options="field:'primeName',width:80,sortable:true,editor:'text'">引物名称</th>
-				<th data-options="field:'geneOrder',width:80,sortable:true,editor:'text'">序列</th>
+				<th data-options="field:'geneOrderMidi',width:80,sortable:true,editor:'text'">序列</th>
 				<th data-options="field:'tbn',width:80,sortable:true,editor:'text'">碱基数</th>
 				<c:if test="${order.orderUpType=='nmol'}">
 				<th data-options="field:'nmolTotal',width:80,sortable:true,editor:'text'">nmol总量</th>
@@ -100,7 +100,7 @@ var ctx = '${ctx}';
 	</table>
 	</div>
 	<div class="tools_bar">
-		<button type="" class="btn btn-primary" onclick="goToPage('${ctx}/order/orderList');">确 定</button>
+		<button type="button" class="btn" onclick="history.back()">返回</button>
 	</div>
 </div>
 </form>

@@ -836,11 +836,11 @@ public class DeliveryService {
 	public void deliveryList( List<OrderInfo> orderInfos, Invocation inv) throws IOException {
 		
 		String companyName = "";//公司名称
-		String customerName     = "";//客户姓名
 		String orderDate     = "";//订货日期
 		String deliveryDate     = "";//发货日期
 		String unit     = "";//客户单位
 		String orderNo = "";//订单号
+		String outOrderNo = "";//外部订单号
 		String productNoMinToMax = "";//序列范围
 		DeliveryInfo deliveryInfo = new DeliveryInfo();
 		List<DeliveryInfo> deliveryInfos = new ArrayList<DeliveryInfo>();
@@ -855,6 +855,7 @@ public class DeliveryService {
 				customerCode = order.getCustomerCode();//客户代码
 				orderDate = order.getCreateTime().toString();
 				productNoMinToMax = order.getProductNoMinToMax();
+				outOrderNo        = order.getOutOrderNo();
 				
 				if(orderDate.length()>10){
 					orderDate = orderDate.substring(0, 10);
@@ -864,7 +865,6 @@ public class DeliveryService {
 				
 				if (customer != null) {
 					companyName = customer.getName();
-					customerName= customer.getName();
 					unit = customer.getName();
 				}
 				
@@ -898,7 +898,7 @@ public class DeliveryService {
 				deliveryInfo = new DeliveryInfo();
 				deliveryInfo.setExtendStr1(orderDate);//订货日期
 				deliveryInfo.setExtendStr2(unit);//单位
-				deliveryInfo.setExtendStr3(customerName);//客户姓名
+				deliveryInfo.setExtendStr3(outOrderNo);//外部订单号
 				deliveryInfo.setExtendStr4(productNoMinToMax);//生产编号
 				deliveryInfo.setExtendStr5(tbnTotal+"");//碱基数
 				if(orderUpType == OrderType.od){
