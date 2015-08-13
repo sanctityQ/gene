@@ -20,6 +20,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
 import org.one.gene.domain.entity.Customer;
@@ -35,6 +36,7 @@ import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.entity.PrimerValueType;
 import org.one.gene.domain.entity.PrintLabel;
 import org.one.gene.domain.entity.User;
+import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.excel.OrderCaculate;
 import org.one.gene.repository.BoardRepository;
 import org.one.gene.repository.CustomerRepository;
@@ -171,6 +173,9 @@ public class DeliveryService {
     @Transactional(readOnly = false)
 	public String saveBack(List<OrderInfo> orderInfos, String flag, String text ) {
     	
+    	ShiroUser shrioUser = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	User user = shrioUser.getUser();
+    	
 		PrimerProduct primerProduct = new PrimerProduct(); 
 		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
 		List<PrimerProductOperation> primerProductOperations = new ArrayList<PrimerProductOperation>();
@@ -210,8 +215,8 @@ public class DeliveryService {
 							//组装操作信息
 							primerProductOperation = new PrimerProductOperation();
 							primerProductOperation.setPrimerProduct(boardHole.getPrimerProduct());
-							primerProductOperation.setUserCode("123");//后续从session取得
-							primerProductOperation.setUserName("张三");//后续从session取得
+							primerProductOperation.setUserCode(user.getCode());
+							primerProductOperation.setUserName(user.getName());
 							primerProductOperation.setCreateTime(new Date());
 							primerProductOperation.setType(type);
 							primerProductOperation.setTypeDesc(typeDesc);

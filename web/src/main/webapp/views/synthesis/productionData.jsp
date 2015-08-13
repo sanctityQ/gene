@@ -50,7 +50,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>
 			<th data-options="field:'productNo',width:65,sortable:true">生产编号</th>
-			<th data-options="field:'geneOrder',width:50,sortable:true,styler:cellStyler1">序列</th>
+			<th data-options="field:'geneOrderMidi',width:50,sortable:true,styler:cellStyler1">序列</th>
 			<th data-options="field:'odTotal',width:60,sortable:true">OD总量</th>
 			<th data-options="field:'odTB',width:60,sortable:true">OD/TB</th>
 			<th data-options="field:'nmolTotal',width:60,sortable:true">nmol总量</th>

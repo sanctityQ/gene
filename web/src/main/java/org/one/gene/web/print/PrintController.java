@@ -83,6 +83,7 @@ public class PrintController {
 			orders = printService.getPrintLabelList(primerProducts, inv);
 		} catch (Exception e) {
 			e.printStackTrace();
+			return Replys.with("{\"success\":false,\"mess\":\""+e.getMessage()+"\"}").as(Json.class);
 		}
     	
     	return Replys.with(orders).as(Json.class);

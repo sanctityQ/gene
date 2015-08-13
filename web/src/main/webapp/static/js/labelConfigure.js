@@ -105,6 +105,12 @@ function searchConfigure(){
         },
 		success : function(data) {
 			if(data !=null){
+				
+				if(typeof(data.success) !='undefined'){
+					alert(data.mess);
+					return;
+				}
+				
 				$('#customerCode').val(data.customerCode);
 				$('#seachCustom').val(data.customerName);
 				//打印列数赋值

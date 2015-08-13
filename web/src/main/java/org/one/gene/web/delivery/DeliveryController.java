@@ -154,7 +154,9 @@ public class DeliveryController {
 	public Reply saveBack(@Param("orderInfos") List<OrderInfo> orderInfos,
 			@Param("flag") String flag, @Param("text") String text,
 			Invocation inv) throws Exception {
-
+    	
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	
         deliveryService.saveBack(orderInfos, flag, text);
         
         //发邮件

@@ -4,10 +4,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.PrimerLabelConfig;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerLabelConfig.ColumnType;
 import org.one.gene.domain.entity.PrimerLabelConfigSub;
+import org.one.gene.domain.entity.User;
+import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.repository.PrimerLabelConfigRepository;
 import org.one.gene.repository.PrimerLabelConfigSubRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,15 +61,20 @@ public class LabelConfigureService {
 		return message;
 	}
 	
-	public PrimerLabelConfig getPrimerLabelConfig(PrimerLabelConfig primerLabelConfig,String customerCode,String customerName,String columnsNumber){
+	public PrimerLabelConfig getPrimerLabelConfig(
+			PrimerLabelConfig primerLabelConfig, String customerCode,
+			String customerName, String columnsNumber) {
+		
+		ShiroUser shiroUser = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+		User user = shiroUser.getUser();
+		
 		primerLabelConfig.setCustomerCode(customerCode);
 		primerLabelConfig.setCustomerName(customerName);
 		primerLabelConfig.setCreateTime(new Date());
 		primerLabelConfig.setModifyTime(new Date());
 		primerLabelConfig.setColumnType(ColumnType.covertValue(new Integer(columnsNumber)));
-		//登陆从session中获取，暂时写死
-		primerLabelConfig.setUserCode("8800331");
-		primerLabelConfig.setUserName("赵五");
+		primerLabelConfig.setUserCode(user.getCode());
+		primerLabelConfig.setUserName(user.getName());
 		return primerLabelConfig;
 	}
 	

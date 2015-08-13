@@ -26,6 +26,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
 import org.one.gene.domain.entity.Order.OrderType;
@@ -34,6 +35,7 @@ import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerProductValue;
 import org.one.gene.domain.entity.PrimerType;
+import org.one.gene.domain.entity.User;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.entity.PrimerType.PrimerOperationType;
 import org.one.gene.domain.entity.PrimerValueType;
@@ -471,6 +473,9 @@ public class SynthesisService {
     @Transactional(readOnly = false)
 	public String submitSynthesis(String boardNo, List<BoardHole> boardHoleList) {
     	
+    	ShiroUser shrioUser = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	User user = shrioUser.getUser();
+    	
     	Map<String, BoardHole> bhMap = new HashMap<String, BoardHole>();
     	for(BoardHole bh:boardHoleList){
     		System.out.println("=========页面的选择合成结果="+bh.getHoleNo()+"="+ bh.getFailFlag()+"="+ bh.getRemark());
@@ -536,8 +541,8 @@ public class SynthesisService {
 				//组装操作信息
 				primerProductOperation = new PrimerProductOperation();
 				primerProductOperation.setPrimerProduct(boardHole.getPrimerProduct());
-				primerProductOperation.setUserCode("123");//后续从session取得
-				primerProductOperation.setUserName("张三");//后续从session取得
+				primerProductOperation.setUserCode(user.getCode());
+				primerProductOperation.setUserName(user.getName());
 				primerProductOperation.setCreateTime(new Date());
 				primerProductOperation.setType(type);
 				primerProductOperation.setTypeDesc(typeDesc);
@@ -615,7 +620,7 @@ public class SynthesisService {
 		String excelFilePath = templatePath+"packTable.xls";
 		String configFilePath = templatePath+"packTableHoleConfig.txt";
 		
-		SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");//设置日期格式
+		SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm");//设置日期格式
         String currentTime = df.format(new Date());
         Board board = boardRepository.findByBoardNo(boardNo);
         String boardType = "";
@@ -936,6 +941,9 @@ public class SynthesisService {
 	public String resultsSelectSubmit(List<PrimerProduct> primerProducts,
 			String successFlag,PrimerStatusType operationType, String failReason) {
     	
+    	ShiroUser shrioUser = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	User user = shrioUser.getUser();
+    	
 		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
 		PrimerOperationType type = null;
 		String typeDesc = "";
@@ -949,7 +957,7 @@ public class SynthesisService {
 			
 			if (boardHole != null) {
 				boardHole.setModifyTime(new Date());//最后修改时间
-				boardHole.setModifyUser(123L);//后续从session取得
+				boardHole.setModifyUser(user.getId());
 			}
 			
 			if(primerProduct.getBackTimes() == null){
@@ -996,8 +1004,8 @@ public class SynthesisService {
 			//组装操作信息
 			primerProductOperation = new PrimerProductOperation();
 			primerProductOperation.setPrimerProduct(primerProduct);
-			primerProductOperation.setUserCode("123");//后续从session取得
-			primerProductOperation.setUserName("张三");//后续从session取得
+			primerProductOperation.setUserCode(user.getCode());
+			primerProductOperation.setUserName(user.getName());
 			primerProductOperation.setCreateTime(new Date());
 			primerProductOperation.setType(type);
 			primerProductOperation.setTypeDesc(typeDesc);
@@ -1160,6 +1168,9 @@ public class SynthesisService {
 	public String submitBoardEdit(String boardNo,
 			List<BoardHole> boardHoleList, PrimerStatusType operationType) throws IOException {
     	
+    	ShiroUser shrioUser = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	User user = shrioUser.getUser();
+    	
     	Map<String, BoardHole> bhMap = new HashMap<String, BoardHole>();
     	for(BoardHole bh:boardHoleList){
     		bhMap.put(bh.getHoleNo(), bh);
@@ -1185,7 +1196,7 @@ public class SynthesisService {
 				
 				boardHole.getPrimerProduct().setModifyTime(new Date());//最后修改时间
 				boardHole.setModifyTime(new Date());//最后修改时间
-				boardHole.setModifyUser(123L);//后续从session取得
+				boardHole.setModifyUser(user.getId());
 				
 				if ("0".equals(failFlag)) { // success
 					failReason = "";
@@ -1262,8 +1273,8 @@ public class SynthesisService {
 				//组装操作信息
 				primerProductOperation = new PrimerProductOperation();
 				primerProductOperation.setPrimerProduct(boardHole.getPrimerProduct());
-				primerProductOperation.setUserCode("123");//后续从session取得
-				primerProductOperation.setUserName("张三");//后续从session取得
+				primerProductOperation.setUserCode(user.getCode());
+				primerProductOperation.setUserName(user.getName());
 				primerProductOperation.setCreateTime(new Date());
 				primerProductOperation.setType(type);
 				primerProductOperation.setTypeDesc(typeDesc);

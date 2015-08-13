@@ -73,7 +73,14 @@ function searchLabel(){
 			noType:noType
         },
         success:function(data){
+        	
+			if(typeof(data.success) !='undefined'){
+				alert(data.mess);
+				return;
+			}
+			
             var downList = $('#downList');
+            downList.empty();
             var html = '<ul class="xls_list"><li class="tip"><i class="icon-info-sign"></i>选择下列公司下载生产标签。</li>';
             for(var i = 0; i < data.length; i++){
                 var name = data[i].customerName;

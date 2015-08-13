@@ -247,10 +247,27 @@ public class PrintService {
 			
 		//形成Excel
 		//读取配置信息
-		PrimerLabelConfig primerLabelConfig = primerLabelConfigRepository.findByCustomerCode(order.getCustomerCode());
-		if (primerLabelConfig == null) {
-			throw new Exception(order.getCustomerName()+"的引物标签打印信息为空，请配置！");
+		PrimerLabelConfig primerLabelConfig = null;
+		Customer customer = customerRepository.findByCode(order.getCustomerCode());
+		//直接客户，使用梓熙生物的配置
+		if (customer != null && "2".equals(customer.getCustomerFlag())) {
+
+			List<Customer> customers = customerRepository.seachHaveZiXi();
+			if (customers != null && customers.size() > 0) {
+				Customer customerTemp = (Customer)customers.get(0);
+				primerLabelConfig = primerLabelConfigRepository.findByCustomerCode(customerTemp.getCode());
+			}
+			if (primerLabelConfig == null) {
+				throw new Exception("梓熙生物的引物标签打印信息为空，请配置！");
+			}
+			
+		} else {
+			primerLabelConfig = primerLabelConfigRepository.findByCustomerCode(order.getCustomerCode());
+			if (primerLabelConfig == null) {
+				throw new Exception(order.getCustomerName()+ "的引物标签打印信息为空，请配置！");
+			}
 		}
+		
 
 		//计算第一列多少行
 		BigDecimal totalListCount = new BigDecimal(printLabels.size());//本excel的条数
