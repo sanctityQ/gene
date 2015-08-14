@@ -593,7 +593,7 @@ public class SynthesisService {
 			
 			//序列，如果是删除的，展现错误类型信息
 			if(bh.getStatus() == 0){
-				tableContext += primerProduct.getGeneOrder();
+				tableContext += primerProduct.getGeneOrderMidi();
 			}else if(bh.getStatus() == 1){
 				tableContext += bh.getPrimerProductOperation().getTypeDesc();
 			}
@@ -668,7 +668,7 @@ public class SynthesisService {
         }
 		
 		// 读取分装表模板 形成Excel
-		String strFileName = "packTable"+System.currentTimeMillis()+".xls";
+		String strFileName = System.currentTimeMillis()+".xls";
 		
 		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(excelFilePath));
 		HSSFSheet sheet = workbook.getSheetAt(0);
@@ -719,13 +719,31 @@ public class SynthesisService {
 						cell = row.getCell(pthc.getColumn() + 3);
 						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 						cell.setCellValue(pp.getMeasureVolume() + "");
-					} else if (!"".equals(pp.getModiFiveType())
-							|| !"".equals(pp.getModiThreeType())
-							|| !"".equals(pp.getModiMidType())
-							|| !"".equals(pp.getModiSpeType())) {
+					} else if (!"".equals(pp.getModiFiveType())|| !"".equals(pp.getModiThreeType())
+							|| !"".equals(pp.getModiMidType()) || !"".equals(pp.getModiSpeType())) {
+						String modiStr = "";
+						if (!"".equals(pp.getModiFiveType())) {
+							modiStr += pp.getModiFiveType()+",";
+						}
+						if (!"".equals(pp.getModiThreeType())) {
+							modiStr += pp.getModiThreeType()+",";
+						}
+						if (!"".equals(pp.getModiMidType())) {
+							modiStr += pp.getModiMidType()+",";
+						}
+						if (!"".equals(pp.getModiSpeType())) {
+							modiStr += pp.getModiSpeType()+",";
+						}
+						if (modiStr.length() > 0) {
+							while(modiStr.indexOf(",")!=-1 && modiStr.endsWith(",")){
+								modiStr = modiStr.substring(0, modiStr.length() - 1);
+							}
+							modiStr = "(" + modiStr + ")";
+						}
+						
 						cell = row.getCell(pthc.getColumn() + 3);
 						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-						cell.setCellValue("修饰");
+						cell.setCellValue(modiStr);
 					} else if ("HPLC".equals(pp.getPurifyType())) {
 						cell = row.getCell(pthc.getColumn() + 3);
 						cell.setCellType(HSSFCell.CELL_TYPE_STRING);

@@ -35,7 +35,7 @@ public class Customer extends IdEntity implements java.io.Serializable {
      */
     private Company company;
     /**
-     * 负责人姓名.
+     * 联系人姓名.
      */
     private String leaderName;
 

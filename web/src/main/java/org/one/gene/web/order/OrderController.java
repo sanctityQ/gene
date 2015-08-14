@@ -167,12 +167,23 @@ public class OrderController {
         		return "orderImport";
         		//throw new Exception("无此客户信息，请您确认后重新上传！");
         	}
+        	
+        	String prefix = "";//生产编号开头
+        	//直接客户使用梓熙的配置
+			if ("2".equals(customer.getCustomerFlag())) {
+				List<Customer> customers = customerRepository.seachHaveZiXi();
+				if (customers != null && customers.size() > 0) {
+					Customer customerTemp = (Customer)customers.get(0);
+					prefix = customerTemp.getPrefix().toUpperCase();
+				}
+			}
+        	
         	//组织订单对象
         	Order order = new Order();
         	//获取外部订单号
         	String outOrderNo = orderService.getOutOrderNo(path,1,1);
         	order.setOutOrderNo(outOrderNo);
-        	order = orderService.ReadExcel(path, 0,"4-",order,customer);
+        	order = orderService.ReadExcel(path, 0,"4-",order, prefix);
         	orderService.convertOrder(customer,filename,order);
         	//保存订单信息
         	try{

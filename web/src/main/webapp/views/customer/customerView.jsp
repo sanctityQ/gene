@@ -31,7 +31,7 @@ var ctx = '${ctx}';
 				<td>
                     <input class="readonly_inp" type="text" value="${customer.customerFlag}" disabled style="width:150px" />
                 </td>
-				<td align="right">负责人姓名:</td>
+				<td align="right">联系人姓名:</td>
 				<td><input class="readonly_inp" type="text" value="${customer.leaderName}" disabled style="width:150px" /></td>
 			</tr>
 			<tr>

@@ -51,7 +51,7 @@ String comCode = user.getUser().getCompany().getComCode();
 		                    <% }%>
 	                </select>
                 </td>
-                <td align="right">负责人姓名:</td>
+                <td align="right">联系人姓名:</td>
 				<td><input class="inp_text" type="text" name="customer.leaderName" value="${customer.leaderName}"  style="width:150px" /></td>
 			</tr>
              <tr>
@@ -70,7 +70,7 @@ String comCode = user.getUser().getCompany().getComCode();
 			<tr>
 				<td align="right">生产编号开头:</td>
 				<td>
-                    <input class="inp_text" type="text" name="customer.prefix" value="${customer.prefix}"  style="width:50px" />
+                    <input class="inp_text" type="text" id="customerPrefix" name="customer.prefix" value="${customer.prefix}"  style="width:50px" />
 				</td>
 				<td align="right">联系电话:</td>
 				<td>
@@ -151,6 +151,9 @@ var customerSave=function(){
 	}
 	if($("#customerFlag").val()==''){
 		messAge += "请选择客户性质。\n";
+	}
+	if($("#customerFlag").val()=='2' && $("#customerPrefix").val()!=''){
+		messAge += "客户性质选择‘直接客户’时不需要录入生产编号开头，直接使用梓熙生物的配置。\n";
 	}
 	if($("#customerFlag").val()=='0'){
 		if($("#haveZiXi").val()!='' && $("#haveZiXi").val()!=$("#customerid").val()){

@@ -492,7 +492,6 @@ public class DeliveryService {
 		String customerName     = "";//客户姓名
 		String orderDate     = "";//订货日期
 		String deliveryDate     = "";//发货日期
-		String unit     = "";//客户单位
 		String deliveryAddress     = "";//送货地址
 		String area     = "";//地区
 		String address     = "";//公司地址
@@ -502,6 +501,8 @@ public class DeliveryService {
 		String email     = "";//邮箱
 		String orderNo = "";//订单号
 		String productNoMinToMax = "";//序列范围
+		String leaderName = "";//客户联系人
+		String customerFlag = "";//客户标识
 		
 		for (OrderInfo orderInfo : orderInfos) {
 			orderNo = orderInfo.getOrderNo();
@@ -524,16 +525,24 @@ public class DeliveryService {
 		Customer customer = customerRepository.findByCode(customerCode);
 		
 		if (customer != null) {
-			companyName = customer.getName();
-			webSite     = customer.getWebSite();
-			customerName= customer.getName();
-			unit = "";
+			companyName     = customer.getName();
+			webSite         = customer.getWebSite();
+			customerName    = customer.getName();
 			deliveryAddress = customer.getAddress();
 			address         = customer.getAddress();
 			phoneNo         = customer.getPhoneNo();
 			email           = customer.getEmail();
+			leaderName      = customer.getLeaderName();
+			customerFlag    = customer.getCustomerFlag();
 		}
-		
+		//直接客户 抬头展现梓熙生物
+		if ("2".equals(customerFlag)) {
+			List<Customer> customers = customerRepository.seachHaveZiXi();
+			if (customers != null && customers.size() > 0) {
+				Customer customerTemp = (Customer)customers.get(0);
+				companyName = customerTemp.getName();
+			}
+		}
 		
 		int geneCount = 0;//序列总条数
 		double odTotal = 0.0;//每条OD总量
@@ -551,7 +560,6 @@ public class DeliveryService {
 		
 		DecimalFormat df = new DecimalFormat("#.00");
 		DeliveryInfo deliveryInfo = new DeliveryInfo();
-		List<DeliveryInfo> deliveryInfos = new ArrayList<DeliveryInfo>();
 		Map<String, DeliveryInfo> deliveryInfoMap = new HashMap<String, DeliveryInfo>();//数据库中的板孔信息
 		
 		for (PrimerProduct primerProduct : order.getPrimerProducts()) {
@@ -666,7 +674,7 @@ public class DeliveryService {
 		row = sheet.getRow(2);
 		cell = row.getCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue("客户姓名："+customerName);
+		cell.setCellValue("客户联系人："+leaderName);
 		cell = row.getCell(4);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue("订货日期："+orderDate+"   发货日期："+deliveryDate);
@@ -674,7 +682,7 @@ public class DeliveryService {
 		row = sheet.getRow(3);
 		cell = row.getCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue("客户单位："+unit);
+		cell.setCellValue("客户单位："+customerName);
 		cell = row.getCell(4);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue("订单号："+orderNo+"   序列范围："+productNoMinToMax);
@@ -880,6 +888,7 @@ public class DeliveryService {
 				int orderNmolTotal = 0;//订单的nmole总量
 				int    nmolTB      = 0;// nmole/Tube
 				int geneOrderCount = 0 ;//序列条数
+				int tb = 0 ;//管数
 				OrderType orderUpType = order.getOrderUpType();
 				
 				for (PrimerProduct primerProduct : order.getPrimerProducts()) {
@@ -895,10 +904,11 @@ public class DeliveryService {
 							nmolTB = primerProductValue.getValue().intValue();
 						}else if(type.equals(PrimerValueType.nmolTotal)){//订单的nmole总量
 							orderNmolTotal += primerProductValue.getValue().intValue();
+						}else if(type.equals(PrimerValueType.tb)){//管数
+							tb = primerProductValue.getValue().intValue();
 						}
 					}
 				}
-				
 				
 				deliveryInfo = new DeliveryInfo();
 				deliveryInfo.setExtendStr1(orderDate);//订货日期
@@ -907,10 +917,10 @@ public class DeliveryService {
 				deliveryInfo.setExtendStr4(productNoMinToMax);//生产编号
 				deliveryInfo.setExtendStr5(tbnTotal+"");//碱基数
 				if(orderUpType == OrderType.od){
-					deliveryInfo.setExtendStr6(orderOdTotal+"OD*"+geneOrderCount);//OD/Tube
+					deliveryInfo.setExtendStr6(orderOdTotal+"OD*"+tb);//OD/Tube
 					deliveryInfo.setExtendStr7(orderOdTotal+"OD");//OD总量
 				}else{
-					deliveryInfo.setExtendStr6(nmolTB+"nmol*"+geneOrderCount);//nmol/Tube
+					deliveryInfo.setExtendStr6(nmolTB+"nmol*"+tb);//nmol/Tube
 					deliveryInfo.setExtendStr7(orderNmolTotal+"nmol");//nmol总量
 				}
 				deliveryInfo.setExtendStr8("");//出货日期
