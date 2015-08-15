@@ -168,7 +168,7 @@ public class OrderController {
         		//throw new Exception("无此客户信息，请您确认后重新上传！");
         	}
         	
-        	String prefix = "";//生产编号开头
+        	String prefix = customer.getPrefix().toUpperCase();//生产编号开头
         	//直接客户使用梓熙的配置
 			if ("2".equals(customer.getCustomerFlag())) {
 				List<Customer> customers = customerRepository.seachHaveZiXi();
