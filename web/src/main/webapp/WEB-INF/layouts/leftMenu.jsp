@@ -67,8 +67,8 @@ if ("0".equals(customerFlag)){
 	<div title="发货" data-options="iconCls:'delivery'" style="height:200px;">
 		<ul class="sbu_menu">
 			<li url="${ctx}/delivery/deliveryResults" id="consignmentProcessing"><i class="icon-truck"></i>发货处理</li>
-			<li url="${ctx}/delivery/deliveryList" id="deliveryList"><i class="icon-file-text-alt"></i>发货清单</li>
 			<li url="${ctx}/delivery/deliveryRecall" id="deliveryRecall"><i class="icon-retweet"></i>发货召回</li>
+			<li url="${ctx}/delivery/deliveryList" id="deliveryList"><i class="icon-file-text-alt"></i>发货清单</li>
 		</ul>
 	</div>
 <% }%>

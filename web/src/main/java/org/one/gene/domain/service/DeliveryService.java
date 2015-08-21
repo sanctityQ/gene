@@ -884,26 +884,28 @@ public class DeliveryService {
 				
 				int tbnTotal = order.getTbnTotal().intValue();//碱基总数
 				int orderOdTotal = 0;//订单的OD总量
+				int odTotal      = 0;//OD总量
 				int    odTB      = 0;//OD/Tube
 				int orderNmolTotal = 0;//订单的nmole总量
+				int nmolTotal      = 0;//nmole总量
 				int    nmolTB      = 0;// nmole/Tube
-				int geneOrderCount = 0 ;//序列条数
 				int tb = 0 ;//管数
 				OrderType orderUpType = order.getOrderUpType();
 				
 				for (PrimerProduct primerProduct : order.getPrimerProducts()) {
 					
-					geneOrderCount += 1;
 					for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
 						PrimerValueType type = primerProductValue.getType();
 						if (type.equals(PrimerValueType.odTB)) {// OD/Tube
 							odTB = primerProductValue.getValue().intValue();
 						}else if(type.equals(PrimerValueType.odTotal)){//od总量
-							orderOdTotal += primerProductValue.getValue().intValue();
+							odTotal = primerProductValue.getValue().intValue();
+							orderOdTotal += odTotal;
 						}else if(type.equals(PrimerValueType.nmolTB)){//nmole/Tube
 							nmolTB = primerProductValue.getValue().intValue();
 						}else if(type.equals(PrimerValueType.nmolTotal)){//订单的nmole总量
-							orderNmolTotal += primerProductValue.getValue().intValue();
+							nmolTotal = primerProductValue.getValue().intValue();
+							orderNmolTotal += nmolTotal;
 						}else if(type.equals(PrimerValueType.tb)){//管数
 							tb = primerProductValue.getValue().intValue();
 						}
@@ -915,13 +917,14 @@ public class DeliveryService {
 				deliveryInfo.setExtendStr2(unit);//单位
 				deliveryInfo.setExtendStr3(outOrderNo);//外部订单号
 				deliveryInfo.setExtendStr4(productNoMinToMax);//生产编号
-				deliveryInfo.setExtendStr5(tbnTotal+"");//碱基数
+				deliveryInfo.setExtendStr5(tbnTotal+"");//碱基数--订单下的总量
+				//OD/Tube和OD总量 -- 取订单的最后一条数据的值
 				if(orderUpType == OrderType.od){
-					deliveryInfo.setExtendStr6(orderOdTotal+"OD*"+tb);//OD/Tube
-					deliveryInfo.setExtendStr7(orderOdTotal+"OD");//OD总量
+					deliveryInfo.setExtendStr6(odTB+"OD*"+tb);//OD/Tube
+					deliveryInfo.setExtendStr7(odTotal+"OD");//OD总量
 				}else{
 					deliveryInfo.setExtendStr6(nmolTB+"nmol*"+tb);//nmol/Tube
-					deliveryInfo.setExtendStr7(orderNmolTotal+"nmol");//nmol总量
+					deliveryInfo.setExtendStr7(nmolTotal+"nmol");//nmol总量
 				}
 				deliveryInfo.setExtendStr8("");//出货日期
 				

@@ -471,7 +471,11 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
-            return odTotal.value(primerProduct).divide(odTB.value(primerProduct), 0, BigDecimal.ROUND_UP);
+        	if (primerProduct.isOrderUpType(Order.OrderType.od)) {
+        		return odTotal.value(primerProduct).divide(odTB.value(primerProduct), 0, BigDecimal.ROUND_UP);
+        	} else {
+        		return nmolTotal.value(primerProduct).divide(nmolTB.value(primerProduct), 0, BigDecimal.ROUND_UP);
+        	}
         }
     },
 
