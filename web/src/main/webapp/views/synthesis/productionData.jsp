@@ -17,7 +17,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 </head>
 <body>
 <div class="tools">
-            <input type="hidden" id="customerFlag" name="customerFlag" value="<%=customerFlag %>"/>
+            <input type="hidden" id="customerFlagOld" name="customerFlagOld" value="<%=customerFlag %>"/>
 	<table width="100%">
 		<tr>
 			<td align="right">客户公司名称:</td>
