@@ -16,7 +16,7 @@
 			<td align="right">订单号:</td>
 			<td><input id="orderNo" class="inp_text" type="text" value="" style="width: 60%" /></td>
 			<c:if test="${customerFlag=='0'}">
-				<td align="right">客户代码:</td>
+				<td align="right">客户公司名称:</td>
 				<td><input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 150px" />
 				    <input class="inp_text" type="hidden" id="customercode" name="customercode" value=""/>
 				    <ul id="seachCustomList"></ul>
@@ -43,7 +43,8 @@
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>
             <th data-options="field:'orderNo',width:80,sortable:true">订单号</th>
-            <th data-options="field:'customerName',width:100,sortable:true">客户姓名</th>
+            <th data-options="field:'customerName',width:100,sortable:true">客户公司名称</th>
+            <th data-options="field:'contactsName',width:50,sortable:true">客户联系人</th>
 			<th data-options="field:'productNoMinToMax',width:80,sortable:true">生产编号</th>
 			<th data-options="field:'tbnTotal',width:50,sortable:true">碱基总数</th>
             <th data-options="field:'createTime',width:80,sortable:true">导入时间</th>

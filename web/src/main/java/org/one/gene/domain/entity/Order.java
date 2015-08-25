@@ -38,6 +38,10 @@ public class Order extends IdEntity implements java.io.Serializable {
      */
     private String customerName;
     /**
+     * 客户联系人姓名.
+     */
+    private String contactsName;
+    /**
      * 归属机构代码.
      */
     private String comCode;
@@ -142,6 +146,15 @@ public class Order extends IdEntity implements java.io.Serializable {
         this.customerName = customerName;
     }
 
+    @Column(name = "`contacts_name`", length = 127)
+    public String getContactsName() {
+        return this.contactsName;
+    }
+
+    public void setContactsName(String contactsName) {
+        this.contactsName = contactsName;
+    }
+    
     @Column(name = "`com_code`", length = 15)
     public String getComCode() {
         return this.comCode;

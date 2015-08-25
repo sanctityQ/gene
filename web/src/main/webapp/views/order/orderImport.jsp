@@ -26,6 +26,11 @@
 		 alert("请录入客户公司代码或名称！");
 		 return false;
 	 }
+	 if($("#contactsid").val()=="" && $("#seachContacts").val()!=""){
+		 alert("请从联系人查询的结果列表中选择！");
+		 return false;
+	 }
+	 
 	 if($("#upload").val()==""){
 		 alert("请上传文件！");
 		 return false;
@@ -54,14 +59,18 @@
 	<div class="content_box">
 		<h2>导入单订信息</h2>
 		<c:if test="${customerFlag=='0'}">
-		<div class="import_box">
-			<i class="icon-group"></i>请输入客户公司代码或名称。(从查询的结果列表中选择)
-			<br/>
-		    <input type="hidden" id="customerid" name="customerid" value=""/>
-		    <input type="hidden" id="customerFlag" name="customerFlag" value=""/>
-		    <input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="user.customer.name" value="" style="width: 240px" />
-		    <ul id="seachCustomList"></ul>
-		</div>
+			<div class="import_box">
+				<i class="icon-group"></i>(从查询的结果列表中选择)
+				<br/>
+			    <input type="hidden" id="customerid" name="customerid" value=""/>
+			    <input type="hidden" id="customerFlag" name="customerFlag" value=""/>
+			    <input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="user.customer.name" value="" style="width: 240px" />请输入客户公司代码或名称。
+			    <ul id="seachCustomList"></ul>
+				<br/>
+			    <input type="hidden" id="contactsid" name="contactsid" value=""/>
+			    <input class="inp_text" type="text" autocomplete="off" id="seachContacts" name="contactsname" value="" style="width: 240px" />请输入联系人名称
+			    <ul id="seachContactsList"></ul>
+			</div>
 		</c:if>
 		<div class="import_box" style="line-height: 16px;">
 			<i class="icon-upload-alt"></i>上传您的excel模板，系统将根据您导入的信息生成订单。
@@ -79,5 +88,6 @@
 </div>
 </form>
 <script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
+<script src="${ctx}/static/js/vagueSeachContacts.js" ></script>
 </body>
 </html>

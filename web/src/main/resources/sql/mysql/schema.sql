@@ -71,6 +71,7 @@ CREATE TABLE `order` (
   `out_order_no`      VARCHAR(63) NOT NULL COMMENT '外部订单号',
   `customer_code`     VARCHAR(31)  NOT NULL COMMENT '客户代码',
   `customer_name`     VARCHAR(127) COMMENT '客户姓名',
+  `contacts_name`     VARCHAR(127) COMMENT '客户联系人姓名',
   `com_code`          VARCHAR(15) COMMENT '归属机构代码',
   `status`            TINYINT(2)  COMMENT '订单状态',
   `type`              CHAR(2) NOT NULL DEFAULT 0 COMMENT '订单类型: 00-合成',
@@ -208,6 +209,17 @@ CREATE TABLE `customer_price` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_plc_id_customer` (`customer_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户引物单价配置表';
+
+CREATE TABLE `customer_contacts` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `customer_id` INT(11) NOT NULL COMMENT '客户公司id',
+  `name` VARCHAR(30) NOT NULL COMMENT '联系人姓名',
+  `phone_no` VARCHAR(15) COMMENT '联系电话',
+  `email` VARCHAR(60) COMMENT '邮箱',
+  `fax` VARCHAR(15) COMMENT '传真',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_customer_contacts` (`customer_code`,`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户联系人信息表';
 
 CREATE TABLE `product_molecular` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',

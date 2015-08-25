@@ -95,13 +95,12 @@ public class Customer extends IdEntity implements java.io.Serializable {
      * 业务员姓名.
      */
     private String handlerName;
-
-//    private CustomerPrice customerPrice;
     
     private List<PrimerProduct> primerProducts = Lists.newArrayList();
     
     private String haveUserFlag;//是否含有用户
     
+    private List<CustomerContacts> customerContactss = Lists.newArrayList();
     
 	public Customer() {
     }
@@ -291,6 +290,15 @@ public class Customer extends IdEntity implements java.io.Serializable {
 	public void setHaveUserFlag(String haveUserFlag) {
 		this.haveUserFlag = haveUserFlag;
 	}
+	
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
+    public List<CustomerContacts> getCustomerContactss() {
+        return this.customerContactss;
+    }
+
+    public void setCustomerContactss(List<CustomerContacts> customerContactss) {
+        this.customerContactss = customerContactss;
+    }
 }
 
 

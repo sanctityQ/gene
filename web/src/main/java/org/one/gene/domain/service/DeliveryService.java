@@ -501,7 +501,7 @@ public class DeliveryService {
 		String email     = "";//邮箱
 		String orderNo = "";//订单号
 		String productNoMinToMax = "";//序列范围
-		String leaderName = "";//客户联系人
+		String contactsName = "";//客户联系人
 		String customerFlag = "";//客户标识
 		
 		for (OrderInfo orderInfo : orderInfos) {
@@ -516,6 +516,8 @@ public class DeliveryService {
 			orderDate = order.getCreateTime().toString();
 			productNoMinToMax = order.getProductNoMinToMax();
 			saler = order.getHandlerName();
+			contactsName = order.getContactsName();
+			customerName = order.getCustomerName();
 		}
 		
 		if(orderDate.length()>10){
@@ -527,12 +529,10 @@ public class DeliveryService {
 		if (customer != null) {
 			companyName     = customer.getName();
 			webSite         = customer.getWebSite();
-			customerName    = customer.getName();
 			deliveryAddress = customer.getAddress();
 			address         = customer.getAddress();
 			phoneNo         = customer.getPhoneNo();
 			email           = customer.getEmail();
-			leaderName      = customer.getLeaderName();
 			customerFlag    = customer.getCustomerFlag();
 		}
 		//直接客户 抬头展现梓熙生物
@@ -674,7 +674,7 @@ public class DeliveryService {
 		row = sheet.getRow(2);
 		cell = row.getCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue("客户联系人："+leaderName);
+		cell.setCellValue("客户联系人："+contactsName);
 		cell = row.getCell(4);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue("订货日期："+orderDate+"   发货日期："+deliveryDate);

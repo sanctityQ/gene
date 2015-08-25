@@ -1,18 +1,19 @@
 $(function(){
 
-    $("#seachCustom")
+    $("#seachContacts")
         .focus(function(){$(this).addClass("fouse");})  
         .blur(function(){$(this).removeClass("fouse");});
     
-    seachCustomChange();
+    seachContactsChange();
 });
-function seachCustomChange(){
-    var seach = $("#seachCustom");
+function seachContactsChange(){
+	
+    var seach = $("#seachContacts");
     var left = seach.offset().left;
     var top = seach.offset().top + 30;
-    var list = $("#seachCustomList");
+    var list = $("#seachContactsList");
     list.css({'left':left,'top':top});
-    list.on("click",'li',seachCustomSelect);
+    list.on("click",'li',seachContactsSelect);
     seach.bind('keydown',function(event){
         var select = $('li.selected',list);
         if(event.keyCode == 40){
@@ -41,19 +42,17 @@ function seachCustomChange(){
     function ajaxSeach(){
     	
     	//重新模糊查询时清空
-    	$("#customerid").val("");
-    	$("#customerFlag").val("");
     	$("#contactsid").val("");
-    	$("#seachContacts").val("");
-    	
+        
     	setTimeout(function(){
             if(seach.val() != ''){
                 $.ajax({
                     type: "post",
-                    url: "/gene/customer/vagueSeachCustomer",
+                    url: "/gene/customerContacts/vagueSeachContacts",
                     dataType: "json",
             		data:{
-            			customercode: seach.val()
+            			contactsName: seach.val(),
+            			customerid: $("#customerid").val()
                     },
                     success:function(data){
                         list.empty();
@@ -63,10 +62,8 @@ function seachCustomChange(){
                         }
                         for(var i = 0; i < data.length; i++){
                             var id   = data[i].id;
-                            var code = data[i].code;
                             var name = data[i].name;
-                            var custFlag = data[i].customerFlag;
-                            li += '<li id="'+id+'" custFlag="'+custFlag+'" code="'+code+'">'+name+'</li>';
+                            li += '<li id="'+id+'">'+name+'</li>';
                         };
                         list.append(li);
                     }
@@ -77,45 +74,13 @@ function seachCustomChange(){
         },500);
     };
 }
-function seachCustomSelect(){
-    var seach = $("#seachCustom");
-    var customerid = $("#customerid");
-    var customerFlag = $("#customerFlag");
-    var list = $("#seachCustomList");
+function seachContactsSelect(){
+    var seach = $("#seachContacts");
+    var contactsid = $("#contactsid");
+    var list = $("#seachContactsList");
     var val = $(this).text();
     var id = $(this).attr("id");
-    var code = $(this).attr("code");
-    var custFlag = $(this).attr("custFlag");
-    seach.val(val).attr("tagId",code);
-    customerid.val(id)
-    customerFlag.val(custFlag);
+    seach.val(val);
+    contactsid.val(id)
     list.hide(100);
-
-    //如果需要赋总公司值
-    if(typeof($("#needTopCom").val()) != 'undefind'){
-    	addTopComInfo( custFlag );
-    }
-    
 };
-
-function addTopComInfo( custFlag ){
-
-    if(custFlag =='0' && $("#operateUserComLevel").val() == '1'){//梓熙  & 操作员是总公司
-    	
-    	$("#companyId").val("");
-    	$("#companyComCode").val("");
-    	$("#seachCompany").val("");
-    	$("#tdComCode").show();
-    	$("#tdComName").show();
-    	$("#tdComCodeHidden").hide();
-    }else{
-    	$("#companyId").val("");
-    	$("#companyComCode").val("");
-    	$("#seachCompany").val("");
-    	$("#tdComCode").hide();
-    	$("#tdComName").hide();
-    	$("#tdComCodeHidden").show();
-    }
-	
-};	
-

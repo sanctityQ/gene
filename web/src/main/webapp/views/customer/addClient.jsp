@@ -1,7 +1,6 @@
-<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="msg" uri="http://mvc.one.sinosoft.com/validation/msg" %>
 <%@page import="org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser"%>
 <%@page import="org.apache.shiro.SecurityUtils"%>
 
@@ -104,20 +103,7 @@ String comCode = user.getUser().getCompany().getComCode();
                 <td align="right">Email:</td>
                 <td><input class="inp_text" name="customer.email" type="text" value="${customer.email}"  style="width:150px" /></td>
 			</tr>
-            <%-- <tr>
-				<td align="right">修饰价格:</td>
-				<td><input class="inp_text" type="text" name="customer.customerPrice.modifyPrice" value="${customer.customerPrice.modifyPrice}"  style="width:150px" /></td>
-				<td align="right">碱基单价:</td>
-                <td><input class="inp_text" name="customer.customerPrice.baseVal" type="text" value="${customer.customerPrice.baseVal}"  style="width:150px" /></td>
-				
-			</tr>
-			<tr>
-				<td align="right">纯化价格:</td>
-				<td><input class="inp_text" type="text" name="customer.customerPrice.purifyVal" value="${customer.customerPrice.purifyVal}"  style="width:150px" /></td>
-				<td align="right">&nbsp;</td>
-                <td>&nbsp;</td>
-				
-			</tr> --%>
+
 			<tr>
 				<td colspan="3" height="10"></td>
 			</tr>
@@ -126,6 +112,31 @@ String comCode = user.getUser().getCompany().getComCode();
 			<input type="hidden" id="haveZiXi" value="${haveZiXi}"/>
 		</table>
 	</div>
+    <div class="content_box info margin_btoom">
+         <h2>联系人信息<td>&nbsp;</td><td><button id="addID" type="button" class="btn btn-primary" onclick="addLinker();">增加</button></td></h2>
+         <table id="tableID" width="100%" align="center" class="order_info" style="BORDER-COLLAPSE: collapse" borderColor=#000000 border="0">
+             <tr>
+                 <td align="center" width="15%">姓名</td>
+                 <td align="center" width="20%">联系电话</td>
+                 <td align="center" width="20%">电子邮箱</td>
+                 <td align="center" width="8%">操作</td>
+                 <input type="hidden" id="maxIndex" name="maxIndex" value="${customer.customerContactss.size()}">
+             </tr>
+             <tbody id="tbodyID">
+	           <c:forEach var="cc" items="${customer.customerContactss}" varStatus="status">
+		           <tr>
+	                 <td>
+	                 <input type="hidden" name="customer.customerContactss[${status.index}].id" value="${cc.id}">
+	                 <input class="inp_text" type="text" name="customer.customerContactss[${status.index}].name" value="${cc.name}" style="width: 90%">
+	                 </td>
+	                 <td><input class="inp_text" type="text" name="customer.customerContactss[${status.index}].phoneNo" value="${cc.phoneNo}" style="width: 90%"></td>
+	                 <td><input class="inp_text" type="text" name="customer.customerContactss[${status.index}].email" value="${cc.email}"  style="width: 90%"></td>
+	                 <td align="center"><button type="button" class="btn" onclick="delRow(this);">删除</button></td>
+				  </tr>
+	           </c:forEach>
+             </tbody>
+         </table>
+    </div>
 	<div class="tools_bar">
 		<button type="button" class="btn" onclick="goToPage('${ctx}/customer/clientManage');">取 消</button>
 		<button type="button" class="btn btn-primary" onclick="customerSave();">保 存</button>
@@ -133,46 +144,14 @@ String comCode = user.getUser().getCompany().getComCode();
 </div>
 </form>
 <script src="${ctx}/static/js/vagueSeachUser.js" ></script>
+<script src="${ctx}/views/customer/js/customer.js" ></script>
 <script type="text/javascript">
-$(document).ready(function(){ 
+$(document).ready(function(){
     var customerFlag = "${customer.customerFlag}";
     if(customerFlag!=""){
    	 $("#customerFlag").val(customerFlag);
     }
 })
-
-var customerSave=function(){
-	var messAge = '';
-	if($("#customercode").val()==''){
-		messAge += "请录入客户代码。\n";
-	}
-	if($("#customername").val()==''){
-		messAge += "请录入客户公司。\n";
-	}
-	if($("#customerFlag").val()==''){
-		messAge += "请选择客户性质。\n";
-	}
-	if($("#customerFlag").val()=='2' && $("#customerPrefix").val()!=''){
-		messAge += "客户性质选择‘直接客户’时不需要录入生产编号开头，直接使用梓熙生物的配置。\n";
-	}
-	if($("#customerFlag").val()=='0'){
-		if($("#haveZiXi").val()!='' && $("#haveZiXi").val()!=$("#customerid").val()){
-    		messAge += "系统中客户性质已存在‘梓熙’。\n";
-		}
-		if($("#seachUserName").val()!=''){
-    		messAge += "客户性质选择‘梓熙’时不需要录入业务员。\n";
-		}
-	}else{
-		if($("#vagueUserCode").val()==''){
-			messAge += "请选择业务员(点选下拉列表中的结果)。\n";
-		}
-	}
-	if(messAge!=''){
-		alert(messAge);
-		return false;
-	}
-	$("#customerfm").submit();
-}
 </script>                                      
 </body>
 </html>

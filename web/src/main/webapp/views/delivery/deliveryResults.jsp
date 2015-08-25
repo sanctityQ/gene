@@ -21,7 +21,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 		<tr>
 			<td align="right">订单号:</td>
 			<td><input id="orderNo" class="inp_text" type="text" value="" style="width: 60%" /></td>
-			<td>客户代码:</td>
+			<td>客户公司代码:</td>
 			<td><input id="customerCode" class="inp_text" type="text" value="" style="width: 60%" /></td>
 			<td><button type="button" class="btn" onclick="getOrderInfo();">查询</button></td>
 			<td align="right">

@@ -20,7 +20,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
             <input type="hidden" id="customerFlag" name="customerFlag" value="<%=customerFlag %>"/>
 	<table width="100%">
 		<tr>
-			<td align="right">客户代码:</td>
+			<td align="right">客户公司名称:</td>
 			<td><input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 150px" />
 			    <input class="inp_text" type="hidden" id="customercode" name="customercode" value=""/>
 			    <ul id="seachCustomList"></ul>

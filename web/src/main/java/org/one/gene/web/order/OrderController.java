@@ -91,9 +91,16 @@ public class OrderController {
     }
     
     @Post("upload")
-    public String upload(@Param("customerid") String customerid, @Param("file") MultipartFile file, Invocation inv) throws Exception {
+	public String upload(@Param("customerid") String customerid,
+			@Param("contactsname") String contactsname,
+			@Param("file") MultipartFile file, Invocation inv) throws Exception {
+    	
     	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
     	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+    	
+		if (contactsname == null) {
+			contactsname = "";
+		}
     	
     	ArrayList<String> errors = new ArrayList<String>();
     	
@@ -180,6 +187,7 @@ public class OrderController {
         	
         	//组织订单对象
         	Order order = new Order();
+        	order.setContactsName(contactsname);
         	//获取外部订单号
         	String outOrderNo = orderService.getOutOrderNo(path,1,1);
         	order.setOutOrderNo(outOrderNo);

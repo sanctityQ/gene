@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Company;
 import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.CustomerContacts;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.User;
 import org.one.gene.domain.service.CustomerService;
@@ -95,7 +96,7 @@ public class CustomerController {
 		return "addClient";
 	}
 	@Post("save")
-	public String save(@Param("customer") Customer customer,Invocation inv) throws IllegalStateException, IOException{
+	public String save(@Param("customer") Customer customer,Invocation inv) throws IllegalStateException, IOException {
 		Company company = null;
 		if(customer.getHandlerCode()==null || "".equals(customer.getHandlerCode())){//客户是梓熙，不需要选择业务员
 			company = companyRepository.findByComCode("00000000");

@@ -385,8 +385,18 @@ public class PrintService {
 		Order order = orderRepository.findByOrderNo(orderNo);
 		String customerCode = order.getCustomerCode();//客户代码
 		String customerName = order.getCustomerName();//客户名称
+		String customerPhoneNo = "";
+		String customerWebSite = "";
+		String customerEmail = "";
+		String customerFlag  ="";
 		Customer customer = customerRepository.findByCode(customerCode);
-		String strFileName = customerCode+"-"+System.currentTimeMillis()+".xls";
+		if(customer!=null){
+			customerPhoneNo = customer.getPhoneNo();
+			customerWebSite = customer.getWebSite();
+			customerEmail   = customer.getEmail();
+			customerFlag    = customer.getCustomerFlag();
+		}
+		String strFileName = System.currentTimeMillis()+".xls";
 		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");//设置日期格式
         String currentTime = df.format(new Date());
 		
@@ -395,6 +405,7 @@ public class PrintService {
 		BigDecimal ugOD = new BigDecimal(0);//ug/OD
 		String purifyType = "";
 		PrintLabel printLabel = new PrintLabel();
+		
 		List<PrintLabel> printLabels = new ArrayList<PrintLabel>();
 		for (PrimerProduct primerProduct : order.getPrimerProducts()) {
 			
@@ -468,28 +479,48 @@ public class PrintService {
 			}
 			printLabels.add(printLabel);
 		  }
-		    //形成Excel
-			boolean jwzh = false;
-			if (customerName.startsWith("金唯智")) {
-				jwzh = true;
-			}
-			//读取模板,现在是两种模板。每个公司放一个模板
-			String templetName = "";
-			if (jwzh) {
-				templetName = "genewiz.xls";
-			}else{
-				templetName = "comonTemplate.xls";
+		    
+		   String templetName = "";//读取模板,现在是两种模板。每个公司放一个模板
+			boolean jinweizhi = false;//金唯智
+			boolean meiji = false;//美吉
+			boolean huada = false;//华大
+			boolean qitadaili = false;//其他代理
+			boolean zixi = false;//梓熙
+			
+			if (customerName.indexOf("金唯智") != -1) {
+				jinweizhi = true;
+				templetName = "jinweizhi.xls";
+			} else if (customerName.indexOf("美吉") != -1) {
+				meiji = true;
+				templetName = "meiji.xls";
+			} else if (customerName.indexOf("华大") != -1) {
+				huada = true;
+				templetName = "huada.xls";
+			} else if ("1".equals(customerFlag)) {
+				qitadaili = true;
+				templetName = "qitadaili.xls";
+			} else {
+				zixi = true;
+				templetName = "zixi.xls";
 			}
 			
+			//形成Excel
 			String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+"report"+File.separator;
 			
 			HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(templatePath+templetName));
 	        HSSFSheet sheet = workbook.getSheetAt(0);
 			HSSFRow row = null;
 			HSSFCell cell = null;
+			int totalCount = printLabels.size();//总条数
+			int perPage   = 20;//每页条数
+			int totalPage = new BigDecimal(totalCount).divide(new BigDecimal(perPage),0, BigDecimal.ROUND_UP).intValue();
+			
 			int startRowNum = 0;
-			if (jwzh) {
-				startRowNum = 6;
+			
+			if (jinweizhi) {
+				startRowNum = 7;
+				perPage   = 18;//每页条数
+				totalPage = new BigDecimal(totalCount).divide(new BigDecimal(perPage),0, BigDecimal.ROUND_UP).intValue();
 				
 				row = sheet.getRow(1);
 				cell = row.getCell(1);//得到单元格
@@ -515,7 +546,26 @@ public class PrintService {
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellValue("完成日期：");
 				
-			} else {
+			}else if(meiji){
+				startRowNum = 6;
+				perPage   = 21;//每页条数
+				totalPage = new BigDecimal(totalCount).divide(new BigDecimal(perPage),0, BigDecimal.ROUND_UP).intValue();
+			}else if(huada){
+				startRowNum = 10;
+				perPage   = 18;//每页条数
+				totalPage = new BigDecimal(totalCount).divide(new BigDecimal(perPage),0, BigDecimal.ROUND_UP).intValue();
+				
+				row = sheet.getRow(3);
+				cell = row.getCell(6);//得到单元格
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue(ugOD+"μg");
+				
+				row = sheet.getRow(5);
+				cell = row.getCell(2);//得到单元格
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue(purifyType);
+				
+			}else if(qitadaili){
 				startRowNum = 12;
 				
 				row = sheet.getRow(4);
@@ -531,21 +581,52 @@ public class PrintService {
 				row = sheet.getRow(8);
 				cell = row.getCell(2);//得到单元格
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				cell.setCellValue(customer.getName());
+				cell.setCellValue(customerName);
 				cell = row.getCell(8);//得到单元格
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellValue(currentTime);
 				
+			} else {
+				startRowNum = 6;
+				
+				row = sheet.getRow(2);
+				cell = row.getCell(0);//得到单元格
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue("Order number："+orderNo);
+				cell = row.getCell(1);//得到单元格
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue("Purification："+purifyType);
+				
+				row = sheet.getRow(3);
+				cell = row.getCell(8);//得到单元格
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue("Date：          "+currentTime);
+			}
+			
+			//先copy第一个sheet创建所有的sheet
+			for (int i=0;i<totalPage;i++){
+				if(i!=0){
+					int totalSheet = workbook.getNumberOfSheets();
+					sheet = workbook.cloneSheet(0);
+					workbook.setSheetName(totalSheet, "第"+(i+1)+"页");
+				}
 			}
 			
 			
-			
+			int startRowNumOld = startRowNum;
+			int numCur  = 0;
+			int pageNum = 1;
+			boolean addLast = true;
         	for (PrintLabel printLabelExcel:printLabels) {
-        		row = sheet.createRow(startRowNum);
+        		
+        		if(pageNum==1){
+        			sheet = workbook.getSheetAt(pageNum-1);
+        		}
+        		row = sheet.getRow(startRowNum);
          		
-        		if(jwzh){
+        		if(jinweizhi){
         			for (int k=1;k<13;k++){
-        				cell = row.createCell(k);//产生单元格
+        				cell = row.getCell(k);//产生单元格
         				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
         				//往单元格中写入信息
         				String value = "";
@@ -579,69 +660,103 @@ public class PrintService {
         				}
         			}
         				
-        			}else{
-        				for (int k=0;k<12;k++){
-            				cell = row.createCell(k);//产生单元格
-            				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-            				//往单元格中写入信息
-            				String value = "";
-            				if(k==0){
-            					value = printLabelExcel.getProductNo();
-            				}else if(k==1){
-            					value = printLabelExcel.getPrimeName();
-            				}else if(k==2){
-            					value = printLabelExcel.getGeneOrder();
-            				}else if(k==3){
-            					value = printLabelExcel.getTbn()+"";
-            				}else if(k==4){
-            					value = printLabelExcel.getOdTotal()+"";
-            				}else if(k==5){
-            					value = printLabelExcel.getOdTB()+"";
-            				}else if(k==6){
-            					value = printLabelExcel.getMw()+"";
-            				}else if(k==7){
-            					value = printLabelExcel.getTm()+"";
-            				}else if(k==8){
-            					value = printLabelExcel.getGc()+"";
-            				}else if(k==9){
-            					value = printLabelExcel.getNmolTB()+"";
-            				}else if(k==10){
-            					value = printLabelExcel.getPmole()+"";
-            				}else if(k==11){
-            					value = printLabelExcel.getMidi()+"";
-            				}
+        		}else if(meiji){
+        			for (int k=0;k<13;k++){
+        				cell = row.getCell(k);//产生单元格
+        				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+        				//往单元格中写入信息
+        				String value = "";
+        				if(k==0){
+        				}else if(k==1){
+        					value = printLabelExcel.getProductNo();
+        				}else if(k==2){
+        					value = printLabelExcel.getPrimeName();
+        				}else if(k==3){
+        					value = printLabelExcel.getGeneOrder();
+        				}else if(k==4){
+//        					value = printLabelExcel.getTbn()+"";//mer??
+        				}else if(k==5){
+        					value = printLabelExcel.getOdTotal()+"";
+        				}else if(k==6){
+        					value = printLabelExcel.getOdTB()+"";
+        				}else if(k==7){
+        					value = printLabelExcel.getMw()+"";
+        				}else if(k==8){
+        					value = printLabelExcel.getTm()+"";
+        				}else if(k==9){
+        					value = printLabelExcel.getGc()+"";
+        				}else if(k==10){
+        					value = printLabelExcel.getNmolTB()+"";
+        				}else if(k==11){
+        					value = printLabelExcel.getPmole()+"";
+        				}else if(k==12){
+        					value = printLabelExcel.getMidi()+"";
+        				}
 
-            				if (!"null".equals(value)) {
-            					cell.setCellValue(value);
-            				}
-            			}
+        				if (!"null".equals(value)) {
+        					cell.setCellValue(value);
+        				}
         			}
+        		}
+        		else{
+    				for (int k=0;k<12;k++){
+        				cell = row.getCell(k);//产生单元格
+        				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+        				//往单元格中写入信息
+        				String value = "";
+        				if(k==0){
+        					value = printLabelExcel.getProductNo();
+        				}else if(k==1){
+        					value = printLabelExcel.getPrimeName();
+        				}else if(k==2){
+        					value = printLabelExcel.getGeneOrder();
+        				}else if(k==3){
+        					value = printLabelExcel.getTbn()+"";
+        				}else if(k==4){
+        					value = printLabelExcel.getOdTotal()+"";
+        				}else if(k==5){
+        					value = printLabelExcel.getOdTB()+"";
+        				}else if(k==6){
+        					value = printLabelExcel.getMw()+"";
+        				}else if(k==7){
+        					value = printLabelExcel.getTm()+"";
+        				}else if(k==8){
+        					value = printLabelExcel.getGc()+"";
+        				}else if(k==9){
+        					value = printLabelExcel.getNmolTB()+"";
+        				}else if(k==10){
+        					value = printLabelExcel.getPmole()+"";
+        				}else if(k==11){
+        					value = printLabelExcel.getMidi()+"";
+        				}
+
+        				if (!"null".equals(value)) {
+        					cell.setCellValue(value);
+        				}
+        			}
+        		}
         		
-        			startRowNum+=1;
+        		
+        		if(addLast){
+        			//处理最后一行
+        			if(jinweizhi){
+        				row = sheet.getRow(25);
+        				cell = row.getCell(1);//产生单元格
+        				cell.setCellValue(cell.getStringCellValue()+ pageNum+"/"+totalPage);
+        			}
+        			addLast = false;
+        		}
+            	
+        		numCur += 1;
+        		startRowNum+=1;
+        		if (numCur == perPage && pageNum!=totalPage){
+        			numCur = 0;
+        			startRowNum = startRowNumOld;
+        			pageNum +=1;
+        			addLast = true;
+        			sheet = workbook.getSheetAt(pageNum-1);
+        		}
         	}
-        	
-        	//处理最后一行
-        	if(jwzh){
-        	//合并单元格
-	        	CellRangeAddress range = new CellRangeAddress(startRowNum,startRowNum,1,12);
-	        	sheet.addMergedRegion(range);
-	        	
-	        	//放入公司的相关信息
-	        	row = sheet.createRow(startRowNum);
-	        	cell = row.createCell(1);//产生单元格
-				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				cell.setCellValue("金唯智生物科技（北京）有限公司         电话："+customer.getPhoneNo()+"      传真：010-59458058         "+customer.getWebSite());
-			}else{
-	        	CellRangeAddress range = new CellRangeAddress(startRowNum,startRowNum,0,11);
-	        	sheet.addMergedRegion(range);
-	        	
-	        	//放入公司的相关信息
-	        	row = sheet.createRow(startRowNum);
-	        	cell = row.createCell(0);//产生单元格
-				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				cell.setCellValue("     Release by _________      Phone : "+customer.getPhoneNo()+"     "+customer.getWebSite()+"    "+customer.getEmail());
-			}
-			
         	
             //输出文件到客户端
             HttpServletResponse response = inv.getResponse();
@@ -661,8 +776,9 @@ public class PrintService {
 		
 		Order order = orderRepository.findByOrderNo(orderNo);
 		String customerCode = order.getCustomerCode();//客户代码
-		Customer customer = customerRepository.findByCode(customerCode);
-		String strFileName = customerCode+"-"+System.currentTimeMillis()+".xls";
+		String customerName = order.getCustomerName();//客户公司名称
+		String contactsName = order.getContactsName();//客户联系人
+		String strFileName = System.currentTimeMillis()+".xls";
 		
 		BigDecimal orderBaseCount = new BigDecimal(0);//订单碱基数总量
 
@@ -695,12 +811,12 @@ public class PrintService {
 		row = sheet.getRow(1);
 		cell = row.getCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(customer.getName());
+		cell.setCellValue(customerName);
 		
 		row = sheet.getRow(2);
 		cell = row.getCell(3);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(customer.getName());
+		cell.setCellValue(contactsName);
 		
         //输出文件到客户端
         HttpServletResponse response = inv.getResponse();

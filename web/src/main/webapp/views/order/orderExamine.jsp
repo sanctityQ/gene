@@ -16,7 +16,7 @@
 			<td align="right">订单号:</td>
 			<td><input id="orderNo" class="inp_text" type="text" value="" style="width: 60%" /></td>
 			<c:if test="${customerFlag=='0'}">
-				<td align="right">客户代码:</td>
+				<td align="right">客户公司代码:</td>
 				<td><input id="customerCode" class="inp_text" type="text" value="" style="width: 60%" /></td>
 			</c:if>
 			<td><button type="button" class="btn" onclick="getExamineInfo()">查询</button></td>
@@ -30,7 +30,8 @@
 			<th data-options="field:'ck',checkbox:true"></th>
 			<th data-options="field:'orderNo',width:80,sortable:true">订单号</th>
 			<th data-options="field:'outOrderNo',width:80,sortable:true">外部订单号</th>
-			<th data-options="field:'customerName',width:80,sortable:true">客户名称</th>
+			<th data-options="field:'customerName',width:80,sortable:true">客户公司名称</th>
+			<th data-options="field:'contactsName',width:50,sortable:true">客户联系人</th>
 			<th data-options="field:'productNoMinToMax',width:80,sortable:true">生产编号</th>
 			<th data-options="field:'tbnTotal',width:80,sortable:true">碱基总数</th>
 			<th data-options="field:'status',width:80,sortable:true">状态</th>

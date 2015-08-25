@@ -78,25 +78,27 @@ var ctx = '${ctx}';
                     <input class="readonly_inp" type="text" value="${customer.address}" disabled style="width: 50%" />
                 </td>
 			</tr>
-            <%-- <tr>
-				<td align="right">修饰价格:</td>
-				<td><input class="readonly_inp" disabled type="text" name="customer.customerPrice.modifyPrice" value="${customer.customerPrice.modifyPrice}"  style="width:150px" /></td>
-				<td align="right">碱基单价:</td>
-                <td><input class="readonly_inp" disabled name="customer.customerPrice.baseVal" type="text" value="${customer.customerPrice.baseVal}"  style="width:150px" /></td>
-				
-			</tr>
-			<tr>
-				<td align="right">纯化价格:</td>
-				<td><input class="readonly_inp" disabled type="text" name="customer.customerPrice.purifyVal" value="${customer.customerPrice.purifyVal}"  style="width:150px" /></td>
-				<td align="right">&nbsp;</td>
-                <td>&nbsp;</td>
-				
-			</tr> --%>
-			<tr>
-				<td colspan="3" height="10"></td>
-			</tr>
 		</table>
 	</div>
+    <div class="content_box info margin_btoom">
+         <h2>联系人信息</h2>
+         <table id="tableID" width="100%" align="center" class="order_info" style="BORDER-COLLAPSE: collapse" borderColor=#000000 border="0">
+             <tr>
+                 <td align="center" width="15%">姓名</td>
+                 <td align="center" width="20%">联系电话</td>
+                 <td align="center" width="20%">电子邮箱</td>
+             </tr>
+             <tbody id="tbodyID">
+	           <c:forEach var="cc" items="${customer.customerContactss}" varStatus="status">
+		           <tr>
+	                 <td><input class="inp_text" type="text" name="customer.customerContactss[${status.index}].name" value="${cc.name}" style="width: 90%"></td>
+	                 <td><input class="inp_text" type="text" name="customer.customerContactss[${status.index}].phoneNo" value="${cc.phoneNo}" style="width: 90%"></td>
+	                 <td><input class="inp_text" type="text" name="customer.customerContactss[${status.index}].email" value="${cc.email}"  style="width: 90%"></td>
+				  </tr>
+	           </c:forEach>
+             </tbody>
+         </table>
+    </div>
 </div>
 </body>
 </html>

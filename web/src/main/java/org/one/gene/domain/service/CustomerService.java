@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.CustomerContacts;
+import org.one.gene.repository.CustomerContactsRepository;
 import org.one.gene.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomerService {
 	@Autowired
     private CustomerRepository customerRepository;
+	
+	@Autowired
+    private CustomerContactsRepository customerContactsRepository;
+	
 	
 	@Transactional(readOnly = false)
 	public void save(Customer customer){
@@ -29,10 +35,36 @@ public class CustomerService {
 		}
 		customer.setPrefix(prefix);
 		customer.setModifyTime(new Date());
-		/*customer.getCustomerPrice().setCustomer(customer);
-		if(customerOld!=null){
-		  customer.getCustomerPrice().setId(customerOld.getCustomerPrice().getId());
-		}*/
+		
+		//remove CustomerContactss 中null的对象
+		for (int i = customer.getCustomerContactss().size() - 1; i >= 0; i--) {
+			CustomerContacts cc = customer.getCustomerContactss().get(i);
+			if(cc == null || cc.getName()==null){
+				customer.getCustomerContactss().remove(i);
+			}else{
+				cc.setCustomer(customer);
+			}
+		}
+        
+		//删除数据库中需要删除的数据
+		if (customer.getId() != null){
+			List<CustomerContacts> ccsOld= customerContactsRepository.findByCustomer(customer);
+			if (ccsOld != null) {
+				for(CustomerContacts ccOld:ccsOld){
+					boolean match = false;//数据库中的联系人id没有匹配上页面的值，需要删除
+					for(CustomerContacts ccNew:customer.getCustomerContactss()){
+						if (ccOld.getId() == ccNew.getId()) {
+							match = true;
+						}
+					}
+					
+					if (!match) {
+						customerContactsRepository.delete(ccOld);
+					}
+				}
+			}
+		}
+
 		customerRepository.save(customer);
 	}
 }

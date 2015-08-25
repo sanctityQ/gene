@@ -24,7 +24,7 @@ public class OrderInfo {
 	private String status;
 	private Date createTime;
 	private Date modifyTime;
-	
+    private String contactsName;
 	
 	
 	public Customer getCustomer() {
@@ -184,5 +184,10 @@ public class OrderInfo {
 	public void setCommodityName(String commodityName) {
 		this.commodityName = commodityName;
 	}
-	
+	public String getContactsName() {
+		return contactsName;
+	}
+	public void setContactsName(String contactsName) {
+		this.contactsName = contactsName;
+	}
 }
