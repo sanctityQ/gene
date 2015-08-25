@@ -13,7 +13,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 %>
 </head>
 <body>
-<input type="hidden" id="customerFlag" name="customerFlag" value="<%=customerFlag %>"/>
+<input type="hidden" id="customerFlagOld" name="customerFlagOld" value="<%=customerFlag %>"/>
 <div class="tools">
 	<table width="100%">
 		<tr>

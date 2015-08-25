@@ -16,7 +16,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 </head>
 <body>
 <form name="form" action="${ctx}/delivery/deliveryList/" method="post">
-<input type="hidden" id="customerFlag" name="customerFlag" value="<%=customerFlag %>"/>
+<input type="hidden" id="customerFlagOld" name="customerFlagOld" value="<%=customerFlag %>"/>
 <div class="tools">
 	<table width="100%">
 		<tr>
