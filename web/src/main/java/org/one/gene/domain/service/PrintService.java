@@ -422,6 +422,7 @@ public class PrintService {
 
 			printLabel.setPrimeName(primerProduct.getPrimeName());// 引物名称
 			printLabel.setOrderNo(primerProduct.getOrder().getOrderNo());// 订单号
+			printLabel.setOutOrderNo(order.getOutOrderNo());//外部订单号
 			printLabel.setGeneOrder(primerProduct.getGeneOrder());// 引物序列
 			// 修饰
 			String midi = "";
@@ -453,6 +454,7 @@ public class PrintService {
 					printLabel.setNmolTotal(primerProductValue.getValue());
 				} else if (type.equals(PrimerValueType.nmolTB)) {// NUML/TB
 					printLabel.setNmolTB(primerProductValue.getValue());
+					printLabel.setPmole(new BigDecimal(10).multiply(primerProductValue.getValue()));// 加水量
 				} else if (type.equals(PrimerValueType.baseCount)) {// 碱基数
 					printLabel.setTbn(primerProductValue.getValue());
 				} else if (type.equals(PrimerValueType.MW)) {// MW
@@ -470,11 +472,6 @@ public class PrintService {
 					printLabel.setOdμmol(primerProductValue.getValue());
 				} else if(type.equals(PrimerValueType.tb)){
 					orderTbTotal = orderTbTotal.add(primerProductValue.getValue());
-				}
-				
-				if (type.equals(PrimerValueType.nmolTB)) {// 加水量
-					printLabel.setPmole(new BigDecimal(10)
-							.multiply(primerProductValue.getValue()));
 				}
 			}
 			printLabels.add(printLabel);
@@ -653,7 +650,7 @@ public class PrintService {
         				}else if(k==11){
         					value = printLabelExcel.getNmolTB()+"";
         				}else if(k==12){
-        					value = "";                         //==============μl/100μM
+        					value = printLabelExcel.getPmole()+"";
         				}
         				if (!"null".equals(value)) {
         					cell.setCellValue(value);
@@ -667,6 +664,7 @@ public class PrintService {
         				//往单元格中写入信息
         				String value = "";
         				if(k==0){
+        					value = printLabelExcel.getOutOrderNo();
         				}else if(k==1){
         					value = printLabelExcel.getProductNo();
         				}else if(k==2){
@@ -674,7 +672,7 @@ public class PrintService {
         				}else if(k==3){
         					value = printLabelExcel.getGeneOrder();
         				}else if(k==4){
-//        					value = printLabelExcel.getTbn()+"";//mer??
+        					value = printLabelExcel.getTbn()+"";
         				}else if(k==5){
         					value = printLabelExcel.getOdTotal()+"";
         				}else if(k==6){

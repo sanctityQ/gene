@@ -8,7 +8,8 @@ public class PrintLabel {
 	private String primeName;//引物名称
 	private String geneOrder;//引物序列
 	private String orderNo;//订单号
-    private BigDecimal tube;//管数
+    private String outOrderNo;//外部订单号
+	private BigDecimal tube;//管数
 	private BigDecimal odTotal;//OD总量
 	private BigDecimal odTB;//OD/TB
     private BigDecimal nmolTotal;//NUML总量
@@ -48,6 +49,12 @@ public class PrintLabel {
 	}
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
+	}
+    public String getOutOrderNo() {
+		return outOrderNo;
+	}
+	public void setOutOrderNo(String outOrderNo) {
+		this.outOrderNo = outOrderNo;
 	}
 	public BigDecimal getTube() {
 		return tube;
