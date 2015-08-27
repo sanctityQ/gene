@@ -397,11 +397,12 @@ public class PrintService {
 			customerFlag    = customer.getCustomerFlag();
 		}
 		String strFileName = System.currentTimeMillis()+".xls";
-		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");//设置日期格式
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
         String currentTime = df.format(new Date());
 		
-		BigDecimal orderODTotal = new BigDecimal(0);//订单OD总量
-		BigDecimal orderTbTotal = new BigDecimal(0);//订单总管数
+		BigDecimal odTotal = new BigDecimal(0);//一个生产编号的OD总量
+		BigDecimal tb = new BigDecimal(0);//一个生产编号的管数
+		BigDecimal odTube = new BigDecimal(0);//一个生产编号的od/tube
 		BigDecimal ugOD = new BigDecimal(0);//ug/OD
 		String purifyType = "";
 		PrintLabel printLabel = new PrintLabel();
@@ -446,9 +447,10 @@ public class PrintService {
 			for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
 				PrimerValueType type = primerProductValue.getType();
 				if (type.equals(PrimerValueType.odTotal)) {// OD总量
-					orderODTotal = orderODTotal.add(primerProductValue.getValue());
+					odTotal = primerProductValue.getValue();
 					printLabel.setOdTotal(primerProductValue.getValue());
 				} else if (type.equals(PrimerValueType.odTB)) {// OD/TB
+					odTube = primerProductValue.getValue();
 					printLabel.setOdTB(primerProductValue.getValue());
 				} else if (type.equals(PrimerValueType.nmolTotal)) {// NUML总量
 					printLabel.setNmolTotal(primerProductValue.getValue());
@@ -471,7 +473,7 @@ public class PrintService {
 				} else if (type.equals(PrimerValueType.ODμmol)) {
 					printLabel.setOdμmol(primerProductValue.getValue());
 				} else if(type.equals(PrimerValueType.tb)){
-					orderTbTotal = orderTbTotal.add(primerProductValue.getValue());
+					tb = primerProductValue.getValue();
 				}
 			}
 			printLabels.add(printLabel);
@@ -516,7 +518,7 @@ public class PrintService {
 			
 			if (jinweizhi) {
 				startRowNum = 7;
-				perPage   = 18;//每页条数
+				perPage   = 17;//每页条数
 				totalPage = new BigDecimal(totalCount).divide(new BigDecimal(perPage),0, BigDecimal.ROUND_UP).intValue();
 				
 				row = sheet.getRow(1);
@@ -527,7 +529,7 @@ public class PrintService {
 				row = sheet.getRow(2);
 				cell = row.getCell(1);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				cell.setCellValue("合成规格："+orderODTotal+" OD");
+				cell.setCellValue("合成规格："+odTotal+" OD");
 				
 				cell = row.getCell(4);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
@@ -536,12 +538,12 @@ public class PrintService {
 				row = sheet.getRow(3);
 				cell = row.getCell(1);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				cell.setCellValue("发货规格：1OD（干粉）X"+orderTbTotal);
+				cell.setCellValue("发货规格："+odTube+"*"+tb);
 				
 				row = sheet.getRow(3);
 				cell = row.getCell(4);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				cell.setCellValue("完成日期：");
+				cell.setCellValue("完成日期："+currentTime);
 				
 			}else if(meiji){
 				startRowNum = 6;
@@ -590,12 +592,12 @@ public class PrintService {
 				cell = row.getCell(0);//得到单元格
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellValue("Order number："+orderNo);
-				cell = row.getCell(1);//得到单元格
+				cell = row.getCell(3);//得到单元格
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellValue("Purification："+purifyType);
 				
 				row = sheet.getRow(3);
-				cell = row.getCell(8);//得到单元格
+				cell = row.getCell(3);//得到单元格
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellValue("Date：          "+currentTime);
 			}
@@ -738,7 +740,7 @@ public class PrintService {
         		if(addLast){
         			//处理最后一行
         			if(jinweizhi){
-        				row = sheet.getRow(25);
+        				row = sheet.getRow(24);
         				cell = row.getCell(1);//产生单元格
         				cell.setCellValue(cell.getStringCellValue()+ pageNum+"/"+totalPage);
         			}

@@ -425,7 +425,7 @@ public class OrderController {
     			primerProduct.setPrimerProductOperations(ppos);
     			orderService.addNewValue(primerProduct);
     			primerProduct.setOperationTypeDesc(primerProduct.getOperationType().desc());
-    			if(!"1".equals(user.getUser().getCompany().getComLevel())){//梓熙 总公司，可以查
+    			if("1".equals(user.getUser().getCompany().getComLevel())){//梓熙 总公司，可以查
     				inv.addModel("primerProduct", primerProduct);
     				return "primerProductInfo";
     			}else{

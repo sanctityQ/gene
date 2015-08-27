@@ -310,7 +310,11 @@ public class DeliveryService {
 			for(Order order:orders){
 				orderNo = order.getOrderNo();
 				orderInfo = new OrderInfo();
-				orderInfo.setUnit(order.getCustomerName());//客户名称
+				if(order.getContactsName()!=null && !"".equals(order.getContactsName())){
+					orderInfo.setUnit(order.getContactsName());//客户联系人
+				}else{
+					orderInfo.setUnit(order.getCustomerName());//客户名称
+				}
 				orderInfo.setOutOrderNO(order.getOutOrderNo());//外部订单号
 				orderInfo.setProductNoMinToMax(order.getProductNoMinToMax());//生产编号
 				orderInfo.setTbnTotal(order.getTbnTotal());//碱基总数
