@@ -492,7 +492,7 @@ public class PrintService {
 			} else if (customerName.indexOf("美吉") != -1) {
 				meiji = true;
 				templetName = "meiji.xls";
-			} else if (customerName.indexOf("华大") != -1) {
+			} else if (customerName.indexOf("北京华大") != -1) {
 				huada = true;
 				templetName = "huada.xls";
 			} else if ("1".equals(customerFlag)) {
@@ -642,7 +642,7 @@ public class PrintService {
         				}else if(k==6){
         					value = printLabelExcel.getGc()+"";
         				}else if(k==7){
-        					value = printLabelExcel.getMv()+"";
+        					value = printLabelExcel.getMw()+"";
         				}else if(k==8){
         					value = printLabelExcel.getUgOD()+"";
         				}else if(k==9){
