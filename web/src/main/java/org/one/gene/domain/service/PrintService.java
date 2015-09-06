@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -697,6 +698,42 @@ public class PrintService {
         					cell.setCellValue(value);
         				}
         			}
+        		}else if(zixi){
+        			for (int k=0;k<12;k++){
+        				cell = row.getCell(k);//产生单元格
+        				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+        				//往单元格中写入信息
+        				String value = "";
+        				if(k==0){
+        					value = printLabelExcel.getProductNo();
+        				}else if(k==1){
+        					value = printLabelExcel.getPrimeName();
+        				}else if(k==2){
+        					value = printLabelExcel.getGeneOrder();
+        				}else if(k==3){
+        					value = printLabelExcel.getTbn()+"";
+        				}else if(k==4){
+        					value = printLabelExcel.getNmolTotal()+"";
+        				}else if(k==5){
+        					value = printLabelExcel.getNmolTB()+"";
+        				}else if(k==6){
+        					value = printLabelExcel.getMw()+"";
+        				}else if(k==7){
+        					value = printLabelExcel.getTm()+"";
+        				}else if(k==8){
+        					value = printLabelExcel.getGc()+"";
+        				}else if(k==9){
+        					value = printLabelExcel.getOdTB()+"";
+        				}else if(k==10){
+        					value = printLabelExcel.getPmole()+"";
+        				}else if(k==11){
+        					value = printLabelExcel.getMidi()+"";
+        				}
+
+        				if (!"null".equals(value)) {
+        					cell.setCellValue(value);
+        				}
+        			}
         		}
         		else{
     				for (int k=0;k<12;k++){
@@ -1011,7 +1048,6 @@ public class PrintService {
 	public List<PrimerProduct> getDeliveryPrimerProducts(List<OrderInfo> orderInfos, Invocation inv) {
 		
 		List<PrimerProduct> primerProducts = new ArrayList<PrimerProduct>();
-		List<PrimerProduct> primerProductBoardNOs =  new ArrayList<PrimerProduct>();
 		PrimerProduct primerProduct = null;
 		for (OrderInfo orderInfo : orderInfos) {
 			String productNo = orderInfo.getProductNoMinToMax();
@@ -1023,4 +1059,22 @@ public class PrintService {
 		}
 		return primerProducts;
 	}
+	
+	public static void main(String[] args){
+		
+		String str = "10";
+		
+		 Pattern pattern = Pattern.compile("[0-9]*");
+		 
+		 boolean bb = pattern.matcher(str).matches();
+		 
+		 if(bb){
+			 System.out.println("shi");
+		 }else{
+			 System.out.println("fou");
+		 }
+		
+	}
+	
+	
 }

@@ -139,38 +139,44 @@ public class OrderService {
 			for (PrimerProductOperation po : primerProduct.getPrimerProductOperations()) {
 				po.setPrimerProduct(primerProduct);
 			}
-			for (PrimerProductValue pv : primerProduct.getPrimerProductValues()) {
-				if(PrimerValueType.MW.equals(pv.getType())){
-					//mw 处理修饰分子量
-					BigDecimal modiMidVal = new BigDecimal("0");
-		        	OrderCaculate orderCaculate = new OrderCaculate();
-		        	String modiMidType = orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),OrderCaculate.modiMidMap);
-		        	String[] moditypes = modiMidType.split(",");
-		    		for(int i=0;i<moditypes.length;i++){
-		    			modiMidVal = modiMidVal.add(new BigDecimal(propotiesService.getValue("modiMidType",moditypes[i])));
-		    		}
-		    		BigDecimal modiSpeVal = new BigDecimal("0");
-		        	String modiSpeType = orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),OrderCaculate.modiSpeMap);
-		        	String[] modiSpeTypes = modiSpeType.split(",");
-		    		for(int i=0;i<modiSpeTypes.length;i++){
-		    			modiSpeVal = modiSpeVal.add(new BigDecimal(propotiesService.getValue("modiSpeType",modiSpeTypes[i])));
-		    		}
-					pv.getValue()
-					//中间修饰分子量
-					.add(modiMidVal)
-					//特殊修饰分子量
-					.add(modiSpeVal)
-					//5修饰分子量
-					.add(new BigDecimal(propotiesService.getValue("modiFiveType",primerProduct.getModiFiveType())))
-					//3修饰分子量
-					.add(new BigDecimal(propotiesService.getValue("modiThreeType",primerProduct.getModiThreeType())));
-				}
-	      	}
 		}
         order.setProductNoMinToMax(firstProductNO+lastProductNO);
         order.setTbnTotal(tbnTotal);
 		orderRepository.save(order);
 
+		for(PrimerProduct pp :order.getPrimerProducts()){
+			for (PrimerProductValue pv : pp.getPrimerProductValues()) {
+				if(PrimerValueType.MW.equals(pv.getType())){
+					//mw 处理修饰分子量
+					BigDecimal modiMidVal = new BigDecimal("0");
+					OrderCaculate orderCaculate = new OrderCaculate();
+					String modiMidType = orderCaculate.getModiType(pp.getGeneOrderMidi(),OrderCaculate.modiMidMap);
+					String[] moditypes = modiMidType.split(",");
+					for(int i=0;i<moditypes.length;i++){
+						modiMidVal = modiMidVal.add(new BigDecimal(propotiesService.getValue("modiMidType",moditypes[i])));
+					}
+					BigDecimal modiSpeVal = new BigDecimal("0");
+					String modiSpeType = orderCaculate.getModiType(pp.getGeneOrderMidi(),OrderCaculate.modiSpeMap);
+					String[] modiSpeTypes = modiSpeType.split(",");
+					for(int i=0;i<modiSpeTypes.length;i++){
+						modiSpeVal = modiSpeVal.add(new BigDecimal(propotiesService.getValue("modiSpeType",modiSpeTypes[i])));
+					}
+					pv.setValue(
+							pv.getValue()
+							//中间修饰分子量
+							.add(modiMidVal)
+							//特殊修饰分子量
+							.add(modiSpeVal)
+							//5修饰分子量
+							.add(new BigDecimal(propotiesService.getValue("modiFiveType",pp.getModiFiveType())))
+							//3修饰分子量
+							.add(new BigDecimal(propotiesService.getValue("modiThreeType",pp.getModiThreeType()))));
+					
+					//单独更新MW的修饰分子量
+					primerProductValueRepository.save(pv);
+				}
+			}
+		}
     }
 
 	public List<Customer> vagueSeachCustomer(String customerCode, String comCodeSQL){

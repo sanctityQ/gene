@@ -1,5 +1,6 @@
 package org.one.gene.excel;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -8,6 +9,9 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
 
+import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.service.PropotiesService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.CharMatcher;
@@ -20,6 +24,9 @@ import com.google.common.base.CharMatcher;
 @Component
 public class OrderCaculate {
 
+    @Autowired
+    private PropotiesService propotiesService;
+    
 	public final static Map<String,String> modiMidMap = new HashMap<String,String>();  
 	static {  
 		modiMidMap.put("Cy5", "635.88");  

@@ -575,7 +575,7 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
-            return nmolTB.value(primerProduct).multiply(MW.value(primerProduct).divide(new BigDecimal(1000)));
+        	return MW.value(primerProduct).divide(ODμmol.value(primerProduct),2, BigDecimal.ROUND_HALF_UP);
         }
     },
     
