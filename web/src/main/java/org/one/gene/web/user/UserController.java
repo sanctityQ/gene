@@ -82,7 +82,7 @@ public class UserController {
     return "user";
   }
 
-  @Get("list")
+  @Post("list")
   public  Reply list(@Param("userName") String userName,
                      @Param("comCode") String comCode,
                      @Param("pageNo") Integer pageNo,

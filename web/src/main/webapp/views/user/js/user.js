@@ -105,7 +105,7 @@ function rpcData() {
     var userName = $("#userName").val();
     var comCode = $("#comCode").val();
     $.ajax({
-               type : "get",
+               type : "post",
                url : ctx+"/user/list",
                dataType : "json",
                data:
