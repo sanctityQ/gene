@@ -69,7 +69,7 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
     
     PrimerProduct findByProductNoOrOutProductNo(String productNo, String outProductNo);
     
-    @SQL("select * from `primer_product` where `out_product_no` is null order by id desc limit 1")
+    @SQL("select * from `primer_product` where `out_product_no` is null and `from_product_no` is null order by id desc limit 1")
     public PrimerProduct getLastProduct();
     
     public List<PrimerProduct> findByOrder(Order order);

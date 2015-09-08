@@ -2,10 +2,13 @@ package org.one.gene.domain.entity;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.one.gene.domain.CalculatePrimerValue;
+import org.one.gene.excel.OrderCaculate;
 
 public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc {
 
@@ -528,6 +531,59 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
+        	
+        	Map<String,String> modiFiveMap = new HashMap<String,String>();
+        	Map<String,String> modiThreeMap = new HashMap<String,String>();
+        	Map<String,String> modiMidMap = new HashMap<String,String>();
+        	Map<String,String> modiSpeMap = new HashMap<String,String>();
+
+			if (primerProduct.getProductMolecularMap() != null) {
+				  for (Map.Entry<String, BigDecimal> entry : primerProduct.getProductMolecularMap().entrySet()) {
+					String key = entry.getKey();
+					String value = entry.getValue()+"";
+					if (key.startsWith("modiMidType")) {
+						
+						modiMidMap.put(key.replace("modiMidType_", ""), value);
+					} else if (key.startsWith("modiThreeType")) {
+						modiThreeMap.put(key.replace("modiThreeType_", ""), value);
+					} else if (key.startsWith("modiSpeType")) {
+						modiSpeMap.put(key.replace("modiSpeType_", ""), value);
+					} else if (key.startsWith("modiFiveType")) {
+						modiFiveMap.put(key.replace("modiFiveType_", ""), value);
+					}
+				  }
+			}
+			
+        	
+			BigDecimal modiFiveVal = new BigDecimal("0");
+			if(modiFiveMap.get(primerProduct.getModiFiveType())!=null){
+				modiFiveVal = new BigDecimal(modiFiveMap.get(primerProduct.getModiFiveType()));
+			}
+			
+			BigDecimal modiThreeVal = new BigDecimal("0");
+			if(modiThreeMap.get(primerProduct.getModiThreeType())!=null){
+				modiThreeVal = new BigDecimal(modiThreeMap.get(primerProduct.getModiThreeType()));
+			}
+			
+        	BigDecimal modiMidVal = new BigDecimal("0");
+			OrderCaculate orderCaculate = new OrderCaculate();
+			String modiMidType = orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),modiMidMap);
+			String[] moditypes = modiMidType.split(",");
+			for(int i=0;i<moditypes.length;i++){
+				if(modiMidMap.get(moditypes[i])!=null){
+					modiMidVal =  modiMidVal.add(new BigDecimal(modiMidMap.get(moditypes[i])));
+				}
+			}
+			
+			BigDecimal modiSpeVal = new BigDecimal("0");
+			String modiSpeType = orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),modiSpeMap);
+			String[] modiSpeTypes = modiSpeType.split(",");
+			for(int i=0;i<modiSpeTypes.length;i++){
+				if(modiSpeMap.get(modiSpeTypes[i])!=null){
+					modiSpeVal = modiSpeVal.add(new BigDecimal(modiSpeMap.get(modiSpeTypes[i])));
+				}
+			}
+        	
         	return new BigDecimal("313.2").multiply(av.value(primerProduct))
             		.add(new BigDecimal("289.2").multiply(cv.value(primerProduct)))
             		.add(new BigDecimal("329.2").multiply(gv.value(primerProduct)))
@@ -543,7 +599,7 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 					.add(new BigDecimal("310.5").multiply(vv.value(primerProduct)))
 					.add(new BigDecimal("308.7").multiply(wv.value(primerProduct)))
 					.add(new BigDecimal("296.7").multiply(yv.value(primerProduct)))
-					.subtract(new BigDecimal(61))
+					.subtract(new BigDecimal(61)).add(modiFiveVal).add(modiThreeVal).add(modiMidVal).add(modiSpeVal)
 					.setScale(1, RoundingMode.HALF_UP);
         }
     },

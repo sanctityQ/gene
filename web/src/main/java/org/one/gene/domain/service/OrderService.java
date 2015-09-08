@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -18,6 +19,7 @@ import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerProductValue;
 import org.one.gene.domain.entity.PrimerType;
 import org.one.gene.domain.entity.PrimerValueType;
+import org.one.gene.domain.entity.ProductMolecular;
 import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.excel.OrderCaculate;
 import org.one.gene.excel.OrderExcelPase;
@@ -25,6 +27,7 @@ import org.one.gene.repository.CustomerRepository;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.repository.PrimerProductValueRepository;
+import org.one.gene.repository.ProductMolecularRepository;
 import org.one.gene.web.order.AtomicLongUtil;
 import org.one.gene.web.order.OrderInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Maps;
 
 @Component
 public class OrderService {
@@ -61,6 +66,9 @@ public class OrderService {
     @Autowired
     private PropotiesService propotiesService;
 	
+	@Autowired
+	private ProductMolecularRepository productMolecularRepository;
+	
 	/**
 	 * 订单入库
 	 * @param order
@@ -83,6 +91,15 @@ public class OrderService {
         if(order.getCreateTime() == null){
             order.setCreateTime(new Date());
         }
+        //所有分子量
+        List<ProductMolecular> productMoleculars = (List<ProductMolecular>) productMolecularRepository.findAll();
+        Map<String, BigDecimal> productMolecularMap = Maps.newHashMap();
+        for(ProductMolecular pm:productMoleculars){
+			if ("1".equals(pm.getValidate())) {
+				productMolecularMap.put(pm.getProductCategories()+"_"+pm.getProductCode(), pm.getModifiedMolecular());
+			}
+        }
+        
         int index=0;
         //定义订单集合中第一个生产代码
   		String firstProductNO = "";
@@ -101,6 +118,7 @@ public class OrderService {
 			primerProduct.setOrder(order);
 			primerProduct.setModifyTime(new Date());//最新修改时间
 			primerProduct.setBackTimes(0);
+			primerProduct.setProductMolecularMap(productMolecularMap);//map放入分子量
 
 
 			//获取碱基数
@@ -144,39 +162,6 @@ public class OrderService {
         order.setTbnTotal(tbnTotal);
 		orderRepository.save(order);
 
-		for(PrimerProduct pp :order.getPrimerProducts()){
-			for (PrimerProductValue pv : pp.getPrimerProductValues()) {
-				if(PrimerValueType.MW.equals(pv.getType())){
-					//mw 处理修饰分子量
-					BigDecimal modiMidVal = new BigDecimal("0");
-					OrderCaculate orderCaculate = new OrderCaculate();
-					String modiMidType = orderCaculate.getModiType(pp.getGeneOrderMidi(),OrderCaculate.modiMidMap);
-					String[] moditypes = modiMidType.split(",");
-					for(int i=0;i<moditypes.length;i++){
-						modiMidVal = modiMidVal.add(new BigDecimal(propotiesService.getValue("modiMidType",moditypes[i])));
-					}
-					BigDecimal modiSpeVal = new BigDecimal("0");
-					String modiSpeType = orderCaculate.getModiType(pp.getGeneOrderMidi(),OrderCaculate.modiSpeMap);
-					String[] modiSpeTypes = modiSpeType.split(",");
-					for(int i=0;i<modiSpeTypes.length;i++){
-						modiSpeVal = modiSpeVal.add(new BigDecimal(propotiesService.getValue("modiSpeType",modiSpeTypes[i])));
-					}
-					pv.setValue(
-							pv.getValue()
-							//中间修饰分子量
-							.add(modiMidVal)
-							//特殊修饰分子量
-							.add(modiSpeVal)
-							//5修饰分子量
-							.add(new BigDecimal(propotiesService.getValue("modiFiveType",pp.getModiFiveType())))
-							//3修饰分子量
-							.add(new BigDecimal(propotiesService.getValue("modiThreeType",pp.getModiThreeType()))));
-					
-					//单独更新MW的修饰分子量
-					primerProductValueRepository.save(pv);
-				}
-			}
-		}
     }
 
 	public List<Customer> vagueSeachCustomer(String customerCode, String comCodeSQL){
@@ -370,6 +355,16 @@ public class OrderService {
 	@Transactional
 	public void saveOrderAndPrimerProduct(Order order, Collection<PrimerProduct> values) throws Exception {
 		this.save(order);
+		
+        //所有分子量
+        List<ProductMolecular> productMoleculars = (List<ProductMolecular>) productMolecularRepository.findAll();
+        Map<String, BigDecimal> productMolecularMap = Maps.newHashMap();
+        for(ProductMolecular pm:productMoleculars){
+			if ("1".equals(pm.getValidate())) {
+				productMolecularMap.put(pm.getProductCategories()+"_"+pm.getProductCode(), pm.getModifiedMolecular());
+			}
+        }
+        
 		//新增数据时comcode赋值
 		for (PrimerProduct primerProduct : values) {
 			if("".equals(primerProduct.getComCode())||primerProduct.getComCode()==null){
@@ -380,6 +375,7 @@ public class OrderService {
 			}
 			  primerProduct.setBackTimes(0);
 			  primerProduct.setModifyTime(new Date());//最新修改时间
+			  primerProduct.setProductMolecularMap(productMolecularMap);//map放入分子量
 		}
 		this.primerProductRepository.save(values);
 	}

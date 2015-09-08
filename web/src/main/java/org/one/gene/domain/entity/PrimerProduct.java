@@ -135,7 +135,9 @@ public class PrimerProduct implements java.io.Serializable {
     private BigDecimal mw;//分子量
 	private String midi;//修饰
 	private String selectFlag;//是否被选择，用于页面选择时使用，不存库
-
+	private Map<String, BigDecimal> productMolecularMap = Maps.newHashMap();//修饰分子量
+	
+	
 	public PrimerProduct() {
     }
 
@@ -536,7 +538,17 @@ public class PrimerProduct implements java.io.Serializable {
         return this.getOrder().isOrderType(orderType);
     }
 
+	@Transient
+	public Map<String, BigDecimal> getProductMolecularMap() {
+		return productMolecularMap;
+	}
 
+
+	public void setProductMolecularMap(Map<String, BigDecimal> productMolecularMap) {
+		this.productMolecularMap = productMolecularMap;
+	}
+	
+	
     @PrePersist
     @PreUpdate
     public void generatePrimerProductValue(){
