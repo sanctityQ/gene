@@ -17,7 +17,7 @@ public interface PrimerProductOperationRepository extends PagingAndSortingReposi
     @SQL("select count(1) from `primer_product_operation` where `primer_product_id` = :ppID and `type`= :potType ")
     public int getCountWithType(@Param("ppID") Long ppID, @Param("potType") String potType);
    
-    @SQL("select * from `primer_product_operation` where `primer_product_id` = :ppID  ")
+    @SQL("select * from `primer_product_operation` where `primer_product_id` = :ppID  ORDER BY create_time ")
     List<PrimerProductOperation> getInfoByPrimerProductID(@Param("ppID") Long ppID);
     
     

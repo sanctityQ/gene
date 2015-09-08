@@ -502,7 +502,7 @@ public class SynthesisService {
 				type = null;
 				boardHole.getPrimerProduct().setModifyTime(new Date());//最后修改时间
 				boardHole.setModifyTime(new Date());//最后修改时间
-				boardHole.setModifyUser(123L);//后续从session取得
+				boardHole.setModifyUser(user.getId());//修改人id
 				
 				if ("0".equals(failFlag)) { // Synthesis success
 					failReason = "";
@@ -997,7 +997,7 @@ public class SynthesisService {
 				
 			} else if ("0".equals(successFlag)) { // fail
 				
-				primerProduct.setOperationType(PrimerStatusType.synthesis);//回到待合成
+				primerProduct.setOperationType(PrimerStatusType.makeBoard);//回到待制板
 				primerProduct.setBoardNo("");//清空板号
 				if (primerProduct.getBackTimes() != null) {
 					primerProduct.setBackTimes(primerProduct.getBackTimes()+1);//循环重回次数+1
@@ -1258,7 +1258,7 @@ public class SynthesisService {
 					if ("3".equals(failFlag)) {
 						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.pack);//回到分装
 					}else{
-						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
+						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.makeBoard);//回到待制板
 						boardHole.getPrimerProduct().setBoardNo("");//清空板号
 						boardHole.setStatus(1);//删除
 					}
