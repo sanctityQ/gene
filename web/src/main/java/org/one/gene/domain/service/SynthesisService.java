@@ -974,8 +974,13 @@ public class SynthesisService {
 		for (PrimerProduct pp:primerProducts) {
 			
 			PrimerProduct primerProduct = primerProductRepository.findOne(pp.getId());
-			BoardHole boardHole = boardHoleRepository.findByPrimerProduct(primerProduct);
-			
+			BoardHole boardHole = null;
+			List<BoardHole> boardHoles = boardHoleRepository.findByPrimerProduct(primerProduct);
+			for(BoardHole bh:boardHoles){
+				if (bh.getBoard().getBoardNo().equals(primerProduct.getBoardNo())) {//如果是本板下的数据功
+					boardHole = bh;
+				}
+			}
 			primerProduct.setModifyTime(new Date());//最后修改时间
 			
 			if (boardHole != null) {
@@ -1380,9 +1385,16 @@ public class SynthesisService {
     	String originalFilename = "";
     	if (!file.isEmpty()) {
     		originalFilename = file.getOriginalFilename();
-        	realpathdir = inv.getServletContext().getRealPath("/")+"upExcel"+File.separator+"detect"+File.separator;
+        	realpathdir = "D:\\geneUploadFile\\detect\\";
         	path = realpathdir+originalFilename;
         	
+    	    // 创建文件目录
+    	    File savedir = new File(realpathdir);
+    	    // 如果目录不存在就创建
+    	    if (!savedir.exists()) {
+    	      savedir.mkdirs();
+    	    }
+    	    
         	Map<String, String> productNoMap = new HashMap<String, String>();
         	
         	//压缩文件

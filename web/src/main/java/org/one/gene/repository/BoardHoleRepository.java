@@ -14,7 +14,7 @@ public interface BoardHoleRepository extends PagingAndSortingRepository<BoardHol
 	
 	List<BoardHole> findByBoard(Board board);
 	
-	BoardHole findByPrimerProduct(PrimerProduct primerProduct);
+	List<BoardHole> findByPrimerProduct(PrimerProduct primerProduct);
 	
 }
 
