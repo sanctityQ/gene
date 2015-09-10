@@ -22,16 +22,11 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 	        <input type="hidden" id="operationType" name="operationType" value="modification"/>
 		<tr>
 			<td align="right">板号:</td>
-			<td><input class="inp_text" type="text" autocomplete="off" id="boardNo" name="boardNo" value="" style="width: 80%" />
+			<td><input class="inp_text" type="text" autocomplete="off" id="boardNo" name="boardNo" value="" style="width: 60%" />
 			    <ul id="seachBoardList"></ul>
+			    <button type="button" class="btn" onclick="getResultProducts();">查询</button>
 			</td>
-            <td>
-                <label><input type="checkbox" id="modiFiveType" name="modiFiveType" checked /> 5'修饰</label>
-                <label><input type="checkbox" id="modiThreeType" name="modiThreeType" checked /> 3'修饰</label>
-                <label><input type="checkbox" id="modiMidType" name="modiMidType" checked /> 中间修饰</label>
-                <label><input type="checkbox" id="modiSpeType" name="modiSpeType" checked /> 特殊修饰</label>
-            </td>
-            <td><button type="button" class="btn" onclick="getResultProducts();">查询</button></td>
+            <td colspan="2">&nbsp;</td>
 		</tr>
         <tr>
             <td colspan="4" height="10"></td>

@@ -62,7 +62,14 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			@Param("purifyType") String purifyType,
 			@Param("comCode") String comCode,
 			Pageable pageable);
-	
+
+	@SQL("select pp.* from `primer_product` pp where pp.`operation_type` = :operationType "
+			+ "#if(:boardNo != '') { and pp.`board_no` = :boardNo }"
+			+ " and (pp.`modi_five_type` !='' or pp.`modi_three_type` !='' or pp.`modi_mid_type` !='' or pp.`modi_spe_type` !='' ) "
+			+ "#if(:comCode != '') { and pp.`com_code` = :comCode }"
+			+ "")
+	Page<PrimerProduct> resultsSelectQueryDecorate(@Param("boardNo") String boardNo, @Param("operationType") String operationType,
+			                                       @Param("comCode") String comCode, Pageable pageable);
 	
     
     PrimerProduct findByProductNo(String productNo);

@@ -616,8 +616,23 @@ public class DeliveryService {
 			String modiStr    = "";
 			String modiStrKey = "";
 			double price = 0.0;
-			if (!"".equals(modiFiveType) && !"".equals(modiThreeType) && !"".equals(modiMidType) && !"".equals(modiSpeType)) {
-				modiStr = "(" + modiFiveType + "," + modiThreeType + "," + modiMidType+ "," + modiSpeType+")";
+			if (!"".equals(modiFiveType) || !"".equals(modiThreeType) || !"".equals(modiMidType) || !"".equals(modiSpeType)) {
+				modiStr = "(";
+				if (!"".equals(modiFiveType)) {
+					modiStr += modiFiveType + ",";
+				}
+				if (!"".equals(modiThreeType)) {
+					modiStr += modiThreeType + ",";
+				}
+				if (!"".equals(modiMidType)) {
+					modiStr += modiMidType + ",";
+				}
+				if (!"".equals(modiSpeType)) {
+					modiStr += modiSpeType + ",";
+				}
+				modiStr = modiStr.substring(0, modiStr.length()-1);
+				modiStr += ")";
+				
 				modiStrKey = modiStr + "_" + df.format(modiPrice);
 				price = Double.parseDouble(df.format(modiPrice));
 			} else {

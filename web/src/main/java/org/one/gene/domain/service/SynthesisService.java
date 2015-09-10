@@ -891,7 +891,12 @@ public class SynthesisService {
 			String modiSpeType, String purifyType, String comCode,
 			Pageable pageable) {
 
-			Page<PrimerProduct> primerProductPage = primerProductRepository.resultsSelectQuery(boardNo,productNo,operationType.toString(), modiFiveType, modiThreeType, modiMidType, modiSpeType,purifyType,comCode, pageable);
+		    Page<PrimerProduct> primerProductPage = null;
+		    if (operationType == PrimerStatusType.modification) {//操作类型为修饰时只查有修饰的数据
+		    	primerProductPage = primerProductRepository.resultsSelectQueryDecorate(boardNo, operationType.toString(), comCode, pageable);
+		    }else{
+		    	primerProductPage = primerProductRepository.resultsSelectQuery(boardNo,productNo,operationType.toString(), modiFiveType, modiThreeType, modiMidType, modiSpeType,purifyType,comCode, pageable);
+		    }
 			
 			// 查询primer_product_value
 			for (PrimerProduct primerProduct : primerProductPage.getContent()) {
