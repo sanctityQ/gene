@@ -19,7 +19,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 		<tr>
 			<td align="right">客户公司名称:</td>
 			<td><input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 150px" />
-			    <input class="inp_text" type="hidden" id="customercode" name="customercode" value=""/>
+			    <input class="inp_text" type="hidden" id="customerCode" name="customerCode" />
 			    <ul id="seachCustomList"></ul>
 			</td>
             <td align="right">订单时间:</td>

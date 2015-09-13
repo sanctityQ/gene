@@ -21,7 +21,7 @@
 			<c:if test="${customerFlag=='0'}">
 	            <td align="right">客户公司名称:</td>
 	            <td><input class="inp_text" type="text" id="seachCustom" name="customerName" value="" style="width:150px" />
-				    <input class="inp_text" type="hidden" id="customercode" name="customercode" value=""/>
+				    <input class="inp_text" type="hidden" id="customerCode" name="customerCode" />
 				    <ul id="seachCustomList"></ul>
 				</td>
 			</c:if>

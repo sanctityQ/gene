@@ -22,7 +22,7 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			+ " from `order` o , `primer_product` pp, `primer_product_value` ppv "
 			+ " where o.`order_no` =  pp.`order_no` and pp.`id` = ppv.`primer_product_id` and ppv.`type` = 'baseCount' "
 			+ " and o.`status` = '1' and pp.`operation_type` = 'makeBoard' and (pp.`board_no` is null or pp.`board_no`='') "
-			+ "#if(:customercode != '') { and o.`customer_code` = :customercode } "
+			+ "#if(:customerCode != '') { and o.`customer_code` = :customerCode } "
 			+ "#if(:purifytype != '') { and pp.`purify_type` = :purifytype }"
 			+ "#if(:comCode != '') { and pp.`com_code` = :comCode }"
 			+ "#if(:tbn1 != '') { and ppv.`value` >= :tbn1 }"
@@ -31,7 +31,7 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			+ "#if(:modiFlag == '1') { and ( pp.`modi_five_type` !='' or pp.`modi_three_type` !='' or pp.`modi_mid_type` !='' or pp.`modi_spe_type` !='') }"
 			+ "")
 	Page<PrimerProduct> selectPrimerProduct(
-			@Param("customercode") String customercode,
+			@Param("customerCode") String customerCode,
 			@Param("modiFlag") String modiFlag, @Param("tbn1") String tbn1,
 			@Param("tbn2") String tbn2,
 			@Param("purifytype") String purifytype,

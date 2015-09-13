@@ -16,8 +16,11 @@
 			<td align="right">订单号:</td>
 			<td><input id="orderNo" class="inp_text" type="text" value="" style="width: 60%" /></td>
 			<c:if test="${customerFlag=='0'}">
-				<td align="right">客户公司代码:</td>
-				<td><input id="customerCode" class="inp_text" type="text" value="" style="width: 60%" /></td>
+				<td>客户公司名称:</td>
+				<td><input class="inp_text" type="text" id="seachCustom" name="customerName" style="width:150px" />
+				    <input class="inp_text" type="hidden" id="customerCode" name="customerCode" />
+				    <ul id="seachCustomList"></ul>
+				</td>
 			</c:if>
 			<td><button type="button" class="btn" onclick="getExamineInfo()">查询</button></td>
 
@@ -42,6 +45,7 @@
 	</thead>
 </table>
 <script src="${ctx}/views/order/js/orderExamine.js" ></script>
+<script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script type="text/javascript">
 examineIni();
 $(function(){
@@ -49,7 +53,7 @@ $(function(){
     var opts = dg.datagrid('options');
     var pager = dg.datagrid('getPager');
     pager.pagination({
-        pageSize:10,
+        pageSize:20,
         onSelectPage:function(pageNum, pageSize){
             opts.pageNumber = pageNum;
             opts.pageSize = pageSize;

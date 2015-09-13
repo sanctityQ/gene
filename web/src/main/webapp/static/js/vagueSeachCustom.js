@@ -43,6 +43,7 @@ function seachCustomChange(){
     	//重新模糊查询时清空
     	$("#customerid").val("");
     	$("#customerFlag").val("");
+    	$("#customerCode").val("");
     	$("#contactsid").val("");
     	$("#seachContacts").val("");
     	
@@ -81,6 +82,7 @@ function seachCustomSelect(){
     var seach = $("#seachCustom");
     var customerid = $("#customerid");
     var customerFlag = $("#customerFlag");
+    var customerCode = $("#customerCode");
     var list = $("#seachCustomList");
     var val = $(this).text();
     var id = $(this).attr("id");
@@ -89,6 +91,7 @@ function seachCustomSelect(){
     seach.val(val).attr("tagId",code);
     customerid.val(id)
     customerFlag.val(custFlag);
+    customerCode.val(code);
     list.hide(100);
 
     //如果需要赋总公司值

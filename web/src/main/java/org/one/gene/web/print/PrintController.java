@@ -188,7 +188,7 @@ public class PrintController {
      * @throws Exception 
      * */
 	public Reply printReportQuery(@Param("orderNo") String orderNo,
-			@Param("customercode") String customercode,
+			@Param("customerCode") String customerCode,
 			@Param("modifyTime") String modifyTime,
 			@Param("pageNo") Integer pageNo,
 			@Param("pageSize") Integer pageSize, Invocation inv) throws Exception {
@@ -211,7 +211,7 @@ public class PrintController {
 		if (!"0".equals(customerFlag)) {//代理公司和直接客户，只能查自己公司的业务
 			searchParams.put(SearchFilter.Operator.EQ+"_customerCode",user.getUser().getCustomer().getCode());
 		} else {
-			searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customercode);
+			searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
 		}
         searchParams.put(SearchFilter.Operator.EQ+"_status","1");//订单审核通过
     	if(!"1".equals(user.getUser().getCompany().getComLevel())){

@@ -86,11 +86,11 @@ public class SynthesisService {
 
 //    @Transactional(readOnly = false)
     //安排合成查询
-	public Page<PrimerProduct> makeBoardQuery(String customercode,
+	public Page<PrimerProduct> makeBoardQuery(String customerCode,
 			String modiFlag, String tbn1, String tbn2, String purifytype, String comCode,
 			Pageable pageable) {
 
-		Page<PrimerProduct> primerProductPage = primerProductRepository.selectPrimerProduct(customercode, modiFlag, tbn1, tbn2, purifytype, comCode, pageable);
+		Page<PrimerProduct> primerProductPage = primerProductRepository.selectPrimerProduct(customerCode, modiFlag, tbn1, tbn2, purifytype, comCode, pageable);
 		
 		// 查询primer_product_value
 		for (PrimerProduct primerProduct : primerProductPage.getContent()) {
@@ -944,7 +944,7 @@ public class SynthesisService {
 				   
 				//文件超连接
 			   if (!"".equals(primerProduct.getReviewFileName())) {
-				   String templateFilePath= File.separator+"gene"+File.separator+"upExcel"+File.separator+"detect"+File.separator+primerProduct.getReviewFileName();
+				   String templateFilePath= "D:\\geneUploadFile\\detect\\"+primerProduct.getReviewFileName();
 				   System.out.println("检测结果查询页面，下载附件文件的路径templateFilePath="+templateFilePath);
 				   primerProduct.setReviewFileName("<a href='"+templateFilePath+"' target='_blank'>"+primerProduct.getReviewFileName()+"</a>");
 				}

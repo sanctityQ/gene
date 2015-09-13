@@ -15,14 +15,17 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 </head>
 <body>
 <form action="" id='queryForm'>
-<input type="hidden" id="customerFlag" name="customerFlag" value="<%=customerFlag %>"/>
+<input type="hidden" id="customerFlagOld" name="customerFlagOld" value="<%=customerFlag %>"/>
 <div class="tools">
 	<table width="100%">
 		<tr>
 			<td align="right">订单号:</td>
 			<td><input id="orderNo" class="inp_text" type="text" value="" style="width: 60%" /></td>
-			<td>客户公司代码:</td>
-			<td><input id="customerCode" class="inp_text" type="text" value="" style="width: 60%" /></td>
+			<td>客户公司名称:</td>
+			<td><input class="inp_text" type="text" id="seachCustom" name="customerName" style="width:150px" />
+			    <input class="inp_text" type="hidden" id="customerCode" name="customerCode" />
+			    <ul id="seachCustomList"></ul>
+			</td>
 			<td><button type="button" class="btn" onclick="getOrderInfo();">查询</button></td>
 			<td align="right">
 			</td>
@@ -48,6 +51,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 </table>
 <div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
 <script src="${ctx}/views/delivery/js/delivery.js" ></script>
+<script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script type="text/javascript">
 
 //orderInfoIni();

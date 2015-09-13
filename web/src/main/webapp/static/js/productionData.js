@@ -47,16 +47,16 @@ var getProducts=function(){
 	}else{
 		strModifyFlag = '0';
 	}
-	var customercode = '';
+	var customerCode = '';
 	if($("#seachCustom").val() != ''){
-		customercode = $("#customercode").val();
+		customerCode = $("#customerCode").val();
 	}
 	$.ajax({
 		type : "post",
 		url : "/gene/synthesis/makeBoardQuery",
 		dataType : "json",
 		data:{
-			customercode: customercode,
+			customerCode: customerCode,
 			tbn1: $("#tbn1").val(),
 			tbn2: $("#tbn2").val(),
 			modiFlag: strModifyFlag,

@@ -98,7 +98,7 @@ public class SynthesisController {
      * 制板查询
      * */
     @Post("makeBoardQuery")
-    public Reply makeBoardQuery(@Param("customercode") String customercode, 
+    public Reply makeBoardQuery(@Param("customerCode") String customerCode, 
 					    		 @Param("tbn1") String tbn1,
 					    		 @Param("tbn2") String tbn2,
 					    		 @Param("modiFlag") String modiFlag,
@@ -122,7 +122,7 @@ public class SynthesisController {
         
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         
-        Page<PrimerProduct> primerProductPage = synthesisService.makeBoardQuery(customercode, modiFlag, tbn1, tbn2, purifytype, comCode, pageable);
+        Page<PrimerProduct> primerProductPage = synthesisService.makeBoardQuery(customerCode, modiFlag, tbn1, tbn2, purifytype, comCode, pageable);
     	
     	return Replys.with(primerProductPage).as(Json.class);
     }

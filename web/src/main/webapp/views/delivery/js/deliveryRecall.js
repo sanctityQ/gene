@@ -97,9 +97,9 @@ var getProducts=function(){
     
 	var gridOpts = $('#productionData').datagrid('getPager').data("pagination").options;
 
-	var customercode = '';
+	var customerCode = '';
 	if($("#seachCustom").val() != ''){
-		customercode = $("#customercode").val();
+		customerCode = $("#customerCode").val();
 	}
 	
 	$.ajax({
@@ -107,7 +107,7 @@ var getProducts=function(){
 		url : "/gene/delivery/queryBack",
 		dataType : "json",
 		data:{
-			customerCode: customercode,
+			customerCode: customerCode,
 			createStartTime: $('#createStartTime').datebox('getValue'),
 			createEndTime: $('#createEndTime').datebox('getValue'),
 			boardNo: $("#boardNo").val(),

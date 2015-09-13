@@ -37,9 +37,9 @@ var getOrderInfos=function(){
     });
     
 	var gridOpts = $('#productionData').datagrid('getPager').data("pagination").options;
-	var customercode = '';
+	var customerCode = '';
 	if($("#seachCustom").val() != ''){
-		customercode = $("#customercode").val();
+		customerCode = $("#customerCode").val();
 	}
 	var orderNo = '';
 	if($("#seachOrder").val() != ''){
@@ -56,7 +56,7 @@ var getOrderInfos=function(){
 		url : "/gene/print/printReportQuery",
 		dataType : "json",
 		data:{
-			customercode: customercode,
+			customerCode: customerCode,
 			orderNo: orderNo,
 			modifyTime:modifyTime,
 			pageNo: gridOpts.pageNumber,
