@@ -2,6 +2,7 @@ package org.one.gene.web.delivery;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.springframework.data.jpa.domain.Specification;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
@@ -295,7 +297,16 @@ public class DeliveryController {
     //发货清单 导出
     @Post("deliveryList/{orderInfos}/")
 	public void deliveryList(@Param("orderInfos") String orderInfosJson ,Invocation inv) throws IOException {
-    	List<OrderInfo> orderInfos = JSON.parseArray(orderInfosJson,OrderInfo.class);
+    	List<OrderInfo> orderInfos = Lists.newArrayList();
+    	
+		String[] ois = orderInfosJson.split(",");
+		for(int i=0;i<ois.length;i++){
+			OrderInfo orderInfo = new OrderInfo();
+			String orderNo = ois[i];
+			orderInfo.setOrderNo(orderNo);
+			orderInfos.add(orderInfo);
+		}
+		
     	deliveryService.deliveryList(orderInfos, inv);
     }
     

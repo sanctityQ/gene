@@ -508,6 +508,10 @@ public class DeliveryService {
 		String contactsName = "";//客户联系人
 		String customerFlag = "";//客户标识
 		
+		ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+		
+		kaidan = user.getName();
+		
 		for (OrderInfo orderInfo : orderInfos) {
 			orderNo = orderInfo.getOrderNo();
 			
@@ -539,12 +543,15 @@ public class DeliveryService {
 			email           = customer.getEmail();
 			customerFlag    = customer.getCustomerFlag();
 		}
-		//直接客户 抬头展现梓熙生物
+		//直接客户 展现梓熙生物的信息
 		if ("2".equals(customerFlag)) {
 			List<Customer> customers = customerRepository.seachHaveZiXi();
 			if (customers != null && customers.size() > 0) {
 				Customer customerTemp = (Customer)customers.get(0);
 				companyName = customerTemp.getName();
+				address     = customerTemp.getAddress();
+				phoneNo     = customerTemp.getPhoneNo();
+				email       = customerTemp.getEmail();
 			}
 		}
 		
