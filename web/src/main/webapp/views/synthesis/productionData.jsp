@@ -45,7 +45,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
         <button id="makeBoard" class="btn btn-success" disabled onclick="makeBoard('views/synthesis/makeBoard.jsp');">制作合成板</button>
     </div>
 </div>
-<table id="productionData" class="easyui-datagrid" data-options="striped:true,method:'post',pagination:true,fitColumns:true">
+<table id="productionData" class="easyui-datagrid" data-options="striped:true,method:'post',pagination:true,fitColumns:true,sortOrder:'desc',remoteSort:false">
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>

@@ -67,7 +67,7 @@ var deliveryList = function(){
     var makeBoard = $('#makeBoard');
   
 	makeBoard.attr('disabled','disabled');//按钮置灰
-	table.datagrid('loadData', { total: 0, rows: [] });//清空数据
+	//table.datagrid('loadData', { total: 0, rows: [] });//清空数据
 	
 	document.form.action = "/gene/delivery/exportChuku/"+JSON.stringify(orderInfos)+"/";
 	document.form.submit();

@@ -62,7 +62,7 @@ String comCode = user.getUser().getCompany().getComCode();
 		</tr>
 	</table>
 </div>
-<table id="customerList" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true">
+<table id="customerList" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true,sortOrder:'desc',remoteSort:false">
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>

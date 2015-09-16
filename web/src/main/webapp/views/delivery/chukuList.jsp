@@ -38,7 +38,7 @@
         <button id="makeBoard" type="button" class="btn btn-primary" disabled onclick="deliveryList()">导出出库单</button>
     </div>
 </div>
-<table id="productionData" class="easyui-datagrid" data-options="striped:true,singleSelect: true,method: 'get',pagination:true,fitColumns:true">
+<table id="productionData" class="easyui-datagrid" data-options="striped:true,singleSelect: true,method: 'get',pagination:true,fitColumns:true,sortOrder:'desc',remoteSort:false">
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>

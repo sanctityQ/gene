@@ -40,7 +40,7 @@ var ctx = '${ctx}';
 		</tr>
 	</table>
 </div>
-<table id="moleculaList" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true">
+<table id="moleculaList" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true,sortOrder:'desc',remoteSort:false">
 	<thead>
 		<tr>
 		    <th data-options="field:'id',hidden:true,width:80,sortable:true">id</th>

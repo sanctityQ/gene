@@ -57,7 +57,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
         </div>
     </div>
 </div>
-<table id="productionData" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true,">
+<table id="productionData" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true,sortOrder:'desc',remoteSort:false">
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>

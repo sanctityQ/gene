@@ -50,7 +50,7 @@ String level = user.getUser().getCompany().getComLevel();
     </table>
 </div>
 <table id="userList" class="easyui-datagrid"
-       data-options="striped:true,method:'get',pagination:true,fitColumns:true">
+       data-options="striped:true,method:'get',pagination:true,fitColumns:true,sortOrder:'desc',remoteSort:false">
     <thead>
     <tr>
         <th data-options="field:'id',checkbox:true"></th>
