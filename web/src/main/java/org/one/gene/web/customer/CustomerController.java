@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
@@ -172,7 +173,14 @@ public class CustomerController {
         	comCodeSQL = "";
         }
 		String customerSQL = "%" + customercode + "%";
-		List<Customer> customers = customerRepository.vagueSeachCustomer(customerSQL,comCodeSQL);
+		
+		List<Customer> customers = Lists.newArrayList();
+		
+		if (customercode.startsWith("梓熙")) {
+			customers = customerRepository.vagueSeachCustomerZhiJie(comCodeSQL);
+		} else {
+			customers = customerRepository.vagueSeachCustomer(customerSQL,comCodeSQL);
+		}
     	return Replys.with(customers).as(Json.class);
     }
     

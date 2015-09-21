@@ -48,5 +48,19 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 			"(select distinct `order_no` from `primer_product` where (`product_no`= :productNo or `out_product_no`= :productNo ))")
 	List<Order> getOrdersByProductNo(@Param("productNo") String productNo);
 	
+	
+	@SQL("select * from `order` o  where 1=1 "
+			+ "#if(:createStartTime != '') { and o.`create_time` >= STR_TO_DATE(' :createStartTime ', '%m/%d/%Y') } "
+			+ "#if(:createEndTime != '') { and o.`create_time` <= date_add(STR_TO_DATE(' :createEndTime ', '%m/%d/%Y'), INTERVAL 1 day) } "
+			+ "#if(:outOrderNo != '') { and o.`out_order_no` = :outOrderNo }"
+			+ "#if(:customerId != '') { and o.`customer_code` IN ( select `code` from `customer` where id= :customerId ) }"
+			+ "#if(:contactsId != '') { and o.`contacts_name` IN ( select `name` from `customer_contacts` where id= :contactsId ) }"
+			+ "#if(:userCode != '') { and o.`handler_code` = :userCode }"
+			)
+	List<Order>  queryChuKuTongJi(@Param("createStartTime") String createStartTime,@Param("createEndTime") String createEndTime,
+			@Param("outOrderNo") String outOrderNo,
+			@Param("customerId") String customerId,@Param("contactsId") String contactsId,@Param("userCode") String userCode);
+	
+	
 }
 
