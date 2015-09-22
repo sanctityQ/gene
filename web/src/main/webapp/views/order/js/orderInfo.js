@@ -339,7 +339,7 @@ function getChanesSave(){
         },
 		success : function(data) {
 			$.messager.progress('close');
-			if(data == "sucess"){
+			if(data != null){
 //				goToPage(ctx+'/views/order/orderList.jsp?orderNo='+orderNo);
 				goToPage(ctx+'/order/import');
 			}

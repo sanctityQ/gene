@@ -10,8 +10,15 @@ public class StatisticsInfo {
 	private String contactsId = "";
 	private String userCode = "";
 	private String contactsName = "";
+	private String productNo = "";
 	
 	
+	public String getProductNo() {
+		return productNo;
+	}
+	public void setProductNo(String productNo) {
+		this.productNo = productNo;
+	}
 	public String getContactsName() {
 		return contactsName;
 	}

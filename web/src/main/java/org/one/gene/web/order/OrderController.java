@@ -289,7 +289,10 @@ public class OrderController {
     
     
     @Post("save")
-    public Reply save(@Param("primerProducts") List<PrimerProduct> primerProducts,@Param("orderNo") String orderNo,Invocation inv) throws Exception{
+	public Reply save(
+			@Param("primerProducts") List<PrimerProduct> primerProducts,
+			@Param("orderNo") String orderNo, Invocation inv) throws Exception {
+    	
     	Order order = orderRepository.findByOrderNo(orderNo);
         Map<Long, PrimerProduct> newPrimerProductMap = Maps.newHashMap();
         for (PrimerProduct primerProduct : primerProducts) {
@@ -328,7 +331,7 @@ public class OrderController {
         //order.setPrimerProducts(primerProducts);
        // orderService.save(order);
         orderService.saveOrderAndPrimerProduct(order,newPrimerProductMap.values());
-    	return Replys.with("sucess").as(Text.class);  
+        return Replys.with("{\"success\":true,\"mess\":\"数据已保存！\"}").as(Json.class);
     }
     
     /**

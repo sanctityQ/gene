@@ -76,4 +76,26 @@ public class StatisticsController {
     }
     
     
+    /**
+     * 进入对账单查询页面
+     * */
+    @Get("duiZhangDan")
+    public String duiZhangDan(){
+    	return "duiZhangDan";
+    }
+    
+    /**
+     * 导出对账单文件
+     * */
+    @Post("exportDuiZhangDan")
+	public void exportDuiZhangDan(@Param("statisticsInfojson") String statisticsInfojson, Invocation inv)
+			throws IOException {
+    	
+    	statisticsInfojson = new String(statisticsInfojson.getBytes("iso-8859-1"), "utf-8");;  
+    	List<StatisticsInfo> statisticsInfos = JSON.parseArray(statisticsInfojson,StatisticsInfo.class);
+    	
+    	StatisticsInfo statisticsInfo = statisticsInfos.get(0);
+		
+		statisticsService.exportDuiZhangDan(statisticsInfo, inv);
+    }
 }
