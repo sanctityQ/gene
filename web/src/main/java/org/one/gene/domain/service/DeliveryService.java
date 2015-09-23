@@ -504,6 +504,7 @@ public class DeliveryService {
 		String phoneNo     = "";//联系方式
 		String email     = "";//邮箱
 		String orderNo = "";//订单号
+		String outOrderNo = "";//外部订单号
 		String productNoMinToMax = "";//序列范围
 		String contactsName = "";//客户联系人
 		String customerFlag = "";//客户标识
@@ -520,6 +521,7 @@ public class DeliveryService {
 		Order order = orderRepository.findByOrderNo(orderNo);
 		String customerCode = "";
 		if( order != null ){
+			outOrderNo   = order.getOutOrderNo();
 			customerCode = order.getCustomerCode();//客户代码
 			orderDate = order.getCreateTime().toString();
 			productNoMinToMax = order.getProductNoMinToMax();
@@ -545,6 +547,7 @@ public class DeliveryService {
 		}
 		//直接客户 展现梓熙生物的信息
 		if ("2".equals(customerFlag)) {
+			outOrderNo = orderNo;//直接客户，订单号显示内部订单号
 			List<Customer> customers = customerRepository.seachHaveZiXi();
 			if (customers != null && customers.size() > 0) {
 				Customer customerTemp = (Customer)customers.get(0);
@@ -679,11 +682,10 @@ public class DeliveryService {
 		
 		//形成Excel
 		String templetName = "chukudanTemplate.xls";
-		String strFileName = orderNo+"-"+System.currentTimeMillis()+".xls";
+		String strFileName = System.currentTimeMillis()+".xls";
 		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator;
 		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(templatePath+templetName));
         HSSFSheet sheet = workbook.getSheetAt(0);
-		HSSFRow rowFirst = null;
 		HSSFRow row = null;
 		HSSFCell cell = null;
 		
@@ -711,7 +713,7 @@ public class DeliveryService {
 		cell.setCellValue("客户单位："+customerName);
 		cell = row.getCell(4);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue("订单号："+orderNo+"   序列范围："+productNoMinToMax);
+		cell.setCellValue("订单号："+outOrderNo+"   序列范围："+productNoMinToMax);
 		
 		row = sheet.getRow(4);
 		cell = row.getCell(0);
