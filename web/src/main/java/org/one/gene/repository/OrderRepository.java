@@ -49,17 +49,15 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 	List<Order> getOrdersByProductNo(@Param("productNo") String productNo);
 	
 	
-	@SQL("select * from `order` o  where 1=1 "
-			+ "#if(:createStartTime != '') { and o.`create_time` >= STR_TO_DATE(' :createStartTime ', '%m/%d/%Y') } "
-			+ "#if(:createEndTime != '') { and o.`create_time` <= date_add(STR_TO_DATE(' :createEndTime ', '%m/%d/%Y'), INTERVAL 1 day) } "
-			+ "#if(:outOrderNo != '') { and o.`out_order_no` = :outOrderNo }"
-			+ "#if(:customerId != '') { and o.`customer_code` IN ( select `code` from `customer` where id= :customerId ) }"
-			+ "#if(:contactsId != '') { and o.`contacts_name` IN ( select `name` from `customer_contacts` where id= :contactsId ) }"
-			+ "#if(:userCode != '') { and o.`handler_code` = :userCode }"
+	@SQL("select * from `order` o  where `status` = '1' "
+			+ "#if(:createStartTime != '') { and o.`create_time` >= STR_TO_DATE( :createStartTime , '%m/%d/%Y %H:%i:%S') } "
+			+ "#if(:createEndTime != '') { and o.`create_time`   <= STR_TO_DATE( :createEndTime   , '%m/%d/%Y %H:%i:%S') } "
+			+ "#if(:customerFlag == '0') { and o.`customer_code` IN ( select `code` from `customer` where `customer_flag`= '2' ) }"
+			+ "#if(:customerFlag == '1') { and o.`customer_code` = :customerCode }"
+			+ "#if(:customerFlag == '2') { and o.`customer_code` = :customerCode }"
 			)
-	List<Order>  queryChuKuTongJi(@Param("createStartTime") String createStartTime,@Param("createEndTime") String createEndTime,
-			@Param("outOrderNo") String outOrderNo,
-			@Param("customerId") String customerId,@Param("contactsId") String contactsId,@Param("userCode") String userCode);
+	List<Order>  queryYinWuJInDu(@Param("createStartTime") String createStartTime,@Param("createEndTime") String createEndTime,
+			@Param("customerFlag") String customerFlag,@Param("customerCode") String customerCode);
 	
 	
 }

@@ -104,7 +104,7 @@ public class StatisticsService {
         	searchParams.put(SearchFilter.Operator.GT+"__createTime",new Date(statisticsInfo.getCreateStartTime()+" 00:00:00"));
         }
         if (!"".equals(statisticsInfo.getCreateEndTime())) {
-        	searchParams.put(SearchFilter.Operator.LT+"__createTime",new Date(statisticsInfo.getCreateEndTime()+" 59:59:59"));
+        	searchParams.put(SearchFilter.Operator.LT+"__createTime",new Date(statisticsInfo.getCreateEndTime()+" 23:59:59"));
         }
 		if (!"".equals(statisticsInfo.getOutOrderNo())) {
 			searchParams.put(SearchFilter.Operator.EQ+"_outOrderNo",statisticsInfo.getOutOrderNo());
@@ -559,7 +559,7 @@ public class StatisticsService {
         	searchParams.put(SearchFilter.Operator.GT+"__createTime",new Date(statisticsInfo.getCreateStartTime()+" 00:00:00"));
         }
         if (!"".equals(statisticsInfo.getCreateEndTime())) {
-        	searchParams.put(SearchFilter.Operator.LT+"__createTime",new Date(statisticsInfo.getCreateEndTime()+" 59:59:59"));
+        	searchParams.put(SearchFilter.Operator.LT+"__createTime",new Date(statisticsInfo.getCreateEndTime()+" 23:59:59"));
         }
 		if (!"".equals(statisticsInfo.getOutOrderNo())) {
 			searchParams.put(SearchFilter.Operator.EQ+"_outOrderNo",statisticsInfo.getOutOrderNo());
@@ -782,6 +782,232 @@ public class StatisticsService {
         out.close();
     }
 	
+
+    /**
+     * 导出引物进度表
+     * @throws IOException 
+     * */
+	public void exportYinWuJinDuBiao( StatisticsInfo statisticsInfo, Invocation inv) throws IOException {
+		
+		String customerFlag    = statisticsInfo.getCustomerFlag();
+		String customerCode    = statisticsInfo.getCustomerCode();
+		String createStartTime = statisticsInfo.getCreateStartTime()+" 00:00:00";
+		String createEndTime   = statisticsInfo.getCreateEndTime()+" 23:59:59";
+
+		List<Order> orders = orderRepository.queryYinWuJInDu(createStartTime, createEndTime, customerFlag, customerCode);
+		
+		String zixiCode = "";//梓熙生物 公司代码
+		String zixiName = "";//梓熙生物 公司名称
+		
+		List<Customer> customers = customerRepository.seachHaveZiXi();
+		if (customers != null && customers.size() > 0) {
+			Customer customerTemp = (Customer)customers.get(0);
+			zixiCode = customerTemp.getCode();
+			zixiName = customerTemp.getName();
+		}
+		
+		//形成Excel
+		String templetName = "ywjdTemplate.xls";
+		String strFileName = System.currentTimeMillis()+".xls";
+		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+"statistics"+File.separator;
+		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(templatePath+templetName));
+        HSSFSheet sheet = workbook.getSheetAt(0);
+		HSSFRow row = null;
+		HSSFCell cell = null;
+		
+    	HSSFCellStyle style_center = workbook.createCellStyle();
+    	style_center.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+    	style_center.setBorderBottom(HSSFCellStyle.BORDER_THIN); // 下边框  
+    	style_center.setBorderLeft(HSSFCellStyle.BORDER_THIN);// 左边框  
+    	style_center.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框  
+    	style_center.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框  
+    	
+    	String orderNo = "";//订单号
+    	int startRow = 2;//从第2行开始
+    	Map<String, StatisticsInfo> siMap = new HashMap<String, StatisticsInfo>();//客户的生产引物信息
+    	
+		for (Order tempOrder : orders) {
+			orderNo = tempOrder.getOrderNo();
+			
+			String c_Code = "";//公司代码
+			String c_Name = "";//公司名称
+			String c_Flag = "";//公司性质标志
+			
+			Order order = orderRepository.findByOrderNo(orderNo);
+			
+			c_Code = order.getCustomerCode();//客户代码
+			
+			Customer customer = customerRepository.findByCode(c_Code);
+			
+			if (customer != null) {
+				c_Name = customer.getName();
+				c_Flag = customer.getCustomerFlag();
+				if ("2".equals(c_Flag)) {
+					c_Code = zixiCode;
+					c_Name = zixiName;
+				}
+			}
+			int count1 = 0;//引物条数
+			int count2 = 0;//碱基总数
+			int count3 = 0;//修饰和HPLC条数
+			int count4 = 0;//修饰和HPLC碱基数
+			int count5 = 0;//正常发货数
+			int count6 = 0;//晚发货数
+			int count7 = 0;//内部重合数
+			int count8 = 0;//外部重合条数
+			int count9 = 0;//修饰和HPLC重合数
+			
+			for (PrimerProduct pp : order.getPrimerProducts()) {
+				
+				for (PrimerProductValue primerProductValue : pp.getPrimerProductValues()) {
+					PrimerValueType type = primerProductValue.getType();
+					if (type.equals(PrimerValueType.baseCount)) {// 碱基数
+						//tbn = primerProductValue.getValue().intValue();
+					}else if(type.equals(PrimerValueType.odTotal)){//od总量
+						//odTotal = primerProductValue.getValue().doubleValue();
+					}else if(type.equals(PrimerValueType.nmolTotal)){//nmol总量
+						//nmolTotal = primerProductValue.getValue().doubleValue();
+					}
+				}
+				
+			}
+			
+			if (siMap.get(c_Code) == null) {
+				StatisticsInfo si = new StatisticsInfo();
+				si.setCustomerName(c_Name);
+				si.setCount1(count1);
+				si.setCount2(count2);
+				si.setCount3(count3);
+				si.setCount4(count4);
+				si.setCount5(count5);
+				si.setCount6(count6);
+				si.setCount7(count7);
+				si.setCount8(count8);
+				si.setCount9(count9);
+				
+				siMap.put(c_Code, si);
+			} else {
+				StatisticsInfo si = siMap.get(c_Code);
+				si.setCount1(count1+si.getCount1());
+				si.setCount2(count2+si.getCount2());
+				si.setCount3(count3+si.getCount3());
+				si.setCount4(count4+si.getCount4());
+				si.setCount5(count5+si.getCount5());
+				si.setCount6(count6+si.getCount6());
+				si.setCount7(count7+si.getCount7());
+				si.setCount8(count8+si.getCount8());
+				si.setCount9(count9+si.getCount9());
+				siMap.put(c_Code, si);
+			}
+			
+		}
+		
+		row = sheet.getRow(0);
+		cell = row.getCell(0);
+		cell.setCellValue(cell.getStringCellValue()+"("+statisticsInfo.getCreateStartTime()+"~"+statisticsInfo.getCreateEndTime()+")");//放置起止时间
+		
+		for (String key : siMap.keySet()) {
+			StatisticsInfo si = (StatisticsInfo)siMap.get(key);
+			
+			row = sheet.createRow(startRow);
+			
+			cell = row.createCell(0);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(si.getCustomerName());//公司名称
+			cell = row.createCell(1);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(si.getCount1());//引物条数	
+			cell = row.createCell(2);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(si.getCount2());//碱基总数
+			cell = row.createCell(3);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(si.getCount3());//修饰和HPLC条数
+			cell = row.createCell(4);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(si.getCount4());//修饰和HPLC碱基数
+			cell = row.createCell(5);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(si.getCount5());//正常发货数
+			cell = row.createCell(6);
+		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		    cell.setCellStyle(style_center);
+			cell.setCellValue(si.getCount6());//晚发货数
+			cell = row.createCell(7);
+		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		    cell.setCellStyle(style_center);
+			cell.setCellValue(si.getCount7());//内部重合数
+			cell = row.createCell(8);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(si.getCount8());//外部重合条数
+			cell = row.createCell(9);
+		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		    cell.setCellStyle(style_center);
+			cell.setCellValue(si.getCount9());//修饰和HPLC重合数
+			
+			startRow = startRow +1;
+		}
+		
+		row = sheet.createRow(startRow);
+		
+		cell = row.createCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("合计");//公司名称
+		cell = row.createCell(1);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("总数");//引物条数	
+		cell = row.createCell(2);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("总数");//碱基总数
+		cell = row.createCell(3);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("总数");//修饰和HPLC条数
+		cell = row.createCell(4);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("总数");//修饰和HPLC碱基数
+		cell = row.createCell(5);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("总数");//正常发货数
+		cell = row.createCell(6);
+	    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+	    cell.setCellStyle(style_center);
+		cell.setCellValue("总数");//晚发货数
+		cell = row.createCell(7);
+	    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+	    cell.setCellStyle(style_center);
+		cell.setCellValue("总数");//内部重合数
+		cell = row.createCell(8);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("总数");//外部重合条数
+		cell = row.createCell(9);
+	    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+	    cell.setCellStyle(style_center);
+		cell.setCellValue("总数");//修饰和HPLC重合数
+		
+		
+        //输出文件到客户端
+        HttpServletResponse response = inv.getResponse();
+        response.setContentType("application/x-msdownload");
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + strFileName + "\"");
+        OutputStream out=response.getOutputStream();
+        workbook.write(out);
+        out.flush();
+        out.close();
+    }
 	
 	
 }
