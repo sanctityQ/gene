@@ -185,8 +185,7 @@ public abstract class ExcelHelper {
 						value = "";
 					}
 				} else {
-					value = new DecimalFormat("0").format(cell
-							.getNumericCellValue());
+					value = new DecimalFormat("0.00").format(cell.getNumericCellValue());
 				}
 				break;
 			case HSSFCell.CELL_TYPE_FORMULA:
@@ -355,8 +354,7 @@ public abstract class ExcelHelper {
 	    								value = "";
 	    							}
 	    						} else {
-	    							value = new DecimalFormat("0").format(cell
-	    									.getNumericCellValue());
+	    							value = new DecimalFormat("0.00").format(cell.getNumericCellValue());
 	    						}
 	    						break;
 	    					case HSSFCell.CELL_TYPE_FORMULA:

@@ -386,6 +386,7 @@ public class PrintService {
 		Order order = orderRepository.findByOrderNo(orderNo);
 		String customerCode = order.getCustomerCode();//客户代码
 		String customerName = order.getCustomerName();//客户名称
+		String outOrderNo   = order.getOutOrderNo();//外部订单号
 		String customerPhoneNo = "";
 		String customerWebSite = "";
 		String customerEmail = "";
@@ -397,7 +398,7 @@ public class PrintService {
 			customerEmail   = customer.getEmail();
 			customerFlag    = customer.getCustomerFlag();
 		}
-		String strFileName = System.currentTimeMillis()+".xls";
+		String strFileName = orderNo+".xls";
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
         String currentTime = df.format(new Date());
 		
@@ -424,7 +425,7 @@ public class PrintService {
 
 			printLabel.setPrimeName(primerProduct.getPrimeName());// 引物名称
 			printLabel.setOrderNo(primerProduct.getOrder().getOrderNo());// 订单号
-			printLabel.setOutOrderNo(order.getOutOrderNo());//外部订单号
+			printLabel.setOutOrderNo(outOrderNo);//外部订单号
 			printLabel.setGeneOrder(primerProduct.getGeneOrder());// 引物序列
 			// 修饰
 			String midi = "";
@@ -525,7 +526,7 @@ public class PrintService {
 				row = sheet.getRow(1);
 				cell = row.getCell(1);//得到单元格
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				cell.setCellValue("金唯智订单号："+orderNo);
+				cell.setCellValue("金唯智订单号："+outOrderNo);
 				
 				row = sheet.getRow(2);
 				cell = row.getCell(1);

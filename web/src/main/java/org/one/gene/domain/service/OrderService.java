@@ -312,18 +312,21 @@ public class OrderService {
     	}
     	for (PrimerProduct primerProduct : order.getPrimerProducts()) {
     		
+			if(!"".equals(failReason)){
+      		  primerProduct.setOperationType(PrimerType.PrimerStatusType.orderCheck);
+  			}else{
+  			  primerProduct.setOperationType(PrimerType.PrimerStatusType.makeBoard);//订单审核通过，生产数据到可制板状态
+  			  primerProduct.setBackTimes(0);
+  			  primerProduct.setModifyTime(new Date());//最新修改时间
+  			}
     		for (PrimerProductOperation primerProductOperation : primerProduct.getPrimerProductOperations()) {
     			if(!"".equals(failReason)){
     			  primerProductOperation.setType(PrimerType.PrimerOperationType.orderCheckFailure);
         		  primerProductOperation.setTypeDesc(PrimerType.PrimerOperationType.orderCheckFailure.desc());
         		  primerProductOperation.setFailReason(failReason);
-        		  primerProduct.setOperationType(PrimerType.PrimerStatusType.orderCheck);
     			}else{
     			  primerProductOperation.setType(PrimerType.PrimerOperationType.orderCheckSuccess);
     			  primerProductOperation.setTypeDesc(PrimerType.PrimerOperationType.orderCheckSuccess.desc());
-    			  primerProduct.setOperationType(PrimerType.PrimerStatusType.makeBoard);//订单审核通过，生产数据到可制板状态
-    			  primerProduct.setBackTimes(0);
-    			  primerProduct.setModifyTime(new Date());//最新修改时间
     			}
     		}
     	}
