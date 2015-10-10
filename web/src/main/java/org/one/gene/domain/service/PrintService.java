@@ -184,8 +184,10 @@ public class PrintService {
 			}
 			
 			printLabel.setPrimeName(primerProduct.getPrimeName());//引物名称
-			printLabel.setOrderNo(primerProduct.getOrder().getOrderNo());//订单号
-			printLabel.setRemark(primerProduct.getRemark());//备注/日期
+			printLabel.setOrderNo(primerProduct.getOrder().getOutOrderNo());//订单号,有外部的显示外部的，没有显示内部的
+			SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");//设置日期格式
+	        String createTime = df.format(primerProduct.getOrder().getCreateTime());
+			printLabel.setRemark(createTime);// 日期：20151010
 			
 			//修饰
 			String midi = "";

@@ -442,7 +442,16 @@ public class DeliveryService {
 				row = sheet.getRow((short) rowNum);
 			}
 			for (int k = 0; k < 5; k++) {
-				HSSFCell cell = row.createCell((short) ((columNum - 1) * 5 + k));// 产生单元格
+				//每大列后空两列
+				HSSFCell cell = null;// 产生单元格
+				if(columNum == 1){
+					cell = row.createCell((short) ((columNum - 1) * 5 + k));
+				}else if(columNum == 2){
+					cell = row.createCell((short) ((columNum - 1) * 5 + k + 2));
+				}else if(columNum == 3){
+					cell = row.createCell((short) ((columNum - 1) * 5 + k + 4));
+				}
+				
 				// 设置单元格内容为字符串型
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				// 往单元格中写入信息
