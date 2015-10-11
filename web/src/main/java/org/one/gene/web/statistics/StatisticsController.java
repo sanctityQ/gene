@@ -127,5 +127,34 @@ public class StatisticsController {
 			e.printStackTrace();
 		}
     }
+   
+    /**
+     * 进入修饰进度表查询页面
+     * */
+    @Get("xiuShiJinDuBiao")
+    public String xiuShiJinDuBiao(){
+    	return "xiuShiJinDuBiao";
+    }
+    
+    /**
+     * 导出引物进度表文件
+     * */
+    @Post("exportXiuShiJinDuBiao")
+	public void exportXiuShiJinDuBiao(@Param("statisticsInfojson") String statisticsInfojson, Invocation inv)
+			throws IOException {
+    	
+    	statisticsInfojson = new String(statisticsInfojson.getBytes("iso-8859-1"), "utf-8");;  
+    	List<StatisticsInfo> statisticsInfos = JSON.parseArray(statisticsInfojson,StatisticsInfo.class);
+    	
+    	StatisticsInfo statisticsInfo = statisticsInfos.get(0);
+		
+		try {
+			statisticsService.exportXiuShiJinDuBiao(statisticsInfo, inv);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
     
 }

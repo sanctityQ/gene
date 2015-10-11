@@ -72,6 +72,7 @@ if ("0".equals(customerFlag)){
 		    <li url="${ctx}/statistics/chuKuTongJi" id="chuKuTongJi"><i class="icon-th-large"></i>出库统计</li>
 		    <li url="${ctx}/statistics/duiZhangDan" id="duiZhangDan"><i class="icon-th-large"></i>对账单</li>
 		    <li url="${ctx}/statistics/yinWuJinDuBiao" id="yinWuJinDuBiao"><i class="icon-th-large"></i>引物生产进度表</li>
+		    <li url="${ctx}/statistics/xiuShiJinDuBiao" id="xiuShiJinDuBiao"><i class="icon-th-large"></i>修饰进度表</li>
 		</ul>
 	</div>
 <% }%>

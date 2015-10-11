@@ -14,6 +14,11 @@ public class StatisticsInfo {
 	private String productNo = "";
 	private String customerFlag = "";
 	private String orderTime = "";
+	private String modiType = "";
+	private int tbn = 0;
+	private String tb = "";
+	private String primerType = "";
+	private String deliveryDate = "";
 	private int count1 = 0;
 	private int count2 = 0;
 	private int count3 = 0;
@@ -159,5 +164,34 @@ public class StatisticsInfo {
 	public void setUserCode(String userCode) {
 		this.userCode = userCode;
 	}
-	
+	public String getModiType() {
+		return modiType;
+	}
+	public void setModiType(String modiType) {
+		this.modiType = modiType;
+	}
+	public int getTbn() {
+		return tbn;
+	}
+	public void setTbn(int tbn) {
+		this.tbn = tbn;
+	}
+	public String getTb() {
+		return tb;
+	}
+	public void setTb(String tb) {
+		this.tb = tb;
+	}
+	public String getDeliveryDate() {
+		return deliveryDate;
+	}
+	public void setDeliveryDate(String deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+	public String getPrimerType() {
+		return primerType;
+	}
+	public void setPrimerType(String primerType) {
+		this.primerType = primerType;
+	}
 }
