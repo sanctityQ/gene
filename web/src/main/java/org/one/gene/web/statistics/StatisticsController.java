@@ -3,6 +3,7 @@ package org.one.gene.web.statistics;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -119,7 +120,12 @@ public class StatisticsController {
     	
     	StatisticsInfo statisticsInfo = statisticsInfos.get(0);
 		
-		statisticsService.exportYinWuJinDuBiao(statisticsInfo, inv);
+		try {
+			statisticsService.exportYinWuJinDuBiao(statisticsInfo, inv);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
 }

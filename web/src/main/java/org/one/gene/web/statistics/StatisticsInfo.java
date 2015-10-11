@@ -13,6 +13,7 @@ public class StatisticsInfo {
 	private String contactsName = "";
 	private String productNo = "";
 	private String customerFlag = "";
+	private String orderTime = "";
 	private int count1 = 0;
 	private int count2 = 0;
 	private int count3 = 0;
@@ -29,6 +30,12 @@ public class StatisticsInfo {
 	}
 	public void setCustomerName(String customerName) {
 		this.customerName = customerName;
+	}
+	public String getOrderTime() {
+		return orderTime;
+	}
+	public void setOrderTime(String orderTime) {
+		this.orderTime = orderTime;
 	}
 	public int getCount1() {
 		return count1;

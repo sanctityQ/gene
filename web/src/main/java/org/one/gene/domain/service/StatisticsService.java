@@ -6,11 +6,18 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,6 +37,7 @@ import org.one.gene.domain.entity.PrimerLabelConfigSub;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerProductValue;
+import org.one.gene.domain.entity.PrimerType;
 import org.one.gene.domain.entity.Order.OrderType;
 import org.one.gene.domain.entity.PrimerType.PrimerOperationType;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
@@ -48,6 +56,7 @@ import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.repository.PrimerProductValueRepository;
 import org.one.gene.repository.UserRepository;
 import org.one.gene.util.mail.MailSenderInfo;
+import org.one.gene.utils.MapKeyComparator;
 import org.one.gene.web.delivery.DeliveryInfo;
 import org.one.gene.web.order.OrderInfo;
 import org.one.gene.web.statistics.StatisticsInfo;
@@ -81,16 +90,14 @@ public class StatisticsService {
 
     @Autowired
     private OrderRepository orderRepository;
-
     @Autowired
     private PrimerProductRepository primerProductRepository;
-    
     @Autowired
     private CustomerRepository customerRepository;
-    
     @Autowired
     private UserRepository userRepository;
-    
+    @Autowired
+    private PrimerProductOperationRepository primerProductOperationRepository;
 
     /**
      * 导出出库统计
@@ -786,8 +793,14 @@ public class StatisticsService {
     /**
      * 导出引物进度表
      * @throws IOException 
+     * @throws ParseException 
      * */
-	public void exportYinWuJinDuBiao( StatisticsInfo statisticsInfo, Invocation inv) throws IOException {
+	public void exportYinWuJinDuBiao( StatisticsInfo statisticsInfo, Invocation inv) throws IOException, ParseException {
+		
+		SimpleDateFormat df1 = new SimpleDateFormat("MMdd");//设置日期格式 月日
+		SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式 年月日
+		SimpleDateFormat df3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式 年月日时分秒
+		Date today = new Date();//当前时间 
 		
 		String customerFlag    = statisticsInfo.getCustomerFlag();
 		String customerCode    = statisticsInfo.getCustomerCode();
@@ -824,7 +837,7 @@ public class StatisticsService {
     	
     	String orderNo = "";//订单号
     	int startRow = 2;//从第2行开始
-    	Map<String, StatisticsInfo> siMap = new HashMap<String, StatisticsInfo>();//客户的生产引物信息
+    	Map<String, StatisticsInfo> siMap = new TreeMap<String, StatisticsInfo>();//客户的生产引物信息
     	
 		for (Order tempOrder : orders) {
 			orderNo = tempOrder.getOrderNo();
@@ -834,7 +847,27 @@ public class StatisticsService {
 			String c_Flag = "";//公司性质标志
 			
 			Order order = orderRepository.findByOrderNo(orderNo);
+			Date createTime = order.getCreateTime();//订单导入时间
 			
+			Calendar   calendar   =   new   GregorianCalendar();
+			calendar.setTime(createTime);
+			calendar.add(calendar.DATE,1);//把日期往后增加一天.整数往后推,负数往前移动 
+
+			Date createTime_nextDay = calendar.getTime();//订单导入时间的第二天
+			
+	        String orderTime_md = df1.format(createTime);
+	        orderTime_md = orderTime_md.substring(0, 2)+"月"+orderTime_md.substring(2)+"日";
+	        
+	        String orderTime_ymd = df2.format(createTime);
+	        String orderTime_ymd_nextDay = df2.format(createTime_nextDay);
+			
+	        Date  time_0 = df3.parse(orderTime_ymd + " 00:00:00");
+	        Date  time_20 = df3.parse(orderTime_ymd + " 20:00:00");
+	        
+	        Date  nextDay_0830 = df3.parse(orderTime_ymd_nextDay + " 08:30:00");
+	        Date  nextDay_1530 = df3.parse(orderTime_ymd_nextDay + " 15:30:00");
+	        Date  nextDay_2359 = df3.parse(orderTime_ymd_nextDay + " 23:59:59");
+	        
 			c_Code = order.getCustomerCode();//客户代码
 			
 			Customer customer = customerRepository.findByCode(c_Code);
@@ -847,33 +880,128 @@ public class StatisticsService {
 					c_Name = zixiName;
 				}
 			}
+			
 			int count1 = 0;//引物条数
-			int count2 = 0;//碱基总数
+			int count2 = order.getTbnTotal().intValue();//碱基总数
 			int count3 = 0;//修饰和HPLC条数
 			int count4 = 0;//修饰和HPLC碱基数
-			int count5 = 0;//正常发货数
-			int count6 = 0;//晚发货数
-			int count7 = 0;//内部重合数
-			int count8 = 0;//外部重合条数
-			int count9 = 0;//修饰和HPLC重合数
+			int count5 = 0;//普通引物  正常发货数
+			int count6 = 0;//普通引物  晚发货数
+			int count7 = 0;//普通引物 内部重合数
+			int count8 = 0;//普通引物 外部重合条数
+			int count9 = 0;//修饰和HPLC内部重合数
+			int count10= 0;//修饰和HPLC外部重合数
 			
 			for (PrimerProduct pp : order.getPrimerProducts()) {
-				
+				int tbn = 0;//每条生产数据的碱基数
 				for (PrimerProductValue primerProductValue : pp.getPrimerProductValues()) {
 					PrimerValueType type = primerProductValue.getType();
 					if (type.equals(PrimerValueType.baseCount)) {// 碱基数
-						//tbn = primerProductValue.getValue().intValue();
-					}else if(type.equals(PrimerValueType.odTotal)){//od总量
-						//odTotal = primerProductValue.getValue().doubleValue();
-					}else if(type.equals(PrimerValueType.nmolTotal)){//nmol总量
-						//nmolTotal = primerProductValue.getValue().doubleValue();
+						tbn = primerProductValue.getValue().intValue();
 					}
+				}
+				
+				List<PrimerProductOperation> ppos= primerProductOperationRepository.getInfoByPrimerProductID(pp.getId());
+				//内部重合
+				boolean neibu = false;
+				//外部重合
+				boolean waibu = false;
+				
+				//是否已发货
+				boolean fahuo = false;
+				Date fahuoTime = null;
+				
+				for (PrimerProductOperation ppo : ppos) {
+					if (ppo.getBackTimes() > 0) {
+						neibu = true;
+					}
+					if (ppo.getType() == PrimerType.PrimerOperationType.backSuccess) {//发货召回成功
+						waibu = true;
+					}
+					if (ppo.getType() == PrimerType.PrimerOperationType.deliverySuccess) {//发货成功
+						fahuo = true;
+						fahuoTime = ppo.getCreateTime();
+					}
+					
+				}
+				
+				//计算比较每条生产数据的时间进度
+				boolean primerType = false;//普通引物 还是修饰或HPLC的标志
+				
+				count1 = count1 + 1;//引物条数
+				String modiFiveType = pp.getModiFiveType();
+				String modiThreeType= pp.getModiThreeType();
+				String modiMidType  = pp.getModiMidType();
+				String modiSpeType  = pp.getModiSpeType();
+				String purifyType   = pp.getPurifyType();
+				
+				if (purifyType.equals("HPLC") || !"".equals(modiFiveType)
+						|| !"".equals(modiThreeType) || !"".equals(modiMidType)
+						|| !"".equals(modiSpeType)) {
+					primerType = true;
+				}
+				
+				if (primerType) {
+					count3 = count3 + 1;
+					count4 = count4 + tbn;
+					if (neibu) {
+						count9 = count9 +1;
+					}
+					if (waibu) {
+						count10 = count10 +1;
+					}
+					
+				} else {//普通引物
+					
+					if (neibu) {
+						count7 = count7 +1;
+					}
+					if (waibu) {
+						count8 = count8 +1;
+					}
+					Date  compareTime = null;
+					if (tbn <= 40) {// 40个碱基数以内
+						compareTime = nextDay_0830;
+					} else {
+						compareTime = nextDay_1530;
+					}
+					
+					if (createTime.getTime() >= time_0.getTime()
+							&& createTime.getTime() <= time_20.getTime()) {// 0~20点导入的
+						if (fahuo) {//已经发货
+							if(compareTime.getTime()>=fahuoTime.getTime()){
+								count5 = count5 + 1;
+							}else{
+								count6 = count6 + 1;
+							}
+							
+						}else{//没有发货
+							if(today.getTime()>compareTime.getTime()){
+							count6 = count6 + 1;
+							}
+						}
+					} else {// 20~24点导入的
+						if (fahuo) {//已经发货
+							if(nextDay_2359.getTime()>=fahuoTime.getTime()){
+								count5 = count5 + 1;
+							}else{
+								count6 = count6 + 1;
+							}
+							
+						}else{//没有发货
+							if(today.getTime()>nextDay_2359.getTime()){
+								count6 = count6 + 1;
+							}
+						}
+					}
+					
 				}
 				
 			}
 			
-			if (siMap.get(c_Code) == null) {
+			if (siMap.get(orderTime_md+"_"+c_Code) == null) {
 				StatisticsInfo si = new StatisticsInfo();
+				si.setOrderTime(orderTime_md);
 				si.setCustomerName(c_Name);
 				si.setCount1(count1);
 				si.setCount2(count2);
@@ -884,10 +1012,11 @@ public class StatisticsService {
 				si.setCount7(count7);
 				si.setCount8(count8);
 				si.setCount9(count9);
+				si.setCount10(count10);
 				
-				siMap.put(c_Code, si);
+				siMap.put(orderTime_md+"_"+c_Code, si);
 			} else {
-				StatisticsInfo si = siMap.get(c_Code);
+				StatisticsInfo si = siMap.get(orderTime_md+"_"+c_Code);
 				si.setCount1(count1+si.getCount1());
 				si.setCount2(count2+si.getCount2());
 				si.setCount3(count3+si.getCount3());
@@ -897,16 +1026,14 @@ public class StatisticsService {
 				si.setCount7(count7+si.getCount7());
 				si.setCount8(count8+si.getCount8());
 				si.setCount9(count9+si.getCount9());
-				siMap.put(c_Code, si);
+				si.setCount10(count10+si.getCount10());
+				siMap.put(orderTime_md+"_"+c_Code, si);
 			}
 			
 		}
+		Map<String, StatisticsInfo> resultMap = sortMapByKey(siMap);    //按Key进行排序 
 		
-		row = sheet.getRow(0);
-		cell = row.getCell(0);
-		cell.setCellValue(cell.getStringCellValue()+"("+statisticsInfo.getCreateStartTime()+"~"+statisticsInfo.getCreateEndTime()+")");//放置起止时间
-		
-		for (String key : siMap.keySet()) {
+		for (String key : resultMap.keySet()) {
 			StatisticsInfo si = (StatisticsInfo)siMap.get(key);
 			
 			row = sheet.createRow(startRow);
@@ -914,43 +1041,51 @@ public class StatisticsService {
 			cell = row.createCell(0);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCustomerName());//公司名称
+			cell.setCellValue(si.getOrderTime());//订单日期
 			cell = row.createCell(1);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount1());//引物条数	
+			cell.setCellValue(si.getCustomerName());//公司名称
 			cell = row.createCell(2);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount2());//碱基总数
+			cell.setCellValue(si.getCount1());//引物条数	
 			cell = row.createCell(3);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount3());//修饰和HPLC条数
+			cell.setCellValue(si.getCount2());//碱基总数
 			cell = row.createCell(4);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount4());//修饰和HPLC碱基数
+			cell.setCellValue(si.getCount3());//修饰和HPLC条数
 			cell = row.createCell(5);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount5());//正常发货数
+			cell.setCellValue(si.getCount4());//修饰和HPLC碱基数
 			cell = row.createCell(6);
-		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		    cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount6());//晚发货数
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(si.getCount5());//正常发货数
 			cell = row.createCell(7);
 		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		    cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount7());//内部重合数
+			cell.setCellValue(si.getCount6());//晚发货数
 			cell = row.createCell(8);
+		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		    cell.setCellStyle(style_center);
+			cell.setCellValue(si.getCount7());//内部重合数
+			cell = row.createCell(9);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
 			cell.setCellValue(si.getCount8());//外部重合条数
-			cell = row.createCell(9);
+			cell = row.createCell(10);
 		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		    cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount9());//修饰和HPLC重合数
+			cell.setCellValue(si.getCount9());//修饰和HPLC内部重合数
+			cell = row.createCell(11);
+		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		    cell.setCellStyle(style_center);
+			cell.setCellValue(si.getCount10());//修饰和HPLC外部重合数
 			
 			startRow = startRow +1;
 		}
@@ -964,40 +1099,46 @@ public class StatisticsService {
 		cell = row.createCell(1);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
-		cell.setCellValue("总数");//引物条数	
 		cell = row.createCell(2);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
-		cell.setCellValue("总数");//碱基总数
+		cell.setCellValue("总数");//引物条数	
 		cell = row.createCell(3);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
-		cell.setCellValue("总数");//修饰和HPLC条数
+		cell.setCellValue("总数");//碱基总数
 		cell = row.createCell(4);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
-		cell.setCellValue("总数");//修饰和HPLC碱基数
+		cell.setCellValue("总数");//修饰和HPLC条数
 		cell = row.createCell(5);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
-		cell.setCellValue("总数");//正常发货数
+		cell.setCellValue("总数");//修饰和HPLC碱基数
 		cell = row.createCell(6);
-	    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-	    cell.setCellStyle(style_center);
-		cell.setCellValue("总数");//晚发货数
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("总数");//正常发货数
 		cell = row.createCell(7);
 	    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 	    cell.setCellStyle(style_center);
-		cell.setCellValue("总数");//内部重合数
+		cell.setCellValue("总数");//晚发货数
 		cell = row.createCell(8);
+	    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+	    cell.setCellStyle(style_center);
+		cell.setCellValue("总数");//内部重合数
+		cell = row.createCell(9);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
 		cell.setCellValue("总数");//外部重合条数
-		cell = row.createCell(9);
+		cell = row.createCell(10);
 	    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 	    cell.setCellStyle(style_center);
-		cell.setCellValue("总数");//修饰和HPLC重合数
-		
+		cell.setCellValue("总数");//修饰和HPLC内部重合数
+		cell = row.createCell(11);
+	    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+	    cell.setCellStyle(style_center);
+		cell.setCellValue("总数");//修饰和HPLC外部重合数
 		
         //输出文件到客户端
         HttpServletResponse response = inv.getResponse();
@@ -1009,5 +1150,19 @@ public class StatisticsService {
         out.close();
     }
 	
+    /** 
+     * 使用 Map按key进行排序 
+     * @param map 
+     * @return 
+     */  
+    public static Map<String, StatisticsInfo> sortMapByKey(Map<String, StatisticsInfo> map) {  
+        if (map == null || map.isEmpty()) {  
+            return null;  
+        }  
+        Map<String, StatisticsInfo> sortMap = new TreeMap<String, StatisticsInfo>(new MapKeyComparator());
+        sortMap.putAll(map);  
+        return sortMap;  
+    }  
+
 	
 }
