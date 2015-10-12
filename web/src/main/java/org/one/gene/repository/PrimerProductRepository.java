@@ -90,6 +90,37 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 	int countByProductNo(@Param("productNo") String productNo);
 	 
 	@SQL("select * from `primer_product` where `board_no` = :boardNo and `order_no` = :orderNo order by product_no limit 1")
-	public PrimerProduct getpPmerProductByBoardNoAndOrderNo(@Param("boardNo") String boardNo,@Param("orderNo") String orderNo);
+	public PrimerProduct getPmerProductByBoardNoAndOrderNo(@Param("boardNo") String boardNo,@Param("orderNo") String orderNo);
+	
+	@SQL("select pp.* from `primer_product` pp "
+			+ "where (pp.`modi_five_type` !='' or pp.`modi_three_type` !='' or pp.`modi_mid_type` !='' or pp.`modi_spe_type` !='' ) "
+			+ "#if(:modiFiveType != '')  { and pp.`modi_five_type` =:modiFiveType }"
+			+ "#if(:modiThreeType != '') { and pp.`modi_three_type` =:modiThreeType  }"
+			+ "#if(:midType != '')   { and pp.`modi_mid_type` like :midType  }"
+			+ "#if(:speType != '')   { and pp.`modi_spe_type` like :speType  }"
+			+ "#if(:productNo != '') { and pp.`product_no` =:productNo  }"
+			+ " and exists(select 1 from `order` o where o.`order_no` =  pp.`order_no` "
+			+ "#if(:createStartTime != '') { and o.`create_time` >= STR_TO_DATE( :createStartTime , '%m/%d/%Y %H:%i:%S') } "
+			+ "#if(:createEndTime != '')   { and o.`create_time` <= STR_TO_DATE( :createEndTime   , '%m/%d/%Y %H:%i:%S') } "
+			+ "#if(:customerFlag == '0')   { and o.`customer_code` IN ( select `code` from `customer` where `customer_flag`= '2' ) }"
+			+ "#if(:customerFlag == '1')   { and o.`customer_code` = :customerCode }"
+			+ "#if(:customerFlag == '2')   { and o.`customer_code` = :customerCode }"
+			+ "#if(:outOrderNo != '')      { and o.`out_order_no`  = :outOrderNo }"
+			+ "#if(:contactsName != '')    { and o.`contacts_name` = :contactsName }"
+			+ " )")
+	List<PrimerProduct> queryXiuShiJInDu(
+			@Param("createStartTime") String createStartTime,
+			@Param("createEndTime") String createEndTime,
+			@Param("outOrderNo") String outOrderNo,
+			@Param("productNo") String productNo,
+			@Param("contactsName") String contactsName,
+			@Param("customerFlag") String customerFlag,
+			@Param("customerCode") String customerCode,
+			@Param("modiFiveType") String modiFiveType,
+			@Param("modiThreeType") String modiThreeType,
+			@Param("midType") String midType,
+			@Param("speType") String speType);
+	
+	
 }
 

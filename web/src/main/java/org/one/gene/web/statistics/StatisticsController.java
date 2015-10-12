@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
+import org.one.gene.domain.entity.Company;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.entity.ProductMolecular;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.entity.User;
 import org.one.gene.domain.service.DeliveryService;
@@ -23,6 +25,7 @@ import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.repository.PrimerProductValueRepository;
+import org.one.gene.repository.ProductMolecularRepository;
 import org.one.gene.web.order.OrderInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -53,6 +56,9 @@ public class StatisticsController {
     @Autowired
 	private StatisticsService statisticsService;
     
+	@Autowired
+	private ProductMolecularRepository productMolecularRepository;
+	
     /**
      * 进入出库统计查询页面
      * */
@@ -132,7 +138,15 @@ public class StatisticsController {
      * 进入修饰进度表查询页面
      * */
     @Get("xiuShiJinDuBiao")
-    public String xiuShiJinDuBiao(){
+    public String xiuShiJinDuBiao(Invocation inv){
+    	List<ProductMolecular> modiFives = productMolecularRepository.findByProductCategories("modiFiveType");
+    	List<ProductMolecular> modiThrees = productMolecularRepository.findByProductCategories("modiThreeType");
+    	List<ProductMolecular> modiMids = productMolecularRepository.findByProductCategories("modiMidType");
+    	List<ProductMolecular> modiSpes = productMolecularRepository.findByProductCategories("modiSpeType");
+		inv.addModel("modiFives", modiFives);
+		inv.addModel("modiThrees", modiThrees);
+		inv.addModel("modiMids", modiMids);
+		inv.addModel("modiSpes", modiSpes);
     	return "xiuShiJinDuBiao";
     }
     

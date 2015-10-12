@@ -21,6 +21,7 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -1196,12 +1197,27 @@ public class StatisticsService {
 		
 		SimpleDateFormat df1 = new SimpleDateFormat("MMdd");//设置日期格式 月日
 		
-		String customerFlag    = statisticsInfo.getCustomerFlag();
-		String customerCode    = statisticsInfo.getCustomerCode();
 		String createStartTime = statisticsInfo.getCreateStartTime()+" 00:00:00";
 		String createEndTime   = statisticsInfo.getCreateEndTime()+" 23:59:59";
-
-		List<Order> orders = orderRepository.queryYinWuJInDu(createStartTime, createEndTime, customerFlag, customerCode);
+        String midType = "";
+        String speType = "";
+		if (!StringUtils.isBlank(statisticsInfo.getModiMidType())) {
+			midType = "%" + statisticsInfo.getModiMidType() + "%";
+        }
+		if (!StringUtils.isBlank(statisticsInfo.getModiSpeType())) {
+			speType = "%" + statisticsInfo.getModiSpeType() + "%";
+        }
+		
+		List<PrimerProduct> primerProducts = primerProductRepository
+				.queryXiuShiJInDu(createStartTime, createEndTime,
+						statisticsInfo.getOutOrderNo(),
+						statisticsInfo.getProductNo(),
+						statisticsInfo.getContactsName(),
+						statisticsInfo.getCustomerFlag(),
+						statisticsInfo.getCustomerCode(),
+						statisticsInfo.getModiFiveType(),
+						statisticsInfo.getModiThreeType(), midType, speType);
+		
 		
 		//形成Excel
 		String templetName = "xsjdTemplate.xls";
@@ -1222,9 +1238,11 @@ public class StatisticsService {
     	int startRow = 2;//从第2行开始
     	Map<String, StatisticsInfo> siMap = new TreeMap<String, StatisticsInfo>();//客户的生产引物信息
     	
-		for (Order tempOrder : orders) {
-			orderNo = tempOrder.getOrderNo();
-			
+    	for (PrimerProduct ppTemp : primerProducts) {
+    		
+    		PrimerProduct pp = primerProductRepository.findOne(ppTemp.getId());
+    		
+			orderNo = pp.getOrder().getOrderNo();
 			Order order = orderRepository.findByOrderNo(orderNo);
 			Date createTime = order.getCreateTime();//订单导入时间
 
@@ -1236,139 +1254,138 @@ public class StatisticsService {
 			String contactsName = order.getContactsName();//客户联系人姓名
 			String outOrderNo   = order.getOutOrderNo();//外部订单号
 			
-			for (PrimerProduct pp : order.getPrimerProducts()) {
-				int tbn = 0;//每条生产数据的碱基数
-				double odTB = 0;
-				double nmolTB = 0;
-				int tb = 0;
-				for (PrimerProductValue primerProductValue : pp.getPrimerProductValues()) {
-					PrimerValueType type = primerProductValue.getType();
-					if (type.equals(PrimerValueType.baseCount)) {// 碱基数
-						tbn = primerProductValue.getValue().intValue();
-					}else if(type.equals(PrimerValueType.odTB)){
-						odTB = primerProductValue.getValue().doubleValue();
-					}else if(type.equals(PrimerValueType.nmolTB)){
-						nmolTB = primerProductValue.getValue().doubleValue();
-					}else if(type.equals(PrimerValueType.tb)){
-						tb = primerProductValue.getValue().intValue();
-					}
+			int tbn = 0;//每条生产数据的碱基数
+			double odTB = 0;
+			double nmolTB = 0;
+			int tb = 0;
+			for (PrimerProductValue primerProductValue : pp.getPrimerProductValues()) {
+				PrimerValueType type = primerProductValue.getType();
+				if (type.equals(PrimerValueType.baseCount)) {// 碱基数
+					tbn = primerProductValue.getValue().intValue();
+				}else if(type.equals(PrimerValueType.odTB)){
+					odTB = primerProductValue.getValue().doubleValue();
+				}else if(type.equals(PrimerValueType.nmolTB)){
+					nmolTB = primerProductValue.getValue().doubleValue();
+				}else if(type.equals(PrimerValueType.tb)){
+					tb = primerProductValue.getValue().intValue();
 				}
-				
-				List<PrimerProductOperation> ppos= primerProductOperationRepository.getInfoByPrimerProductID(pp.getId());
-				
-				//是否已发货
-				boolean fahuo = false;
-				Date fahuoTime = null;
-				
-				for (PrimerProductOperation ppo : ppos) {
-					if (ppo.getType() == PrimerType.PrimerOperationType.deliverySuccess) {//发货成功
-						fahuo = true;
-						fahuoTime = ppo.getCreateTime();
-					}
-				}
-				
-				String modiType = "";
-				String modiFiveType = pp.getModiFiveType();
-				String modiThreeType= pp.getModiThreeType();
-				String modiMidType  = pp.getModiMidType();
-				String modiSpeType  = pp.getModiSpeType();
-				
-				if (!"".equals(modiFiveType) || !"".equals(modiThreeType) || !"".equals(modiMidType) || !"".equals(modiSpeType)) {
-					modiType = "(";
-					if (!"".equals(modiFiveType)) {
-						modiType += "5'"+modiFiveType + ",";
-					}
-					if (!"".equals(modiMidType)) {
-						modiType += modiMidType + ",";
-					}
-					if (!"".equals(modiSpeType)) {
-						modiType += modiSpeType + ",";
-					}
-					if (!"".equals(modiThreeType)) {
-						modiType += "3'"+modiThreeType + ",";
-					}
-					modiType = modiType.substring(0, modiType.length()-1);
-					modiType += ")";
-
-				} else {
-					modiType = "HPLC";
-				}
-				
-				StatisticsInfo si = new StatisticsInfo();
-				si.setOrderTime(orderTime_md);//订货日期
-				si.setCustomerName(c_Name);//公司名称
-				si.setContactsName(contactsName);//客户姓名
-				si.setOutOrderNo(outOrderNo);//外部订单号
-				si.setProductNo(pp.getProductNo());//生产编号
-				si.setModiType(modiType);//修饰类型
-				si.setTbn(tbn);//碱基数
-				if (pp.isOrderUpType(Order.OrderType.od)) {
-					si.setTb(odTB+"OD*"+tb);//合成规格
-				}else{
-					si.setTb(nmolTB+"nmol*"+tb);//合成规格
-				}
-				si.setPrimerType(pp.getOperationType().desc());//状态
-		        String deliveryDate = "未发货";
-		        if(fahuo){
-		        	deliveryDate = df1.format(fahuoTime);
-		        	deliveryDate = deliveryDate.substring(0, 2)+"月"+deliveryDate.substring(2)+"日";
-		        }
-				si.setDeliveryDate(deliveryDate);//发货日期
-				
-				siMap.put(orderTime_md+"_"+c_Code+"_"+pp.getProductNo(), si);
 			}
 			
+			List<PrimerProductOperation> ppos= primerProductOperationRepository.getInfoByPrimerProductID(pp.getId());
+			
+			//是否已发货
+			boolean fahuo = false;
+			Date fahuoTime = null;
+			
+			for (PrimerProductOperation ppo : ppos) {
+				if (ppo.getType() == PrimerType.PrimerOperationType.deliverySuccess) {//发货成功
+					fahuo = true;
+					fahuoTime = ppo.getCreateTime();
+				}
+			}
+			
+			String modiType = "";
+			String modiFiveType = pp.getModiFiveType();
+			String modiThreeType= pp.getModiThreeType();
+			String modiMidType  = pp.getModiMidType();
+			String modiSpeType  = pp.getModiSpeType();
+			
+			if (!"".equals(modiFiveType) || !"".equals(modiThreeType) || !"".equals(modiMidType) || !"".equals(modiSpeType)) {
+				modiType = "(";
+				if (!"".equals(modiFiveType)) {
+					modiType += "5'"+modiFiveType + ",";
+				}
+				if (!"".equals(modiMidType)) {
+					modiType += modiMidType + ",";
+				}
+				if (!"".equals(modiSpeType)) {
+					modiType += modiSpeType + ",";
+				}
+				if (!"".equals(modiThreeType)) {
+					modiType += "3'"+modiThreeType + ",";
+				}
+				modiType = modiType.substring(0, modiType.length()-1);
+				modiType += ")";
+
+			} else {
+				modiType = "HPLC";
+			}
+			
+			StatisticsInfo si = new StatisticsInfo();
+			si.setOrderTime(orderTime_md);//订货日期
+			si.setCustomerName(c_Name);//公司名称
+			si.setContactsName(contactsName);//客户姓名
+			si.setOutOrderNo(outOrderNo);//外部订单号
+			si.setProductNo(pp.getProductNo());//生产编号
+			si.setModiType(modiType);//修饰类型
+			si.setTbn(tbn);//碱基数
+			if (pp.isOrderUpType(Order.OrderType.od)) {
+				si.setTb(odTB+"OD*"+tb);//合成规格
+			}else{
+				si.setTb(nmolTB+"nmol*"+tb);//合成规格
+			}
+			si.setPrimerType(pp.getOperationType().desc());//状态
+	        String deliveryDate = "未发货";
+	        if(fahuo){
+	        	deliveryDate = df1.format(fahuoTime);
+	        	deliveryDate = deliveryDate.substring(0, 2)+"月"+deliveryDate.substring(2)+"日";
+	        }
+			si.setDeliveryDate(deliveryDate);//发货日期
+			
+			siMap.put(orderTime_md+"_"+c_Code+"_"+pp.getProductNo(), si);
 		}
-		
+    	
 		Map<String, StatisticsInfo> resultMap = sortMapByKey(siMap);    //按Key进行排序 
 		
-		for (String key : resultMap.keySet()) {
-			StatisticsInfo si = (StatisticsInfo)siMap.get(key);
-			
-			row = sheet.createRow(startRow);
-			
-			cell = row.createCell(0);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getOrderTime());//订单日期
-			cell = row.createCell(1);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCustomerName());//公司名称
-			cell = row.createCell(2);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getContactsName());//客户姓名
-			cell = row.createCell(3);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getOutOrderNo());//外部订单号
-			cell = row.createCell(4);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getProductNo());//生产编号
-			cell = row.createCell(5);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getModiType());//修饰类型
-			cell = row.createCell(6);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getTbn());//碱基数
-			cell = row.createCell(7);
-		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		    cell.setCellStyle(style_center);
-			cell.setCellValue(si.getTb());//合成规格
-			cell = row.createCell(8);
-		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		    cell.setCellStyle(style_center);
-			cell.setCellValue(si.getPrimerType());//状态
-			cell = row.createCell(9);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getDeliveryDate());//发货日期
-			
-			startRow = startRow +1;
+		if (resultMap != null) {
+			for (String key : resultMap.keySet()) {
+				StatisticsInfo si = (StatisticsInfo)siMap.get(key);
+				
+				row = sheet.createRow(startRow);
+				
+				cell = row.createCell(0);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getOrderTime());//订单日期
+				cell = row.createCell(1);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getCustomerName());//公司名称
+				cell = row.createCell(2);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getContactsName());//客户姓名
+				cell = row.createCell(3);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getOutOrderNo());//外部订单号
+				cell = row.createCell(4);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getProductNo());//生产编号
+				cell = row.createCell(5);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getModiType());//修饰类型
+				cell = row.createCell(6);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getTbn());//碱基数
+				cell = row.createCell(7);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getTb());//合成规格
+				cell = row.createCell(8);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getPrimerType());//状态
+				cell = row.createCell(9);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getDeliveryDate());//发货日期
+				
+				startRow = startRow +1;
+			}
 		}
 		
         //输出文件到客户端

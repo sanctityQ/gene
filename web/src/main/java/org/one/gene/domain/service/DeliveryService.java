@@ -320,7 +320,7 @@ public class DeliveryService {
 				orderInfo.setTbnTotal(order.getTbnTotal());//碱基总数
 				String odTb = "";
 				String tb = "";
-				PrimerProduct ppTemp = primerProductRepository.getpPmerProductByBoardNoAndOrderNo(boardNo, orderNo);
+				PrimerProduct ppTemp = primerProductRepository.getPmerProductByBoardNoAndOrderNo(boardNo, orderNo);
 				if (ppTemp != null) {
 					List<PrimerProductValue> primerProductValues = primerProductValueRepository.selectValueByPrimerProductId(ppTemp.getId());
 					for (PrimerProductValue ppv : primerProductValues) {

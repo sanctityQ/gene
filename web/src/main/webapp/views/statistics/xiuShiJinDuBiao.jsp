@@ -32,13 +32,11 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 			<td><input id="productNo" class="inp_text" type="text" value="" style="width: 200px" /></td>
 		</tr>
 		<tr>
-            <td colspan="6" height="20"></td>
-        </tr>
-		<tr>
 			<td align="right">客户公司名称:</td>
 			<td><input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 200px" />
-			    <input class="inp_text" type="hidden" id="customerid" name="customerid" value=""/>
-			    <input class="inp_text" type="hidden" id="customerCode" name="customerCode" value=""/>
+			    <input type="hidden" id="customerid" name="customerid" value=""/>
+			    <input type="hidden" id="customerCode" name="customerCode" value=""/>
+			    <input type="hidden" id="customerFlag" name="customerFlag" value=""/>
 			    <ul id="seachCustomList"></ul>
 			</td>
 			<td align="right">客户姓名:</td>
@@ -47,9 +45,47 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 			    <input class="inp_text" type="hidden" id="contactsid" name="contactsid" value=""/>
 			    <ul id="seachContactsList"></ul>
 			</td>
+			<td align="right">特殊单体:</td>
+			<td>
+                <select id="modiSpeType" class="my_select" style="width: 100px;">
+                <option value="">全部</option>
+				<c:forEach items="${modiSpes}" var="modiSpe"  varStatus="status">
+				  <option value="${modiSpe.productCode}">${modiSpe.productCode}</option>
+				</c:forEach>
+                </select>
+			</td>
+		</tr>
+		<tr>
+			<td align="right">5修饰:</td>
+			<td>
+                <select id="modiFiveType" class="my_select" style="width: 100px;">
+                <option value="">全部</option>
+				<c:forEach items="${modiFives}" var="modiFive"  varStatus="status">
+				  <option value="${modiFive.productCode}">${modiFive.productCode}</option>
+				</c:forEach>
+                </select>
+			</td>
+			<td align="right">3修饰:</td>
+			<td>
+                <select id="modiThreeType" class="my_select" style="width: 100px;">
+                <option value="">全部</option>
+				<c:forEach items="${modiThrees}" var="modiThree"  varStatus="status">
+				  <option value="${modiThree.productCode}">${modiThree.productCode}</option>
+				</c:forEach>
+                </select>
+			</td>
+			<td align="right">中间修饰:</td>
+			<td>
+                <select id="modiMidType" class="my_select" style="width: 100px;">
+                <option value="">全部</option>
+				<c:forEach items="${modiMids}" var="modiMid"  varStatus="status">
+				  <option value="${modiMid.productCode}">${modiMid.productCode}</option>
+				</c:forEach>
+                </select>
+			</td>
 		</tr>
         <tr>
-            <td colspan="6" height="20"></td>
+            <td colspan="8" height="20"></td>
         </tr>
 	</table>
     <div class="btn_group">
@@ -58,6 +94,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 </div>
 </form>
 <script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
+<script src="${ctx}/static/js/vagueSeachContacts.js" ></script>
 <script type="text/javascript">
 var exportFile = function(){
 	
@@ -69,16 +106,38 @@ var exportFile = function(){
     	return false;
     }
 
+    var outOrderNo = $('#outOrderNo').val();
     var customerid = $('#customerid').val();
+    var customerCode = $('#customerCode').val();
     var customerFlag = $('#customerFlag').val();
+    var contactsid = $('#contactsid').val();
+    var contactsName = $('#seachContacts').val();
+    if(contactsid == ""){
+    	contactsName = "";
+    }
+	
+    var productNo     = $('#productNo').val();
+    var modiFiveType  = $('#modiFiveType').val();
+    var modiThreeType = $('#modiThreeType').val();
+    var modiMidType   = $('#modiMidType').val();
+    var modiSpeType   = $('#modiSpeType').val();
     
     var statisticsInfos = new Array();
     
     var statisticsInfo = {
 		     "createStartTime":createStartTime,
 		     "createEndTime":createEndTime,
+		     "outOrderNo":outOrderNo,
 		     "customerId":customerid,
-		     "customerFlag":customerFlag
+		     "customerCode":customerCode,
+		     "customerFlag":customerFlag,
+		     "contactsId":contactsid,
+		     "contactsName":contactsName,
+		     "productNo":productNo,
+		     "modiFiveType":modiFiveType,
+		     "modiThreeType":modiThreeType,
+		     "modiMidType":modiMidType,
+		     "modiSpeType":modiSpeType
 		     };
     statisticsInfos.push(statisticsInfo);
     

@@ -30,6 +30,11 @@ public class StatisticsInfo {
 	private int count9 = 0;
 	private int count10= 0;
 	
+	private String modiFiveType = "";
+	private String modiThreeType = "";
+	private String modiMidType = "";
+	private String modiSpeType = "";
+	
 	public String getCustomerName() {
 		return customerName;
 	}
@@ -194,4 +199,30 @@ public class StatisticsInfo {
 	public void setPrimerType(String primerType) {
 		this.primerType = primerType;
 	}
+	public String getModiFiveType() {
+		return modiFiveType;
+	}
+	public void setModiFiveType(String modiFiveType) {
+		this.modiFiveType = modiFiveType;
+	}
+	public String getModiThreeType() {
+		return modiThreeType;
+	}
+	public void setModiThreeType(String modiThreeType) {
+		this.modiThreeType = modiThreeType;
+	}
+	public String getModiMidType() {
+		return modiMidType;
+	}
+	public void setModiMidType(String modiMidType) {
+		this.modiMidType = modiMidType;
+	}
+	public String getModiSpeType() {
+		return modiSpeType;
+	}
+	public void setModiSpeType(String modiSpeType) {
+		this.modiSpeType = modiSpeType;
+	}
+	
+	
 }
