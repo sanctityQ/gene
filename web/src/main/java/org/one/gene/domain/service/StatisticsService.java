@@ -138,7 +138,7 @@ public class StatisticsService {
 		Map<String, DeliveryInfo> deliveryInfoMap = new HashMap<String, DeliveryInfo>();//整理好的订单信息
 		Map<String, String> customerContactsMap = new HashMap<String, String>();//客户数量，重复的算1，空的累加
 		int customerContacts = 0;//计算姓名为空的客户
-		DecimalFormat df = new DecimalFormat("#.00");
+		DecimalFormat df = new DecimalFormat("0.00");
 		
 		for (Order tempOrder : orders) {
 			orderNo = tempOrder.getOrderNo();
@@ -150,13 +150,10 @@ public class StatisticsService {
 			String handlerName = "";
 			
 			Order order = orderRepository.findByOrderNo(orderNo);
+			String outOrderNo = order.getOutOrderNo();
 			
-			//计算客户数量
-			if ("".equals(order.getContactsName())) {
-				customerContacts += 1;
-			}else{
-				customerContactsMap.put(order.getContactsName(), "");
-			}
+			//放入客户公司代码和客户姓名，如果姓名为空，则只计算客户代码
+			customerContactsMap.put(order.getCustomerCode()+order.getContactsName(), "");
 			
 			customerCode = order.getCustomerCode();//客户代码
 			orderDate = order.getCreateTime().toString();
@@ -173,7 +170,6 @@ public class StatisticsService {
 				companyName     = customer.getName();
 			}
 			
-			int geneCount = 0;//序列总条数
 			double odTotal = 0.0;//每条OD总量
 			int    tbn = 0;//每条碱基的数量
 			
@@ -190,7 +186,6 @@ public class StatisticsService {
 			
 			
 			for (PrimerProduct primerProduct : order.getPrimerProducts()) {
-				geneCount += 1;
 				odTotal = 0.0;
 				tbn = 0;
 				
@@ -213,7 +208,7 @@ public class StatisticsService {
 				purifyType   = primerProduct.getPurifyType();
 				
 				//DNA合成
-				String dnaSrt = orderNo+"DNA合成_"+df.format(baseVal);
+				String dnaSrt = orderDate+orderNo+"DNA合成_"+df.format(baseVal);
 				
 				if (deliveryInfoMap.get(dnaSrt) != null) {
 					deliveryInfo = (DeliveryInfo)deliveryInfoMap.get(dnaSrt);
@@ -227,7 +222,7 @@ public class StatisticsService {
 					deliveryInfo.setExtendStr1(orderDate);//订货日期
 					deliveryInfo.setExtendStr2(companyName);//公司名称
 					deliveryInfo.setExtendStr3(contactsName);//客户姓名
-					deliveryInfo.setExtendStr4(orderNo);//订单号
+					deliveryInfo.setExtendStr4(outOrderNo);//订单号
 					deliveryInfo.setExtendStr5(handlerName);//业务员
 					deliveryInfo.setDeliveryName("DNA合成");//货物名称
 					deliveryInfo.setCountNum(1);//条数
@@ -236,6 +231,7 @@ public class StatisticsService {
 					deliveryInfo.setCount(tbn);//数量
 					deliveryInfo.setPrice(baseVal);//单价
 					deliveryInfo.setMoney(df.format(deliveryInfo.getCount() * deliveryInfo.getPrice()));//金额
+					deliveryInfo.setExtendStr9("0");//引物类型：0 普通引入 1 修饰引物 2 纯化引物
 					
 					deliveryInfoMap.put(dnaSrt, deliveryInfo);
 				}
@@ -244,7 +240,11 @@ public class StatisticsService {
 				String modiStr    = "";
 				String modiStrKey = "";
 				double price = 0.0;
+				boolean haveModi = false;//是否含有修饰
+				boolean haveHPLC = false;//是否含有HPLC
 				if (!"".equals(modiFiveType) || !"".equals(modiThreeType) || !"".equals(modiMidType) || !"".equals(modiSpeType)) {
+					haveModi = true;
+					
 					modiStr = "(";
 					if (!"".equals(modiFiveType)) {
 						modiStr += modiFiveType + ",";
@@ -265,6 +265,9 @@ public class StatisticsService {
 					price = Double.parseDouble(df.format(modiPrice));
 				} else {
 					if (purifyVal > 0) {
+						if ("HPLC".equals(purifyType)) {
+							haveHPLC = true;
+						}
 						modiStr      = purifyType;
 						modiStrKey = purifyType + "_" + df.format(purifyVal);
 						price = Double.parseDouble(df.format(purifyVal));
@@ -272,7 +275,7 @@ public class StatisticsService {
 				}
 				if (!"".equals(modiStrKey)) {
 					
-					modiStrKey = orderNo+modiStrKey;
+					modiStrKey = orderDate+orderNo+modiStrKey;
 					
 					if (deliveryInfoMap.get(modiStrKey) != null) {
 						deliveryInfo = (DeliveryInfo)deliveryInfoMap.get(modiStrKey);
@@ -286,7 +289,7 @@ public class StatisticsService {
 						deliveryInfo.setExtendStr1(orderDate);//订货日期
 						deliveryInfo.setExtendStr2(companyName);//公司名称
 						deliveryInfo.setExtendStr3(contactsName);//客户姓名
-						deliveryInfo.setExtendStr4(orderNo);//订单号
+						deliveryInfo.setExtendStr4(outOrderNo);//订单号
 						deliveryInfo.setExtendStr5(handlerName);//业务员
 						deliveryInfo.setDeliveryName(modiStr);
 						deliveryInfo.setCountNum(1);
@@ -295,7 +298,12 @@ public class StatisticsService {
 						deliveryInfo.setCount(deliveryInfo.getCountNum());
 						deliveryInfo.setPrice(price);
 						deliveryInfo.setMoney(df.format(deliveryInfo.getCount() * deliveryInfo.getPrice()));
-						
+						if (haveModi) {
+							deliveryInfo.setExtendStr9("1");//引物类型：0 普通引入 1 修饰引物 2 纯化引物
+						} 
+						if (haveHPLC) {
+							deliveryInfo.setExtendStr9("2");//引物类型：0 普通引入 1 修饰引物 2 纯化引物
+						}
 						deliveryInfoMap.put(modiStrKey, deliveryInfo);
 					}
 				}
@@ -305,12 +313,16 @@ public class StatisticsService {
 		}
 		
 	    //累计客户数量
-		customerContacts = customerContacts + customerContactsMap.size();
+		customerContacts = customerContactsMap.size();
 		int allOrderCount = orders.size();
-		int tiaoshuCount = 0;//条数之和
+		int tiaoshuCount_pt = 0;//普通引物 条数之和
+		int tiaoshuCount_xs = 0;//修饰引物 条数之和
+		int tiaoshuCount_ch = 0;//纯化引物 条数之和
 		double hechengliangSum = 0;//合成量之和
 		int shuliangCount = 0;//数量之和
-		double danjiaSum = 0;//单价总和
+		double danjiaSum_pt = 0;//普通引物 单价总和
+		double danjiaSum_xs = 0;//修饰引物 单价总和
+		double danjiaSum_ch = 0;//纯化引物 单价总和
 		
 		//形成Excel
 		String templetName = "cktjTemplate.xls";
@@ -328,10 +340,12 @@ public class StatisticsService {
     	style_center.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框  
     	style_center.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框  
 		
+    	Map<String, DeliveryInfo> resultMap = sortMapByKeyDI(deliveryInfoMap);    //按Key进行排序 
+    	
 		int startRow = 2;//从第2行开始
 		double totalMoney = 0.0;//合计
-		for (String key : deliveryInfoMap.keySet()) {
-			DeliveryInfo dis = (DeliveryInfo)deliveryInfoMap.get(key);
+		for (String key : resultMap.keySet()) {
+			DeliveryInfo dis = (DeliveryInfo)resultMap.get(key);
 			
 			row = sheet.getRow(startRow);
 			
@@ -370,8 +384,6 @@ public class StatisticsService {
 		    cell.setCellStyle(style_center);
 			cell.setCellValue(dis.getCountNum());//条数
 			
-			tiaoshuCount += dis.getCountNum();//条数之和
-			
 			cell = row.createCell(7);
 		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		    cell.setCellStyle(style_center);
@@ -396,7 +408,16 @@ public class StatisticsService {
 			cell.setCellStyle(style_center);
 			cell.setCellValue(dis.getPrice());//单价
 			
-			danjiaSum += dis.getPrice();//单价总和
+			if ("0".equals(dis.getExtendStr9())) {// 普通引物
+				tiaoshuCount_pt += dis.getCountNum();// 条数之和
+				danjiaSum_pt += dis.getPrice();// 单价总和
+			} else if ("1".equals(dis.getExtendStr9())) {// 修饰引物
+				tiaoshuCount_xs += dis.getCountNum();// 条数之和
+				danjiaSum_xs += dis.getPrice();// 单价总和
+			} else if ("2".equals(dis.getExtendStr9())) {// 纯化引物
+				tiaoshuCount_ch += dis.getCountNum();// 条数之和
+				danjiaSum_ch += dis.getPrice();// 单价总和
+			}
 			
 			cell = row.createCell(11);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
@@ -414,8 +435,19 @@ public class StatisticsService {
 			}
 		}
 		
-		double avgePrice = danjiaSum/tiaoshuCount;//单价底下平均数为：所有单价总和除以条数总数
-
+		double avgePrice_pt = 0;//单价底下平均数为：所有单价总和除以条数总数（不包括修饰的和HPLC）
+		if (tiaoshuCount_pt != 0) {
+			avgePrice_pt = danjiaSum_pt / tiaoshuCount_pt;
+		}
+		double avgePrice_xs = 0;//单价底下平均数为：所有单价总和除以条数总数（修饰的)
+		if (tiaoshuCount_xs != 0) {
+			 avgePrice_xs = danjiaSum_xs/tiaoshuCount_xs;
+		}
+		double avgePrice_ch = 0;//单价底下平均数为：所有单价总和除以条数总数（HPLC）
+		if (tiaoshuCount_ch != 0) {
+			avgePrice_ch = danjiaSum_ch/tiaoshuCount_ch;
+		}
+		
 		row = sheet.getRow(startRow);
 		cell = row.createCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
@@ -471,7 +503,7 @@ public class StatisticsService {
 		cell = row.createCell(6);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
-		cell.setCellValue(tiaoshuCount);//条数总数
+		cell.setCellValue(tiaoshuCount_pt);//条数总数
 		cell = row.createCell(7);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
@@ -486,7 +518,7 @@ public class StatisticsService {
 		cell = row.createCell(10);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
-		cell.setCellValue(df.format(avgePrice));//单价平均值
+		cell.setCellValue(df.format(avgePrice_pt));//单价平均值
 		cell = row.createCell(11);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
@@ -544,6 +576,25 @@ public class StatisticsService {
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
 		
+		row = sheet.getRow(startRow+4);
+		cell = row.createCell(9);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("HPLC均价");
+		cell = row.createCell(10);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue(df.format(avgePrice_ch));//单价平均值：HPLC均价
+		
+		row = sheet.getRow(startRow+5);
+		cell = row.createCell(9);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("修饰均价");
+		cell = row.createCell(10);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue(df.format(avgePrice_xs));//单价平均值：修饰均价
 		
         //输出文件到客户端
         HttpServletResponse response = inv.getResponse();
@@ -1175,7 +1226,7 @@ public class StatisticsService {
 	
     /** 
      * 使用 Map按key进行排序 
-     * @param map 
+     * @param map StatisticsInfo
      * @return 
      */  
     public static Map<String, StatisticsInfo> sortMapByKey(Map<String, StatisticsInfo> map) {
@@ -1185,8 +1236,21 @@ public class StatisticsService {
         Map<String, StatisticsInfo> sortMap = new TreeMap<String, StatisticsInfo>(new MapKeyComparator());
         sortMap.putAll(map);  
         return sortMap;  
-    }  
-
+    }
+    
+    /** 
+     * 使用 Map按key进行排序 
+     * @param map  DeliveryInfo
+     * @return 
+     */  
+    public static Map<String, DeliveryInfo> sortMapByKeyDI(Map<String, DeliveryInfo> map) {
+        if (map == null || map.isEmpty()) {  
+            return null;  
+        }  
+        Map<String, DeliveryInfo> sortMap = new TreeMap<String, DeliveryInfo>(new MapKeyComparator());
+        sortMap.putAll(map);  
+        return sortMap;  
+    }
     
     /**
      * 导出修饰进度表
