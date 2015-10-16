@@ -152,7 +152,7 @@ public class OrderController {
         	file.transferTo(new File(path));
 	        
 	        if(!"".equals(path)){
-		        errors = orderService.getExcelPaseErrors(path,3,1);
+		        errors = orderService.getExcelPaseErrors(path,1,1);
 	        }
     	}
         if(errors.size()>0){
@@ -186,23 +186,33 @@ public class OrderController {
 			}
         	
         	//组织订单对象
-        	Order order = new Order();
-        	order.setContactsName(contactsname);
+        	
         	//获取外部订单号
-        	String outOrderNo = orderService.getOutOrderNo(path,1,1);
-        	order.setOutOrderNo(outOrderNo);
-        	order = orderService.ReadExcel(path, 0,"4-",order, prefix);
-        	orderService.convertOrder(customer,filename,order);
+        	ArrayList<Order>  orders = orderService.ReadExcel(path, 0,"2-", prefix);
+        	orderService.convertOrder(customer,filename,orders, contactsname);
         	//保存订单信息
         	try{
-        	  orderService.save(order);
+        	  orderService.save(orders);
         	}catch(Exception e){
         		//刷新时赋值客户类型
         		inv.addModel("customerFlag", customerFlag);
         		inv.addModel("userExp",e.getMessage());
         		return "orderImport";
         	}
+        	Order order = new Order();
+        	int index = 1;
+        	String orderNoStr = "";
+        	for(Order o :orders){
+        		orderNoStr += o.getOrderNo()+"^";
+        		if(index==1){
+        			order = o;
+        		}
+        		index ++;
+        	}
+        	orderNoStr = orderNoStr.substring(0, orderNoStr.length()-1);
+        	
         	inv.getResponse().setContentType("text/html");
+    		inv.addModel("orderNoStr", orderNoStr);
     		inv.addModel("customer", customer);
     		inv.addModel("order", order);
     		//jsp获取未生效生成datagrid表格，后续优化
@@ -215,12 +225,20 @@ public class OrderController {
     
     @Post("modifyQuery")
     @Get("modifyQuery")
-    public String modifyQuery(@Param("orderNo") String orderNo, @Param("forwordName") String forwordName,Invocation inv) throws Exception {
+	public String modifyQuery(@Param("orderNo") String orderNo,
+			@Param("orderNoStr") String orderNoStr,
+			@Param("forwordName") String forwordName, Invocation inv)
+			throws Exception {
     	 Order order = orderRepository.findByOrderNo(orderNo);
     	 String coustomerCode = order.getCustomerCode();
      	 Customer customer = orderService.findCustomer(coustomerCode);
      	 inv.addModel("customer", customer);
 		 inv.addModel("order", order);
+		 if (orderNoStr == null || "".equals(orderNoStr)) {
+			inv.addModel("orderNoStr", order.getOrderNo());
+		 } else {
+			 inv.addModel("orderNoStr", orderNoStr);
+		 }
     	 return forwordName;
     }
 

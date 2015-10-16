@@ -4,12 +4,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.entity.Order.OrderType;
 import org.one.gene.domain.service.PriceTool;
 import org.one.gene.repository.CustomerRepository;
 import org.one.gene.web.order.AtomicLongUtil;
@@ -45,29 +48,29 @@ public class OrderExcelPase {
 
 		for (int i = 0; i < date.length; i++) {
 			StringBuffer message = new StringBuffer(100);
-			if(!"".equals(date[i][2])){
-				String result = orderCaculate.valiGeneOrder(date[i][2]);
+			if(!"".equals(date[i][3])){
+				String result = orderCaculate.valiGeneOrder(date[i][3]);
 				if(!"".equals(result)){
-				  message.append("第"+(i+4)+"行第3列[序列]数据"+result+" \n");
+				  message.append("第"+(i+2)+"行第4列[序列]数据"+result+" \n");
 				}
 			}
-			if("".equals(date[i][2])){
-				message.append("第"+(i+4)+"行第3列[序列]数据不能为空! \n");
+			if("".equals(date[i][3])){
+				message.append("第"+(i+2)+"行第4列[序列]数据不能为空! \n");
 			}
-			if("".equals(date[i][7])){
-				message.append("第"+(i+4)+"行第8列[纯化方式]数据不能为空! \n");
+			if("".equals(date[i][8])){
+				message.append("第"+(i+2)+"行第9列[纯化方式]数据不能为空! \n");
 			}
-			if("".equals(date[i][3])&&"".equals(date[i][5])){
-				message.append("第"+(i+4)+"行第4列与第6列[OD与nmol]数据不能同时为空! \n");
+			if("".equals(date[i][4])&&"".equals(date[i][6])){
+				message.append("第"+(i+2)+"行第5列与第7列[OD与nmol]数据不能同时为空! \n");
 			}
-			if(!"".equals(date[i][3])&&!"".equals(date[i][5])){
-				message.append("第"+(i+4)+"行第4列与第6列[OD与nmol]数据不能同时存在! \n");
+			if(!"".equals(date[i][4])&&!"".equals(date[i][6])){
+				message.append("第"+(i+2)+"行第5列与第7列[OD与nmol]数据不能同时存在! \n");
 			}
-			if(!"".equals(date[i][3])&&"".equals(date[i][4])){
-				message.append("第"+(i+4)+"行第4列[nmol总量]不为空值时，第5列[nmol/tube]数据不能为空! \n");
+			if(!"".equals(date[i][4])&&"".equals(date[i][5])){
+				message.append("第"+(i+2)+"行第5列[nmol总量]不为空值时，第6列[nmol/tube]数据不能为空! \n");
 			}
-			if(!"".equals(date[i][5])&&"".equals(date[i][6])){
-				message.append("第"+(i+4)+"行第6列[OD总量]不为空值时，第7列[OD/tube]数据不能为空! \n");
+			if(!"".equals(date[i][6])&&"".equals(date[i][7])){
+				message.append("第"+(i+2)+"行第7列[OD总量]不为空值时，第8列[OD/tube]数据不能为空! \n");
 			}
 			if(!"".equals(message.toString())){
 			  Errors.add(message.toString());
@@ -93,24 +96,38 @@ public class OrderExcelPase {
 		return outOrderNo;
 	}
 	/**
-	 * 解析第二个订单中的列表信息
+	 * 解析订单中的列表信息
 	 * @param path
 	 * @param sheetIndex 第几个sheet页
 	 * @param rows 忽略的行数或从第几行开始
 	 */
-	public Order ReadExcel(String path, int sheetIndex, String rows,Order order, String prefix) {
+	public ArrayList<Order> ReadExcel(String path, int sheetIndex, String rows, String prefix) {
 		// 获取Excel文件的第1个sheet的内容
 		ArrayList<ArrayList<String>> lists = excelResolver.ReadExcel(path, sheetIndex,rows);
-//		ArrayList<PrimerProduct>  primerProducts = new ArrayList<PrimerProduct>();
+		ArrayList<Order>  orders = new ArrayList<Order>();
+		Order order = new Order();
+		boolean haveFirst = false;//通过第一个外部订单判断整个外部订单是不是全空
+		OrderType orderUpType = Order.OrderType.nmol;;//订单类型
+		String outOrderNoTemp = "";
+		Map<String, Order> orderMap = new HashMap<String, Order>();
     	//输出单元格数据
 		for(ArrayList<String> data : lists) {
 			if(data==null){continue;}
 			int index = 1;
 			PrimerProduct primerProduct = new PrimerProduct();
+			String outOrderNo = "";
 			for(String v : data) {
 				//给客户对象赋值
 				switch(index){
 				  case 1:
+					if (!"".equals(v)) {
+						outOrderNo = v;
+						if (index == 1) {
+							haveFirst = true;
+						}
+					}
+					break;
+				  case 2:
 					  //如果Excel导入中有生产编号存储为外部生产编号，如果没有系统自动生成
 					  if("".equals(v)){
 						  primerProduct.setProductNo(atomicLongUtil.getProductSerialNo(prefix));
@@ -118,63 +135,53 @@ public class OrderExcelPase {
 						  primerProduct.setProductNo(v);
 					  }
 				  	break;
-				  case 2:
+				  case 3:
 					  primerProduct.setPrimeName(v);
 					break;
-				  case 3:	
+				  case 4:	
 					  String geneOrder = orderCaculate.getGeneOrder(v);
 					  primerProduct.setGeneOrderMidi(v);
 					  primerProduct.setGeneOrder(orderCaculate.getYWSeqValue(geneOrder));
 					break;
-				  case 4:	
-					  if(!"".equals(v)){
-					    primerProduct.setNmolTotal(new BigDecimal(v));
-					    order.setOrderUpType(Order.OrderType.nmol);
-					  }
-					break;
 				  case 5:	
 					  if(!"".equals(v)){
-					    primerProduct.setNmolTB(new BigDecimal(v));
+					    primerProduct.setNmolTotal(new BigDecimal(v));
 					  }
 					break;
 				  case 6:	
 					  if(!"".equals(v)){
-					    primerProduct.setOdTotal(new BigDecimal(v));
-					    order.setOrderUpType(Order.OrderType.od);
+					    primerProduct.setNmolTB(new BigDecimal(v));
 					  }
 					break;
 				  case 7:	
 					  if(!"".equals(v)){
-					    primerProduct.setOdTB(new BigDecimal(v));
+					    primerProduct.setOdTotal(new BigDecimal(v));
+					    orderUpType = Order.OrderType.od;
 					  }
 					break;
 				  case 8:	
-					  primerProduct.setPurifyType(v);
+					  if(!"".equals(v)){
+					    primerProduct.setOdTB(new BigDecimal(v));
+					  }
 					break;
 				  case 9:	
-					  primerProduct.setModiFiveType(v);
+					  primerProduct.setPurifyType(v);
 					break;
 				  case 10:	
-					  primerProduct.setModiThreeType(v);
+					  primerProduct.setModiFiveType(v);
 					break;
 				  case 11:	
+					  primerProduct.setModiThreeType(v);
+					break;
+				  case 12:	
 					  String modiMid = orderCaculate.getCountStr(orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),OrderCaculate.modiMidMap));
 					  primerProduct.setModiMidType(modiMid);
 					break;
-				  case 12:	
+				  case 13:	
 					  String modiSpe = orderCaculate.getCountStr(orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),OrderCaculate.modiSpeMap));
 					  primerProduct.setModiSpeType(modiSpe);
 					break;
-				  /*case 13:	
-					  primerProduct.setModiPrice(new BigDecimal(v));
-					break;
 				  case 14:	
-					  primerProduct.setBaseVal(new BigDecimal(v));
-					  break;
-				  case 15:	
-					  primerProduct.setPurifyVal(new BigDecimal(v));
-					  break;*/
-				  case 13:	
 					  primerProduct.setRemark(v);
 					  //最后根据条件获取价格
 					  if(primerProduct.getOdTotal()!=null&&primerProduct.getOdTotal().intValue()<20){
@@ -189,14 +196,35 @@ public class OrderExcelPase {
 				  default:
 					break;
 				}
-				/*primerProduct.setModiPrice(customer.getCustomerPrice().getModifyPrice());
-				primerProduct.setBaseVal(customer.getCustomerPrice().getBaseVal());
-				primerProduct.setPurifyVal(customer.getCustomerPrice().getPurifyVal());*/
 				index ++;
 			}
-			order.getPrimerProducts().add(primerProduct);
+			
+			if (!haveFirst) {
+				order.setOrderUpType(orderUpType);
+				order.getPrimerProducts().add(primerProduct);
+			} else {
+				if (!"".equals(outOrderNo)) {
+					outOrderNoTemp = outOrderNo;
+					order = new Order();
+				} else {
+					order = orderMap.get(outOrderNoTemp);
+				}
+				order.setOutOrderNo(outOrderNoTemp);
+				order.setOrderUpType(orderUpType);
+				order.getPrimerProducts().add(primerProduct);
+				
+				orderMap.put(outOrderNoTemp, order);
+			}
 		}
-		return order;
+		if (!haveFirst) {
+			orders.add(order);
+		} else {
+			for (Map.Entry<String, Order> map : orderMap.entrySet()) {
+				order = (Order)map.getValue();
+				orders.add(order);
+			}
+		}
+		return orders;
 	}
 	
 	/**

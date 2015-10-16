@@ -78,19 +78,8 @@ public class OrderService {
 	 * @throws IOException
 	 */
 	@Transactional
-    public void save(Order order) throws Exception{
+    public void save(ArrayList<Order> orders) throws Exception{
 
-    	//存储订单数据
-		if("".equals(order.getOutOrderNo())){
-    	  order.setOutOrderNo(order.getOrderNo());
-		}else{
-		  order.setOutOrderNo(order.getOutOrderNo());
-		}
-    	order.setModifyTime(new Date());
-    	order.setStatus(0);//初始状态
-        if(order.getCreateTime() == null){
-            order.setCreateTime(new Date());
-        }
         //所有分子量
         List<ProductMolecular> productMoleculars = (List<ProductMolecular>) productMolecularRepository.findAll();
         Map<String, BigDecimal> productMolecularMap = Maps.newHashMap();
@@ -100,67 +89,83 @@ public class OrderService {
 			}
         }
         
-        int index=0;
-        //定义订单集合中第一个生产代码
-  		String firstProductNO = "";
-  		//定义订单集合中最后一个生产代码
-  		String lastProductNO  = "";
-  		BigDecimal tbnTotal = new BigDecimal("0");
-    	//存储生产数据
-        for (PrimerProduct primerProduct : order.getPrimerProducts()) {
-        	int count = primerProductRepository.countByProductNo(primerProduct.getProductNo());
-        	if(count>0&&primerProduct.getId()==null){
-        		throw new Exception("您提交的生产编号存在重复，请修改后重新提交！");
-        	}
-			//后续补充，获取登录操作人员的归属机构。
-			primerProduct.setComCode(order.getComCode());
-			primerProduct.setOperationType(PrimerType.PrimerStatusType.orderInit);//!!!是初始状态不是审核通过状态
-			primerProduct.setOrder(order);
-			primerProduct.setModifyTime(new Date());//最新修改时间
-			primerProduct.setBackTimes(0);
-			primerProduct.setProductMolecularMap(productMolecularMap);//map放入分子量
-
-
-			//获取碱基数
-			String tbnStr = orderCaculate.getAnJiShu(primerProduct.getGeneOrder());
-			//总价格:修饰单价+碱基单价*碱基数+纯化价格(9+10*碱基数+11)
-			BigDecimal totalVal = primerProduct.getModiPrice().add(primerProduct.getBaseVal().multiply(new BigDecimal(tbnStr))).add(primerProduct.getPurifyVal());
-			primerProduct.setTotalVal(totalVal);
-
-			index++;
-			 if(index==1) {
-				 firstProductNO = primerProduct.getProductNo();
-		     }
-			 if(index==order.getPrimerProducts().size()) {
-				 lastProductNO = "~"+primerProduct.getProductNo();
-		     }
-			//汇总碱基数
-		    tbnTotal= tbnTotal.add(new BigDecimal(tbnStr));
+		for(Order order :orders){
 			
-			//初始化数据 先实现功能后续优化
-			if(primerProduct.getId() == null){
-				List<PrimerProductValue> primerProductValueList = new ArrayList<PrimerProductValue>();
-				for (PrimerValueType type : PrimerValueType.values()) {
-					PrimerProductValue primerProductValue = type.create(primerProduct);
-					primerProductValue.setPrimerProduct(primerProduct);
-					primerProductValueList.add(primerProductValue);
+			//存储订单数据
+			if(order.getOutOrderNo()==null || "".equals(order.getOutOrderNo())){
+				order.setOutOrderNo(order.getOrderNo());
+			}else{
+				order.setOutOrderNo(order.getOutOrderNo());
+			}
+			order.setModifyTime(new Date());
+			order.setStatus(0);//初始状态
+			if(order.getCreateTime() == null){
+				order.setCreateTime(new Date());
+			}
+			
+			
+			int index=0;
+			//定义订单集合中第一个生产代码
+			String firstProductNO = "";
+			//定义订单集合中最后一个生产代码
+			String lastProductNO  = "";
+			BigDecimal tbnTotal = new BigDecimal("0");
+			//存储生产数据
+			for (PrimerProduct primerProduct : order.getPrimerProducts()) {
+				int count = primerProductRepository.countByProductNo(primerProduct.getProductNo());
+				if(count>0&&primerProduct.getId()==null){
+					throw new Exception("您提交的生产编号存在重复，请修改后重新提交！");
 				}
-				primerProduct.setPrimerProductValues(primerProductValueList);
+				//后续补充，获取登录操作人员的归属机构。
+				primerProduct.setComCode(order.getComCode());
+				primerProduct.setOperationType(PrimerType.PrimerStatusType.orderInit);//!!!是初始状态不是审核通过状态
+				primerProduct.setOrder(order);
+				primerProduct.setModifyTime(new Date());//最新修改时间
+				primerProduct.setBackTimes(0);
+				primerProduct.setProductMolecularMap(productMolecularMap);//map放入分子量
+				
+				
+				//获取碱基数
+				String tbnStr = orderCaculate.getAnJiShu(primerProduct.getGeneOrder());
+				//总价格:修饰单价+碱基单价*碱基数+纯化价格(9+10*碱基数+11)
+				BigDecimal totalVal = primerProduct.getModiPrice().add(primerProduct.getBaseVal().multiply(new BigDecimal(tbnStr))).add(primerProduct.getPurifyVal());
+				primerProduct.setTotalVal(totalVal);
+				
+				index++;
+				if(index==1) {
+					firstProductNO = primerProduct.getProductNo();
+				}
+				if(index==order.getPrimerProducts().size()) {
+					lastProductNO = "~"+primerProduct.getProductNo();
+				}
+				//汇总碱基数
+				tbnTotal= tbnTotal.add(new BigDecimal(tbnStr));
+				
+				//初始化数据 先实现功能后续优化
+				if(primerProduct.getId() == null){
+					List<PrimerProductValue> primerProductValueList = new ArrayList<PrimerProductValue>();
+					for (PrimerValueType type : PrimerValueType.values()) {
+						PrimerProductValue primerProductValue = type.create(primerProduct);
+						primerProductValue.setPrimerProduct(primerProduct);
+						primerProductValueList.add(primerProductValue);
+					}
+					primerProduct.setPrimerProductValues(primerProductValueList);
+				}
+				
+				primerProduct.init();
+				
+				
+				if (primerProduct.getPrimerProductOperations().isEmpty()) {
+					primerProduct.getPrimerProductOperations().add(createPrimerProductOperation(primerProduct));
+				}
+				for (PrimerProductOperation po : primerProduct.getPrimerProductOperations()) {
+					po.setPrimerProduct(primerProduct);
+				}
 			}
-
-			primerProduct.init();
-
-
-			if (primerProduct.getPrimerProductOperations().isEmpty()) {
-				primerProduct.getPrimerProductOperations().add(createPrimerProductOperation(primerProduct));
-			}
-			for (PrimerProductOperation po : primerProduct.getPrimerProductOperations()) {
-				po.setPrimerProduct(primerProduct);
-			}
+			order.setProductNoMinToMax(firstProductNO+lastProductNO);
+			order.setTbnTotal(tbnTotal);
+			orderRepository.save(order);
 		}
-        order.setProductNoMinToMax(firstProductNO+lastProductNO);
-        order.setTbnTotal(tbnTotal);
-		orderRepository.save(order);
 
     }
 
@@ -218,27 +223,33 @@ public class OrderService {
 	
 	
 	/**
-     * 组织订单对象
+     * 组织订单List对象
      * @param customer
      * @param fileName
      * @return
      * @throws ParseException 
      */
-    public Order convertOrder(Customer customer, String fileName,Order order) throws ParseException{
-    	order.setOrderNo(atomicLongUtil.getOrderSerialNo());
-		order.setCustomerCode(customer.getCode());
-		order.setCustomerName(customer.getName());
-		ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
-		String comCode = user.getUser().getCompany().getComCode();
-		order.setComCode(comCode);
-		order.setHandlerCode(customer.getHandlerCode());
-		order.setHandlerName(customer.getHandlerName());
-    	order.setType("00");
-    	order.setFileName(fileName);
-    	order.setCreateTime(new Date());
-    	order.setValidate(true);
+	public ArrayList<Order> convertOrder(Customer customer, String fileName,
+			ArrayList<Order> orders, String contactsname) throws ParseException {
+		
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	String comCode = user.getUser().getCompany().getComCode();
     	
-    	return order;
+		for (Order order : orders) {
+			order.setOrderNo(atomicLongUtil.getOrderSerialNo());
+			order.setCustomerCode(customer.getCode());
+			order.setCustomerName(customer.getName());
+			order.setContactsName(contactsname);
+			order.setComCode(comCode);
+			order.setHandlerCode(customer.getHandlerCode());
+			order.setHandlerName(customer.getHandlerName());
+			order.setType("00");
+			order.setFileName(fileName);
+			order.setCreateTime(new Date());
+			order.setValidate(true);
+		}
+    	
+    	return orders;
     }
     
 
@@ -284,8 +295,8 @@ public class OrderService {
     	primerProductRepository.save(primerProductTemp);
     }
     
-    public Order ReadExcel(String path, int sheetIndex, String rows,Order order, String prefix) {
-    	return orderExcelPase.ReadExcel(path, sheetIndex,rows,order, prefix);
+    public ArrayList<Order> ReadExcel(String path, int sheetIndex, String rows, String prefix) {
+    	return orderExcelPase.ReadExcel(path, sheetIndex,rows,prefix);
     }
     
     public ArrayList<String> getExcelPaseErrors(String path,int ignoreRows, int sheetIndex) throws FileNotFoundException, IOException{
@@ -357,7 +368,9 @@ public class OrderService {
 
 	@Transactional
 	public void saveOrderAndPrimerProduct(Order order, Collection<PrimerProduct> values) throws Exception {
-		this.save(order);
+		ArrayList<Order>  orders = new ArrayList<Order>();
+		orders.add(order);
+		this.save(orders);
 		
         //所有分子量
         List<ProductMolecular> productMoleculars = (List<ProductMolecular>) productMolecularRepository.findAll();

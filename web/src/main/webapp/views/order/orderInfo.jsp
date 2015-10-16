@@ -9,6 +9,7 @@
 <title></title>
 <script type="text/javascript">
 var orderNo = ${orderNo};
+var orderNoStr = '${orderNoStr}';
 var ctx = '${ctx}';
 //var reSultdata = ${reSultdata};
 //var total = ${total};
@@ -117,11 +118,37 @@ var ctx = '${ctx}';
 	</div>
 	<div class="tools_bar">
 		<button type="" class="btn" onclick="goToPage('${ctx}/order/import');">取 消</button>
-		<button type="" class="btn btn-primary" onclick="getChanesSave();">保 存</button>
+		<button type="" class="btn btn-primary" onclick="getChanesSave('','');">保 存</button>
+	</div>
+	<div id="orderNoID"  class="content_box info margin_btoom" style="display:none">
+		<h2><b class="bule">您也可点击以下订单按钮来实现保存上方生产数据并继续查看相应订单</b>
+		<a href="javascript:;" class="right btn-primary submit" onclick="goToPage(ctx+'/order/import');" type="button">继续导入订单</a>
+		</h2>
+		
 	</div>
 </div>
 <script src="${ctx}/views/order/js/orderInfo.js" ></script>
 <script type="text/javascript">
+
+if((orderNoStr+"").length>(orderNo+"").length){
+	
+	var btn_str = "";
+	var orderNos = (orderNoStr+"").split("^");
+	for(var i=0;i<orderNos.length;i++){
+		if(orderNos[i]=='' || orderNos[i]==orderNo){
+			continue;
+		}
+		btn_str += "<button class=\"btn btn-primary\" onclick=\"getChanesSave(" + orderNos[i] + ",'" + (orderNoStr+"") + "');\" >" + orderNos[i] + "</button>&nbsp;&nbsp;";
+		if(i!=0 && i%6==0){
+			btn_str += "<br>";
+		}
+	}
+	$("#orderNoID").append(btn_str);
+	$("#orderNoID").show();
+}
+
+//alert(orderNo);
+//alert(orderNoStr);
 getProduct();
 </script>
 </body>

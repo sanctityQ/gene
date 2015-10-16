@@ -316,14 +316,13 @@ function isRepeat(arr){
     return false;
 }
 
-function getChanesSave(){
+function getChanesSave(nextOrderNo,orderNoString){
 	bigToSmall.datagrid('endEdit',editIndex);
     var primerProducts = bigToSmall.datagrid('getData').rows;
     var productNos = new Array();
     for(var i=0;i<primerProducts.length;i++){
     	productNos.push(primerProducts[i].productNo);
     }
-    
     if(isRepeat(productNos)){
     	alert("您提交的生产编号存在重复，请修改后重新提交！");
     }
@@ -341,7 +340,11 @@ function getChanesSave(){
 			$.messager.progress('close');
 			if(data != null){
 //				goToPage(ctx+'/views/order/orderList.jsp?orderNo='+orderNo);
-				goToPage(ctx+'/order/import');
+				if(nextOrderNo==''){
+					goToPage(ctx+'/order/import');
+				}else{
+					goToPage(ctx+'/order/modifyQuery?orderNo='+nextOrderNo+'&orderNoStr='+orderNoString+'&forwordName=orderInfo');
+				}
 			}
 		},
 		error:function(data){
