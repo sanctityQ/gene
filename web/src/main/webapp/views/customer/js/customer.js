@@ -247,7 +247,7 @@ var iniPrice=function(){
 	var cpf = document.getElementsByName("customerPriceFlag");
 	var execFlag = true;
 	if(cpf.length>0){
-		if(confirm("执行‘初始化数据’按钮会覆盖已有数据，是否继续执行？")){
+		if(confirm("执行‘初始化数据’会覆盖已有价格数据，是否继续执行？")){
 			execFlag = true;
 		}else{
 			execFlag = false;
