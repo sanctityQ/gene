@@ -133,14 +133,31 @@ public class PrintService {
 		List<Order> orders = new ArrayList<Order>();
 		Map<String, Order> ccMap = new HashMap<String, Order>();
 		Order order = new Order();
+		String zixiCode = "";
+		String zixiName = "";
+		List<Customer> customers = customerRepository.seachHaveZiXi();
+		if (customers != null && customers.size() > 0) {
+			Customer customerTemp = (Customer)customers.get(0);
+			zixiCode = customerTemp.getCode();
+			zixiName = customerTemp.getName();
+		}
+		
 		for (PrimerProduct primerProduct : primerProducts) {
+			String customerCode = primerProduct.getOrder().getCustomerCode();
+			String customerName = primerProduct.getOrder().getCustomerName();
+					
+			Customer customer = customerRepository.findByCode(customerCode);
+			if (customer != null && "2".equals(customer.getCustomerFlag())) {//直接客户都汇总到梓熙下面
+				customerCode = zixiCode;
+				customerName = zixiName;
+			}
 			
-			if (ccMap.get(primerProduct.getOrder().getCustomerCode()) == null) {
+			if (ccMap.get(customerCode) == null) {
 				order = new Order();
-				order.setCustomerCode(primerProduct.getOrder().getCustomerCode());
-				order.setCustomerName(primerProduct.getOrder().getCustomerName());
+				order.setCustomerCode(customerCode);
+				order.setCustomerName(customerName);
 			}else{
-				order = ccMap.get(primerProduct.getOrder().getCustomerCode());
+				order = ccMap.get(customerCode);
 			}
 			
 			order.getPrimerProducts().add(primerProduct);
@@ -253,7 +270,7 @@ public class PrintService {
 		PrimerLabelConfig primerLabelConfig = null;
 		Customer customer = customerRepository.findByCode(order.getCustomerCode());
 		//直接客户，使用梓熙生物的配置
-		if (customer != null && "2".equals(customer.getCustomerFlag())) {
+		if (customer != null && ("0".equals(customer.getCustomerFlag()) || "2".equals(customer.getCustomerFlag()))) {
 
 			List<Customer> customers = customerRepository.seachHaveZiXi();
 			if (customers != null && customers.size() > 0) {

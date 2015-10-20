@@ -59,6 +59,28 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 	List<Order>  queryYinWuJInDu(@Param("createStartTime") String createStartTime,@Param("createEndTime") String createEndTime,
 			@Param("customerFlag") String customerFlag,@Param("customerCode") String customerCode);
 	
+	@SQL("select * from `order` o  where `status` = '1' "
+			+ "#if(:createStartTime != '') { and o.`create_time` >= STR_TO_DATE( :createStartTime , '%m/%d/%Y %H:%i:%S') } "
+			+ "#if(:createEndTime != '') { and o.`create_time`   <= STR_TO_DATE( :createEndTime   , '%m/%d/%Y %H:%i:%S') } "
+			+ "#if(:comLevel != '1') { and o.`com_code` = :comCode }"
+			+ "#if(:customerFlag != '0') { and o.`customer_code` = :customerCode }"
+			+ "#if(:customerFlag == '0' && :customerName !='') { and o.`customer_name` = :customerName }"
+			+ "#if(:orderNo != '') { and o.`order_no` = :orderNo }"
+			+ "#if(:customerFlagStr != '') { and o.`customer_code` IN ( select `code` from `customer` where `customer_flag`= :customerFlagStr ) }"
+			+ " order by o.`create_time` desc "
+			)
+	Page<Order> queryDeliveryList(
+			@Param("createStartTime") String createStartTime,
+			@Param("createEndTime") String createEndTime,
+			@Param("comLevel") String comLevel,
+			@Param("comCode") String comCode,
+			@Param("customerFlag") String customerFlag,
+			@Param("customerCode") String customerCode,
+			@Param("customerName") String customerName,
+			@Param("orderNo") String orderNo,
+			@Param("customerFlagStr") String customerFlagStr, 
+			Pageable pageable
+			);
 	
 }
 

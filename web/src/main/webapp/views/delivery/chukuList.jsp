@@ -21,6 +21,14 @@
 				    <input class="inp_text" type="hidden" id="customercode" name="customercode" value=""/>
 				    <ul id="seachCustomList"></ul>
 				</td>
+			<td align="right">公司性质:</td>
+			<td>
+                <select id="customerFlag" class="my_select" style="width: 100px;" >
+                    <option value="">请选择</option>
+                    <option value="1">代理公司</option>
+                    <option value="2">直接客户</option>
+                </select>
+			</td>
 			</c:if>
             <td align="right">订单时间:</td>
             <td>

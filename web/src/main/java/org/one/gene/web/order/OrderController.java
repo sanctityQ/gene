@@ -616,6 +616,7 @@ public class OrderController {
     public Reply queryDeliveryList(
 			@Param("orderNo") String orderNo,
 			@Param("customerName") String customerName,
+			@Param("customerFlagStr") String customerFlagStr,
 			@Param("createStartTime") String createStartTime,
 			@Param("createEndTime") String createEndTime,
     		@Param("pageNo")Integer pageNo,
@@ -628,35 +629,32 @@ public class OrderController {
         if(pageSize == null){
             pageSize = 20;
         }
-        
-        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
-        String comCode = user.getUser().getCompany().getComCode();
-        String customerFlag = user.getUser().getCustomer().getCustomerFlag();
-        
-        Sort s=new Sort(Direction.DESC, "createTime");
-        Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
-        Map<String,Object> searchParams = Maps.newHashMap();
-        searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
-		if (!"0".equals(customerFlag)) {//代理公司和直接客户，只能查自己公司的业务
-			searchParams.put(SearchFilter.Operator.EQ+"_customerCode",user.getUser().getCustomer().getCode());
-		} else {
-			searchParams.put(SearchFilter.Operator.EQ+"_customerName",customerName);
+		if (customerFlagStr == null) {
+			customerFlagStr = "";
 		}
-        searchParams.put(SearchFilter.Operator.EQ+"_status","1");//订单审核通过
+		if (customerName == null) {
+			customerName = "";
+		}
+		
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCode      = user.getUser().getCompany().getComCode();
+        String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+        String comLevel     = user.getUser().getCompany().getComLevel();
+        
+        Pageable pageable = new PageRequest(pageNo-1,pageSize);
+
 		if (!"".equals(createStartTime)) {
-        	searchParams.put(SearchFilter.Operator.GT+"__createTime",new Date(createStartTime+" 00:00:00"));
+        	createStartTime = createStartTime+" 00:00:00";
         }
 		if (!"".equals(createEndTime)) {
-        	searchParams.put(SearchFilter.Operator.LT+"__createTime",new Date(createEndTime+" 59:59:59"));
+			createEndTime = createEndTime+" 23:59:59";
         }
-        if(!"1".equals(user.getUser().getCompany().getComLevel())){
-            searchParams.put(SearchFilter.Operator.EQ+"__comCode",comCode);
-         }
+			
+		Page<Order> orderPage = orderRepository.queryDeliveryList(
+				createStartTime, createEndTime, comLevel, comCode,
+				customerFlag, user.getUser().getCustomer().getCode(),
+				customerName, orderNo, customerFlagStr, pageable);
         
-        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
-        Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
-        
-        Page<Order> orderPage = orderRepository.findAll(spec,pageable);
         Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
         
         return Replys.with(orderListPage).as(Json.class);
