@@ -1097,71 +1097,73 @@ public class StatisticsService {
 		
 		Map<String, StatisticsInfo> resultMap = sortMapByKey(siMap);    //按Key进行排序 
 		
-		for (String key : resultMap.keySet()) {
-			StatisticsInfo si = (StatisticsInfo)siMap.get(key);
-			
-			row = sheet.createRow(startRow);
-			
-			cell = row.createCell(0);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getOrderTime());//订单日期
-			cell = row.createCell(1);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCustomerName());//公司名称
-			cell = row.createCell(2);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount1());//引物条数
-			Count1All += si.getCount1();
-			cell = row.createCell(3);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount2());//碱基总数
-			Count2All += si.getCount2();
-			cell = row.createCell(4);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount3());//修饰和HPLC条数
-			Count3All += si.getCount3();
-			cell = row.createCell(5);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount4());//修饰和HPLC碱基数
-			Count4All += si.getCount4();
-			cell = row.createCell(6);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount5());//正常发货数
-			Count5All += si.getCount5();
-			cell = row.createCell(7);
-		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		    cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount6());//晚发货数
-			Count6All += si.getCount6();
-			cell = row.createCell(8);
-		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		    cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount7());//内部重合数
-			Count7All += si.getCount7();
-			cell = row.createCell(9);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount8());//外部重合条数
-			Count8All += si.getCount8();
-			cell = row.createCell(10);
-		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		    cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount9());//修饰和HPLC内部重合数
-			Count9All += si.getCount9();
-			cell = row.createCell(11);
-		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		    cell.setCellStyle(style_center);
-			cell.setCellValue(si.getCount10());//修饰和HPLC外部重合数
-			Count10All += si.getCount10();
-			
-			startRow = startRow +1;
+		if (resultMap != null) {
+			for (String key : resultMap.keySet()) {
+				StatisticsInfo si = (StatisticsInfo)siMap.get(key);
+				
+				row = sheet.createRow(startRow);
+				
+				cell = row.createCell(0);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getOrderTime());//订单日期
+				cell = row.createCell(1);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getCustomerName());//公司名称
+				cell = row.createCell(2);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getCount1());//引物条数
+				Count1All += si.getCount1();
+				cell = row.createCell(3);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getCount2());//碱基总数
+				Count2All += si.getCount2();
+				cell = row.createCell(4);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getCount3());//修饰和HPLC条数
+				Count3All += si.getCount3();
+				cell = row.createCell(5);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getCount4());//修饰和HPLC碱基数
+				Count4All += si.getCount4();
+				cell = row.createCell(6);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getCount5());//正常发货数
+				Count5All += si.getCount5();
+				cell = row.createCell(7);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getCount6());//晚发货数
+				Count6All += si.getCount6();
+				cell = row.createCell(8);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getCount7());//内部重合数
+				Count7All += si.getCount7();
+				cell = row.createCell(9);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getCount8());//外部重合条数
+				Count8All += si.getCount8();
+				cell = row.createCell(10);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getCount9());//修饰和HPLC内部重合数
+				Count9All += si.getCount9();
+				cell = row.createCell(11);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(si.getCount10());//修饰和HPLC外部重合数
+				Count10All += si.getCount10();
+				
+				startRow = startRow +1;
+			}
 		}
 		
 		row = sheet.createRow(startRow);
