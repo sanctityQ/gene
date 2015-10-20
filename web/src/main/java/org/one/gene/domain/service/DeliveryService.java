@@ -581,7 +581,7 @@ public class DeliveryService {
 		String modiSpeType = "";//特殊单体
 		
 		
-		DecimalFormat df = new DecimalFormat("#.00");
+		DecimalFormat df = new DecimalFormat("0.00");
 		DeliveryInfo deliveryInfo = new DeliveryInfo();
 		Map<String, DeliveryInfo> deliveryInfoMap = new HashMap<String, DeliveryInfo>();//数据库中的板孔信息
 		

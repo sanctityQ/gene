@@ -100,7 +100,8 @@ public class Customer extends IdEntity implements java.io.Serializable {
     
     private String haveUserFlag;//是否含有用户
     
-    private List<CustomerContacts> customerContactss = Lists.newArrayList();
+    private List<CustomerContacts> customerContactss = Lists.newArrayList();//联系人列表
+    private List<CustomerPrice> customerPrices = Lists.newArrayList();//价格列表
     
 	public Customer() {
     }
@@ -298,6 +299,15 @@ public class Customer extends IdEntity implements java.io.Serializable {
 
     public void setCustomerContactss(List<CustomerContacts> customerContactss) {
         this.customerContactss = customerContactss;
+    }
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
+    public List<CustomerPrice> getCustomerPrices() {
+        return this.customerPrices;
+    }
+
+    public void setCustomerPrices(List<CustomerPrice> customerPrices) {
+        this.customerPrices = customerPrices;
     }
 }
 

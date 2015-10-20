@@ -202,12 +202,16 @@ CREATE TABLE `primer_label_config_sub` (
 
 CREATE TABLE `customer_price` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
-  `customer_code` VARCHAR(15)      NOT NULL COMMENT '客户代码',
-  `modi_price`   DECIMAL(10,2) COMMENT '修饰价格',
+  `customer_id` INT(11) NOT NULL COMMENT '客户公司id',
+  `min_tbn`     DECIMAL(10,2) COMMENT '最小碱基数',
+  `max_tbn`     DECIMAL(10,2) COMMENT '最大碱基数',
+  `min_od`      DECIMAL(10,2) COMMENT '最小OD总数 ',
+  `max_od`      DECIMAL(10,2) COMMENT '最大OD总数 ',
+  `purify_type` VARCHAR(7) NOT NULL COMMENT '纯化方式',
   `base_val`     DECIMAL(10,2) COMMENT '碱基单价',
   `purify_val`     DECIMAL(10,2) COMMENT '纯化价格',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_plc_id_customer` (`customer_code`)
+  `modi_price`   DECIMAL(10,2) COMMENT '修饰价格',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户引物单价配置表';
 
 CREATE TABLE `customer_contacts` (

@@ -1,7 +1,10 @@
 package org.one.gene.domain.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
+import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.CustomerPrice;
 import org.one.gene.domain.entity.ModifiedPrice;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.excel.OrderCaculate;
@@ -19,106 +22,32 @@ public class PriceTool {
 
 	@Autowired
 	private ModifiedPriceRepository modifiedPriceRepository;
-	//int tbn,BigDecimal odTotal,String purifyType
-	public void getPrice(PrimerProduct primerProduct){
+	
+	
+	public void getPrice(PrimerProduct pp, List<CustomerPrice> customerPrices){
 		
-		int tbn = primerProduct.getGeneOrder().trim().length();
-		int odTotal = primerProduct.getOdTotal().intValue();
-		
-		if("OPC".equals(primerProduct.getPurifyType())){
-			if(tbn<60){
-				if(odTotal<=5){
-					primerProduct.setBaseVal(new BigDecimal("0.45"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}else if(odTotal>=6&&odTotal<=10){
-					primerProduct.setBaseVal(new BigDecimal("0.8"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}else if(odTotal>=11&&odTotal<=20){
-					primerProduct.setBaseVal(new BigDecimal("1.6"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}else{
-					primerProduct.setBaseVal(new BigDecimal("0"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}
-			}else if(tbn>=60){
-				if(odTotal<=5){
-					primerProduct.setBaseVal(new BigDecimal("0.8"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}else if(odTotal>=6&&odTotal<=10){
-					primerProduct.setBaseVal(new BigDecimal("1.6"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}else if(odTotal>=11&&odTotal<=20){
-					primerProduct.setBaseVal(new BigDecimal("3.2"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}else{
-					primerProduct.setBaseVal(new BigDecimal("0"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
+		int tbn = pp.getGeneOrder().trim().length();
+		int odTotal = pp.getOdTotal().intValue();
+		boolean havePrice = false;
+		if (customerPrices != null && customerPrices.size() > 0) {
+			for(CustomerPrice cp:customerPrices){
+				if (cp.getPurifyType().equals(pp.getPurifyType())
+						&& cp.getMinTbn().intValue() <= tbn
+						&& cp.getMaxTbn().intValue() >= tbn
+						&& cp.getMinOd().intValue() <= odTotal
+						&& cp.getMaxOd().intValue() >= odTotal) {
+					
+					pp.setBaseVal(cp.getBaseVal());// 碱基单价
+					pp.setPurifyVal(cp.getPurifyVal());// 纯化价格
+					havePrice = true;
+					break;
 				}
 			}
-		}else if("PAGE".equals(primerProduct.getPurifyType())){
-			if(tbn<60){
-				if(odTotal<=5){
-					primerProduct.setBaseVal(new BigDecimal("0.6"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}else if(odTotal>=6&&odTotal<=10){
-					primerProduct.setBaseVal(new BigDecimal("1.2"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}else if(odTotal>=11&&odTotal<=20){
-					primerProduct.setBaseVal(new BigDecimal("2.4"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}else{
-					primerProduct.setBaseVal(new BigDecimal("0"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}
-			}else if(tbn>=60){
-				if(odTotal<=5){
-					primerProduct.setBaseVal(new BigDecimal("1.2"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}else if(odTotal>=6&&odTotal<=10){
-					primerProduct.setBaseVal(new BigDecimal("2.4"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}else if(odTotal>=11&&odTotal<=20){
-					primerProduct.setBaseVal(new BigDecimal("4.8"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}else{
-					primerProduct.setBaseVal(new BigDecimal("0"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}
-			}
-		}else if("HPLC".equals(primerProduct.getPurifyType())){
-			if(tbn<60){
-				if(odTotal<=5){
-					primerProduct.setBaseVal(new BigDecimal("0.45"));
-					primerProduct.setPurifyVal(new BigDecimal("30"));
-				}else if(odTotal>=6&&odTotal<=10){
-					primerProduct.setBaseVal(new BigDecimal("0.8"));
-					primerProduct.setPurifyVal(new BigDecimal("60"));
-				}else if(odTotal>=11&&odTotal<=20){
-					primerProduct.setBaseVal(new BigDecimal("1.6"));
-					primerProduct.setPurifyVal(new BigDecimal("120"));
-				}else{
-					primerProduct.setBaseVal(new BigDecimal("0"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}
-			}else if(tbn>=60){
-				if(odTotal<=5){
-					primerProduct.setBaseVal(new BigDecimal("0.8"));
-					primerProduct.setPurifyVal(new BigDecimal("30"));
-				}else if(odTotal>=6&&odTotal<=10){
-					primerProduct.setBaseVal(new BigDecimal("1.6"));
-					primerProduct.setPurifyVal(new BigDecimal("60"));
-				}else if(odTotal>=11&&odTotal<=20){
-					primerProduct.setBaseVal(new BigDecimal("3.2"));
-					primerProduct.setPurifyVal(new BigDecimal("120"));
-				}else{
-					primerProduct.setBaseVal(new BigDecimal("0"));
-					primerProduct.setPurifyVal(new BigDecimal("0"));
-				}
-			}
-		}else{
-			//primerProduct.setModiPrice(new BigDecimal("0"));//修饰价格
-			primerProduct.setBaseVal(new BigDecimal("0"));//碱基单价
-			primerProduct.setPurifyVal(new BigDecimal("0"));//纯化价格
+		} 
+        
+		if (!havePrice) {
+			pp.setBaseVal(new BigDecimal("0"));// 碱基单价
+			pp.setPurifyVal(new BigDecimal("0"));// 纯化价格
 		}
 		
 	}

@@ -42,6 +42,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
                 <label><input type="radio" id="purifyType" name="purifyType" value="" checked/>所有</label>
                 <label><input type="radio" id="purifyType" name="purifyType" value="OPC"/>OPC</label>
                 <label><input type="radio" id="purifyType" name="purifyType" value="PAGE"/>PAGE</label>
+                <label><input type="radio" id="purifyType" name="purifyType" value="page"/>page</label>
                 <label><input type="radio" id="purifyType" name="purifyType" value="HPLC"/>HPLC</label>
             </td>
             <td><button type="button" class="btn" onclick="getResultProducts();">查询</button></td>

@@ -82,18 +82,48 @@ var ctx = '${ctx}';
 	</div>
     <div class="content_box info margin_btoom">
          <h2>联系人信息</h2>
-         <table id="tableID" width="100%" align="center" class="order_info" style="BORDER-COLLAPSE: collapse" borderColor=#000000 border="0">
+         <table id="tableLinker" width="100%" align="center" class="order_info" style="BORDER-COLLAPSE: collapse" borderColor=#000000 border="0">
              <tr>
                  <td align="center" width="15%">姓名</td>
                  <td align="center" width="20%">联系电话</td>
                  <td align="center" width="20%">电子邮箱</td>
              </tr>
-             <tbody id="tbodyID">
+             <tbody id="tbodyLinker">
 	           <c:forEach var="cc" items="${customer.customerContactss}" varStatus="status">
 		           <tr>
 	                 <td><input class="inp_text" type="text" name="customer.customerContactss[${status.index}].name" value="${cc.name}" style="width: 90%"></td>
 	                 <td><input class="inp_text" type="text" name="customer.customerContactss[${status.index}].phoneNo" value="${cc.phoneNo}" style="width: 90%"></td>
 	                 <td><input class="inp_text" type="text" name="customer.customerContactss[${status.index}].email" value="${cc.email}"  style="width: 90%"></td>
+				  </tr>
+	           </c:forEach>
+             </tbody>
+         </table>
+    </div>
+    <div class="content_box info margin_btoom">
+         <h2>价格信息</h2>
+         <table id="tablePrice" width="100%" align="center" class="order_info" style="BORDER-COLLAPSE: collapse" borderColor=#000000 border="0">
+             <tr>
+                 <td align="center" width="8%">最小碱基数</td>
+                 <td align="center" width="8%">最大碱基数</td>
+                 <td align="center" width="8%">最小OD数</td>
+                 <td align="center" width="8%">最大OD数</td>
+                 <td align="center" width="8%">纯化方式</td>
+                 <td align="center" width="8%">单价/元</td>
+                 <td align="center" width="8%">纯化费</td>
+             </tr>
+             <tbody id="tbodyPrice">
+	           <c:forEach var="cp" items="${customer.customerPrices}" varStatus="status">
+		           <tr>
+	                 <td>
+	                 <input type="hidden" name="customer.customerPrices[${status.index}].id" value="${cp.id}">
+	                 <input class="inp_text" type="text" name="customer.customerPrices[${status.index}].minTbn" value="${cp.minTbn}" style="width: 90%">
+	                 </td>
+	                 <td><input class="inp_text" type="text" name="customer.customerPrices[${status.index}].maxTbn" value="${cp.maxTbn}" style="width: 90%"></td>
+	                 <td><input class="inp_text" type="text" name="customer.customerPrices[${status.index}].minOd" value="${cp.minOd}"  style="width: 90%"></td>
+	                 <td><input class="inp_text" type="text" name="customer.customerPrices[${status.index}].maxOd" value="${cp.maxOd}"  style="width: 90%"></td>
+	                 <td><input class="inp_text" type="text" name="customer.customerPrices[${status.index}].purifyType" value="${cp.purifyType}"  style="width: 90%"></td>
+	                 <td><input class="inp_text" type="text" name="customer.customerPrices[${status.index}].baseVal" value="${cp.baseVal}"  style="width: 90%"></td>
+	                 <td><input class="inp_text" type="text" name="customer.customerPrices[${status.index}].purifyVal" value="${cp.purifyVal}"  style="width: 90%"></td>
 				  </tr>
 	           </c:forEach>
              </tbody>

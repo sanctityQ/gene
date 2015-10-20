@@ -50,6 +50,11 @@ var customerSave=function(){
 		}
 	}
 	
+	var cpf = document.getElementsByName("customerPriceFlag");
+	if(cpf.length==0){
+		messAge += "请配置‘价格信息’。\n";
+	}
+	
 	if(messAge!=''){
 		alert(messAge);
 		return false;
@@ -59,11 +64,11 @@ var customerSave=function(){
 
 
 
-//动态增加和删除表格行的内容
+//动态增加和删除联系人表格行的内容
 var addLinker=function(){
-	   var maxIndex = $("#maxIndex").val();
-	   maxIndex = parseInt(maxIndex);
-	   $("#maxIndex").val(maxIndex+1)
+	   var maxLinkerIndex = $("#maxLinkerIndex").val();
+	   maxLinkerIndex = parseInt(maxLinkerIndex);
+	   $("#maxLinkerIndex").val(maxLinkerIndex+1)
 	   
        //创建tr元素
        var trElemnet = document.createElement("tr");
@@ -84,21 +89,21 @@ var addLinker=function(){
        var inputElement1 = document.createElement("input");
        inputElement1.type="text";
        inputElement1.value="";
-       inputElement1.name ="customer.customerContactss["+maxIndex+"].name";
+       inputElement1.name ="customer.customerContactss["+maxLinkerIndex+"].name";
        inputElement1.className="inp_text";
        inputElement1.style.width="90%";
        
        var inputElement2 = document.createElement("input");
        inputElement2.type="text";
        inputElement2.value="";
-       inputElement2.name ="customer.customerContactss["+maxIndex+"].phoneNo";
+       inputElement2.name ="customer.customerContactss["+maxLinkerIndex+"].phoneNo";
        inputElement2.className="inp_text";
        inputElement2.style.width="90%";
 
        var inputElement3 = document.createElement("input");
        inputElement3.type="text";
        inputElement3.value="";
-       inputElement3.name ="customer.customerContactss["+maxIndex+"].email";
+       inputElement3.name ="customer.customerContactss["+maxLinkerIndex+"].email";
        inputElement3.className="inp_text";
        inputElement3.style.width="90%";
        
@@ -120,5 +125,197 @@ var addLinker=function(){
        trElemnet.appendChild(td4Element);
        
        //将tr元素添加到tbody元素中
-       document.getElementById("tbodyID").appendChild(trElemnet);
+       document.getElementById("tbodyLinker").appendChild(trElemnet);
  }
+
+//动态增加和删除联系人表格行的内容
+var addPrice=function(minTbnVal,maxTbnVal,minOdVal,maxOdVal,purifyType,baseVal,purifyVal){
+	   var maxPriceIndex = $("#maxPriceIndex").val();
+	   maxPriceIndex = parseInt(maxPriceIndex);
+	   $("#maxPriceIndex").val(maxPriceIndex+1)
+	   
+       //创建tr元素
+       var trElemnet = document.createElement("tr");
+       //创建td元素
+       var td1Element = document.createElement("td");
+       var td2Element = document.createElement("td");
+       var td3Element = document.createElement("td");
+       var td4Element = document.createElement("td");
+       var td5Element = document.createElement("td");
+       var td6Element = document.createElement("td");
+       var td7Element = document.createElement("td");
+       
+       var tdElementLast = document.createElement("td");
+           tdElementLast.align="center";
+       //创建按钮
+       var delElement = document.createElement("input");
+       delElement.type="button";
+       delElement.value="删除";
+       delElement.className="btn";
+       delElement.align="center";
+       
+       
+       var inputElement1 = document.createElement("input");
+       inputElement1.type="text";
+       inputElement1.value=minTbnVal;
+       inputElement1.name ="customer.customerPrices["+maxPriceIndex+"].minTbn";
+       inputElement1.className="inp_text";
+       inputElement1.style.width="90%";
+       
+       var inputElement2 = document.createElement("input");
+       inputElement2.type="text";
+       inputElement2.value=maxTbnVal;
+       inputElement2.name ="customer.customerPrices["+maxPriceIndex+"].maxTbn";
+       inputElement2.className="inp_text";
+       inputElement2.style.width="90%";
+
+       var inputElement3 = document.createElement("input");
+       inputElement3.type="text";
+       inputElement3.value=minOdVal;
+       inputElement3.name ="customer.customerPrices["+maxPriceIndex+"].minOd";
+       inputElement3.className="inp_text";
+       inputElement3.style.width="90%";
+       
+       var inputElement4 = document.createElement("input");
+       inputElement4.type="text";
+       inputElement4.value=maxOdVal;
+       inputElement4.name ="customer.customerPrices["+maxPriceIndex+"].maxOd";
+       inputElement4.className="inp_text";
+       inputElement4.style.width="90%";
+       
+       var inputElement5 = document.createElement("select");
+       inputElement5.options[0] = new Option("OPC", "OPC");
+       inputElement5.options[1] = new Option("PAGE", "PAGE");
+       inputElement5.options[2] = new Option("page", "page");
+       inputElement5.options[3] = new Option("HPLC", "HPLC");
+       inputElement5.options[purifyType].selected = true;
+       inputElement5.name ="customer.customerPrices["+maxPriceIndex+"].purifyType";
+       inputElement5.className="inp_text";
+       inputElement5.style.width="90%";
+       
+       var inputElement6 = document.createElement("input");
+       inputElement6.type="text";
+       inputElement6.value=baseVal;
+       inputElement6.name ="customer.customerPrices["+maxPriceIndex+"].baseVal";
+       inputElement6.className="inp_text";
+       inputElement6.style.width="90%";
+       
+       var inputElement7 = document.createElement("input");
+       inputElement7.type="text";
+       inputElement7.value=purifyVal;
+       inputElement7.name ="customer.customerPrices["+maxPriceIndex+"].purifyVal";
+       inputElement7.className="inp_text";
+       inputElement7.style.width="90%";
+       
+       var inputElementHidden = document.createElement("input");
+       inputElementHidden.type="hidden";
+       inputElementHidden.name ="customerPriceFlag";
+       
+       //为按钮添加单击事件
+       delElement.onclick=function(){
+           //删除按钮所在的tr对象
+           trElemnet.parentNode.removeChild(trElemnet);
+       }
+       tdElementLast.appendChild(delElement);
+       
+       td1Element.appendChild(inputElement1);
+       td2Element.appendChild(inputElement2);
+       td3Element.appendChild(inputElement3);
+       td4Element.appendChild(inputElement4);
+       td5Element.appendChild(inputElement5);
+       td6Element.appendChild(inputElement6);
+       td7Element.appendChild(inputElement7);
+       td7Element.appendChild(inputElementHidden);
+       
+       //将td元素添加到tr元素中
+       trElemnet.appendChild(td1Element);
+       trElemnet.appendChild(td2Element);
+       trElemnet.appendChild(td3Element);
+       trElemnet.appendChild(td4Element);
+       trElemnet.appendChild(td5Element);
+       trElemnet.appendChild(td6Element);
+       trElemnet.appendChild(td7Element);
+       
+       trElemnet.appendChild(tdElementLast);
+       
+       //将tr元素添加到tbody元素中
+       document.getElementById("tbodyPrice").appendChild(trElemnet);
+ }
+
+var iniPrice=function(){
+	
+	var cpf = document.getElementsByName("customerPriceFlag");
+	var execFlag = true;
+	if(cpf.length>0){
+		if(confirm("执行‘初始化数据’按钮会覆盖已有数据，是否继续执行？")){
+			execFlag = true;
+		}else{
+			execFlag = false;
+		}
+	}
+	
+	if(execFlag){
+		document.getElementById("tbodyPrice").innerHTML="";//清空tbody
+		$("#maxPriceIndex").val(0)
+		
+		//OPC
+		addPrice('0.0','60.0', '0.0', '5.0',0,'0.45','0.0');
+		addPrice('0.0','60.0', '6.0','10.0',0,'0.80','0.0');
+		addPrice('0.0','60.0','11.0','20.0',0,'1.60','0.0');
+		addPrice('0.0','60.0','21.0','30.0',0,'1.60','0.0');
+		addPrice('0.0','60.0','31.0','40.0',0,'1.60','0.0');
+		addPrice('0.0','60.0','41.0','50.0',0,'1.60','0.0');
+		
+		addPrice('60.0','999.0', '0.0', '5.0',0,'0.80','0.0');
+		addPrice('60.0','999.0', '6.0','10.0',0,'1.60','0.0');
+		addPrice('60.0','999.0','11.0','20.0',0,'3.20','0.0');
+		addPrice('60.0','999.0','21.0','30.0',0,'0.00','0.0');
+		addPrice('60.0','999.0','31.0','40.0',0,'0.00','0.0');
+		addPrice('60.0','999.0','41.0','50.0',0,'0.00','0.0');
+		
+		//PAGE
+		addPrice('0.0','60.0', '0.0', '5.0',1,'0.45','0.0');
+		addPrice('0.0','60.0', '6.0','10.0',1,'0.80','0.0');
+		addPrice('0.0','60.0','11.0','20.0',1,'1.60','0.0');
+		addPrice('0.0','60.0','21.0','30.0',1,'1.60','0.0');
+		addPrice('0.0','60.0','31.0','40.0',1,'1.60','0.0');
+		addPrice('0.0','60.0','41.0','50.0',1,'1.60','0.0');
+		
+		addPrice('60.0','999.0', '0.0', '5.0',1,'0.80','0.0');
+		addPrice('60.0','999.0', '6.0','10.0',1,'1.60','0.0');
+		addPrice('60.0','999.0','11.0','20.0',1,'3.20','0.0');
+		addPrice('60.0','999.0','21.0','30.0',1,'0.00','0.0');
+		addPrice('60.0','999.0','31.0','40.0',1,'0.00','0.0');
+		addPrice('60.0','999.0','41.0','50.0',1,'0.00','0.0');
+		
+		//page
+		addPrice('0.0','60.0', '0.0', '5.0',2,'0.45','0.0');
+		addPrice('0.0','60.0', '6.0','10.0',2,'0.80','0.0');
+		addPrice('0.0','60.0','11.0','20.0',2,'1.60','0.0');
+		addPrice('0.0','60.0','21.0','30.0',2,'1.60','0.0');
+		addPrice('0.0','60.0','31.0','40.0',2,'1.60','0.0');
+		addPrice('0.0','60.0','41.0','50.0',2,'1.60','0.0');
+		
+		addPrice('60.0','999.0', '0.0', '5.0',2,'0.80','0.0');
+		addPrice('60.0','999.0', '6.0','10.0',2,'1.60','0.0');
+		addPrice('60.0','999.0','11.0','20.0',2,'3.20','0.0');
+		addPrice('60.0','999.0','21.0','30.0',2,'0.00','0.0');
+		addPrice('60.0','999.0','31.0','40.0',2,'0.00','0.0');
+		addPrice('60.0','999.0','41.0','50.0',2,'0.00','0.0');
+		
+		//HPLC
+		addPrice('0.0','60.0', '0.0', '5.0',3,'0.45','30.0');
+		addPrice('0.0','60.0', '6.0','10.0',3,'0.80','60.0');
+		addPrice('0.0','60.0','11.0','20.0',3,'1.60','90.0');
+		addPrice('0.0','60.0','21.0','30.0',3,'1.60','120.0');
+		addPrice('0.0','60.0','31.0','40.0',3,'1.60','150.0');
+		addPrice('0.0','60.0','41.0','50.0',3,'1.60','200.0');
+		
+		addPrice('60.0','999.0', '0.0', '5.0',3,'0.80','30.0');
+		addPrice('60.0','999.0', '6.0','10.0',3,'1.60','60.0');
+		addPrice('60.0','999.0','11.0','20.0',3,'3.20','90.0');
+		addPrice('60.0','999.0','21.0','30.0',3,'0.00','120.0');
+		addPrice('60.0','999.0','31.0','40.0',3,'0.00','150.0');
+		addPrice('60.0','999.0','41.0','50.0',3,'0.00','200.0');
+	}
+}

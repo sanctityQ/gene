@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.CustomerPrice;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
@@ -20,6 +21,7 @@ import org.one.gene.domain.service.OrderService;
 import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
+import org.one.gene.repository.CustomerPriceRepository;
 import org.one.gene.repository.CustomerRepository;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductOperationRepository;
@@ -64,7 +66,9 @@ public class OrderController {
     private CustomerRepository customerRepository;
     @Autowired
     private PrimerProductOperationRepository primerProductOperationRepository;
-
+    @Autowired
+    private CustomerPriceRepository customerPriceRepository;
+    
     @Get("import")
     public String orderImport(Invocation inv){
     	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
@@ -161,9 +165,9 @@ public class OrderController {
         }else{
         	//获取客户信息
         	Customer customer = null;
-			if ("0".equals(customerFlag)) {
+			if ("0".equals(customerFlag)) {//梓熙用户，需要现查客户信息
         		customer = customerRepository.findOne(Long.parseLong(customerid));
-        	}else{
+        	}else{//代理或直接用户，直接使用客户信息
         		customer = user.getUser().getCustomer();
         	}
         			
@@ -172,7 +176,13 @@ public class OrderController {
         		inv.addModel("customerFlag", customerFlag);
         		inv.addModel("userExp", "无此客户信息，请您确认后重新上传！");
         		return "orderImport";
-        		//throw new Exception("无此客户信息，请您确认后重新上传！");
+        	}
+        	List<CustomerPrice> customerPrices = customerPriceRepository.selectByCustomerId(customer.getId());
+        	
+        	if (customerPrices == null || customerPrices.size() == 0) {
+        		inv.addModel("customerFlag", customerFlag);
+        		inv.addModel("userExp", "客户价格信息缺失，请联系管理员进行配置！");
+        		return "orderImport";
         	}
         	
         	String prefix = customer.getPrefix().toUpperCase();//生产编号开头
@@ -188,7 +198,7 @@ public class OrderController {
         	//组织订单对象
         	
         	//获取外部订单号
-        	ArrayList<Order>  orders = orderService.ReadExcel(path, 0,"2-", prefix);
+        	ArrayList<Order>  orders = orderService.ReadExcel(path, 0,"2-", prefix, customerPrices);
         	orderService.convertOrder(customer,filename,orders, contactsname);
         	//保存订单信息
         	try{

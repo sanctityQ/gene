@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.CustomerPrice;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
@@ -295,8 +296,8 @@ public class OrderService {
     	primerProductRepository.save(primerProductTemp);
     }
     
-    public ArrayList<Order> ReadExcel(String path, int sheetIndex, String rows, String prefix) {
-    	return orderExcelPase.ReadExcel(path, sheetIndex,rows,prefix);
+    public ArrayList<Order> ReadExcel(String path, int sheetIndex, String rows, String prefix, List<CustomerPrice> customerPrices) {
+    	return orderExcelPase.ReadExcel(path, sheetIndex,rows,prefix,customerPrices);
     }
     
     public ArrayList<String> getExcelPaseErrors(String path,int ignoreRows, int sheetIndex) throws FileNotFoundException, IOException{

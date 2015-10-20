@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.CustomerContacts;
+import org.one.gene.domain.entity.CustomerPrice;
 import org.one.gene.repository.CustomerContactsRepository;
+import org.one.gene.repository.CustomerPriceRepository;
 import org.one.gene.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,9 @@ public class CustomerService {
 	
 	@Autowired
     private CustomerContactsRepository customerContactsRepository;
+	
+	@Autowired
+    private CustomerPriceRepository customerPriceRepository;
 	
 	
 	@Transactional(readOnly = false)
@@ -63,6 +68,23 @@ public class CustomerService {
 					}
 				}
 			}
+			
+			customerPriceRepository.deleteByCustomerId(customer.getId());
+			
+		}
+		
+		//remove CustomerPrices 中null的对象
+		for (int i = customer.getCustomerPrices().size() - 1; i >= 0; i--) {
+			CustomerPrice cp = customer.getCustomerPrices().get(i);
+			if(cp == null || cp.getPurifyType()==null){
+				customer.getCustomerPrices().remove(i);
+			}else{
+				cp.setCustomer(customer);
+			}
+		}
+		
+		if (customer.getId() != null) {
+			customerPriceRepository.deleteByCustomerId(customer.getId());
 		}
 
 		customerRepository.save(customer);

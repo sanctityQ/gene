@@ -67,7 +67,7 @@ String comCode = user.getUser().getCompany().getComCode();
 				
 			</tr>
 			<tr>
-				<td align="right">生产编号开头:</td>
+				<td align="right" title="例：X501120004为生产编号，录入生产编号开头标识X开头。">生产编号开头:</td>
 				<td>
                     <input class="inp_text" type="text" id="customerPrefix" name="customer.prefix" value="${customer.prefix}"  style="width:50px" />
 				</td>
@@ -77,11 +77,8 @@ String comCode = user.getUser().getCompany().getComCode();
 				</td>
 			</tr>
             <tr>
-                <td align="right">&nbsp;
-            	</td>
-            	<td>
-            	<input class="readonly_inp" type="text" disabled value="例：X501120004为生产编号，录入生产编号开头标识X开头。"  style="width: 200px" />
-            	</td>
+                <td align="right">&nbsp;</td>
+            	<td align="right">&nbsp;</td>
 				<td align="right">网址:</td>
 				<td>
                     <input class="inp_text" type="text" name="customer.webSite" value="${customer.webSite}"  style="width:150px" />
@@ -114,15 +111,15 @@ String comCode = user.getUser().getCompany().getComCode();
 	</div>
     <div class="content_box info margin_btoom">
          <h2>联系人信息<td>&nbsp;</td><td><button id="addID" type="button" class="btn btn-primary" onclick="addLinker();">增加</button></td></h2>
-         <table id="tableID" width="100%" align="center" class="order_info" style="BORDER-COLLAPSE: collapse" borderColor=#000000 border="0">
+         <table id="tableLinker" width="100%" align="center" class="order_info" style="BORDER-COLLAPSE: collapse" borderColor=#000000 border="0">
              <tr>
                  <td align="center" width="15%">姓名</td>
                  <td align="center" width="20%">联系电话</td>
                  <td align="center" width="20%">电子邮箱</td>
                  <td align="center" width="8%">操作</td>
-                 <input type="hidden" id="maxIndex" name="maxIndex" value="${customer.customerContactss.size()}">
+                 <input type="hidden" id="maxLinkerIndex" name="maxLinkerIndex" value="${customer.customerContactss.size()}">
              </tr>
-             <tbody id="tbodyID">
+             <tbody id="tbodyLinker">
 	           <c:forEach var="cc" items="${customer.customerContactss}" varStatus="status">
 		           <tr>
 	                 <td>
@@ -131,6 +128,51 @@ String comCode = user.getUser().getCompany().getComCode();
 	                 </td>
 	                 <td><input class="inp_text" type="text" name="customer.customerContactss[${status.index}].phoneNo" value="${cc.phoneNo}" style="width: 90%"></td>
 	                 <td><input class="inp_text" type="text" name="customer.customerContactss[${status.index}].email" value="${cc.email}"  style="width: 90%"></td>
+	                 <td align="center"><button type="button" class="btn" onclick="delRow(this);">删除</button></td>
+				  </tr>
+	           </c:forEach>
+             </tbody>
+         </table>
+    </div>
+    <div class="content_box info margin_btoom">
+         <h2>价格信息<td>&nbsp;</td><td><button id="addPriceBN" type="button" class="btn btn-primary" onclick="addPrice('0.0','0.0','0.0','0.0','0.0','0.0','0.0');">增加</button></td>
+         <a href="javascript:;" class="right btn-primary submit" onclick="iniPrice()" type="button">初始化数据</a>
+         </h2>
+         <table id="tablePrice" width="100%" align="center" class="order_info" style="BORDER-COLLAPSE: collapse" borderColor=#000000 border="0">
+             <tr>
+                 <td align="center" width="8%">最小碱基数</td>
+                 <td align="center" width="8%">最大碱基数</td>
+                 <td align="center" width="8%">最小OD数</td>
+                 <td align="center" width="8%">最大OD数</td>
+                 <td align="center" width="8%">纯化方式</td>
+                 <td align="center" width="8%">单价/元</td>
+                 <td align="center" width="8%">纯化费</td>
+                 <td align="center" width="8%">操作</td>
+                 <input type="hidden" id="maxPriceIndex" name="maxPriceIndex" value="${customer.customerPrices.size()}">
+             </tr>
+             <tbody id="tbodyPrice">
+	           <c:forEach var="cp" items="${customer.customerPrices}" varStatus="status">
+		           <tr>
+	                 <td>
+	                 <input type="hidden" name="customer.customerPrices[${status.index}].id" value="${cp.id}">
+	                 <input class="inp_text" type="text" name="customer.customerPrices[${status.index}].minTbn" value="${cp.minTbn}" style="width: 90%">
+	                 </td>
+	                 <td><input class="inp_text" type="text" name="customer.customerPrices[${status.index}].maxTbn" value="${cp.maxTbn}" style="width: 90%"></td>
+	                 <td><input class="inp_text" type="text" name="customer.customerPrices[${status.index}].minOd" value="${cp.minOd}"  style="width: 90%"></td>
+	                 <td><input class="inp_text" type="text" name="customer.customerPrices[${status.index}].maxOd" value="${cp.maxOd}"  style="width: 90%"></td>
+	                 <td>
+		                <select name="customer.customerPrices[${status.index}].purifyType" value="${cp.purifyType}" class="my_select" style="width:  90%" >
+		                    <option value="OPC" <c:if test="${cp.purifyType=='OPC'}">selected</c:if> >OPC</option>
+		                    <option value="PAGE" <c:if test="${cp.purifyType=='PAGE'}">selected</c:if> >PAGE</option>
+		                    <option value="page" <c:if test="${cp.purifyType=='page'}">selected</c:if> >page</option>
+		                    <option value="HPLC" <c:if test="${cp.purifyType=='HPLC'}">selected</c:if> >HPLC</option>
+		                </select>
+	                 </td>
+	                 <td><input class="inp_text" type="text" name="customer.customerPrices[${status.index}].baseVal" value="${cp.baseVal}"  style="width: 90%"></td>
+	                 <td><input class="inp_text" type="text" name="customer.customerPrices[${status.index}].purifyVal" value="${cp.purifyVal}"  style="width: 90%">
+	                     <input type="hidden" name="customerPriceFlag">
+	                 </td>
+	                 
 	                 <td align="center"><button type="button" class="btn" onclick="delRow(this);">删除</button></td>
 				  </tr>
 	           </c:forEach>

@@ -5,15 +5,18 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.CustomerPrice;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.Order.OrderType;
 import org.one.gene.domain.service.PriceTool;
+import org.one.gene.repository.CustomerPriceRepository;
 import org.one.gene.repository.CustomerRepository;
 import org.one.gene.web.order.AtomicLongUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,8 @@ public class OrderExcelPase {
     private AtomicLongUtil atomicLongUtil;
     @Autowired
     private PriceTool priceTool;
+	@Autowired
+	private CustomerPriceRepository customerPriceRepository;
 	
 	/**
 	 * 组织解析excel验证异常信息
@@ -101,7 +106,7 @@ public class OrderExcelPase {
 	 * @param sheetIndex 第几个sheet页
 	 * @param rows 忽略的行数或从第几行开始
 	 */
-	public ArrayList<Order> ReadExcel(String path, int sheetIndex, String rows, String prefix) {
+	public ArrayList<Order> ReadExcel(String path, int sheetIndex, String rows, String prefix, List<CustomerPrice> customerPrices) {
 		// 获取Excel文件的第1个sheet的内容
 		ArrayList<ArrayList<String>> lists = excelResolver.ReadExcel(path, sheetIndex,rows);
 		ArrayList<Order>  orders = new ArrayList<Order>();
@@ -185,7 +190,7 @@ public class OrderExcelPase {
 					  primerProduct.setRemark(v);
 					  //最后根据条件获取价格
 					  if(primerProduct.getOdTotal()!=null&&primerProduct.getOdTotal().intValue()<20){
-					    priceTool.getPrice(primerProduct);
+					    priceTool.getPrice(primerProduct, customerPrices);
 					    priceTool.getModiTypePrice(primerProduct);
 					  }else{
 						primerProduct.setModiPrice(new BigDecimal("0"));//修饰价格
