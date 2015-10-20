@@ -189,14 +189,8 @@ public class OrderExcelPase {
 				  case 14:	
 					  primerProduct.setRemark(v);
 					  //最后根据条件获取价格
-					  if(primerProduct.getOdTotal()!=null&&primerProduct.getOdTotal().intValue()<20){
-					    priceTool.getPrice(primerProduct, customerPrices);
-					    priceTool.getModiTypePrice(primerProduct);
-					  }else{
-						primerProduct.setModiPrice(new BigDecimal("0"));//修饰价格
-					    primerProduct.setBaseVal(new BigDecimal("0"));//碱基单价
-						primerProduct.setPurifyVal(new BigDecimal("0"));//纯化价格  
-					  }
+					  priceTool.getPrice(primerProduct, customerPrices);
+					  priceTool.getModiTypePrice(primerProduct);
 					break;	
 				  default:
 					break;
