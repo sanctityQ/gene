@@ -26,6 +26,14 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 			    <input class="inp_text" type="hidden" id="customerCode" name="customerCode" />
 			    <ul id="seachCustomList"></ul>
 			</td>
+			<td align="right">公司性质:</td>
+			<td>
+                <select id="customerFlag" class="my_select" style="width: 100px;" >
+                    <option value="">请选择</option>
+                    <option value="1">代理公司</option>
+                    <option value="2">直接客户</option>
+                </select>
+			</td>
 			<td><button type="button" class="btn" onclick="getOrderInfo();">查询</button></td>
 			<td align="right">
 			</td>

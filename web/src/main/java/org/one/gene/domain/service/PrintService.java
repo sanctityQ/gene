@@ -290,23 +290,25 @@ public class PrintService {
 		
 
 		//计算第一列多少行
+		int columnType = primerLabelConfig.getColumnType().getValue();
 		BigDecimal totalListCount = new BigDecimal(printLabels.size());//本excel的条数
-		int totalcolumns = totalListCount.divide(new BigDecimal(primerLabelConfig.getColumnType().getValue()), 0, BigDecimal.ROUND_UP).intValue();//总共的行数
+		int totalcolumns = totalListCount.divide(new BigDecimal(columnType), 0, BigDecimal.ROUND_UP).intValue();//总共的行数
 		
 		
 		FileOutputStream fos = null;
-		
 		HSSFWorkbook workbook = new HSSFWorkbook(); //产生工作簿对象
 		
 		//每行逐行放数据
-		int rowNum = 0;
-		int rowNumForpage  = 0;
+		int rowNum = 1;
+		int rowNumForpage  = 1;
 		int columNum = 1;
 		int sheetNum = -1;
 		HSSFSheet sheet = null;
+		List<PrimerLabelConfigSub> primerLabelConfigSubs = primerLabelConfig.getPrimerLabelConfigSubs();
+		
 		for (PrintLabel printLabelExcel : printLabels) {
 			
-			if(rowNum==0){
+			if(rowNum==1){
 				sheetNum +=1;
 				sheet = workbook.createSheet(); //产生工作表对象
 				//设置工作表的名称
@@ -314,11 +316,24 @@ public class PrintService {
 			}
 			HSSFRow row = null;
 			if(columNum ==1){
-				row = sheet.createRow((short)rowNum);//从第一行开始记录
+				row = sheet.createRow((short)0);//第一行放描述
+				for (int k=0;k<primerLabelConfigSubs.size();k++){
+					String typeDesc = ((PrimerLabelConfigSub) primerLabelConfigSubs.get(k)).getTypeDesc();
+					
+					for(int n=0;n<columnType;n++){
+						HSSFCell cell = row.createCell((short) ((n)*primerLabelConfigSubs.size()+k));//产生单元格
+						//设置单元格内容为字符串型
+						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+						//往单元格中写入信息
+						cell.setCellValue(typeDesc);
+					}
+				}
+				
+				row = sheet.createRow((short)rowNum);//从第二行开始记录
 			}else{
 				row = sheet.getRow(rowNumForpage);
 			}
-			List<PrimerLabelConfigSub> primerLabelConfigSubs = primerLabelConfig.getPrimerLabelConfigSubs();
+			
 			for (int k=0;k<primerLabelConfigSubs.size();k++){
 				String type = ((PrimerLabelConfigSub) primerLabelConfigSubs.get(k)).getType();
 				HSSFCell cell = row.createCell((short) ((columNum-1)*primerLabelConfigSubs.size()+k));//产生单元格
@@ -367,9 +382,9 @@ public class PrintService {
 			
 			rowNum+=1;
 			rowNumForpage+=1;
-			if(totalcolumns == (rowNumForpage)){
+			if(totalcolumns == (rowNumForpage-1)){
 				columNum+=1;
-				rowNumForpage = 0;
+				rowNumForpage = 1;
 			}
 			
 		}

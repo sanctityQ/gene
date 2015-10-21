@@ -570,6 +570,7 @@ public class OrderController {
     @Post("queryDeliveryDeal")
 	public Reply queryDeliveryDeal(@Param("orderNo") String orderNo,
 			@Param("customerCode") String customerCode,
+			@Param("customerFlagStr") String customerFlagStr,
 			@Param("pageNo") Integer pageNo,
 			@Param("pageSize") Integer pageSize, Invocation inv)
 			throws Exception {
@@ -581,6 +582,9 @@ public class OrderController {
         if(pageSize == null){
             pageSize = 20;
         }
+		if (customerFlagStr == null) {
+			customerFlagStr = "";
+		}
         
         ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
         String comCode = user.getUser().getCompany().getComCode();
@@ -590,7 +594,7 @@ public class OrderController {
         
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         
-        Page<Order> orderPage = orderRepository.queryDeliveryDeal(orderNo, customerCode, comCode, pageable);
+        Page<Order> orderPage = orderRepository.queryDeliveryDeal(orderNo, customerCode, comCode, customerFlagStr, pageable);
         //循环查询生产数据表
         for (Order order : orderPage.getContent()) {
         	order.setPrimerProducts(primerProductRepository.findByOrder(order));

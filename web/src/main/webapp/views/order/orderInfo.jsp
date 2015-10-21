@@ -97,6 +97,7 @@ var ctx = '${ctx}';
 							    data: [
 							        {label: 'OPC',value: 'OPC'},
 							        {label: 'PAGE',value: 'PAGE'},
+							        {label: 'page',value: 'page'},
 							        {label: 'HPLC',value: 'HPLC'}
 							    ]
 							}}">纯化方式</th>

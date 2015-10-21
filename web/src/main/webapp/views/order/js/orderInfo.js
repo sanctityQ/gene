@@ -61,12 +61,13 @@ function appendRow(){
              baseVal                :row.baseVal,
              purifyVal              :row.purifyVal,
              totalVal               :"",
-             fromProductNo          :row.productNo,
+             fromProductNo          :"",
              comCode                :row.comCode
         }
     });
     var ind = $(".datagrid-btable").find('tr:first').attr("datagrid-row-index");
     bigToSmall.datagrid('beginEdit',ind);
+    $(".datagrid-btable").find('tr:first').trigger('click');
 }
 function onClickRow(index){
   if (bigIndex != index){
@@ -326,7 +327,7 @@ function getChanesSave(nextOrderNo,orderNoString){
     if(isRepeat(productNos)){
     	alert("您提交的生产编号存在重复，请修改后重新提交！");
     }
-//    console.log(primerProducts);
+
     progress();
     $.ajax({
 		type : "post",

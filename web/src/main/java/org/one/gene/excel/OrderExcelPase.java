@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +19,8 @@ import org.one.gene.domain.entity.Order.OrderType;
 import org.one.gene.domain.service.PriceTool;
 import org.one.gene.repository.CustomerPriceRepository;
 import org.one.gene.repository.CustomerRepository;
+import org.one.gene.utils.MapKeyComparator;
+import org.one.gene.web.delivery.DeliveryInfo;
 import org.one.gene.web.order.AtomicLongUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -218,7 +221,9 @@ public class OrderExcelPase {
 		if (!haveFirst) {
 			orders.add(order);
 		} else {
-			for (Map.Entry<String, Order> map : orderMap.entrySet()) {
+			Map<String, Order> resultMap = sortMapByKeyOutOrderNo(orderMap);    //按Key进行排序 
+			
+			for (Map.Entry<String, Order> map : resultMap.entrySet()) {
 				order = (Order)map.getValue();
 				orders.add(order);
 			}
@@ -226,6 +231,20 @@ public class OrderExcelPase {
 		return orders;
 	}
 	
+    /** 
+     * 使用 Map按key进行排序 
+     * @param map  DeliveryInfo
+     * @return 
+     */  
+    public static Map<String, Order> sortMapByKeyOutOrderNo(Map<String, Order> map) {
+        if (map == null || map.isEmpty()) {  
+            return null;  
+        }  
+        Map<String, Order> sortMap = new TreeMap<String, Order>(new MapKeyComparator());
+        sortMap.putAll(map);  
+        return sortMap;  
+    }
+    
 	/**
 	 * 解析订单excel第一个sheet页中的客户信息
 	 * @param path
