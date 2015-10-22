@@ -3,35 +3,54 @@
 <%@page import="org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser"%>
 <%@page import="org.apache.shiro.SecurityUtils"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
+<c:set var="orderNo_con" value="${param.orderNo_con}" />
+<c:set var="customerCode_con" value="${param.customerCode_con}" />
+<c:set var="customerFlag_con" value="${param.customerFlag_con}" />
 <!DOCTYPE html>
 <html>
 <head>
 <title></title>
+<script type="text/javascript">
+var customerFlag_con = ${customerFlag_con}+"";
+</script>
 <meta charset="utf-8">
 <%
 ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
 String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+String customerName_con = request.getParameter("customerName_con");
+if(customerName_con==null || "null".equals(customerName_con)){
+	customerName_con = "";
+} else {
+	customerName_con = new String(request.getParameter("customerName_con").getBytes("iso-8859-1"),"UTF-8");
+}
+String autoSeachFlag = request.getParameter("autoSeachFlag");
+if(autoSeachFlag==null || "null".equals(autoSeachFlag)){
+	autoSeachFlag = "0";
+}
 %>
 </head>
 <body>
 <form action="" id='queryForm'>
 <input type="hidden" id="customerFlagOld" name="customerFlagOld" value="<%=customerFlag %>"/>
+
+<input type="hidden" id="autoSeachFlag" name="autoSeachFlag" value="<%=autoSeachFlag %>"/>
+
 <div class="tools">
 	<table width="100%">
 		<tr>
 			<td align="right">订单号:</td>
-			<td><input id="orderNo" class="inp_text" type="text" value="" style="width: 60%" /></td>
+			<td><input id="orderNo" class="inp_text" type="text"  value="${orderNo_con}" style="width: 60%" /></td>
 			<td>客户公司名称:</td>
-			<td><input class="inp_text" type="text" id="seachCustom" name="customerName" style="width:150px" />
-			    <input class="inp_text" type="hidden" id="customerCode" name="customerCode" />
+			<td><input class="inp_text" type="text" id="seachCustom" name="customerName" style="width:150px" value="<%=customerName_con%>"/>
+			    <input class="inp_text" type="hidden" id="customerCode" name="customerCode" value="${customerCode_con}"/>
 			    <ul id="seachCustomList"></ul>
 			</td>
 			<td align="right">公司性质:</td>
 			<td>
                 <select id="customerFlag" class="my_select" style="width: 100px;" >
                     <option value="">请选择</option>
-                    <option value="1">代理公司</option>
-                    <option value="2">直接客户</option>
+                    <option value="1" <c:if test="${customerFlag_con=='1'}">selected</c:if> >代理公司</option>
+                    <option value="2" <c:if test="${customerFlag_con=='2'}">selected</c:if> >直接客户</option>
                 </select>
 			</td>
 			<td><button type="button" class="btn" onclick="getOrderInfo();">查询</button></td>
@@ -62,7 +81,9 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 <script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script type="text/javascript">
 
-//orderInfoIni();
+if($("#autoSeachFlag").val()=='1'){
+	orderInfoIni();
+}
 
 $(function(){
     var dg = $('#orderList');

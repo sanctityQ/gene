@@ -65,7 +65,7 @@ public class OrderExcelPase {
 			if("".equals(date[i][3])){
 				message.append("第"+(i+2)+"行第4列[序列]数据不能为空! \n");
 			}
-			if("".equals(date[i][8])){
+			if (date[i].length < 8 || "".equals(date[i][8])) {
 				message.append("第"+(i+2)+"行第9列[纯化方式]数据不能为空! \n");
 			}
 			if("".equals(date[i][4])&&"".equals(date[i][6])){

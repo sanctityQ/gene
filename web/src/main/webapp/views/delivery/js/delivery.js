@@ -13,10 +13,19 @@ var orderInfoIni=function(){
 	
 	progress();
 
+	var orderNo = $("#orderNo").val();
+	var customerCode = $("#customerCode").val();
+	
 	$.ajax({
 		type : "post",
 		url : "/gene/order/queryDeliveryDeal",
 		dataType : "json",
+		data:
+		{
+			orderNo:orderNo,
+	        customerCode:customerCode,
+	        customerFlagStr: $("#customerFlag").val()
+        },
 		success : function(data) {
 			if(data != null){
 				var total = data.totalElements;
@@ -40,9 +49,6 @@ var orderInfoIni=function(){
 			alert("无法获取信息");
 		}
 	});
-	
-	
-	
 }
 /**
  * 获取订单信息
@@ -63,6 +69,7 @@ var getOrderInfo=function(){
     var gridOpts = $('#orderList').datagrid('getPager').data("pagination").options;
 	var orderNo = $("#orderNo").val();
 	var customerCode = $("#customerCode").val();
+	
 	$.ajax({
 		type : "post",
 		url : "/gene/order/queryDeliveryDeal",
@@ -105,7 +112,15 @@ var getOrderInfo=function(){
 //查看
 var lookOrder=function(id,index){
 	var row = $('#orderList').datagrid('getData').rows[index];
-	goToPage('/gene/views/delivery/deliveryView.jsp?orderNo='+row.orderNo);
+	var orderNo_con      = $("#orderNo").val();
+	var customerCode_con = $("#customerCode").val();
+	var customerName_con = $("#seachCustom").val();
+	var customerFlag_con = $("#customerFlag").val();
+	goToPage('/gene/views/delivery/deliveryView.jsp?orderNo='+row.orderNo+
+			                                       '&orderNo_con='+orderNo_con+
+			                                       '&customerCode_con='+customerCode_con+
+			                                       '&customerName_con='+customerName_con+
+			                                       '&customerFlag_con='+customerFlag_con);
 }
 
 /**
@@ -155,6 +170,12 @@ function saveDelivery(){
         text:'页面保存中…'
     });
     
+    //查询条件的值
+	var orderNo_con      = $("#orderNo_con").val();
+	var customerCode_con = $("#customerCode_con").val();
+	var customerName_con = $("#customerName_con").val();
+	var customerFlag_con = $("#customerFlag_con").val();
+	
     var rows = $('#bigToSmall').datagrid('getSelections');
     var primerProducts = [];
     if(rows.length == 0){
@@ -195,7 +216,11 @@ function saveDelivery(){
 		success : function(data) {
 			if(data != null){
 			    $.messager.alert('系统提示','数据已保存！','',function(){
-			        goToPage('/gene/views/delivery/deliveryResults.jsp');
+			        goToPage('/gene/views/delivery/deliveryResults.jsp?orderNo_con='+orderNo_con+
+                            '&customerCode_con='+customerCode_con+
+                            '&customerName_con='+customerName_con+
+                            '&customerFlag_con='+customerFlag_con+
+                            '&autoSeachFlag=1');
 			    });
 			}
 		},

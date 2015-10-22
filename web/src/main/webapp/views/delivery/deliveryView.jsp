@@ -2,6 +2,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <c:set var="orderNo" value="${param.orderNo}" />
+<c:set var="orderNo_con" value="${param.orderNo_con}" />
+<c:set var="customerCode_con" value="${param.customerCode_con}" />
+<c:set var="customerFlag_con" value="${param.customerFlag_con}" />
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,8 +13,21 @@
 var orderNo = ${orderNo};
 var ctx = '${ctx}';
 </script>
+<%
+String customerName_con = request.getParameter("customerName_con");
+if(customerName_con==null || "null".equals(customerName_con)){
+	customerName_con = "";
+} else {
+	customerName_con = new String(request.getParameter("customerName_con").getBytes("iso-8859-1"),"UTF-8");
+}
+%>
 </head>
 <body>
+<!-- 页面的查询条件 -->
+<input type="hidden" id="orderNo_con" name="orderNo_con" value="${orderNo_con}"/>
+<input type="hidden" id="customerCode_con" name="customerCode_con" value="${customerCode_con}"/>
+<input type="hidden" id="customerName_con" name="customerName_con" value="<%=customerName_con%>"/>
+<input type="hidden" id="customerFlag_con" name="customerFlag_con" value="${customerFlag_con}"/>
 <div class="page_padding">
 	<div class="content_box totle margin_btoom">
 		<b>订单号：</b>${orderNo}<br />
