@@ -39,7 +39,9 @@ var getProducts=function(){
 		dataType : "json",
 		data:{
 			orderNo:$("#orderNo").val(),
+			productNoPrefix: $("#productNoPrefix").val(),
 			customerName: $("#seachCustom").val(),
+			customerFlagStr: $("#customerFlag").val(),
 			createStartTime: $('#createStartTime').datebox('getValue'),
 			createEndTime: $('#createEndTime').datebox('getValue'),
 			pageNo: gridOpts.pageNumber,

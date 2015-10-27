@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.CustomerPrice;
@@ -619,6 +620,7 @@ public class OrderController {
     @Post("queryDeliveryList")
     public Reply queryDeliveryList(
 			@Param("orderNo") String orderNo,
+			@Param("productNoPrefix") String productNoPrefix,
 			@Param("customerName") String customerName,
 			@Param("customerFlagStr") String customerFlagStr,
 			@Param("createStartTime") String createStartTime,
@@ -639,6 +641,13 @@ public class OrderController {
 		if (customerName == null) {
 			customerName = "";
 		}
+		if (productNoPrefix == null) {
+			productNoPrefix = "";
+		}
+		
+		if (!StringUtils.isBlank(productNoPrefix)) {
+			productNoPrefix = productNoPrefix.toUpperCase() + "%";
+        }
 		
         ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
         String comCode      = user.getUser().getCompany().getComCode();
@@ -657,7 +666,7 @@ public class OrderController {
 		Page<Order> orderPage = orderRepository.queryDeliveryList(
 				createStartTime, createEndTime, comLevel, comCode,
 				customerFlag, user.getUser().getCustomer().getCode(),
-				customerName, orderNo, customerFlagStr, pageable);
+				customerName, orderNo, customerFlagStr, productNoPrefix,pageable);
         
         Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
         

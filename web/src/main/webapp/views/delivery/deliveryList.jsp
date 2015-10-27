@@ -12,6 +12,12 @@
 <%
 ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
 String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+String customerName_con = request.getParameter("customerName_con");
+if(customerName_con==null || "null".equals(customerName_con)){
+	customerName_con = "";
+} else {
+	customerName_con = new String(request.getParameter("customerName_con").getBytes("iso-8859-1"),"UTF-8");
+}
 %>
 </head>
 <body>
@@ -21,11 +27,22 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 	<table width="100%">
 		<tr>
 			<td align="right">订单号:</td>
-			<td><input id="orderNo" class="inp_text" type="text" value="" style="width: 60%" /></td>
+			<td><input id="orderNo" class="inp_text" type="text" value=""  style="width: 100px"  /></td>
+			<td align="right">生产编号开头:</td>
+			<td><input class="inp_text" type="text" autocomplete="off" id=productNoPrefix name="productNoPrefix" style="width: 20px" />
+			</td>
 			<td align="right">客户公司名称:</td>
-			<td><input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 150px" />
+			<td><input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 120px" />
 			    <input class="inp_text" type="hidden" id="customercode" name="customercode" value=""/>
 			    <ul id="seachCustomList"></ul>
+			</td>
+			<td align="right">公司性质:</td>
+			<td>
+                <select id="customerFlag" class="my_select" style="width: 90px;" >
+                    <option value="">请选择</option>
+                    <option value="1" <c:if test="${customerFlag_con=='1'}">selected</c:if> >代理公司</option>
+                    <option value="2" <c:if test="${customerFlag_con=='2'}">selected</c:if> >直接客户</option>
+                </select>
 			</td>
             <td align="right">订单时间:</td>
             <td>

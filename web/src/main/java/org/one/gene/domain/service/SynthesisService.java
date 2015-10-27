@@ -586,7 +586,7 @@ public class SynthesisService {
 			}
 			//生产编号
 			if (!"".equals(primerProduct.getProductNo())) {
-				tableContext += primerProduct.getProductNo()+", ";
+				tableContext += primerProduct.getProductNo()+",";
 			}else{
 				tableContext += primerProduct.getOutProductNo()+", ";
 			}
@@ -620,7 +620,7 @@ public class SynthesisService {
 		String excelFilePath = templatePath+"packTable.xls";
 		String configFilePath = templatePath+"packTableHoleConfig.txt";
 		
-		SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm");//设置日期格式
+		SimpleDateFormat df = new SimpleDateFormat("HH:mm");//设置日期格式
         String currentTime = df.format(new Date());
         Board board = boardRepository.findByBoardNo(boardNo);
         String boardType = "";
@@ -769,7 +769,7 @@ public class SynthesisService {
 		cell = row.getCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(boardNo);
-		row = sheet.getRow(27);
+		row = sheet.getRow(28);
 		cell = row.getCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(boardNo);
@@ -779,7 +779,7 @@ public class SynthesisService {
 		cell = row.getCell(1);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(remark);
-		row = sheet.getRow(44);
+		row = sheet.getRow(45);
 		cell = row.getCell(1);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(remark);
@@ -806,42 +806,42 @@ public class SynthesisService {
 					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
 				}else if (ppo.getType().equals(PrimerOperationType.ammoniaSuccess)) {
 					//氨解
-					cell = row.getCell(4);
+					cell = row.getCell(7);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("操作员："+ppo.getUserName());
-					cell = row.getCell(5);
+					cell = row.getCell(8);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
 				}else if (ppo.getType().equals(PrimerOperationType.purifySuccess)) {
 					//纯化
-					cell = row.getCell(6);
+					cell = row.getCell(9);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("操作员："+ppo.getUserName());
-					cell = row.getCell(7);
+					cell = row.getCell(10);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
 				}else if (ppo.getType().equals(PrimerOperationType.measureSuccess)) {
 					//测值
-					cell = row.getCell(8);
+					cell = row.getCell(11);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("操作员："+ppo.getUserName());
-					cell = row.getCell(9);
+					cell = row.getCell(12);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
 				}else if (ppo.getType().equals(PrimerOperationType.packSuccess)) {
 					//分装
-					cell = row.getCell(10);
+					cell = row.getCell(13);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("操作员："+ppo.getUserName());
-					cell = row.getCell(11);
+					cell = row.getCell(14);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
 				}else if (ppo.getType().equals(PrimerOperationType.deliverySuccess)) {
 					//发货
-					cell = row.getCell(12);
+					cell = row.getCell(17);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("操作员："+ppo.getUserName());
-					cell = row.getCell(13);
+					cell = row.getCell(18);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
 				}

@@ -245,8 +245,8 @@ public class PrintService {
 					printLabel.setTm(primerProductValue.getValue());
 				}else if(type.equals(PrimerValueType.GC)){//GC
 					printLabel.setGc(primerProductValue.getValue());
-				}else if(type.equals(PrimerValueType.GC)){//ug/tube======================PrimerValueType.java 没有这个值？？？
-					printLabel.setGc(primerProductValue.getValue());
+				}else if(type.equals(PrimerValueType.μgOD)){//ug/OD
+					printLabel.setUgOD(primerProductValue.getValue());
 				}
 				
 				if(type.equals(PrimerValueType.nmolTB)){//加水量
@@ -373,6 +373,8 @@ public class PrintService {
 					value = printLabelExcel.getRemark();
 				}else if("midi".equals(type)){
 					value = printLabelExcel.getMidi();
+				}else if("μgOD".equals(type)){
+					value = printLabelExcel.getUgOD()+"";
 				}
 				
 				if (!"null".equals(value)) {

@@ -148,7 +148,7 @@ public class OrderExcelPase {
 					break;
 				  case 4:	
 					  String geneOrder = orderCaculate.getGeneOrder(v);
-					  primerProduct.setGeneOrderMidi(v);
+					  primerProduct.setGeneOrderMidi(orderCaculate.getGeneOrderToUpper(v));
 					  primerProduct.setGeneOrder(orderCaculate.getYWSeqValue(geneOrder));
 					break;
 				  case 5:	

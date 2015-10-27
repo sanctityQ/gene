@@ -90,17 +90,40 @@ public class OrderCaculate {
 	public String getGeneOrder(String str){
 		//获取不包含在括号内字符串
 		String result = "";
-		Stack<Character> stack = new Stack<Character>();	 
+		Stack<Character> stack = new Stack<Character>();
 		StringBuffer resultbuf = new StringBuffer();	 
 		for(int i=0;i<str.length();i++){		 
 			char c = str.charAt(i);		 
 			if('(' == c){			 
-				stack.push(c);		 
-			}else if(')' == c){			 
-				stack.pop(); 		 
-			}else if(stack.isEmpty()){			
-				resultbuf.append(c);		 
+				stack.push(c);
+			}else if(')' == c){	 
+				stack.pop();
+			}else if(stack.isEmpty()){
+				resultbuf.append(c);
 			}	 
+		}
+		result = resultbuf.toString();
+		return result;
+	}
+	
+	public String getGeneOrderToUpper(String str){
+		//获取不包含在括号内字符串,转成大写，去掉特殊字符；括号内的字符不变动
+		String result = "";
+		Stack<Character> stack = new Stack<Character>();
+		StringBuffer resultbuf = new StringBuffer();	 
+		for(int i=0;i<str.length();i++){		 
+			char c = str.charAt(i);		 
+			if('(' == c){			 
+				stack.push(c);
+			}else if(')' == c){	 
+				stack.pop();
+			}
+            
+			if(stack.isEmpty() && ')' != c){
+				resultbuf.append(CharMatcher.anyOf("ATCGUINBDHKMRSWYV").retainFrom((""+c).toUpperCase()));
+			}else{
+				resultbuf.append(c);
+			}
 		}
 		result = resultbuf.toString();
 		return result;

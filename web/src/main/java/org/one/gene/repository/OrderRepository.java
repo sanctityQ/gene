@@ -70,6 +70,7 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 			+ "#if(:customerFlag == '0' && :customerName !='') { and o.`customer_name` = :customerName }"
 			+ "#if(:orderNo != '') { and o.`order_no` = :orderNo }"
 			+ "#if(:customerFlagStr != '') { and o.`customer_code` IN ( select `code` from `customer` where `customer_flag`= :customerFlagStr ) }"
+			+ "#if(:productNoPrefix != '') { and exists ( select 1 from `primer_product` pp where o.`order_no` = pp.`order_no` and pp.`product_no` like :productNoPrefix ) }"
 			+ " order by o.`create_time` desc "
 			)
 	Page<Order> queryDeliveryList(
@@ -82,6 +83,7 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 			@Param("customerName") String customerName,
 			@Param("orderNo") String orderNo,
 			@Param("customerFlagStr") String customerFlagStr, 
+			@Param("productNoPrefix") String productNoPrefix, 
 			Pageable pageable
 			);
 	
