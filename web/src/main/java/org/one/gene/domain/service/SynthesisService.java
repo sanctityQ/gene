@@ -1528,5 +1528,113 @@ public class SynthesisService {
 		
    		return typeMap;
    	}	
+	
+    /**
+     * 导出合成柱排版文件
+     * @throws IOException 
+     * */
+	public void exportHeChengZhuPaiBan(String boardNo, Invocation inv) throws IOException {
 		
+		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+"";
+		String excelFilePath = templatePath+"heChengZhuPaiBan.xls";
+		
+		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(excelFilePath));
+		HSSFSheet sheet = workbook.getSheetAt(0);
+		HSSFRow row = null;
+		HSSFCell cell = null;
+		
+		int rowIndex = 1;
+        Board board = boardRepository.findByBoardNo(boardNo);
+        if (board != null){
+        	for(BoardHole boardHole:board.getBoardHoles()){
+        		PrimerProduct pp = boardHole.getPrimerProduct();
+        		String holeNo = boardHole.getHoleNo();//孔号
+        		String productNo = pp.getOutProductNo();//生产编号
+        		if(productNo==null || "".equals(productNo)){
+        			productNo = pp.getProductNo();
+        		}
+        		String geneOrder = pp.getGeneOrder();//序列
+        		String purifyType = pp.getPurifyType();//纯化方式
+        		
+        		String modiStr    = "";//修饰
+        		String modiFiveType = pp.getModiFiveType();
+        		String modiThreeType= pp.getModiThreeType();
+        		String modiMidType  = pp.getModiMidType();
+        		String modiSpeType  = pp.getModiSpeType();
+    			
+        		if (!"".equals(modiFiveType) || !"".equals(modiThreeType) || !"".equals(modiMidType) || !"".equals(modiSpeType)) {
+    				modiStr = "(";
+    				if (!"".equals(modiFiveType)) {
+    					modiStr += modiFiveType + ",";
+    				}
+    				if (!"".equals(modiThreeType)) {
+    					modiStr += modiThreeType + ",";
+    				}
+    				if (!"".equals(modiMidType)) {
+    					modiStr += modiMidType + ",";
+    				}
+    				if (!"".equals(modiSpeType)) {
+    					modiStr += modiSpeType + ",";
+    				}
+    				modiStr = modiStr.substring(0, modiStr.length()-1);
+    				modiStr += ")";
+    			}
+        		
+				int odTB  = 0;//OD/Tube
+				int tb    = 0;//管数
+				int tbn   = 0;//碱基数t
+				for (PrimerProductValue ppv : pp.getPrimerProductValues()) {
+					PrimerValueType type = ppv.getType();
+					if (type.equals(PrimerValueType.odTB)) {// OD/Tube
+						odTB = ppv.getValue().intValue();
+					}else if(type.equals(PrimerValueType.tb)){//管数
+						tb = ppv.getValue().intValue();
+					}else if(type.equals(PrimerValueType.baseCount)){
+						tbn = ppv.getValue().intValue();
+		      		}
+				}
+        		
+				row = sheet.createRow(rowIndex);
+				cell = row.createCell(0);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue(holeNo);//
+				cell = row.createCell(1);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue(productNo);//
+				cell = row.createCell(2);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue(geneOrder);//
+				cell = row.createCell(3);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue(tbn);//
+				cell = row.createCell(4);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue(odTB);//
+				cell = row.createCell(5);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue(tb);//
+				cell = row.createCell(6);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue(purifyType);//
+				cell = row.createCell(7);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue(modiStr);//
+        		
+				rowIndex ++;
+        	}
+        }
+		
+		// 读取分装表模板 形成Excel
+		String strFileName = boardNo+".xls";
+		
+        //输出文件到客户端
+        HttpServletResponse response = inv.getResponse();
+        response.setContentType("application/x-msdownload");
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + strFileName + "\"");
+        OutputStream out=response.getOutputStream();
+        workbook.write(out);
+        out.flush();
+        out.close();
+    }
+	
 }

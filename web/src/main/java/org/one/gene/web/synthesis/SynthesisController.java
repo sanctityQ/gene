@@ -595,5 +595,30 @@ public class SynthesisController {
 
 		return Replys.with(boards).as(Json.class);
 	}
+  
+    
+    /**
+     * 进入导出合成柱排版页面
+     * */
+    public String heChengZhuPaiBan(){
+    	return "heChengZhuPaiBan";
+    }
+    
+    /**
+     * 导出合成柱排版文件
+     * @throws IOException 
+     * */
+    @Post("exportHeChengZhuPaiBan")
+    public void exportHeChengZhuPaiBan(@Param("boardNo") String boardNo, Invocation inv) throws IOException{
+    	synthesisService.exportHeChengZhuPaiBan(boardNo, inv);
+    }
+    /**
+     * 导出合成柱排版文件（从列表中）
+     * @throws IOException 
+     * */
+    @Post("exHeChengZhuPaiBan/{boardNoStr}/")
+    public void exHeChengZhuPaiBan(@Param("boardNoStr") String boardNo, Invocation inv) throws IOException{
+    	synthesisService.exportHeChengZhuPaiBan(boardNo, inv);
+    }
     
 }

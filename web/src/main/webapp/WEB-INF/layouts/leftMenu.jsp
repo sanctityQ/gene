@@ -27,6 +27,7 @@ if ("0".equals(customerFlag)){
 	<div title="安排合成" data-options="iconCls:'compound'" style="height:200px;">
 		<ul class="sbu_menu">
 			<li url="${ctx}/synthesis/productionData" id="productionData"><i class="icon-keyboard"></i>制作合成板</li>
+			<li url="${ctx}/synthesis/heChengZhuPaiBan" id="heChengZhuPaiBan"><i class="icon-th-large"></i>合成柱排版</li>
 			<li url="${ctx}/synthesis/synthesisResults" id="synthesisResults"><i class="icon-edit-sign"></i>合成结果</li>
 			<li url="${ctx}/synthesis/machineTable" id="machineTable"><i class="icon-desktop"></i>导出上机表</li>
 			<li url="${ctx}/synthesis/packTable" id="packTable"><i class="icon-dropbox"></i>导出分装表</li>

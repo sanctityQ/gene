@@ -93,6 +93,7 @@ function formatOper(val,row,index){
 	var row = $('#boardData').datagrid('getData').rows[index];
 	var operationType = $("#operationType").val();
 	var btnFlag = $("#btnFlag").val();
+	
 	if(typeof(operationType) != 'undefined'){
 		var url = "'/gene/views/synthesis/"+operationType+"ResultsBoard.jsp?boardNo="+row.boardNo+"'";
 	    return '<a href="javascript:;"  onclick="goToPage('+url+')"><i class="icon-pencil"></i>录入结果</a>';
@@ -108,6 +109,10 @@ function formatOper(val,row,index){
 	if(typeof(btnFlag) != 'undefined' && btnFlag =="DeliveryLabel"){
 		var url = "'/gene/delivery/exDeliveryLabel/"+row.boardNo+"/'";
 	    return '<a href="javascript:;"  onclick="executeUrl('+url+')"><i class="icon-pencil"></i>发货标签</a>';
+	}
+	if(typeof(btnFlag) != 'undefined' && btnFlag =="HeChengZhuPaiBan"){
+		var url = "'/gene/synthesis/exHeChengZhuPaiBan/"+row.boardNo+"/'";
+	    return '<a href="javascript:;"  onclick="executeUrl('+url+')"><i class="icon-pencil"></i>导出</a>';
 	}
 };
 
