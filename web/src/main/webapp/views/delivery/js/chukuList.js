@@ -64,13 +64,22 @@ var getProducts=function(){
 var deliveryList = function(){
 	
     var table = $('#productionData');
-    var orderInfos = table.datagrid('getSelections');
+    var rows = table.datagrid('getSelections');
     var makeBoard = $('#makeBoard');
   
 	makeBoard.attr('disabled','disabled');//按钮置灰
 	//table.datagrid('loadData', { total: 0, rows: [] });//清空数据
 	
-	document.form.action = "/gene/delivery/exportChuku/"+JSON.stringify(orderInfos)+"/";
+    var orderInfos_arr = new Array();
+    
+    for(var i = 0; i < rows.length; i++){
+        var data = rows[i];
+        orderNo = data.orderNo;
+        var orderInfo_arr = { "orderNo":orderNo };
+        orderInfos_arr.push(orderInfo_arr);
+    }
+    
+	document.form.action = "/gene/delivery/exportChuku/"+JSON.stringify(orderInfos_arr)+"/";
 	document.form.submit();
 	
 }
