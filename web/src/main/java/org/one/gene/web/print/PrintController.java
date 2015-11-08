@@ -62,15 +62,6 @@ public class PrintController {
     	return "productionLabel";
     }
     
-    /**
-     * 进入出库单打印查询页面
-     * 
-     * */
-    @Get("printOutBoundList")
-    public String printOutBoundList(){
-    	
-    	return "outboundPrinting";
-    }
     
     /**
      * 打印标签查询
@@ -89,7 +80,16 @@ public class PrintController {
     	return Replys.with(orders).as(Json.class);
     }
 
-    
+    /**
+     * 进入出库单打印查询页面
+     * 
+     * */
+    @Get("printOutBoundList")
+    public String printOutBoundList(){
+    	
+    	return "outboundPrinting";
+    }
+	
     @Post("printOutBoundQuery")
     public Reply printOutBoundQuery(@Param("orderNo") String orderNo, @Param("customerName") String customerName,@Param("status") String status,@Param("pageNo")Integer pageNo,
                         @Param("pageSize")Integer pageSize,Invocation inv) throws Exception {
