@@ -983,7 +983,7 @@ public class DeliveryService {
 		HSSFRow row = null;
 		HSSFCell cell = null;
 		
-		int startRow = 1;//从第6行开始
+		int startRow = 1;//从第1行开始
 		int rowNo = 1;//行号
 		double totalMoney = 0.0;//合计
 		for (DeliveryInfo dis : deliveryInfos) {

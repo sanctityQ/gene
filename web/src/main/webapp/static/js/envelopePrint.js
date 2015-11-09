@@ -59,6 +59,7 @@ var getOrderInfos=function(){
 			customerCode: customerCode,
 			orderNo: orderNo,
 			modifyTime:modifyTime,
+			customerFlagStr: $("#customerFlag").val(),
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
         },

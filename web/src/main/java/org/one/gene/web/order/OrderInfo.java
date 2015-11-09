@@ -15,7 +15,7 @@ public class OrderInfo {
 	//订单信息列表属性
 	private String orderNo;
 	private String outOrderNO;
-	private String productNo;
+	private String productNo;//生产编号
 	private BigDecimal odTotal;
 	private BigDecimal OdTB;
 	private String customerName;
@@ -25,8 +25,11 @@ public class OrderInfo {
 	private Date createTime;
 	private Date modifyTime;
     private String contactsName;
-	
-	
+    private String boardNo;//板号
+	private String midi;//修饰
+    private String mw;//分子量
+    private BigDecimal tbn;//碱基数
+    private String comTbn;//复合碱基
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -189,5 +192,38 @@ public class OrderInfo {
 	}
 	public void setContactsName(String contactsName) {
 		this.contactsName = contactsName;
+	}
+	
+    public String getBoardNo() {
+		return boardNo;
+	}
+	public void setBoardNo(String boardNo) {
+		this.boardNo = boardNo;
+	}
+	public String getMidi() {
+		return midi;
+	}
+	public void setMidi(String midi) {
+		this.midi = midi;
+	}
+	public String getMw() {
+		return mw;
+	}
+	public void setMw(String mw) {
+		this.mw = mw;
+	}
+	public BigDecimal getTbn() {
+		return tbn;
+	}
+	public void setTbn(BigDecimal tbn) {
+		this.tbn = tbn;
+	}
+	
+	
+	public String getComTbn() {
+		return comTbn;
+	}
+	public void setComTbn(String comTbn) {
+		this.comTbn = comTbn;
 	}
 }

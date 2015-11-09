@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
@@ -191,6 +192,8 @@ public class PrintController {
 			@Param("customerCode") String customerCode,
 			@Param("modifyTime") String modifyTime,
 			@Param("pageNo") Integer pageNo,
+			@Param("productNoPrefix") String productNoPrefix,
+			@Param("customerFlagStr") String customerFlagStr,
 			@Param("pageSize") Integer pageSize, Invocation inv) throws Exception {
     	
         if(pageNo == null || pageNo <= 0){
@@ -200,32 +203,43 @@ public class PrintController {
         if(pageSize == null){
             pageSize = 20;
         }
+        
+		if (customerFlagStr == null) {
+			customerFlagStr = "";
+		}
+		
+		if (productNoPrefix == null) {
+			productNoPrefix = "";
+		}
+		
+		if (!StringUtils.isBlank(productNoPrefix)) {
+			productNoPrefix = productNoPrefix.toUpperCase() + "%";
+        }
+		
     	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
     	String comCode = user.getUser().getCompany().getComCode();
     	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+    	String comLevel     = user.getUser().getCompany().getComLevel();
     	
-        Sort s=new Sort(Direction.DESC, "createTime");
-        Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
-        Map<String,Object> searchParams = Maps.newHashMap();
-        searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
-		if (!"0".equals(customerFlag)) {//代理公司和直接客户，只能查自己公司的业务
-			searchParams.put(SearchFilter.Operator.EQ+"_customerCode",user.getUser().getCustomer().getCode());
-		} else {
-			searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
-		}
-        searchParams.put(SearchFilter.Operator.EQ+"_status","1");//订单审核通过
-    	if(!"1".equals(user.getUser().getCompany().getComLevel())){
-    		searchParams.put(SearchFilter.Operator.EQ+"_comCode",comCode);
-    	}
+        Pageable pageable = new PageRequest(pageNo-1,pageSize);
+        
+        String createStartTime = "";
+        String createEndTime = "";
+        
 		if (!"".equals(modifyTime)) {
-        	searchParams.put(SearchFilter.Operator.GT+"_modifyTime",new Date(modifyTime));
-        	searchParams.put(SearchFilter.Operator.LT+"_modifyTime",new Date(modifyTime+" 59:59:59"));
+        	createStartTime = modifyTime+" 00:00:00";
+        	createEndTime = modifyTime+" 23:59:59";
         }
+	
+		
+		if (!"0".equals(customerFlag)) {//代理公司和直接客户，只能查自己公司的业务
+			customerCode = user.getUser().getCustomer().getCode();
+		}
         
-        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
-        Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
-        
-        Page<Order> orderPage = orderRepository.findAll(spec,pageable);
+		Page<Order> orderPage = orderRepository.printReportQuery(
+				createStartTime, createEndTime, comLevel, comCode,
+				customerCode, orderNo, customerFlagStr, productNoPrefix,
+				pageable);
         Page<OrderInfo> orderListPage = orderService.convertOrderList(orderPage,pageable);
         
     	return Replys.with(orderListPage).as(Json.class);

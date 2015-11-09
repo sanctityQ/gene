@@ -171,4 +171,24 @@ public class StatisticsController {
     }
     
     
+    /**
+     * 进入HPLC纯化进度表查询页面
+     * */
+    @Get("hplcChunHuaBiao")
+    public String hplcChunHuaBiao(){
+    	return "hplcChunHuaBiao";
+    }
+    
+    /**
+     * 导出HPLC纯化进度表文件
+     * @throws Exception 
+     * @throws IOException 
+     * */
+    @Post("exHplcChunHuaBiao")
+    public void exHplcChunHuaBiao(@Param("boardNo") String  boardNo, Invocation inv) throws Exception {
+    	
+    	statisticsService.exHplcChunHuaBiao(boardNo, inv);
+    }
+    
+    
 }

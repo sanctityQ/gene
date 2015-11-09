@@ -81,7 +81,6 @@ var ctx = '${ctx}';
                                     <li value="tb">管数</li>
                                     <li value="GC">GC(%)</li>
                                     <li value="remark">备注/日期</li>
-                                    <li value="pmole">加水量</li>
                                     <li value="μgOD">μg/OD</li>
                                 </ul>
                             </td>

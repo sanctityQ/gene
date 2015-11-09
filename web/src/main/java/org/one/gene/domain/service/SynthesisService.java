@@ -709,9 +709,9 @@ public class SynthesisService {
 					cell = row.getCell(pthc.getColumn()+2);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					if (pp.getOrder().getOrderUpType() == OrderType.nmol) {
-						cell.setCellValue(pp.getNmolTB().toBigInteger()+""+pp.getOrder().getOrderUpType()+"*"+pp.getTb().toBigInteger());
+						cell.setCellValue(pp.getNmolTB()+""+pp.getOrder().getOrderUpType()+"*"+pp.getTb().toBigInteger());
 					}else{
-						cell.setCellValue(pp.getOdTB().toBigInteger()+""+pp.getOrder().getOrderUpType()+"*"+pp.getTb().toBigInteger());
+						cell.setCellValue(pp.getOdTB()+""+pp.getOrder().getOrderUpType()+"*"+pp.getTb().toBigInteger());
 					}
 					
 					// 体积:导入测试数据后显示体积,如果在测试之前：显示级别顺序：1：修饰，2：HPLC，3：PAGE)

@@ -74,6 +74,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.sinosoft.one.mvc.web.Invocation;
@@ -99,7 +100,11 @@ public class StatisticsService {
     private UserRepository userRepository;
     @Autowired
     private PrimerProductOperationRepository primerProductOperationRepository;
-
+    @Autowired
+    private PrimerProductValueRepository primerProductValueRepository;
+    @Autowired
+    private BoardRepository boardRepository;
+    
     /**
      * 导出出库统计
      * @throws IOException 
@@ -1463,5 +1468,204 @@ public class StatisticsService {
         out.flush();
         out.close();
     }
+	
+	
+    /**
+     * 导出HPLC纯化表
+     * @throws IOException 
+     * @throws ParseException 
+     * */
+	public void exHplcChunHuaBiao( String boardNo, Invocation inv) throws IOException, ParseException {
+		
+       //组织数据
+
+		OrderInfo orderInfo = null;
+		List<OrderInfo> orderInfos = new ArrayList<OrderInfo>();
+		Board board = boardRepository.findByBoardNo(boardNo);
+		if (board != null) {
+			for (BoardHole boardHole : board.getBoardHoles()) {
+				PrimerProduct primerProduct = boardHole.getPrimerProduct();
+				
+				this.addNewValue(primerProduct);
+				
+				if (boardHole.getStatus() == 0) {//0正常  1 删除 
+					orderInfo = new OrderInfo();
+					//修饰
+					String midi = "";
+					if (!"".equals(primerProduct.getModiFiveType())) {
+						midi += primerProduct.getModiFiveType()+",";
+					}
+					if (!"".equals(primerProduct.getModiMidType())) {
+						midi += primerProduct.getModiMidType()+",";
+					}
+					if (!"".equals(primerProduct.getModiSpeType())) {
+						midi += primerProduct.getModiSpeType()+",";
+					}
+					if (!"".equals(primerProduct.getModiThreeType())) {
+						midi += primerProduct.getModiThreeType()+",";
+					}
+					if(!"".equals(midi)){
+						midi = "("+midi.substring(0, midi.length()-1)+")";
+						orderInfo.setMidi(midi);
+					}
+					if("".equals(midi) && "HPLC".equals(primerProduct.getPurifyType())){
+						orderInfo.setMidi("HPLC");
+					}
+					if (primerProduct.getOutProductNo() != null
+							&& !"".equals(primerProduct.getOutProductNo())
+							&& !"null".equals(primerProduct.getOutProductNo())) {
+						orderInfo.setProductNo(primerProduct.getOutProductNo());
+					} else {
+						orderInfo.setProductNo(primerProduct.getProductNo());
+					}
+					orderInfo.setBoardNo(primerProduct.getBoardNo());
+					orderInfo.setMakingNo(primerProduct.getOdTB()+"OD*"+primerProduct.getTb());
+					orderInfo.setTbn(primerProduct.getTbn());
+					orderInfo.setMw(primerProduct.getMw()+"");
+					orderInfo.setComTbn(CharMatcher.anyOf("MRWSYKVHDBN").retainFrom(primerProduct.getGeneOrder().toUpperCase()));
+					orderInfos.add(orderInfo);
+				}
+			}
+		}
+		
+		//先按板号查
+		if (orderInfos != null && orderInfos.size()>0) {
+		} else {
+			//再按生产编号查
+			PrimerProduct primerProduct = primerProductRepository.findByProductNoOrOutProductNo(boardNo, boardNo);
+			if (primerProduct != null) {
+				
+				this.addNewValue(primerProduct);
+				
+				orderInfo = new OrderInfo();
+				//修饰
+				String midi = "";
+				if (!"".equals(primerProduct.getModiFiveType())) {
+					midi += primerProduct.getModiFiveType()+",";
+				}
+				if (!"".equals(primerProduct.getModiMidType())) {
+					midi += primerProduct.getModiMidType()+",";
+				}
+				if (!"".equals(primerProduct.getModiSpeType())) {
+					midi += primerProduct.getModiSpeType()+",";
+				}
+				if (!"".equals(primerProduct.getModiThreeType())) {
+					midi += primerProduct.getModiThreeType()+",";
+				}
+				if(!"".equals(midi)){
+					midi = "("+midi.substring(0, midi.length()-1)+")";
+					orderInfo.setMidi(midi);
+				}
+				if("".equals(midi) && "HPLC".equals(primerProduct.getPurifyType())){
+					orderInfo.setMidi("HPLC");
+				}
+				if (primerProduct.getOutProductNo() != null
+						&& !"".equals(primerProduct.getOutProductNo())
+						&& !"null".equals(primerProduct.getOutProductNo())) {
+					orderInfo.setProductNo(primerProduct.getOutProductNo());
+				} else {
+					orderInfo.setProductNo(primerProduct.getProductNo());
+				}
+				orderInfo.setBoardNo(primerProduct.getBoardNo());
+				orderInfo.setMakingNo(primerProduct.getOdTB()+"OD*"+primerProduct.getTb());
+				orderInfo.setTbn(primerProduct.getTbn());
+				orderInfo.setMw(primerProduct.getMw()+"");
+				orderInfo.setComTbn(CharMatcher.anyOf("MRWSYKVHDBN").retainFrom(primerProduct.getGeneOrder().toUpperCase()));
+				orderInfos.add(orderInfo);
+			}
+		}
+		
+		
+		
+		//形成Excel
+		String templetName = "HPLCchunhuabiao.xls";
+		String strFileName = boardNo+".xls";
+		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator;
+		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(templatePath+templetName));
+        HSSFSheet sheet = workbook.getSheetAt(0);
+		HSSFRow row = null;
+		HSSFCell cell = null;
+    	HSSFCellStyle style_center = workbook.createCellStyle();
+    	style_center.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+    	style_center.setBorderBottom(HSSFCellStyle.BORDER_THIN); // 下边框  
+    	style_center.setBorderLeft(HSSFCellStyle.BORDER_THIN);// 左边框  
+    	style_center.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框  
+    	style_center.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框  
+    	
+    	int startRow = 2;//从第2行开始
+    	int index=1;
+    	for (OrderInfo oi : orderInfos) {
+			row = sheet.getRow(startRow);
+			
+			cell = row.createCell(0);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(oi.getBoardNo());//
+			cell = row.createCell(1);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(index);//
+			cell = row.createCell(2);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(oi.getMidi());//
+			cell = row.createCell(3);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(oi.getProductNo());//
+			cell = row.createCell(4);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(oi.getMakingNo());//
+			cell = row.createCell(5);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(oi.getTbn()+"");//
+			cell = row.createCell(6);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(oi.getMw());//
+			cell = row.createCell(7);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(oi.getComTbn());//
+			
+			startRow = startRow +1;
+    		index++;
+		}
+    	
+		
+        //输出文件到客户端
+        HttpServletResponse response = inv.getResponse();
+        response.setContentType("application/x-msdownload");
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + strFileName + "\"");
+        OutputStream out=response.getOutputStream();
+        workbook.write(out);
+        out.flush();
+        out.close();
+    }
+	
+	
+	//补充临时字段的值
+	public void addNewValue(PrimerProduct primerProduct) {
+		for (PrimerProductValue pv : primerProduct.getPrimerProductValues()) {
+			if (pv.getType().equals(PrimerValueType.odTotal)) {
+				primerProduct.setOdTotal(pv.getValue());
+			} else if (pv.getType().equals(PrimerValueType.odTB)) {
+				primerProduct.setOdTB(pv.getValue());
+			} else if (pv.getType().equals(PrimerValueType.nmolTotal)) {
+				primerProduct.setNmolTotal(pv.getValue());
+			} else if (pv.getType().equals(PrimerValueType.nmolTB)) {
+				primerProduct.setNmolTB(pv.getValue());
+			} else if (pv.getType().equals(PrimerValueType.baseCount)) {
+				primerProduct.setTbn(pv.getValue());
+			} else if (pv.getType().equals(PrimerValueType.tb)) {
+				primerProduct.setTb(pv.getValue());
+			} else if (pv.getType().equals(PrimerValueType.MW)) {
+				primerProduct.setMw(pv.getValue());
+			}
+		}
+
+}
 	
 }

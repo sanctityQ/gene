@@ -37,6 +37,7 @@ if ("0".equals(customerFlag)){
 		<ul class="sbu_menu">
 			<li url="${ctx}/synthesis/decorate" id="decorate"><i class="icon-star-half-full"></i>修饰</li>
 			<li url="${ctx}/synthesis/ammoniaResults" id="aminolysis"><i class="icon-th-large"></i>氨解</li>
+			<li url="${ctx}/statistics/hplcChunHuaBiao" id="hplcChunHuaBiao"><i class="icon-th-large"></i>HPLC纯化表</li>
 		</ul>
 	</div>
 	<div title="纯化" data-options="iconCls:'purifying'" style="height:200px;">

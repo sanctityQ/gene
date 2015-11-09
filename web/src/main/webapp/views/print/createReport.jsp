@@ -18,6 +18,9 @@
 			<td><input class="inp_text" type="text" id="seachOrder" name="orderNo" value="" style="width:80%"/>
 			    <ul id="seachOrderList"></ul>
 			</td>
+			<td align="right">生产编号开头:</td>
+			<td><input class="inp_text" type="text" autocomplete="off" id=productNoPrefix name="productNoPrefix" style="width: 20px" />
+			</td>
 			<c:if test="${customerFlag=='0'}">
 	            <td align="right">客户公司名称:</td>
 	            <td><input class="inp_text" type="text" id="seachCustom" name="customerName" value="" style="width:150px" />

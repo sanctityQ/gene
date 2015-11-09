@@ -87,5 +87,26 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 			Pageable pageable
 			);
 	
+	@SQL("select * from `order` o  where `status` = '1' "
+			+ "#if(:createStartTime != '') { and o.`create_time` >= STR_TO_DATE( :createStartTime , '%m/%d/%Y %H:%i:%S') } "
+			+ "#if(:createEndTime != '') { and o.`create_time`   <= STR_TO_DATE( :createEndTime   , '%m/%d/%Y %H:%i:%S') } "
+			+ "#if(:comLevel != '1') { and o.`com_code` = :comCode }"
+			+ "#if(:customerCode != '') { and o.`customer_code` = :customerCode }"
+			+ "#if(:orderNo != '') { and o.`order_no` = :orderNo }"
+			+ "#if(:customerFlagStr != '') { and o.`customer_code` IN ( select `code` from `customer` where `customer_flag`= :customerFlagStr ) }"
+			+ "#if(:productNoPrefix != '') { and exists ( select 1 from `primer_product` pp where o.`order_no` = pp.`order_no` and pp.`product_no` like :productNoPrefix ) }"
+			+ " order by o.`create_time` desc "
+			)
+	Page<Order> printReportQuery(
+			@Param("createStartTime") String createStartTime,
+			@Param("createEndTime") String createEndTime,
+			@Param("comLevel") String comLevel,
+			@Param("comCode") String comCode,
+			@Param("customerCode") String customerCode,
+			@Param("orderNo") String orderNo,
+			@Param("customerFlagStr") String customerFlagStr, 
+			@Param("productNoPrefix") String productNoPrefix, 
+			Pageable pageable
+			);
 }
 

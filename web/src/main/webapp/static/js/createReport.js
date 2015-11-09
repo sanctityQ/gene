@@ -53,6 +53,7 @@ var getOrderInfos=function(){
 			customerCode: customerCode,
 			orderNo: orderNo,
 			modifyTime:'',
+			productNoPrefix: $("#productNoPrefix").val(),
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
         },
