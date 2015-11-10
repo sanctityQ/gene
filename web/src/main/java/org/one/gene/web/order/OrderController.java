@@ -207,12 +207,17 @@ public class OrderController {
 			
 			List<ProductMolecular> productMoleculars = (List<ProductMolecular>) productMolecularRepository.findAll();
 			
+			String modiMidArr = "";
+			String modiSpeArr = "";
+			
 			if (productMoleculars != null && productMoleculars.size() > 0) {
 				for (ProductMolecular pm : productMoleculars) {
 					if (pm.getValidate().equals("1")) {
 						if (pm.getProductCategories().equals("modiMidType")) {
+							modiMidArr = modiMidArr + pm.getProductCode() + ",";
 							modiMidMap.put(pm.getProductCode(), pm.getModifiedMolecular()+"");
 						} else if (pm.getProductCategories().equals("modiThreeType")) {
+							modiSpeArr = modiSpeArr + pm.getProductCode() + ",";
 							modiSpeMap.put(pm.getProductCode(), pm.getModifiedMolecular()+"");
 						}
 					}
@@ -244,6 +249,8 @@ public class OrderController {
         	orderNoStr = orderNoStr.substring(0, orderNoStr.length()-1);
         	
         	inv.getResponse().setContentType("text/html");
+    		inv.addModel("modiMidArr", modiMidArr);
+    		inv.addModel("modiSpeArr", modiSpeArr);
     		inv.addModel("orderNoStr", orderNoStr);
     		inv.addModel("customer", customer);
     		inv.addModel("order", order);
@@ -264,8 +271,28 @@ public class OrderController {
     	 Order order = orderRepository.findByOrderNo(orderNo);
     	 String coustomerCode = order.getCustomerCode();
      	 Customer customer = orderService.findCustomer(coustomerCode);
+     	 
+			List<ProductMolecular> productMoleculars = (List<ProductMolecular>) productMolecularRepository.findAll();
+			
+			String modiMidArr = "";
+			String modiSpeArr = "";
+			
+			if (productMoleculars != null && productMoleculars.size() > 0) {
+				for (ProductMolecular pm : productMoleculars) {
+					if (pm.getValidate().equals("1")) {
+						if (pm.getProductCategories().equals("modiMidType")) {
+							modiMidArr = modiMidArr + pm.getProductCode() + ",";
+						} else if (pm.getProductCategories().equals("modiThreeType")) {
+							modiSpeArr = modiSpeArr + pm.getProductCode() + ",";
+						}
+					}
+				}
+			}
+			
      	 inv.addModel("customer", customer);
 		 inv.addModel("order", order);
+ 		 inv.addModel("modiMidArr", modiMidArr);
+ 		 inv.addModel("modiSpeArr", modiSpeArr);
 		 if (orderNoStr == null || "".equals(orderNoStr)) {
 			inv.addModel("orderNoStr", order.getOrderNo());
 		 } else {

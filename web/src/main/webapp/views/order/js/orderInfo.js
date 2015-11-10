@@ -1,8 +1,9 @@
 var bigIndex = undefined,bigToSmall = $('#bigToSmall'),editIndex = 0;
 //中间修饰
-var modiMidArr = "Cy5,TAMRA,ROX,Dabcyl,Biotin,Digoxin,FAM,";
+var modiMidArr = $("#modiMidArr").val();
 //特殊单体
-var modiSpeArr = "dI,dU,dT-NH2,Spacer(C12),*,5-Methyl dC,Spacer(C3),";
+var modiSpeArr = $("#modiSpeArr").val();
+
 function cellStyler(value,row,index){
 	if(value!=''){
       return 'color:red;';

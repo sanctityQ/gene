@@ -16,6 +16,8 @@ var ctx = '${ctx}';
 </script>
 </head>
 <body>
+<input id="modiMidArr" type="hidden" value="${modiMidArr}"/>
+<input id="modiSpeArr" type="hidden" value="${modiSpeArr}"/>
 <div class="page_padding">
 	<div class="content_box totle margin_btoom">
 		<b>订单号：</b>${order.orderNo}<br />
