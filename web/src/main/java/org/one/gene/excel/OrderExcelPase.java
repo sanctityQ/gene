@@ -109,7 +109,10 @@ public class OrderExcelPase {
 	 * @param sheetIndex 第几个sheet页
 	 * @param rows 忽略的行数或从第几行开始
 	 */
-	public ArrayList<Order> ReadExcel(String path, int sheetIndex, String rows, String prefix, List<CustomerPrice> customerPrices) {
+	public ArrayList<Order> ReadExcel(String path, int sheetIndex, String rows,
+			String prefix, List<CustomerPrice> customerPrices,
+			Map<String, String> modiMidMap, Map<String, String> modiSpeMap) {
+		
 		// 获取Excel文件的第1个sheet的内容
 		ArrayList<ArrayList<String>> lists = excelResolver.ReadExcel(path, sheetIndex,rows);
 		ArrayList<Order>  orders = new ArrayList<Order>();
@@ -182,11 +185,11 @@ public class OrderExcelPase {
 					  primerProduct.setModiThreeType(v);
 					break;
 				  case 12:	
-					  String modiMid = orderCaculate.getCountStr(orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),OrderCaculate.modiMidMap));
+					  String modiMid = orderCaculate.getCountStr(orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),modiMidMap));
 					  primerProduct.setModiMidType(modiMid);
 					break;
 				  case 13:	
-					  String modiSpe = orderCaculate.getCountStr(orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),OrderCaculate.modiSpeMap));
+					  String modiSpe = orderCaculate.getCountStr(orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),modiSpeMap));
 					  primerProduct.setModiSpeType(modiSpe);
 					break;
 				  case 14:	

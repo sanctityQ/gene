@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
+import org.one.gene.domain.entity.ProductMolecular;
 import org.one.gene.domain.service.OrderService;
 import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
 import org.one.gene.instrument.persistence.DynamicSpecifications;
@@ -27,6 +29,7 @@ import org.one.gene.repository.CustomerRepository;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductOperationRepository;
 import org.one.gene.repository.PrimerProductRepository;
+import org.one.gene.repository.ProductMolecularRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +72,8 @@ public class OrderController {
     private PrimerProductOperationRepository primerProductOperationRepository;
     @Autowired
     private CustomerPriceRepository customerPriceRepository;
+    @Autowired
+    private ProductMolecularRepository productMolecularRepository;
     
     @Get("import")
     public String orderImport(Invocation inv){
@@ -196,10 +201,26 @@ public class OrderController {
 				}
 			}
         	
-        	//组织订单对象
+			//组织修饰基础数据
+			Map<String,String> modiMidMap = new HashMap<String,String>();  
+			Map<String,String> modiSpeMap = new HashMap<String,String>();
+			
+			List<ProductMolecular> productMoleculars = (List<ProductMolecular>) productMolecularRepository.findAll();
+			
+			if (productMoleculars != null && productMoleculars.size() > 0) {
+				for (ProductMolecular pm : productMoleculars) {
+					if (pm.getValidate().equals("1")) {
+						if (pm.getProductCategories().equals("modiMidType")) {
+							modiMidMap.put(pm.getProductCode(), pm.getModifiedMolecular()+"");
+						} else if (pm.getProductCategories().equals("modiThreeType")) {
+							modiSpeMap.put(pm.getProductCode(), pm.getModifiedMolecular()+"");
+						}
+					}
+				}
+			}
         	
         	//获取外部订单号
-        	ArrayList<Order>  orders = orderService.ReadExcel(path, 0,"2-", prefix, customerPrices);
+        	ArrayList<Order>  orders = orderService.ReadExcel(path, 0,"2-", prefix, customerPrices, modiMidMap, modiSpeMap);
         	orderService.convertOrder(customer,filename,orders, contactsname);
         	//保存订单信息
         	try{

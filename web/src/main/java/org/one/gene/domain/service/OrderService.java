@@ -296,8 +296,8 @@ public class OrderService {
     	primerProductRepository.save(primerProductTemp);
     }
     
-    public ArrayList<Order> ReadExcel(String path, int sheetIndex, String rows, String prefix, List<CustomerPrice> customerPrices) {
-    	return orderExcelPase.ReadExcel(path, sheetIndex,rows,prefix,customerPrices);
+    public ArrayList<Order> ReadExcel(String path, int sheetIndex, String rows, String prefix, List<CustomerPrice> customerPrices, Map<String,String> modiMidMap, Map<String,String> modiSpeMap) {
+    	return orderExcelPase.ReadExcel(path, sheetIndex,rows,prefix,customerPrices, modiMidMap, modiSpeMap);
     }
     
     public ArrayList<String> getExcelPaseErrors(String path,int ignoreRows, int sheetIndex) throws FileNotFoundException, IOException{
