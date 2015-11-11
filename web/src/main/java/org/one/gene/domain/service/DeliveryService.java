@@ -928,6 +928,7 @@ public class DeliveryService {
 				int    nmolTB      = 0;// nmole/Tube
 				int tb = 0 ;//管数
 				OrderType orderUpType = order.getOrderUpType();
+				String remark = "";
 				
 				for (PrimerProduct primerProduct : order.getPrimerProducts()) {
 					
@@ -947,7 +948,11 @@ public class DeliveryService {
 							tb = primerProductValue.getValue().intValue();
 						}
 					}
+					if(!"".equals(primerProduct.getRemark())){
+						remark = remark + "\r\n" +primerProduct.getProductNo()+","+primerProduct.getRemark()+";";
+					}
 				}
+				remark = remark.replaceFirst("\r\n", "");
 				
 				deliveryInfo = new DeliveryInfo();
 				deliveryInfo.setExtendStr1(orderDate);//订货日期
@@ -964,6 +969,7 @@ public class DeliveryService {
 					deliveryInfo.setExtendStr7(nmolTotal+"nmol");//nmol总量
 				}
 				deliveryInfo.setExtendStr8("");//出货日期
+				deliveryInfo.setExtendStr9(remark);//备注
 				
 				deliveryInfos.add(deliveryInfo);
 			}
@@ -979,47 +985,53 @@ public class DeliveryService {
 		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator;
 		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(templatePath+templetName));
         HSSFSheet sheet = workbook.getSheetAt(0);
-		HSSFRow rowFirst = null;
 		HSSFRow row = null;
 		HSSFCell cell = null;
 		
+		 HSSFCellStyle headstyle = workbook.createCellStyle();    
+		 headstyle.setWrapText(true);// 自动换行    
+
+		 
 		int startRow = 1;//从第1行开始
-		int rowNo = 1;//行号
-		double totalMoney = 0.0;//合计
 		for (DeliveryInfo dis : deliveryInfos) {
 			
-			row = sheet.getRow(startRow);
-			cell = row.getCell(0);
+			row = sheet.createRow(startRow);
+			cell = row.createCell(0);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellValue(dis.getExtendStr1());//订货日期
 			
-			cell = row.getCell(1);
+			cell = row.createCell(1);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellValue(dis.getExtendStr2());//单位
 		    
-			cell = row.getCell(2);
+			cell = row.createCell(2);
 		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellValue(dis.getExtendStr3());//客户姓名
 		    
-			cell = row.getCell(3);
+			cell = row.createCell(3);
 		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellValue(dis.getExtendStr4());//生产编号
 			
-			cell = row.getCell(4);
+			cell = row.createCell(4);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellValue(dis.getExtendStr5());//碱基数
 		    
-			cell = row.getCell(5);
+			cell = row.createCell(5);
 		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellValue(dis.getExtendStr6());//OD/Tube
 			
-			cell = row.getCell(6);
+			cell = row.createCell(6);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellValue(dis.getExtendStr7());//OD总量
 			
-			cell = row.getCell(7);
+			cell = row.createCell(7);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellValue("");//出货日期
+			
+			cell = row.createCell(8);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(headstyle);
+			cell.setCellValue(dis.getExtendStr9());//备注
 			
 			startRow = startRow +1;
 

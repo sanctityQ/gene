@@ -66,8 +66,8 @@ if(customerName_con==null || "null".equals(customerName_con)){
 			<th data-options="field:'ck',checkbox:true"></th>
             <th data-options="field:'orderNo',width:80,sortable:true">订单号</th>
             <th data-options="field:'customerName',width:100,sortable:true">客户公司名称</th>
-            <th data-options="field:'contactsName',width:100,sortable:true">客户联系人</th>
-			<th data-options="field:'productNoMinToMax',width:80,sortable:true">生产编号</th>
+            <th data-options="field:'contactsName',width:60,sortable:true">客户联系人</th>
+			<th data-options="field:'productNoMinToMax',width:100,sortable:true">生产编号</th>
 			<th data-options="field:'tbnTotal',width:50,sortable:true">碱基总数</th>
             <th data-options="field:'createTime',width:80,sortable:true">导入时间</th>
             <th data-options="field:'modifyTime',width:80,sortable:true">修改时间</th>
@@ -84,7 +84,8 @@ $(function(){
     var opts = dg.datagrid('options');
     var pager = dg.datagrid('getPager');
     pager.pagination({
-        pageSize:20,
+        pageSize:1000,
+        pageList:[50,100,500,1000],
         onSelectPage:function(pageNum, pageSize){
             opts.pageNumber = pageNum;
             opts.pageSize = pageSize;

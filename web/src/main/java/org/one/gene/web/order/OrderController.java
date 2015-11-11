@@ -89,6 +89,18 @@ public class OrderController {
     	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
     	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 		inv.addModel("customerFlag", customerFlag);// 用户归属公司标识，0-梓熙，1-代理公司，2-直接客户
+		inv.addModel("orderStatus", "");//区分普通信息查询或者审核通过后的查询
+        return "orderList";
+    }
+    
+    //已审核通过的订单，修改信息
+    @Get("orderAudit")
+    @Post("orderAudit")
+    public String orderAudit(Invocation inv){
+    	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
+		inv.addModel("customerFlag", customerFlag);// 用户归属公司标识，0-梓熙，1-代理公司，2-直接客户
+		inv.addModel("orderStatus", "1");//区分普通信息查询或者审核通过后的查询
         return "orderList";
     }
     
@@ -485,6 +497,9 @@ public class OrderController {
     	String comCode = user.getUser().getCompany().getComCode();
     	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
     	String userExp = "无此生产编号信息，请您重新输入条件！";
+    	
+    	inv.addModel("customerFlag", customerFlag);// 用户归属公司标识，0-梓熙，1-代理公司，2-直接客户
+    	inv.addModel("orderStatus", "");//区分普通信息查询或者审核通过后的查询
     	
     	PrimerProduct primerProduct = primerProductRepository.findByProductNo(productNo);
     	if (!"0".equals(customerFlag)) {//代理公司和直接客户，只能查自己公司的业务

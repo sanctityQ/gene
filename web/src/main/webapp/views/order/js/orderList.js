@@ -7,7 +7,10 @@ function cellStyler(value,row,index){
     }
 }
 function formatOper(val,row,index){
-	if(row.status=='订单审核通过'){
+	var orderStatus = $("#orderStatus").val();
+	if(orderStatus=='1'){
+		return '&nbsp;<a href="javascript:;"  onclick="modifyOrder('+row.id+','+index+')"><i class="icon-pencil"></i>修改</a>&nbsp; ';
+	}else if(row.status=='订单审核通过'){
 		return '&nbsp;<a href="javascript:;" onclick="lookOrder('+row.id+','+index+')"><i class="icon-book"></i>查看</a>&nbsp;';
 	}else{
 		return '&nbsp;<a href="javascript:;" onclick="lookOrder('+row.id+','+index+')"><i class="icon-book"></i>查看</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;"  onclick="modifyOrder('+row.id+','+index+')"><i class="icon-pencil"></i>修改</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;" onclick="deleteOrder('+row.id+','+index+')"><i class="icon-trash"></i>删除</a>&nbsp;';
@@ -82,6 +85,7 @@ var getOrderInfo=function(){
 		        customerCode:customerCode,
 				createStartTime: $('#createStartTime').datebox('getValue'),
 				createEndTime: $('#createEndTime').datebox('getValue'),
+				status:$("#orderStatus").val(),
 				pageNo: gridOpts.pageNumber,
 				pageSize: gridOpts.pageSize
 	        },

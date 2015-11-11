@@ -14,6 +14,8 @@ if(userExp!=''){ alert(userExp)}
 </head>
 <body>
 <form action="/gene/order/primerProductInfo" id='queryForm' method="post">
+<input type="hidden" id="orderStatus" value="${orderStatus}"/>
+
 <div class="tools">
 	<table width="100%">
 		<tr>
@@ -35,13 +37,12 @@ if(userExp!=''){ alert(userExp)}
                 -
                 <input type="text" class="easyui-datebox" id="createEndTime" required="required" style="width: 90px;">
             </td>
-            <td>生产编号:</td>
-			<td><input class="inp_text" type="text" id="productNo" name="productNo" style="width:120px" />
-			</td>
+            <c:if test="${orderStatus!='1'}">
+	            <td>生产编号:</td>
+				<td><input class="inp_text" type="text" id="productNo" name="productNo" style="width:120px" /></td>
+            </c:if>
 			<td><button type="button" class="btn" onclick="getOrderInfo();">查询</button></td>
 			<td align="right">
-				<!-- <button type="button" class="btn btn-primary" onclick="goToPage('addOrder.html')">增加订单</button>
-				<button type="button" class="btn btn-primary submit" onclick="DeletdRows('orderList')">批量删除</button> -->
 			</td>
 		</tr>
 	</table>

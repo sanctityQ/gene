@@ -20,6 +20,7 @@ if ("0".equals(customerFlag)){
 			<li url="${ctx}/order/orderList" id="orderList"><i class="icon-file-text"></i>订单信息</li>
 <% if (isZiXi){%>
 			<li url="${ctx}/order/orderExamine" id="orderExamine"><i class="icon-thumbs-up-alt"></i>订单审核</li>
+			<li url="${ctx}/order/orderAudit" id="orderAudit"><i class="icon-file-text"></i>修改订单信息</li>
 <% }%>
 		</ul>
 	</div>

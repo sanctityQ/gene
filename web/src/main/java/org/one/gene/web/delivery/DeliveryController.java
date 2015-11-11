@@ -273,6 +273,24 @@ public class DeliveryController {
         return Replys.with(primerProductListPage).as(Json.class);
     }
     
+    
+    //发货清单 导出
+    @Post("deliveryList/{orderInfos}/")
+	public void deliveryList(@Param("orderInfos") String orderInfosJson ,Invocation inv) throws IOException {
+    	List<OrderInfo> orderInfos = Lists.newArrayList();
+    	
+		String[] ois = orderInfosJson.split(",");
+		for(int i=0;i<ois.length;i++){
+			OrderInfo orderInfo = new OrderInfo();
+			String orderNo = ois[i];
+			orderInfo.setOrderNo(orderNo);
+			orderInfos.add(orderInfo);
+		}
+		
+    	deliveryService.deliveryList(orderInfos, inv);
+    }
+    
+    
     /**
      * 进入出库单查询页面
      * 
@@ -294,21 +312,7 @@ public class DeliveryController {
     }
     
     
-    //发货清单 导出
-    @Post("deliveryList/{orderInfos}/")
-	public void deliveryList(@Param("orderInfos") String orderInfosJson ,Invocation inv) throws IOException {
-    	List<OrderInfo> orderInfos = Lists.newArrayList();
-    	
-		String[] ois = orderInfosJson.split(",");
-		for(int i=0;i<ois.length;i++){
-			OrderInfo orderInfo = new OrderInfo();
-			String orderNo = ois[i];
-			orderInfo.setOrderNo(orderNo);
-			orderInfos.add(orderInfo);
-		}
-		
-    	deliveryService.deliveryList(orderInfos, inv);
-    }
+
     
     
 }

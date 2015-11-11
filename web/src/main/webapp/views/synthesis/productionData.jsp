@@ -73,8 +73,8 @@ $(function(){
     var opts = dg.datagrid('options');
     var pager = dg.datagrid('getPager');
     pager.pagination({
-        pageSize:96,
-        pageList:[48,96],
+        pageSize:1000,
+        pageList:[48,96,500,1000],
         onSelectPage:function(pageNum, pageSize){
             opts.pageNumber = pageNum;
             opts.pageSize = pageSize;
