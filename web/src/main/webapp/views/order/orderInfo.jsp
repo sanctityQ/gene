@@ -18,6 +18,7 @@ var ctx = '${ctx}';
 <body>
 <input id="modiMidArr" type="hidden" value="${modiMidArr}"/>
 <input id="modiSpeArr" type="hidden" value="${modiSpeArr}"/>
+<input id="orderStatus" type="hidden" value="${orderStatus}"/>
 <div class="page_padding">
 	<div class="content_box totle margin_btoom">
 		<b>订单号：</b>${order.orderNo}<br />
@@ -73,7 +74,12 @@ var ctx = '${ctx}';
 		</table>
 	</div>
 	<div class="content_box info margin_btoom">
-		<h2><a href="javascript:;" class="right btn-primary submit" onclick="appendRow()" type="button">添加数据</a>生产数据</h2>
+		<h2>
+			<c:if test="${orderStatus!='1'}">
+				<a href="javascript:;" class="right btn-primary submit" onclick="appendRow()" type="button">添加数据</a>
+			</c:if>
+		          生产数据
+		</h2>
 		<table id="bigToSmall" class="easyui-datagrid" data-options="fitColumns:true,singleSelect: true,striped:true,method: 'get',onClickRow: onClickRow">
 		<thead>
 			<tr>
@@ -114,13 +120,20 @@ var ctx = '${ctx}';
 				<th data-options="field:'totalVal',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">总价格</th>
 				<th data-options="field:'remark',width:80,sortable:true,editor:'text'">备注</th>
 				<th data-options="field:'fromProductNo',width:80,hidden:true,sortable:true,editor:'text'">来源生产编号</th>
+				<c:if test="${orderStatus!='1'}">
 				<th data-options="field:'_operate',width:40,align:'center',formatter:formatOper">操作</th>
+				</c:if>
 			</tr>
 		</thead>
 	</table>
 	</div>
 	<div class="tools_bar">
-		<button type="" class="btn" onclick="goToPage('${ctx}/order/import');">取 消</button>
+		<c:if test="${orderStatus!='1'}">
+			<button type="" class="btn" onclick="goToPage('${ctx}/order/import');">取 消</button>
+		</c:if>
+		<c:if test="${orderStatus=='1'}">
+			<button type="" class="btn" onclick="goToPage('${ctx}/order/orderAudit');">取 消</button>
+		</c:if>
 		<button type="" class="btn btn-primary" onclick="getChanesSave('','');">保 存</button>
 	</div>
 	<div id="orderNoID"  class="content_box info margin_btoom" style="display:none">

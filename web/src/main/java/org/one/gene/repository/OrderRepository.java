@@ -108,5 +108,26 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 			@Param("productNoPrefix") String productNoPrefix, 
 			Pageable pageable
 			);
+	
+	@SQL("select * from `order` o  where 1=1 "
+			+ "#if(:createStartTime != '') { and o.`create_time` >= STR_TO_DATE( :createStartTime , '%m/%d/%Y %H:%i:%S') } "
+			+ "#if(:createEndTime != '') { and o.`create_time`   <= STR_TO_DATE( :createEndTime   , '%m/%d/%Y %H:%i:%S') } "
+			+ "#if(:comLevel != '1') { and o.`com_code` = :comCode }"
+			+ "#if(:customerCode != '') { and o.`customer_code` = :customerCode }"
+			+ "#if(:orderNo != '') { and o.`order_no` = :orderNo }"
+			+ "#if(:orderStatus == 'examine') { and o.`status` in (0,3) }"
+			+ "#if(:orderStatus == '1') { and o.`status` = 1 }"
+			+ " order by o.`create_time` desc "
+			)
+	Page<Order> orderListQuery(
+			@Param("createStartTime") String createStartTime,
+			@Param("createEndTime") String createEndTime,
+			@Param("comLevel") String comLevel,
+			@Param("comCode") String comCode,
+			@Param("customerCode") String customerCode,
+			@Param("orderNo") String orderNo,
+			@Param("orderStatus") String orderStatus,
+			Pageable pageable
+			);
 }
 

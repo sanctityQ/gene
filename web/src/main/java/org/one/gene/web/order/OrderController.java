@@ -241,7 +241,7 @@ public class OrderController {
         	orderService.convertOrder(customer,filename,orders, contactsname);
         	//保存订单信息
         	try{
-        	  orderService.save(orders);
+        	  orderService.save(orders, 0);
         	}catch(Exception e){
         		//刷新时赋值客户类型
         		inv.addModel("customerFlag", customerFlag);
@@ -266,6 +266,7 @@ public class OrderController {
     		inv.addModel("orderNoStr", orderNoStr);
     		inv.addModel("customer", customer);
     		inv.addModel("order", order);
+    		inv.addModel("orderStatus", "0");
     		//jsp获取未生效生成datagrid表格，后续优化
     		inv.addModel("total", order.getPrimerProducts().size());
     		inv.addModel("reSultdata", JSONObject.toJSONString(order.getPrimerProducts()));
@@ -278,7 +279,9 @@ public class OrderController {
     @Get("modifyQuery")
 	public String modifyQuery(@Param("orderNo") String orderNo,
 			@Param("orderNoStr") String orderNoStr,
-			@Param("forwordName") String forwordName, Invocation inv)
+			@Param("forwordName") String forwordName,
+			@Param("orderStatus") String orderStatus,
+			Invocation inv)
 			throws Exception {
     	 Order order = orderRepository.findByOrderNo(orderNo);
     	 String coustomerCode = order.getCustomerCode();
@@ -305,6 +308,7 @@ public class OrderController {
 		 inv.addModel("order", order);
  		 inv.addModel("modiMidArr", modiMidArr);
  		 inv.addModel("modiSpeArr", modiSpeArr);
+ 		 inv.addModel("orderStatus", order.getStatus()+"");
 		 if (orderNoStr == null || "".equals(orderNoStr)) {
 			inv.addModel("orderNoStr", order.getOrderNo());
 		 } else {
@@ -380,8 +384,13 @@ public class OrderController {
     @Post("save")
 	public Reply save(
 			@Param("primerProducts") List<PrimerProduct> primerProducts,
-			@Param("orderNo") String orderNo, Invocation inv) throws Exception {
+			@Param("orderNo") String orderNo,
+			@Param("orderStatus") String orderStatus, Invocation inv)
+			throws Exception {
     	
+    	if(orderStatus==null){
+    		orderStatus = "";
+    	}
     	Order order = orderRepository.findByOrderNo(orderNo);
         Map<Long, PrimerProduct> newPrimerProductMap = Maps.newHashMap();
         for (PrimerProduct primerProduct : primerProducts) {
@@ -412,6 +421,7 @@ public class OrderController {
                 newPrimerProductMap.remove(primerProduct.getId());
             }
         }
+        //页面新增数据
         for (PrimerProduct newPrimerProduct : newPrimerProductMap.values()) {
             newPrimerProduct.setOrder(order);
             //order.getPrimerProducts().add(newPrimerProduct);
@@ -419,7 +429,7 @@ public class OrderController {
 
         //order.setPrimerProducts(primerProducts);
        // orderService.save(order);
-        orderService.saveOrderAndPrimerProduct(order,newPrimerProductMap.values());
+        orderService.saveOrderAndPrimerProduct(order,newPrimerProductMap.values(), orderStatus);
         return Replys.with("{\"success\":true,\"mess\":\"数据已保存！\"}").as(Json.class);
     }
     
@@ -438,7 +448,7 @@ public class OrderController {
     		@Param("customerCode") String customerCode,
 			@Param("createStartTime") String createStartTime,
 			@Param("createEndTime") String createEndTime,
-			@Param("status") String status,
+			@Param("orderStatus") String orderStatus,
     		@Param("pageNo")Integer pageNo,
             @Param("pageSize")Integer pageSize,
             Invocation inv) throws Exception {
@@ -451,34 +461,40 @@ public class OrderController {
             pageSize = 20;
         }
         
+        if(orderStatus == null){
+        	orderStatus = "";
+        }
+        if(orderNo == null){
+        	orderNo = "";
+        }
+    	if(customerCode==null){
+    		customerCode = "";
+    	}
     	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	String comLevel     = user.getUser().getCompany().getComLevel();
     	String comCode = user.getUser().getCompany().getComCode();
     	String customerFlag = user.getUser().getCustomer().getCustomerFlag();
-    	
-    	Sort s=new Sort(Direction.DESC, "createTime");
-    	Pageable pageable = new PageRequest(pageNo-1,pageSize,s);
-    	Map<String,Object> searchParams = Maps.newHashMap();
-    	searchParams.put(SearchFilter.Operator.EQ+"_orderNo",orderNo);
+
+
 		if (!"0".equals(customerFlag)) {//代理公司和直接客户，只能查自己公司的业务
-			searchParams.put(SearchFilter.Operator.EQ+"_customerCode",user.getUser().getCustomer().getCode());
-		} else {
-			searchParams.put(SearchFilter.Operator.EQ+"_customerCode",customerCode);
+			customerCode = user.getUser().getCustomer().getCode();
 		}
-    	searchParams.put(SearchFilter.Operator.EQ+"_status",status);
-    	if(!"1".equals(user.getUser().getCompany().getComLevel())){
-    		searchParams.put(SearchFilter.Operator.EQ+"_comCode",comCode);
-    	}
+		
     	if (createStartTime != null && !"".equals(createStartTime)) {
-    		searchParams.put(SearchFilter.Operator.GT+"_createTime",new Date(createStartTime+" 00:00:00"));
+    		createStartTime = createStartTime+" 00:00:00";
+    	}else{
+    		createStartTime = "";
     	}
     	if (createEndTime != null && !"".equals(createEndTime)) {
-    		searchParams.put(SearchFilter.Operator.LT+"_createTime",new Date(createEndTime+" 59:59:59"));
+    		createEndTime = createEndTime+" 23:59:59";
+    	}else{
+    		createEndTime = "";
     	}
+    	Pageable pageable = new PageRequest(pageNo-1,pageSize);
     	
-    	Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
-    	Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
-    	
-    	Page<Order> orderPage = orderRepository.findAll(spec,pageable);
+		Page<Order> orderPage = orderRepository.orderListQuery(createStartTime,
+				createEndTime, comLevel, comCode, customerCode, orderNo,
+				orderStatus, pageable);
     	
     	return Replys.with(orderPage).as(Json.class);
     }
@@ -561,7 +577,9 @@ public class OrderController {
      * @throws Exception
      */
     @Post("examine")
-    public Object examine(@Param("orderNo") String orderNo,@Param("failReason") String failReason,Invocation inv) throws Exception {
+	public Object examine(@Param("orderNo") String orderNo,
+			@Param("failReason") String failReason, Invocation inv)
+			throws Exception {
         orderService.examine(orderNo,failReason);
     	return Replys.with("sucess").as(Text.class);
     }

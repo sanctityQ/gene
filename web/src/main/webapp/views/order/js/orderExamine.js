@@ -13,7 +13,7 @@ var examineIni=function(){
 		type : "post",
 		url : ctx+"/order/query",
 		dataType : "json",
-		data:{status:0},
+		data:{orderStatus:'examine'},
 		success : function(data) {
 			$.messager.progress('close');
 			if(data != null){
@@ -55,7 +55,7 @@ var getExamineInfo=function(){
 	        customerCode:customerCode,
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize,
-			status:'0'
+			orderStatus:'examine'
         },
 		success : function(data) {
 			$.messager.progress('close');
@@ -69,6 +69,8 @@ var getExamineInfo=function(){
         			  reSultdata[i].status = '订单审核通过';
         			}else if(reSultdata[i].status=='2'){
         			  reSultdata[i].status = '订单审核不通过';	
+        			}else if(reSultdata[i].status=='3'){
+        			  reSultdata[i].status = '通过后已修改';	
         			}
         		}
         		var jsonsource = {total: total, rows: reSultdata};

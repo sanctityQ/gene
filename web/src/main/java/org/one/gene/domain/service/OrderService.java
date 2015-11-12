@@ -79,7 +79,7 @@ public class OrderService {
 	 * @throws IOException
 	 */
 	@Transactional
-    public void save(ArrayList<Order> orders) throws Exception{
+    public void save(ArrayList<Order> orders, Integer status) throws Exception{
 
         //所有分子量
         List<ProductMolecular> productMoleculars = (List<ProductMolecular>) productMolecularRepository.findAll();
@@ -99,7 +99,7 @@ public class OrderService {
 				order.setOutOrderNo(order.getOutOrderNo());
 			}
 			order.setModifyTime(new Date());
-			order.setStatus(0);//初始状态
+			order.setStatus(status);//初始状态:0  初始化，1 审核通过，2 审核不通过， 3 订单审核通过后修改过，需要再次审核
 			if(order.getCreateTime() == null){
 				order.setCreateTime(new Date());
 			}
@@ -118,11 +118,13 @@ public class OrderService {
 					throw new Exception("您提交的生产编号存在重复，请修改后重新提交！");
 				}
 				//后续补充，获取登录操作人员的归属机构。
+				if(status!=3){
+					primerProduct.setOperationType(PrimerType.PrimerStatusType.orderInit);//!!!是初始状态不是审核通过状态
+					primerProduct.setBackTimes(0);
+				}
 				primerProduct.setComCode(order.getComCode());
-				primerProduct.setOperationType(PrimerType.PrimerStatusType.orderInit);//!!!是初始状态不是审核通过状态
 				primerProduct.setOrder(order);
 				primerProduct.setModifyTime(new Date());//最新修改时间
-				primerProduct.setBackTimes(0);
 				primerProduct.setProductMolecularMap(productMolecularMap);//map放入分子量
 				
 				
@@ -314,33 +316,38 @@ public class OrderService {
      */
     public void examine(String orderNo,String failReason){
     	Order order = orderRepository.findByOrderNo(orderNo);
+
+    	for (PrimerProduct primerProduct : order.getPrimerProducts()) {
+    		
+    		primerProduct.setModifyTime(new Date());//最新修改时间
+    		
+    		if(order.getStatus()==0){//订单初始化状态
+    			if(!"".equals(failReason)){
+    				primerProduct.setOperationType(PrimerType.PrimerStatusType.orderCheck);
+    			}else{
+    				primerProduct.setOperationType(PrimerType.PrimerStatusType.makeBoard);//订单审核通过，生产数据到可制板状态
+    				primerProduct.setBackTimes(0);
+    			}
+    			
+    			for (PrimerProductOperation primerProductOperation : primerProduct.getPrimerProductOperations()) {
+    				if(!"".equals(failReason)){
+    					primerProductOperation.setType(PrimerType.PrimerOperationType.orderCheckFailure);
+    					primerProductOperation.setTypeDesc(PrimerType.PrimerOperationType.orderCheckFailure.desc());
+    					primerProductOperation.setFailReason(failReason);
+    				}else{
+    					primerProductOperation.setType(PrimerType.PrimerOperationType.orderCheckSuccess);
+    					primerProductOperation.setTypeDesc(PrimerType.PrimerOperationType.orderCheckSuccess.desc());
+    				}
+    			}
+    		}
+    	}
     	/**
-    	 * 0代表初始 1代表审核通过 2代表审核不通过呗
+    	 * 0代表初始 1代表审核通过 2代表审核不通过 3审核通过已修改
     	 */
     	if(!"".equals(failReason)){
     		order.setStatus(2);
     	}else{
     		order.setStatus(1);
-    	}
-    	for (PrimerProduct primerProduct : order.getPrimerProducts()) {
-    		
-			if(!"".equals(failReason)){
-      		  primerProduct.setOperationType(PrimerType.PrimerStatusType.orderCheck);
-  			}else{
-  			  primerProduct.setOperationType(PrimerType.PrimerStatusType.makeBoard);//订单审核通过，生产数据到可制板状态
-  			  primerProduct.setBackTimes(0);
-  			  primerProduct.setModifyTime(new Date());//最新修改时间
-  			}
-    		for (PrimerProductOperation primerProductOperation : primerProduct.getPrimerProductOperations()) {
-    			if(!"".equals(failReason)){
-    			  primerProductOperation.setType(PrimerType.PrimerOperationType.orderCheckFailure);
-        		  primerProductOperation.setTypeDesc(PrimerType.PrimerOperationType.orderCheckFailure.desc());
-        		  primerProductOperation.setFailReason(failReason);
-    			}else{
-    			  primerProductOperation.setType(PrimerType.PrimerOperationType.orderCheckSuccess);
-    			  primerProductOperation.setTypeDesc(PrimerType.PrimerOperationType.orderCheckSuccess.desc());
-    			}
-    		}
     	}
     	orderRepository.save(order);
     }
@@ -368,10 +375,16 @@ public class OrderService {
   	}
 
 	@Transactional
-	public void saveOrderAndPrimerProduct(Order order, Collection<PrimerProduct> values) throws Exception {
+	public void saveOrderAndPrimerProduct(Order order,
+			Collection<PrimerProduct> values, String orderStatus)
+			throws Exception {
 		ArrayList<Order>  orders = new ArrayList<Order>();
 		orders.add(order);
-		this.save(orders);
+		if ("0".equals(orderStatus)) {
+			this.save(orders, 0);
+		} else {
+			this.save(orders, 3);
+		}
 		
         //所有分子量
         List<ProductMolecular> productMoleculars = (List<ProductMolecular>) productMolecularRepository.findAll();

@@ -88,7 +88,9 @@ var ctx = '${ctx}';
 	</table>
 	</div>
 	<div class="tools_bar">
-        <button type="" class="btn btn-primary submit" onclick="$('#inputCause').dialog('open');">审核不通过</button>
+		<c:if test="${orderStatus=='0'}">
+	        <button type="" class="btn btn-primary submit" onclick="$('#inputCause').dialog('open');">审核不通过</button>
+		</c:if>
 		<button type="" class="btn btn-primary" onclick="examine(${orderNo},'');">审核通过</button>
 	</div>
 </div>

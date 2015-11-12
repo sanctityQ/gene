@@ -336,7 +336,8 @@ function getChanesSave(nextOrderNo,orderNoString){
 		dataType : "html",
         data: {
             "primerProducts": primerProducts,
-            "orderNo": orderNo
+            "orderNo": orderNo,
+            "orderStatus": $("#orderStatus").val()
         },
 		success : function(data) {
 			$.messager.progress('close');

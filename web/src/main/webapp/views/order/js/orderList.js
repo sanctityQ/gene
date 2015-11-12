@@ -10,7 +10,7 @@ function formatOper(val,row,index){
 	var orderStatus = $("#orderStatus").val();
 	if(orderStatus=='1'){
 		return '&nbsp;<a href="javascript:;"  onclick="modifyOrder('+row.id+','+index+')"><i class="icon-pencil"></i>修改</a>&nbsp; ';
-	}else if(row.status=='订单审核通过'){
+	}else if(row.status=='订单审核通过' || row.status=='通过后已修改'){
 		return '&nbsp;<a href="javascript:;" onclick="lookOrder('+row.id+','+index+')"><i class="icon-book"></i>查看</a>&nbsp;';
 	}else{
 		return '&nbsp;<a href="javascript:;" onclick="lookOrder('+row.id+','+index+')"><i class="icon-book"></i>查看</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;"  onclick="modifyOrder('+row.id+','+index+')"><i class="icon-pencil"></i>修改</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;" onclick="deleteOrder('+row.id+','+index+')"><i class="icon-trash"></i>删除</a>&nbsp;';
@@ -47,6 +47,8 @@ var orderInfoIni=function(){
         			  reSultdata[i].status = '订单审核通过';
         			}else if(reSultdata[i].status=='2'){
         			  reSultdata[i].status = '订单审核不通过';	
+        			}else if(reSultdata[i].status=='3'){
+        				reSultdata[i].status = '通过后已修改';
         			}
         		}
         		var jsonsource = {total: total, rows: reSultdata};
@@ -85,7 +87,7 @@ var getOrderInfo=function(){
 		        customerCode:customerCode,
 				createStartTime: $('#createStartTime').datebox('getValue'),
 				createEndTime: $('#createEndTime').datebox('getValue'),
-				status:$("#orderStatus").val(),
+				orderStatus:$("#orderStatus").val(),
 				pageNo: gridOpts.pageNumber,
 				pageSize: gridOpts.pageSize
 	        },
@@ -101,6 +103,8 @@ var getOrderInfo=function(){
 							reSultdata[i].status = '订单审核通过';
 						}else if(reSultdata[i].status=='2'){
 							reSultdata[i].status = '订单审核不通过';	
+						}else if(reSultdata[i].status=='3'){
+							reSultdata[i].status = '通过后已修改';	
 						}
 						
 					}
@@ -156,10 +160,10 @@ var orderDetail=function(orderNo){
 
 //修改
 var modifyOrder=function(id,index){
+	var orderStatus = $("#orderStatus").val();
 	var row = $('#orderList').datagrid('getData').rows[index];
-	 var path = ctx+'/order/modifyQuery?orderNo='+row.orderNo+'&forwordName=orderInfo';  
-	 //$('#queryForm').attr("action", path).submit();
-	 window.location.href = path;
+	var path = ctx+'/order/modifyQuery?orderNo='+row.orderNo+'&forwordName=orderInfo&orderStatus='+orderStatus;
+	window.location.href = path;
 }
 
 //删除
