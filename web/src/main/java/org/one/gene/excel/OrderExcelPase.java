@@ -108,10 +108,11 @@ public class OrderExcelPase {
 	 * @param path
 	 * @param sheetIndex 第几个sheet页
 	 * @param rows 忽略的行数或从第几行开始
+	 * @throws Exception 
 	 */
 	public ArrayList<Order> ReadExcel(String path, int sheetIndex, String rows,
 			String prefix, List<CustomerPrice> customerPrices,
-			Map<String, String> modiMidMap, Map<String, String> modiSpeMap) {
+			Map<String, String> modiMidMap, Map<String, String> modiSpeMap) throws Exception {
 		
 		// 获取Excel文件的第1个sheet的内容
 		ArrayList<ArrayList<String>> lists = excelResolver.ReadExcel(path, sheetIndex,rows);
@@ -121,6 +122,7 @@ public class OrderExcelPase {
 		OrderType orderUpType = Order.OrderType.nmol;;//订单类型
 		String outOrderNoTemp = "";
 		Map<String, Order> orderMap = new HashMap<String, Order>();
+		Map<String, String> outOrderNoMap = new HashMap<String, String>();//存放外部订单号
     	//输出单元格数据
 		for(ArrayList<String> data : lists) {
 			if(data==null){continue;}
@@ -133,6 +135,11 @@ public class OrderExcelPase {
 				  case 1:
 					if (!"".equals(v)) {
 						outOrderNo = v;
+						if(outOrderNoMap.get(outOrderNo)!=null){
+							throw new Exception("您提交的外部订单号 " + outOrderNo + " 重复，请修改后重新提交！");
+						}
+						outOrderNoMap.put(outOrderNo, "");
+						
 						if (index == 1) {
 							haveFirst = true;
 						}

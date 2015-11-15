@@ -25,9 +25,9 @@ function formatOper(val,row,index){
     if(toggle){
         return '<a href="javascript:;" onclick="deletRow('+index+')">删除</a>';
     }else{
-    	//if(row.nmolTotal>=50 || row.odTotal>=10){
+    	if(typeof(row.fromProductNo)=='undefined' || row.fromProductNo==''){//由复制生成的生产数据不展现复制
 	      return '<a href="javascript:;" onclick="copyRow(this)">复制</a>';
-	    //}
+	    }
     }
 	
 }
@@ -319,16 +319,41 @@ function isRepeat(arr){
 }
 
 function getChanesSave(nextOrderNo,orderNoString){
+	
+    var orderUpType = $("#orderUpType").val();
+    var showMess = "";
 	bigToSmall.datagrid('endEdit',editIndex);
     var primerProducts = bigToSmall.datagrid('getData').rows;
     var productNos = new Array();
     for(var i=0;i<primerProducts.length;i++){
     	productNos.push(primerProducts[i].productNo);
+    	
+        if(orderUpType == 'od'){
+        	if(primerProducts[i].odTotal==''){
+        		showMess = showMess + "生产编号为"+primerProducts[i].productNo+"的OD总量不能为空\r\n";
+        	}
+        	if(primerProducts[i].odTB==''){
+        		showMess = showMess + "生产编号为"+primerProducts[i].productNo+"的OD/tube不能为空\r\n";
+        	}
+        }else{
+        	if(primerProducts[i].nmolTotal==''){
+        		showMess = showMess + "生产编号为"+primerProducts[i].productNo+"的nmol总量不能为空\r\n";
+        	}
+        	if(primerProducts[i].nmolTB==''){
+        		showMess = showMess + "生产编号为"+primerProducts[i].productNo+"的nmol/tube不能为空\r\n";
+        	}
+        }
     }
     if(isRepeat(productNos)){
     	alert("您提交的生产编号存在重复，请修改后重新提交！");
     }
-
+   
+    //校验页面必录
+    if(showMess!=""){
+    	alert(showMess);
+    	return false;
+    }
+    
     progress();
     $.ajax({
 		type : "post",
@@ -342,7 +367,11 @@ function getChanesSave(nextOrderNo,orderNoString){
 		success : function(data) {
 			$.messager.progress('close');
 			if(data != null){
-//				goToPage(ctx+'/views/order/orderList.jsp?orderNo='+orderNo);
+				var reJson = JSON.parse(data);//字符串转成json串
+				//提示操作结果
+				if(typeof(reJson.success) !='undefined'){
+					alert(reJson.mess);
+				}
 				if(nextOrderNo==''){
 					goToPage(ctx+'/order/import');
 				}else{
@@ -367,13 +396,23 @@ function copyRow(e){
     var ind = tr.index() + 1;
     var next = $(tr.clone());
     var row = $('#bigToSmall').datagrid('getData').rows[tr.index()];
+    var selectProductNo = row.productNo;
+    
+    var primerProducts = $('#bigToSmall').datagrid('getData').rows;//所有的数据
+    var nextNum = 1;
+    for(var i=0;i<primerProducts.length;i++){
+    	if(primerProducts[i].fromProductNo==selectProductNo){
+    		nextNum = nextNum+1;
+    	}
+    }    
+    
 
     bigToSmall.datagrid('insertRow',{
         index: ind, // index start with 0
         row: {
         del:true,
         //复制页面展示数据
-        productNo              :row.productNo+"1",
+        productNo              :row.productNo+nextNum,
         primeName              :row.primeName,
         geneOrderMidi          :row.geneOrderMidi,
         geneOrder              :row.geneOrder,
@@ -384,10 +423,10 @@ function copyRow(e){
         odTB                   :"",
         purifyType             :row.purifyType,
         midi				   :row.midi,
-        modiPrice              :row.modiPrice,
-        baseVal                :row.baseVal,
-        purifyVal              :row.purifyVal,
-        totalVal               :row.totalVal,
+        modiPrice              :"0",
+        baseVal                :"0",
+        purifyVal              :"0",
+        totalVal               :"0",
         fromProductNo          :row.productNo,
         //复制收集全量数据，下面为行对象其他属性赋值。
         comCode                :row.comCode,

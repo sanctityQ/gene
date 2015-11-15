@@ -9,11 +9,15 @@ function cellStyler(value,row,index){
 function formatOper(val,row,index){
 	var orderStatus = $("#orderStatus").val();
 	if(orderStatus=='1'){
-		return '&nbsp;<a href="javascript:;"  onclick="modifyOrder('+row.id+','+index+')"><i class="icon-pencil"></i>修改</a>&nbsp; ';
+		if(row.selectFlag=='1'){
+			return '<a href="javascript:;"  onclick="modifyOrder('+row.id+','+index+')"><i class="icon-pencil"></i>修改</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;" onclick="deleteOrder('+row.id+','+index+')"><i class="icon-trash"></i>删除</a>';
+		}else{
+			return '&nbsp;<a href="javascript:;"  onclick="modifyOrder('+row.id+','+index+')"><i class="icon-pencil"></i>修改</a>&nbsp; ';
+		}
 	}else if(row.status=='订单审核通过' || row.status=='通过后已修改'){
 		return '&nbsp;<a href="javascript:;" onclick="lookOrder('+row.id+','+index+')"><i class="icon-book"></i>查看</a>&nbsp;';
 	}else{
-		return '&nbsp;<a href="javascript:;" onclick="lookOrder('+row.id+','+index+')"><i class="icon-book"></i>查看</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;"  onclick="modifyOrder('+row.id+','+index+')"><i class="icon-pencil"></i>修改</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;" onclick="deleteOrder('+row.id+','+index+')"><i class="icon-trash"></i>删除</a>&nbsp;';
+		return '<a href="javascript:;" onclick="lookOrder('+row.id+','+index+')"><i class="icon-book"></i>查看</a> <span class="gray">|</span> <a href="javascript:;"  onclick="modifyOrder('+row.id+','+index+')"><i class="icon-pencil"></i>修改</a> <span class="gray">|</span> <a href="javascript:;" onclick="deleteOrder('+row.id+','+index+')"><i class="icon-trash"></i>删除</a>';
 	}
     
 }
@@ -88,6 +92,8 @@ var getOrderInfo=function(){
 				createStartTime: $('#createStartTime').datebox('getValue'),
 				createEndTime: $('#createEndTime').datebox('getValue'),
 				orderStatus:$("#orderStatus").val(),
+				outOrderNo:$("#outOrderNo").val(),
+				primeName:$("#primeName").val(),
 				pageNo: gridOpts.pageNumber,
 				pageSize: gridOpts.pageSize
 	        },

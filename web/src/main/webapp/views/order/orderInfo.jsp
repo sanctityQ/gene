@@ -16,6 +16,7 @@ var ctx = '${ctx}';
 </script>
 </head>
 <body>
+<input id="orderUpType" type="hidden" value="${order.orderUpType}"/>
 <input id="modiMidArr" type="hidden" value="${modiMidArr}"/>
 <input id="modiSpeArr" type="hidden" value="${modiSpeArr}"/>
 <input id="orderStatus" type="hidden" value="${orderStatus}"/>
@@ -83,7 +84,7 @@ var ctx = '${ctx}';
 		<table id="bigToSmall" class="easyui-datagrid" data-options="fitColumns:true,singleSelect: true,striped:true,method: 'get',onClickRow: onClickRow">
 		<thead>
 			<tr>
-				<th data-options="field:'productNo',width:80,sortable:true,editor:'text'">生产编号</th>
+				<th data-options="field:'productNo',width:100,sortable:true,editor:'text'">生产编号</th>
 				<th data-options="field:'primeName',width:80,sortable:true,editor:'text'">引物名称</th>
 				<th data-options="field:'geneOrderMidi',width:220,sortable:true,styler:cellStyler1,editor:'text'">序列</th>
 				<th data-options="field:'geneOrder',width:80,hidden:true,sortable:true,editor:'text'">序列</th>
@@ -120,9 +121,7 @@ var ctx = '${ctx}';
 				<th data-options="field:'totalVal',width:80,sortable:true,editor:{type:'numberbox',options:{precision:2}}">总价格</th>
 				<th data-options="field:'remark',width:80,sortable:true,editor:'text'">备注</th>
 				<th data-options="field:'fromProductNo',width:80,hidden:true,sortable:true,editor:'text'">来源生产编号</th>
-				<c:if test="${orderStatus!='1'}">
 				<th data-options="field:'_operate',width:40,align:'center',formatter:formatOper">操作</th>
-				</c:if>
 			</tr>
 		</thead>
 	</table>

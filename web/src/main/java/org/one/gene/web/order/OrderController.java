@@ -236,31 +236,36 @@ public class OrderController {
 				}
 			}
         	
-        	//获取外部订单号
-        	ArrayList<Order>  orders = orderService.ReadExcel(path, 0,"2-", prefix, customerPrices, modiMidMap, modiSpeMap);
-        	orderService.convertOrder(customer,filename,orders, contactsname);
-        	//保存订单信息
-        	try{
-        	  orderService.save(orders, 0);
-        	}catch(Exception e){
-        		//刷新时赋值客户类型
-        		inv.addModel("customerFlag", customerFlag);
-        		inv.addModel("userExp",e.getMessage());
-        		return "orderImport";
-        	}
         	Order order = new Order();
         	int index = 1;
         	String orderNoStr = "";
-        	for(Order o :orders){
-        		orderNoStr += o.getOrderNo()+"^";
-        		if(index==1){
-        			order = o;
-        		}
-        		index ++;
-        	}
-        	orderNoStr = orderNoStr.substring(0, orderNoStr.length()-1);
         	
-        	inv.getResponse().setContentType("text/html");
+			try {
+				// 获取外部订单号
+				ArrayList<Order> orders = orderService.ReadExcel(path, 0, "2-", prefix, customerPrices, modiMidMap, modiSpeMap);
+				orderService.convertOrder(customer, filename, orders, contactsname);
+				
+				// 保存订单信息
+				orderService.save(orders, 0);
+                
+				//组织页面多个订单串
+				for (Order o : orders) {
+					orderNoStr += o.getOrderNo() + "^";
+					if (index == 1) {
+						order = o;
+					}
+					index++;
+				}
+				orderNoStr = orderNoStr.substring(0, orderNoStr.length() - 1);
+
+			} catch (Exception e) {
+				// 刷新时赋值客户类型
+				inv.addModel("customerFlag", customerFlag);
+				inv.addModel("userExp", e.getMessage());
+				return "orderImport";
+			}
+
+			inv.getResponse().setContentType("text/html");
     		inv.addModel("modiMidArr", modiMidArr);
     		inv.addModel("modiSpeArr", modiSpeArr);
     		inv.addModel("orderNoStr", orderNoStr);
@@ -430,11 +435,14 @@ public class OrderController {
         //order.setPrimerProducts(primerProducts);
        // orderService.save(order);
         orderService.saveOrderAndPrimerProduct(order,newPrimerProductMap.values(), orderStatus);
-        return Replys.with("{\"success\":true,\"mess\":\"数据已保存！\"}").as(Json.class);
+        
+        int count = primerProductRepository.getCountByOrderNo(orderNo);
+        
+        return Replys.with("{\"success\":true,\"mess\":\""+count+"条引物数据已保存！\"}").as(Json.class);
     }
     
     /**
-     * 订单查询列表
+     * 订单查询列表:订单信息，订单审核和修改订单信息都使用该方法
      * @param orderNo
      * @param customerCode
      * @param pageNo
@@ -449,6 +457,8 @@ public class OrderController {
 			@Param("createStartTime") String createStartTime,
 			@Param("createEndTime") String createEndTime,
 			@Param("orderStatus") String orderStatus,
+			@Param("outOrderNo") String outOrderNo,
+			@Param("primeName") String primeName,
     		@Param("pageNo")Integer pageNo,
             @Param("pageSize")Integer pageSize,
             Invocation inv) throws Exception {
@@ -460,7 +470,7 @@ public class OrderController {
         if(pageSize == null){
             pageSize = 20;
         }
-        
+        //orderStatus:examine,订单审核查询，1 已审核通过查询，空 订单信息 查询
         if(orderStatus == null){
         	orderStatus = "";
         }
@@ -469,6 +479,12 @@ public class OrderController {
         }
     	if(customerCode==null){
     		customerCode = "";
+    	}
+    	if(outOrderNo==null){
+    		outOrderNo = "";
+    	}
+    	if(primeName==null){
+    		primeName = "";
     	}
     	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
     	String comLevel     = user.getUser().getCompany().getComLevel();
@@ -494,8 +510,19 @@ public class OrderController {
     	
 		Page<Order> orderPage = orderRepository.orderListQuery(createStartTime,
 				createEndTime, comLevel, comCode, customerCode, orderNo,
-				orderStatus, pageable);
-    	
+				orderStatus, outOrderNo, primeName, pageable);
+		
+		if ("1".equals(orderStatus)) {//查询已审核通过的订单
+			for (Order order : orderPage.getContent()) {
+				String flag = "0";//不可以刪除
+				int count = primerProductRepository.countByOrderNoAndNoTType(order.getOrderNo(), PrimerStatusType.makeBoard.toString());
+				if (count == 0) {
+					flag = "1";// 可以刪除
+				}
+				order.setSelectFlag(flag);
+			}
+		}
+		
     	return Replys.with(orderPage).as(Json.class);
     }
 

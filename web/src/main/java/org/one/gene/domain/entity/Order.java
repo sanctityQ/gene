@@ -96,6 +96,8 @@ public class Order extends IdEntity implements java.io.Serializable {
      * 业务员姓名.
      */
     private String handlerName;
+    
+    private String selectFlag;//临时字段，不存库
 
     public Order() {
     }
@@ -291,7 +293,15 @@ public class Order extends IdEntity implements java.io.Serializable {
         return this.getOrderUpType().equals(orderType);
     }
 
+	@Transient
+    public String getSelectFlag() {
+		return selectFlag;
+	}
 
+
+	public void setSelectFlag(String selectFlag) {
+		this.selectFlag = selectFlag;
+	}
     
 }
 

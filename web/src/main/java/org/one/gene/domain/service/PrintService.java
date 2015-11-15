@@ -434,7 +434,7 @@ public class PrintService {
 			customerEmail   = customer.getEmail();
 			customerFlag    = customer.getCustomerFlag();
 		}
-		String strFileName = orderNo+".xls";
+		String strFileName = order.getProductNoMinToMax()+".xls";
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
         String currentTime = df.format(new Date());
 		

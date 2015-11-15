@@ -25,7 +25,7 @@ if(userExp!=''){ alert(userExp)}
 			<ul id="seachOrderList"></ul>
 			</td>
 			<c:if test="${customerFlag=='0'}">
-				<td>客户公司名称:</td>
+				<td align="right">客户公司名称:</td>
 				<td><input class="inp_text" type="text" id="seachCustom" name="customerName" style="width:150px" />
 				    <input class="inp_text" type="hidden" id="customerCode" name="customerCode" />
 				    <ul id="seachCustomList"></ul>
@@ -37,14 +37,21 @@ if(userExp!=''){ alert(userExp)}
                 -
                 <input type="text" class="easyui-datebox" id="createEndTime" required="required" style="width: 90px;">
             </td>
-            <c:if test="${orderStatus!='1'}">
-	            <td>生产编号:</td>
-				<td><input class="inp_text" type="text" id="productNo" name="productNo" style="width:120px" /></td>
-            </c:if>
 			<td><button type="button" class="btn" onclick="getOrderInfo();">查询</button></td>
 			<td align="right">
 			</td>
 		</tr>
+        <c:if test="${orderStatus!='1'}"><!-- 订单信息菜单 -->
+		<tr>
+			<td align="right">外部订单号:</td>
+			<td><input class="inp_text" type="text" id="outOrderNo" style="width:120px"/></td>
+			<td align="right">引物名称:</td>
+			<td><input class="inp_text" type="text" id="primeName" style="width:150px" />
+			</td>
+            <td align="right">生产编号:</td>
+			<td><input class="inp_text" type="text" id="productNo" style="width:120px" /></td>
+		</tr>
+        </c:if>
 	</table>
 </div>
 </form>
@@ -53,16 +60,16 @@ if(userExp!=''){ alert(userExp)}
 		<thead>
 			<tr>
 				<th data-options="field:'ck',checkbox:true"></th>
-				<th data-options="field:'orderNo',width:70,sortable:true">订单号</th>
-				<th data-options="field:'outOrderNo',width:70,sortable:true">外部订单号</th>
-				<th data-options="field:'customerName',width:80,sortable:true">客户公司名称</th>
-				<th data-options="field:'contactsName',width:50,sortable:true">客户联系人</th>
-				<th data-options="field:'productNoMinToMax',width:90,sortable:true">生产编号</th>
-				<th data-options="field:'tbnTotal',width:40,sortable:true">碱基总数</th>
-				<th data-options="field:'status',width:50,sortable:true">状态</th>
-				<th data-options="field:'createTime',width:80,sortable:true">导入时间</th>
-				<th data-options="field:'modifyTime',width:80,sortable:true">修改时间</th>
-				<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>
+				<th data-options="field:'orderNo',width:65,sortable:true">订单号</th>
+				<th data-options="field:'outOrderNo',width:65,sortable:true">外部订单号</th>
+				<th data-options="field:'customerName',width:75,sortable:true">客户公司名称</th>
+				<th data-options="field:'contactsName',width:45,sortable:true">客户联系人</th>
+				<th data-options="field:'productNoMinToMax',width:110,sortable:true">生产编号</th>
+				<th data-options="field:'tbnTotal',width:35,sortable:true">碱基总数</th>
+				<th data-options="field:'status',width:60,sortable:true">状态</th>
+				<th data-options="field:'createTime',width:70,sortable:true">导入时间</th>
+				<th data-options="field:'modifyTime',width:70,sortable:true">修改时间</th>
+				<th data-options="field:'_operate',width:100,align:'center',formatter:formatOper">操作</th>
 			</tr>
 		</thead>
 	</table>

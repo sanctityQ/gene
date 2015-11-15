@@ -26,6 +26,8 @@ var examineIni=function(){
         			  reSultdata[i].status = '订单审核通过';
         			}else if(reSultdata[i].status=='2'){
         			  reSultdata[i].status = '订单审核不通过';	
+        			}else if(reSultdata[i].status=='3'){
+        			  reSultdata[i].status = '通过后已修改';	
         			}
         		}
         		var jsonsource = {total: total, rows: reSultdata};

@@ -121,6 +121,11 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			@Param("midType") String midType,
 			@Param("speType") String speType);
 	
+	@SQL("select count(*) from `primer_product` where `operation_type` != :operationType and  `order_no`=:orderNo ")
+	int countByOrderNoAndNoTType(@Param("orderNo") String orderNo, @Param("operationType") String operationType);
+	
+	@SQL("select count(*) from `primer_product` where `order_no`=:orderNo ")
+	int getCountByOrderNo(@Param("orderNo") String orderNo);
 	
 }
 

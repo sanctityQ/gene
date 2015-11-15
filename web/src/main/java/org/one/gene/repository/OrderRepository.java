@@ -117,6 +117,8 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 			+ "#if(:orderNo != '') { and o.`order_no` = :orderNo }"
 			+ "#if(:orderStatus == 'examine') { and o.`status` in (0,3) }"
 			+ "#if(:orderStatus == '1') { and o.`status` = 1 }"
+			+ "#if(:outOrderNo != '') { and o.`out_order_no` = :outOrderNo }"
+			+ "#if(:primeName != '') { and exists ( select 1 from `primer_product` pp where o.`order_no` = pp.`order_no` and pp.`prime_name` = :primeName ) }"
 			+ " order by o.`create_time` desc "
 			)
 	Page<Order> orderListQuery(
@@ -127,6 +129,8 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 			@Param("customerCode") String customerCode,
 			@Param("orderNo") String orderNo,
 			@Param("orderStatus") String orderStatus,
+			@Param("outOrderNo") String outOrderNo,
+			@Param("primeName") String primeName,
 			Pageable pageable
 			);
 }

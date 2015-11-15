@@ -526,7 +526,7 @@ public class PrimerProduct implements java.io.Serializable {
 
     @Transient
     public BigDecimal getPrimerRealValue(PrimerValueType type){
-    	if(primerProductValueMap.isEmpty()){
+    	if(primerProductValueMap.isEmpty() || this.primerProductValueMap.get(type) == null){
     		return new BigDecimal("0.0");
     	}else{
             return this.primerProductValueMap.get(type).getValue();
