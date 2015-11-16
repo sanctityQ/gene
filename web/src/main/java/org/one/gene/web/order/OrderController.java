@@ -228,7 +228,7 @@ public class OrderController {
 						if (pm.getProductCategories().equals("modiMidType")) {
 							modiMidArr = modiMidArr + pm.getProductCode() + ",";
 							modiMidMap.put(pm.getProductCode(), pm.getModifiedMolecular()+"");
-						} else if (pm.getProductCategories().equals("modiThreeType")) {
+						} else if (pm.getProductCategories().equals("modiSpeType")) {
 							modiSpeArr = modiSpeArr + pm.getProductCode() + ",";
 							modiSpeMap.put(pm.getProductCode(), pm.getModifiedMolecular()+"");
 						}
