@@ -76,7 +76,6 @@ if(userExp!=''){ alert(userExp)}
 </div>
 <div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
 <script src="${ctx}/views/order/js/orderList.js" ></script>
-<script src="${ctx}/static/js/vagueSeachOrder.js" ></script>
 <script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script type="text/javascript">
 
