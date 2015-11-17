@@ -95,7 +95,7 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 			+ "#if(:orderNo != '') { and o.`order_no` = :orderNo }"
 			+ "#if(:customerFlagStr != '') { and o.`customer_code` IN ( select `code` from `customer` where `customer_flag`= :customerFlagStr ) }"
 			+ "#if(:productNoPrefix != '') { and exists ( select 1 from `primer_product` pp where o.`order_no` = pp.`order_no` and pp.`product_no` like :productNoPrefix ) }"
-			+ " order by o.`create_time` desc "
+			+ " order by o.`create_time` desc,o.`order_no` desc "
 			)
 	Page<Order> printReportQuery(
 			@Param("createStartTime") String createStartTime,
