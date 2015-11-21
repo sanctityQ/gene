@@ -133,5 +133,29 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 			@Param("primeName") String primeName,
 			Pageable pageable
 			);
+	
+	@SQL("select * from `order` o  where `status` = '1' "
+			+ "#if(:createStartTime != '') { and o.`create_time` >= STR_TO_DATE( :createStartTime , '%m/%d/%Y %H:%i:%S') } "
+			+ "#if(:createEndTime != '') { and o.`create_time`   <= STR_TO_DATE( :createEndTime   , '%m/%d/%Y %H:%i:%S') } "
+			+ "#if(:outOrderNo != '') { and o.`out_order_no` = :outOrderNo }"
+			+ "#if(:handlerCode != '') { and o.`handler_code` = :handlerCode }"
+			+ "#if(:customerCode != '') { and o.`customer_code` = :customerCode }"
+			+ "#if(:contactsName != '') { and o.`contacts_name` = :contactsName }"
+			+ "#if(:productNoPrefix != '' || :productNo != '') { and exists ( select 1 from `primer_product` pp where o.`order_no` = pp.`order_no`  "
+            + "#if(:productNoPrefix != '') {  and pp.`product_no` like :productNoPrefix  }"
+            + "#if(:productNo != '') {  and pp.`product_no` = :productNo  }"
+            + " ) } "
+			+ " order by o.`create_time` desc "
+			)
+	List<Order> queryqDuiZhangDan(
+			@Param("createStartTime") String createStartTime,
+			@Param("createEndTime") String createEndTime,
+			@Param("outOrderNo") String outOrderNo,
+			@Param("handlerCode") String handlerCode,
+			@Param("customerCode") String customerCode,
+			@Param("contactsName") String contactsName,
+			@Param("productNo") String productNo,
+			@Param("productNoPrefix") String productNoPrefix
+			);
 }
 

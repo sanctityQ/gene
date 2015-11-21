@@ -617,32 +617,15 @@ public class StatisticsService {
      * */
 	public void exportDuiZhangDan( StatisticsInfo statisticsInfo, Invocation inv) throws IOException {
 		
-		Sort s = new Sort(Direction.DESC, "createTime");
-        Map<String,Object> searchParams = Maps.newHashMap();
-        if (!"".equals(statisticsInfo.getCreateStartTime())) {
-        	searchParams.put(SearchFilter.Operator.GT+"__createTime",new Date(statisticsInfo.getCreateStartTime()+" 00:00:00"));
-        }
-        if (!"".equals(statisticsInfo.getCreateEndTime())) {
-        	searchParams.put(SearchFilter.Operator.LT+"__createTime",new Date(statisticsInfo.getCreateEndTime()+" 23:59:59"));
-        }
-		if (!"".equals(statisticsInfo.getOutOrderNo())) {
-			searchParams.put(SearchFilter.Operator.EQ+"_outOrderNo",statisticsInfo.getOutOrderNo());
-		}
-		if (!"".equals(statisticsInfo.getUserCode())) {
-			searchParams.put(SearchFilter.Operator.EQ+"_handlerCode",statisticsInfo.getUserCode());
-		}
-		if (!"".equals(statisticsInfo.getCustomerCode())) {
-			searchParams.put(SearchFilter.Operator.EQ+"_customerCode",statisticsInfo.getCustomerCode());
-		}
-		if (!"".equals(statisticsInfo.getContactsName())) {
-			searchParams.put(SearchFilter.Operator.EQ+"_contactsName",statisticsInfo.getContactsName());
-		}
-		searchParams.put(SearchFilter.Operator.EQ+"_status","1");//订单审核通过
+		String createStartTime = statisticsInfo.getCreateStartTime()+" 00:00:00";
+		String createEndTime   = statisticsInfo.getCreateEndTime()+" 23:59:59";
         
-        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
-        Specification<Order> spec = DynamicSpecifications.bySearchFilter(filters.values(), Order.class);
-        
-        List<Order> orders = orderRepository.findAll(spec, s);
+		List<Order> orders = orderRepository.queryqDuiZhangDan(createStartTime,
+				createEndTime, statisticsInfo.getOutOrderNo(),
+				statisticsInfo.getUserCode(), statisticsInfo.getCustomerCode(),
+				statisticsInfo.getContactsName(),
+				statisticsInfo.getProductNo(),
+				statisticsInfo.getProductNoPrefix());
 		
 		
 		//形成Excel
@@ -1493,7 +1476,7 @@ public class StatisticsService {
 					//修饰
 					String midi = "";
 					if (!"".equals(primerProduct.getModiFiveType())) {
-						midi += primerProduct.getModiFiveType()+",";
+						midi += "5'"+primerProduct.getModiFiveType()+",";
 					}
 					if (!"".equals(primerProduct.getModiMidType())) {
 						midi += primerProduct.getModiMidType()+",";
@@ -1502,7 +1485,7 @@ public class StatisticsService {
 						midi += primerProduct.getModiSpeType()+",";
 					}
 					if (!"".equals(primerProduct.getModiThreeType())) {
-						midi += primerProduct.getModiThreeType()+",";
+						midi += "3'"+primerProduct.getModiThreeType()+",";
 					}
 					if(!"".equals(midi)){
 						midi = "("+midi.substring(0, midi.length()-1)+")";

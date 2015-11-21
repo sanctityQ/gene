@@ -27,12 +27,14 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
                 <input type="text" class="easyui-datebox" id="createEndTime" required="required" style="width: 120px;">
             </td>
 			<td align="right">外部订单号:</td>
-			<td><input id="outOrderNo" class="inp_text" type="text" value="" style="width: 200px" /></td>
+			<td><input id="outOrderNo" class="inp_text" type="text" value="" style="width: 150px" /></td>
 			<td align="right">生产编号:</td>
-			<td><input id="productNo" class="inp_text" type="text" value="" style="width: 200px" /></td>
+			<td><input id="productNo" class="inp_text" type="text" value="" style="width: 100px" /></td>
+			<td align="right">生产编号开头:</td>
+			<td><input id=productNoPrefix class="inp_text" type="text" autocomplete="off" style="width: 40px" />
 		</tr>
 		<tr>
-            <td colspan="6" height="20"></td>
+            <td colspan="8" height="20"></td>
         </tr>
 		<tr>
 			<td align="right">客户公司名称:</td>
@@ -43,19 +45,19 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 			</td>
 			<td align="right">客户姓名:</td>
             <td>
-			    <input class="inp_text" type="text" autocomplete="off" id="seachContacts" name="contactsname" value="" style="width: 200px" />
+			    <input class="inp_text" type="text" autocomplete="off" id="seachContacts" name="contactsname" value="" style="width: 150px" />
 			    <input class="inp_text" type="hidden" id="contactsid" name="contactsid" value=""/>
 			    <ul id="seachContactsList"></ul>
 			</td>
 			<td align="right">业务员:</td>
             <td>
-                <input class="inp_text" type="text" autocomplete="off" id="seachUserName" name="customer.handlerName" value="" style="width: 200px" />
+                <input class="inp_text" type="text" autocomplete="off" id="seachUserName" name="customer.handlerName" value="" style="width: 100px" />
 			    <input class="inp_text" type="hidden" id="vagueUserCode" name="customer.handlerCode" value=""/>
 			    <ul id="seachUserList"></ul>
 			</td>
 		</tr>
         <tr>
-            <td colspan="6" height="20"></td>
+            <td colspan="8" height="20"></td>
         </tr>
 	</table>
     <div class="btn_group">
@@ -83,6 +85,7 @@ var exportDZD = function(){
     var contactsid = $('#contactsid').val();
     var vagueUserCode = $('#vagueUserCode').val();
     var contactsName = $('#seachContacts').val();
+    var productNoPrefix=$("#productNoPrefix").val();
     if(contactsid == ""){
     	contactsName = "";
     }
@@ -100,7 +103,8 @@ var exportDZD = function(){
 		     "contactsId":contactsid,
 		     "userCode":vagueUserCode,
 		     "contactsName":contactsName,
-		     "productNo":productNo
+		     "productNo":productNo,
+		     "productNoPrefix":productNoPrefix
 		     };
     statisticsInfos.push(statisticsInfo);
     

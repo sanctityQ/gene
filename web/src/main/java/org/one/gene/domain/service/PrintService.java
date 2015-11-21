@@ -462,11 +462,11 @@ public class PrintService {
 			printLabel.setPrimeName(primerProduct.getPrimeName());// 引物名称
 			printLabel.setOrderNo(primerProduct.getOrder().getOrderNo());// 订单号
 			printLabel.setOutOrderNo(outOrderNo);//外部订单号
-			printLabel.setGeneOrder(primerProduct.getGeneOrder());// 引物序列
+			printLabel.setGeneOrder(primerProduct.getGeneOrderMidi());// 引物序列(原始)
 			// 修饰
 			String midi = "";
 			if (!"".equals(primerProduct.getModiFiveType())) {
-				midi += primerProduct.getModiFiveType() + ",";
+				midi += "5'"+primerProduct.getModiFiveType() + ",";
 			}
 			if (!"".equals(primerProduct.getModiMidType())) {
 				midi += primerProduct.getModiMidType() + ",";
@@ -475,7 +475,7 @@ public class PrintService {
 				midi += primerProduct.getModiSpeType() + ",";
 			}
 			if (!"".equals(primerProduct.getModiThreeType())) {
-				midi += primerProduct.getModiThreeType() + ",";
+				midi += "3'"+primerProduct.getModiThreeType() + ",";
 			}
 			if (!"".equals(midi)) {
 				midi = "(" + midi.substring(0, midi.length() - 1) + ")";

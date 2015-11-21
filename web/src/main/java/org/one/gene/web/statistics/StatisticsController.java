@@ -151,7 +151,7 @@ public class StatisticsController {
     }
     
     /**
-     * 导出引物进度表文件
+     * 导出修饰进度表文件
      * */
     @Post("exportXiuShiJinDuBiao")
 	public void exportXiuShiJinDuBiao(@Param("statisticsInfojson") String statisticsInfojson, Invocation inv)

@@ -1565,16 +1565,16 @@ public class SynthesisService {
         		if (!"".equals(modiFiveType) || !"".equals(modiThreeType) || !"".equals(modiMidType) || !"".equals(modiSpeType)) {
     				modiStr = "(";
     				if (!"".equals(modiFiveType)) {
-    					modiStr += modiFiveType + ",";
-    				}
-    				if (!"".equals(modiThreeType)) {
-    					modiStr += modiThreeType + ",";
+    					modiStr += "5'"+modiFiveType + ",";
     				}
     				if (!"".equals(modiMidType)) {
     					modiStr += modiMidType + ",";
     				}
     				if (!"".equals(modiSpeType)) {
     					modiStr += modiSpeType + ",";
+    				}
+    				if (!"".equals(modiThreeType)) {
+    					modiStr += "3'"+modiThreeType + ",";
     				}
     				modiStr = modiStr.substring(0, modiStr.length()-1);
     				modiStr += ")";

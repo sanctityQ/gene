@@ -12,6 +12,7 @@ public class StatisticsInfo {
 	private String userCode = "";
 	private String contactsName = "";
 	private String productNo = "";
+	private String productNoPrefix = "";
 	private String customerFlag = "";
 	private String orderTime = "";
 	private String modiType = "";
@@ -119,6 +120,12 @@ public class StatisticsInfo {
 	}
 	public void setProductNo(String productNo) {
 		this.productNo = productNo;
+	}
+	public String getProductNoPrefix() {
+		return productNoPrefix;
+	}
+	public void setProductNoPrefix(String productNoPrefix) {
+		this.productNoPrefix = productNoPrefix;
 	}
 	public String getContactsName() {
 		return contactsName;
