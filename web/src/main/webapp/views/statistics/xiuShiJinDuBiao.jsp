@@ -27,13 +27,13 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
                 <input type="text" class="easyui-datebox" id="createEndTime" required="required" style="width: 120px;">
             </td>
 			<td align="right">外部订单号:</td>
-			<td><input id="outOrderNo" class="inp_text" type="text" value="" style="width: 200px" /></td>
+			<td><input id="outOrderNo" class="inp_text" type="text" value="" style="width: 200px"  onchange="showButtonDiv()"/></td>
 			<td align="right">生产编号:</td>
-			<td><input id="productNo" class="inp_text" type="text" value="" style="width: 200px" /></td>
+			<td><input id="productNo" class="inp_text" type="text" value="" style="width: 200px"  onchange="showButtonDiv()"/></td>
 		</tr>
 		<tr>
 			<td align="right">客户公司名称:</td>
-			<td><input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 200px" />
+			<td><input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 200px"  onchange="showButtonDiv()"/>
 			    <input type="hidden" id="customerid" name="customerid" value=""/>
 			    <input type="hidden" id="customerCode" name="customerCode" value=""/>
 			    <input type="hidden" id="customerFlag" name="customerFlag" value=""/>
@@ -41,13 +41,13 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 			</td>
 			<td align="right">客户姓名:</td>
             <td>
-			    <input class="inp_text" type="text" autocomplete="off" id="seachContacts" name="contactsname" value="" style="width: 200px" />
+			    <input class="inp_text" type="text" autocomplete="off" id="seachContacts" name="contactsname" value="" style="width: 200px"  onchange="showButtonDiv()"/>
 			    <input class="inp_text" type="hidden" id="contactsid" name="contactsid" value=""/>
 			    <ul id="seachContactsList"></ul>
 			</td>
 			<td align="right">特殊单体:</td>
 			<td>
-                <select id="modiSpeType" class="my_select" style="width: 100px;">
+                <select id="modiSpeType" class="my_select" style="width: 100px;" onchange="showButtonDiv()">
                 <option value="">全部</option>
 				<c:forEach items="${modiSpes}" var="modiSpe"  varStatus="status">
 				  <option value="${modiSpe.productCode}">${modiSpe.productCode}</option>
@@ -58,7 +58,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 		<tr>
 			<td align="right">5修饰:</td>
 			<td>
-                <select id="modiFiveType" class="my_select" style="width: 100px;">
+                <select id="modiFiveType" class="my_select" style="width: 100px;" onchange="showButtonDiv()">
                 <option value="">全部</option>
 				<c:forEach items="${modiFives}" var="modiFive"  varStatus="status">
 				  <option value="${modiFive.productCode}">${modiFive.productCode}</option>
@@ -67,7 +67,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 			</td>
 			<td align="right">3修饰:</td>
 			<td>
-                <select id="modiThreeType" class="my_select" style="width: 100px;">
+                <select id="modiThreeType" class="my_select" style="width: 100px;" onchange="showButtonDiv()">
                 <option value="">全部</option>
 				<c:forEach items="${modiThrees}" var="modiThree"  varStatus="status">
 				  <option value="${modiThree.productCode}">${modiThree.productCode}</option>
@@ -76,7 +76,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 			</td>
 			<td align="right">中间修饰:</td>
 			<td>
-                <select id="modiMidType" class="my_select" style="width: 100px;">
+                <select id="modiMidType" class="my_select" style="width: 100px;" onchange="showButtonDiv()">
                 <option value="">全部</option>
 				<c:forEach items="${modiMids}" var="modiMid"  varStatus="status">
 				  <option value="${modiMid.productCode}">${modiMid.productCode}</option>
@@ -88,7 +88,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
             <td colspan="8" height="20"></td>
         </tr>
 	</table>
-    <div class="btn_group">
+    <div class="btn_group" id="buttonDiv">
         <button type="button" class="btn btn-primary" onclick="exportFile()">导出</button>
     </div>
 </div>
@@ -96,6 +96,19 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 <script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script src="${ctx}/static/js/vagueSeachContacts.js" ></script>
 <script type="text/javascript">
+$('#createStartTime').datebox({
+    onSelect: function (date) {
+    	$('#buttonDiv').show();
+    }
+});
+$('#createEndTime').datebox({
+    onSelect: function (date) {
+    	$('#buttonDiv').show();
+    }
+});
+var showButtonDiv = function(){
+	$('#buttonDiv').show();
+}
 var exportFile = function(){
 	
     var createStartTime = $('#createStartTime').datebox('getValue');
@@ -106,6 +119,8 @@ var exportFile = function(){
     	return false;
     }
 
+    $('#buttonDiv').hide();
+    
     var outOrderNo = $('#outOrderNo').val();
     var customerid = $('#customerid').val();
     var customerCode = $('#customerCode').val();

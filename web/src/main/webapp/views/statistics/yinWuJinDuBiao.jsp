@@ -27,7 +27,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
                 <input type="text" class="easyui-datebox" id="createEndTime" required="required" style="width: 120px;">
             </td>
 			<td align="right">客户公司名称:</td>
-			<td><input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 200px" />
+			<td><input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 200px"  onchange="showButtonDiv()"/>
 			    <input type="hidden" id="customerid" name="customerid" value=""/>
 			    <input type="hidden" id="customerCode" name="customerCode" value=""/>
 			    <input type="hidden" id="customerFlag" name="customerFlag" value=""/>
@@ -35,13 +35,26 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 			</td>
 		</tr>
 	</table>
-    <div class="btn_group">
+    <div class="btn_group" id="buttonDiv">
         <button type="button" class="btn btn-primary" onclick="exportFile()">导出</button>
     </div>
 </div>
 </form>
 <script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script type="text/javascript">
+$('#createStartTime').datebox({
+    onSelect: function (date) {
+    	$('#buttonDiv').show();
+    }
+});
+$('#createEndTime').datebox({
+    onSelect: function (date) {
+    	$('#buttonDiv').show();
+    }
+});
+var showButtonDiv = function(){
+	$('#buttonDiv').show();
+}
 var exportFile = function(){
 	
     var createStartTime = $('#createStartTime').datebox('getValue');
@@ -52,6 +65,8 @@ var exportFile = function(){
     	return false;
     }
 
+    $('#buttonDiv').hide();
+    
     var customerid = $('#customerid').val();
     var customerFlag = $('#customerFlag').val();
     

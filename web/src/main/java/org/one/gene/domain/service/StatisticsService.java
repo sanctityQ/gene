@@ -349,94 +349,97 @@ public class StatisticsService {
     	
 		int startRow = 2;//从第2行开始
 		double totalMoney = 0.0;//合计
-		for (String key : resultMap.keySet()) {
-			DeliveryInfo dis = (DeliveryInfo)resultMap.get(key);
+		if (resultMap!=null){
 			
-			row = sheet.getRow(startRow);
-			
-			cell = row.createCell(0);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(dis.getExtendStr1());//订货日期
-			
-			cell = row.createCell(1);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(dis.getExtendStr2());//公司名称
-			
-			cell = row.createCell(2);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(dis.getExtendStr3());//客户姓名
-			
-			cell = row.createCell(3);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(dis.getExtendStr4());//订单号
-			
-			cell = row.createCell(4);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(dis.getExtendStr5());//业务员
-			
-			cell = row.createCell(5);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(dis.getDeliveryName());//存货名称
-		    
-			cell = row.createCell(6);
-		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		    cell.setCellStyle(style_center);
-			cell.setCellValue(dis.getCountNum());//条数
-			
-			cell = row.createCell(7);
-		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		    cell.setCellStyle(style_center);
-			cell.setCellValue(dis.getOdTotal()+"OD");//合成量
-			
-			hechengliangSum += dis.getOdTotal();//合成量之和
-			
-			cell = row.createCell(8);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(dis.getMeasurement());//计量单位
-		    
-			cell = row.createCell(9);
-		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		    cell.setCellStyle(style_center);
-			cell.setCellValue(dis.getCount());//数量
-			
-			shuliangCount += dis.getCount();//数量之和
-					
-			cell = row.createCell(10);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(dis.getPrice());//单价
-			
-			if ("0".equals(dis.getExtendStr9())) {// 普通引物
-				tiaoshuCount_pt += dis.getCountNum();// 条数之和
-				danjiaSum_pt += dis.getPrice();// 单价总和
-			} else if ("1".equals(dis.getExtendStr9())) {// 修饰引物
-				tiaoshuCount_xs += dis.getCountNum();// 条数之和
-				danjiaSum_xs += dis.getPrice();// 单价总和
-			} else if ("2".equals(dis.getExtendStr9())) {// 纯化引物
-				tiaoshuCount_ch += dis.getCountNum();// 条数之和
-				danjiaSum_ch += dis.getPrice();// 单价总和
-			}
-			
-			cell = row.createCell(11);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			cell.setCellValue(dis.getMoney());//金额
-			
-			cell = row.createCell(12);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellStyle(style_center);
-			
-			startRow = startRow +1;
-			
-			if(!"".equals(dis.getMoney())){
-				totalMoney += Double.parseDouble(dis.getMoney());
+			for (String key : resultMap.keySet()) {
+				DeliveryInfo dis = (DeliveryInfo)resultMap.get(key);
+				
+				row = sheet.getRow(startRow);
+				
+				cell = row.createCell(0);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getExtendStr1());//订货日期
+				
+				cell = row.createCell(1);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getExtendStr2());//公司名称
+				
+				cell = row.createCell(2);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getExtendStr3());//客户姓名
+				
+				cell = row.createCell(3);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getExtendStr4());//订单号
+				
+				cell = row.createCell(4);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getExtendStr5());//业务员
+				
+				cell = row.createCell(5);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getDeliveryName());//存货名称
+				
+				cell = row.createCell(6);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getCountNum());//条数
+				
+				cell = row.createCell(7);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getOdTotal()+"OD");//合成量
+				
+				hechengliangSum += dis.getOdTotal();//合成量之和
+				
+				cell = row.createCell(8);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getMeasurement());//计量单位
+				
+				cell = row.createCell(9);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getCount());//数量
+				
+				shuliangCount += dis.getCount();//数量之和
+				
+				cell = row.createCell(10);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getPrice());//单价
+				
+				if ("0".equals(dis.getExtendStr9())) {// 普通引物
+					tiaoshuCount_pt += dis.getCountNum();// 条数之和
+					danjiaSum_pt += dis.getPrice();// 单价总和
+				} else if ("1".equals(dis.getExtendStr9())) {// 修饰引物
+					tiaoshuCount_xs += dis.getCountNum();// 条数之和
+					danjiaSum_xs += dis.getPrice();// 单价总和
+				} else if ("2".equals(dis.getExtendStr9())) {// 纯化引物
+					tiaoshuCount_ch += dis.getCountNum();// 条数之和
+					danjiaSum_ch += dis.getPrice();// 单价总和
+				}
+				
+				cell = row.createCell(11);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getMoney());//金额
+				
+				cell = row.createCell(12);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				
+				startRow = startRow +1;
+				
+				if(!"".equals(dis.getMoney())){
+					totalMoney += Double.parseDouble(dis.getMoney());
+				}
 			}
 		}
 		

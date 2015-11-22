@@ -22,12 +22,12 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 		<tr>
             <td align="right">订单导入时间段:</td>
             <td>
-                <input type="text" class="easyui-datebox" id="createStartTime" required="required" style="width: 120px;">
+                <input type="text" class="easyui-datebox" id="createStartTime" required="required" style="width: 120px;"/>
                 -
-                <input type="text" class="easyui-datebox" id="createEndTime" required="required" style="width: 120px;">
+                <input type="text" class="easyui-datebox" id="createEndTime" required="required" style="width: 120px;"/>
             </td>
 			<td align="right">外部订单号:</td>
-			<td><input id="outOrderNo" class="inp_text" type="text" value="" style="width: 200px" /></td>
+			<td><input id="outOrderNo" class="inp_text" type="text" value="" style="width: 200px" onchange="showButtonDiv()"/></td>
 			<td align="right"></td>
 			<td align="right"></td>
 		</tr>
@@ -36,20 +36,20 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
         </tr>
 		<tr>
 			<td align="right">客户公司名称:</td>
-			<td><input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 200px" />
+			<td><input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 200px"  onchange="showButtonDiv()"/>
 			    <input class="inp_text" type="hidden" id="customerid" name="customerid" value=""/>
 			    <input class="inp_text" type="hidden" id="customerCode" name="customerCode" value=""/>
 			    <ul id="seachCustomList"></ul>
 			</td>
 			<td align="right">客户姓名:</td>
             <td>
-			    <input class="inp_text" type="text" autocomplete="off" id="seachContacts" name="contactsname" value="" style="width: 200px" />
+			    <input class="inp_text" type="text" autocomplete="off" id="seachContacts" name="contactsname" value="" style="width: 200px"  onchange="showButtonDiv()"/>
 			    <input class="inp_text" type="hidden" id="contactsid" name="contactsid" value=""/>
 			    <ul id="seachContactsList"></ul>
 			</td>
 			<td align="right">业务员:</td>
             <td>
-                <input class="inp_text" type="text" autocomplete="off" id="seachUserName" name="customer.handlerName" value="" style="width: 200px" />
+                <input class="inp_text" type="text" autocomplete="off" id="seachUserName" name="customer.handlerName" value="" style="width: 200px"  onchange="showButtonDiv()"/>
 			    <input class="inp_text" type="hidden" id="vagueUserCode" name="customer.handlerCode" value=""/>
 			    <ul id="seachUserList"></ul>
 			</td>
@@ -58,7 +58,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
             <td colspan="6" height="20"></td>
         </tr>
 	</table>
-    <div class="btn_group">
+    <div class="btn_group" id="buttonDiv">
         <button type="button" class="btn btn-primary" onclick="exportCKTJ()">导出</button>
     </div>
 </div>
@@ -67,6 +67,20 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 <script src="${ctx}/static/js/vagueSeachContacts.js" ></script>
 <script src="${ctx}/static/js/vagueSeachUser.js" ></script>
 <script type="text/javascript">
+
+$('#createStartTime').datebox({
+    onSelect: function (date) {
+    	$('#buttonDiv').show();
+    }
+});
+$('#createEndTime').datebox({
+    onSelect: function (date) {
+    	$('#buttonDiv').show();
+    }
+});
+var showButtonDiv = function(){
+	$('#buttonDiv').show();
+}
 var exportCKTJ = function(){
 	
     var createStartTime = $('#createStartTime').datebox('getValue');
@@ -77,6 +91,8 @@ var exportCKTJ = function(){
     	return false;
     }
 
+    $('#buttonDiv').hide();
+    
     var outOrderNo = $('#outOrderNo').val();
     var customerid = $('#customerid').val();
     var customerCode = $('#customerCode').val();
