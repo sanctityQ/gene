@@ -195,13 +195,13 @@ public class DeliveryService {
 							
 							boardHole.getPrimerProduct().setModifyTime(new Date());//最后修改时间
 							boardHole.setModifyTime(new Date());//最后修改时间
-							boardHole.setModifyUser(123L);//后续从session取得
+							boardHole.setModifyUser(user.getId());
 							if (boardHole.getPrimerProduct().getBackTimes() != null) {
 								boardHole.getPrimerProduct().setBackTimes(boardHole.getPrimerProduct().getBackTimes()+1);//循环重回次数+1
 							}
 							
 							if ("1".equals(flag)) {//安排合成
-								boardHole.getPrimerProduct().setOperationType(PrimerStatusType.synthesis);//回到待合成
+								boardHole.getPrimerProduct().setOperationType(PrimerStatusType.makeBoard);//回到待制板
 								boardHole.getPrimerProduct().setBoardNo("");//清空板号
 								boardHole.setStatus(1);//删除
 							}else if ("2".equals(flag)) {//重新分装

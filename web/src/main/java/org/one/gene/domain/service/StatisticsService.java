@@ -619,13 +619,18 @@ public class StatisticsService {
 		
 		String createStartTime = statisticsInfo.getCreateStartTime()+" 00:00:00";
 		String createEndTime   = statisticsInfo.getCreateEndTime()+" 23:59:59";
-        
+        String productNoPrefix = statisticsInfo.getProductNoPrefix();
+		if (!StringUtils.isBlank(productNoPrefix)) {
+			productNoPrefix = productNoPrefix.toUpperCase() + "%";
+        }
+		
 		List<Order> orders = orderRepository.queryqDuiZhangDan(createStartTime,
 				createEndTime, statisticsInfo.getOutOrderNo(),
 				statisticsInfo.getUserCode(), statisticsInfo.getCustomerCode(),
 				statisticsInfo.getContactsName(),
 				statisticsInfo.getProductNo(),
-				statisticsInfo.getProductNoPrefix());
+				productNoPrefix
+				);
 		
 		
 		//形成Excel
