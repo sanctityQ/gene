@@ -354,7 +354,7 @@ public class StatisticsService {
 			for (String key : resultMap.keySet()) {
 				DeliveryInfo dis = (DeliveryInfo)resultMap.get(key);
 				
-				row = sheet.getRow(startRow);
+				row = sheet.createRow(startRow);
 				
 				cell = row.createCell(0);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
@@ -456,7 +456,7 @@ public class StatisticsService {
 			avgePrice_ch = danjiaSum_ch/tiaoshuCount_ch;
 		}
 		
-		row = sheet.getRow(startRow);
+		row = sheet.createRow(startRow);
 		cell = row.createCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
@@ -473,7 +473,7 @@ public class StatisticsService {
 			cell.setCellStyle(style_center);	
 		}
 	
-		row = sheet.getRow(startRow+1);
+		row = sheet.createRow(startRow+1);
 		cell = row.createCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
@@ -485,7 +485,7 @@ public class StatisticsService {
 			cell.setCellStyle(style_center);	
 		}
 		
-		row = sheet.getRow(startRow+2);
+		row = sheet.createRow(startRow+2);
 		cell = row.createCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
@@ -535,7 +535,7 @@ public class StatisticsService {
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
 		
-		row = sheet.getRow(startRow+3);
+		row = sheet.createRow(startRow+3);
 		cell = row.createCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
@@ -584,7 +584,7 @@ public class StatisticsService {
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
 		
-		row = sheet.getRow(startRow+4);
+		row = sheet.createRow(startRow+4);
 		cell = row.createCell(9);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
@@ -594,7 +594,7 @@ public class StatisticsService {
 		cell.setCellStyle(style_center);
 		cell.setCellValue(df.format(avgePrice_ch));//单价平均值：HPLC均价
 		
-		row = sheet.getRow(startRow+5);
+		row = sheet.createRow(startRow+5);
 		cell = row.createCell(9);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style_center);
@@ -1586,7 +1586,7 @@ public class StatisticsService {
     	int startRow = 2;//从第2行开始
     	int index=1;
     	for (OrderInfo oi : orderInfos) {
-			row = sheet.getRow(startRow);
+			row = sheet.createRow(startRow);
 			
 			cell = row.createCell(0);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
