@@ -214,6 +214,8 @@ public class OrderController {
 			}
         	
 			//组织修饰基础数据
+        	Map<String,String> modiFiveMap = new HashMap<String,String>();
+        	Map<String,String> modiThreeMap = new HashMap<String,String>();
 			Map<String,String> modiMidMap = new HashMap<String,String>();  
 			Map<String,String> modiSpeMap = new HashMap<String,String>();
 			
@@ -225,7 +227,11 @@ public class OrderController {
 			if (productMoleculars != null && productMoleculars.size() > 0) {
 				for (ProductMolecular pm : productMoleculars) {
 					if (pm.getValidate().equals("1")) {
-						if (pm.getProductCategories().equals("modiMidType")) {
+						if (pm.getProductCategories().equals("modiFiveType")) {
+							modiFiveMap.put(pm.getProductCode(), pm.getModifiedMolecular()+"");
+						}else if (pm.getProductCategories().equals("modiThreeType")) {
+							modiThreeMap.put(pm.getProductCode(), pm.getModifiedMolecular()+"");
+						}else if (pm.getProductCategories().equals("modiMidType")) {
 							modiMidArr = modiMidArr + pm.getProductCode() + ",";
 							modiMidMap.put(pm.getProductCode(), pm.getModifiedMolecular()+"");
 						} else if (pm.getProductCategories().equals("modiSpeType")) {
@@ -242,7 +248,8 @@ public class OrderController {
         	
 			try {
 				// 获取外部订单号
-				ArrayList<Order> orders = orderService.ReadExcel(path, 0, "2-", prefix, customerPrices, modiMidMap, modiSpeMap);
+				ArrayList<Order> orders = orderService.ReadExcel(path, 0, "2-",
+						prefix, customerPrices, modiFiveMap, modiThreeMap,	modiMidMap, modiSpeMap);
 				orderService.convertOrder(customer, filename, orders, contactsname);
 				
 				// 保存订单信息

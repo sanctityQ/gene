@@ -112,7 +112,9 @@ public class OrderExcelPase {
 	 */
 	public ArrayList<Order> ReadExcel(String path, int sheetIndex, String rows,
 			String prefix, List<CustomerPrice> customerPrices,
-			Map<String, String> modiMidMap, Map<String, String> modiSpeMap) throws Exception {
+			Map<String, String> modiFiveMap, Map<String, String> modiThreeMap,
+			Map<String, String> modiMidMap, Map<String, String> modiSpeMap)
+			throws Exception {
 		
 		// 获取Excel文件的第1个sheet的内容
 		ArrayList<ArrayList<String>> lists = excelResolver.ReadExcel(path, sheetIndex,rows);
@@ -185,10 +187,20 @@ public class OrderExcelPase {
 				  case 9:	
 					  primerProduct.setPurifyType(v);
 					break;
-				  case 10:	
+				  case 10:
+					  if(!"".equals(v)){
+						  if(modiFiveMap.get(v)== null){
+							  throw new Exception("您提交的5修饰类型 " + v + " 没有修饰分子量配置信息。");
+						  }
+					  }
 					  primerProduct.setModiFiveType(v);
 					break;
-				  case 11:	
+				  case 11:
+					  if(!"".equals(v)){
+						  if(modiThreeMap.get(v)== null){
+							  throw new Exception("您提交的3修饰类型 " + v + " 没有修饰分子量配置信息。");
+						  }
+					  }
 					  primerProduct.setModiThreeType(v);
 					break;
 				  case 12:	

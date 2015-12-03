@@ -554,7 +554,7 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 			
         	BigDecimal modiMidVal = new BigDecimal("0");
 			OrderCaculate orderCaculate = new OrderCaculate();
-			String modiMidType = orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),modiMidMap);
+			String modiMidType = orderCaculate.getModiStr(primerProduct.getGeneOrderMidi());
 			String[] moditypes = modiMidType.split(",");
 			for(int i=0;i<moditypes.length;i++){
 				if(modiMidMap.get(moditypes[i])!=null){
@@ -563,7 +563,7 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 			}
 			
 			BigDecimal modiSpeVal = new BigDecimal("0");
-			String modiSpeType = orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),modiSpeMap);
+			String modiSpeType = orderCaculate.getModiStr(primerProduct.getGeneOrderMidi());
 			String[] modiSpeTypes = modiSpeType.split(",");
 			for(int i=0;i<modiSpeTypes.length;i++){
 				if(modiSpeMap.get(modiSpeTypes[i])!=null){
