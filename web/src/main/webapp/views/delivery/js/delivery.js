@@ -82,6 +82,56 @@ var orderInfoIni=function(){
         			  reSultdata[i].status = '订单审核不通过';	
         			}
         		}
+				orderList.datagrid({
+					onClickCell:function(rowIndex, field, value){
+						if(field == "deliveryRemark"){
+							var dig = $('#inputCause');
+							console.log(reSultdata)
+							$('.inp_text',dig).val(value);
+							dig.dialog({
+								title: '添加备注',
+								width: 400,
+								height: 200,
+								closed: false,
+								cache: false,
+								modal: true,
+								buttons:[{
+									text:'取 消',
+									handler:function(){
+										dig.dialog('close');
+										return false;
+									}
+								},{
+									text:'保 存',
+									handler:function(){
+										var text = $('.inp_text',dig).val();
+										if(text != value){
+											//alert('调保存数据接口：'+ "rowIndex:"+rowIndex+',field:'+field);
+											orderList.datagrid('updateRow', {index:rowIndex,row:{deliveryRemark:text}});
+										}
+										dig.dialog('close');
+									}
+								}]
+							});
+						}
+					},
+					onCheck: function(rowIndex,rowData){
+						batchData += 1;
+						setDisabel();
+					},
+					onUncheck: function(rowIndex,rowData){
+						batchData -= 1;
+						setDisabel();
+					},
+					onCheckAll:function(rows){
+						batchData = rows.length;
+						setDisabel();
+					},
+					onUncheckAll:function(){
+						batchData = 0;
+						setDisabel();
+					}
+				});
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#orderList').datagrid("loadData",jsonsource);
 			}
