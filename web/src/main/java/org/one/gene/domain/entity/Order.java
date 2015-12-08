@@ -79,23 +79,12 @@ public class Order extends IdEntity implements java.io.Serializable {
     private BigDecimal totalValue;
 
     List<PrimerProduct> primerProducts = Lists.newArrayList();
+    private String productNoMinToMax;//订单中生产数据头尾生产编码
+	private BigDecimal tbnTotal;//订单中所有生产数据碱基数汇总
+    private String handlerCode;//业务员工号
+    private String handlerName;//业务员姓名
+    private String deliveryRemark;//发货备注
     
-    /**
-     * 订单中生产数据头尾生产编码
-     */
-    private String productNoMinToMax;
-    /**
-     * 订单中所有生产数据碱基数汇总
-     */
-	private BigDecimal tbnTotal;
-	/**
-     * 业务员.
-     */
-    private String handlerCode;
-    /**
-     * 业务员姓名.
-     */
-    private String handlerName;
     
     private String selectFlag;//临时字段，不存库
 
@@ -258,6 +247,15 @@ public class Order extends IdEntity implements java.io.Serializable {
 		this.handlerName = handlerName;
 	}
 
+	@Column(name = "`delivery_remark`", length = 2000)
+	public String getDeliveryRemark() {
+		return deliveryRemark;
+	}
+
+	public void setDeliveryRemark(String deliveryRemark) {
+		this.deliveryRemark = deliveryRemark;
+	}
+	
 	/**
      * 获取引物生产数据
      * @return

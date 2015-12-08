@@ -137,6 +137,59 @@ public class DeliveryService {
     	return "";
     }
    
+	//批量保存发货信息
+    @Transactional(readOnly = false)
+	public String batchDelivery(List<OrderInfo> orderInfos ,User user) {
+    	
+		PrimerProduct primerProduct = new PrimerProduct(); 
+		PrimerProductOperation primerProductOperation = new PrimerProductOperation();
+		
+		PrimerOperationType type = null;
+		String typeDesc = "";
+		if (orderInfos != null) {
+			for (OrderInfo oi : orderInfos) {
+				Order order = orderRepository.findByOrderNo(oi.getOrderNo());
+				if (order != null) {
+					List<PrimerProductOperation> primerProductOperations = new ArrayList<PrimerProductOperation>();
+					
+					order.setDeliveryRemark(oi.getDeliveryRemark());//发货备注
+					
+					for (PrimerProduct pp:order.getPrimerProducts()) {
+						primerProduct = primerProductRepository.findOne(pp.getId());
+						if (primerProduct != null && primerProduct.getOperationType()==PrimerStatusType.delivery) {
+							primerProduct.setOperationType(PrimerStatusType.finish);
+							type = PrimerOperationType.deliverySuccess;
+							typeDesc = PrimerOperationType.deliverySuccess.desc();
+							
+							
+							//组装操作信息
+							primerProductOperation = new PrimerProductOperation();
+							primerProductOperation.setPrimerProduct(primerProduct);
+							primerProductOperation.setUserCode(user.getCode());
+							primerProductOperation.setUserName(user.getName());
+							primerProductOperation.setCreateTime(new Date());
+							primerProductOperation.setType(type);
+							primerProductOperation.setTypeDesc(typeDesc);
+							primerProductOperation.setBackTimes(primerProduct.getBackTimes());
+							primerProductOperation.setFailReason("");
+							
+							primerProductOperations.add(primerProductOperation);
+							
+							//保存primer_product表数据
+							primerProductRepository.save(primerProduct);
+						}
+						
+			    	}
+					//更新操作信息
+					primerProductOperationRepository.save(primerProductOperations);
+					
+					orderRepository.save(order);
+				}
+			}
+		}
+    	
+    	return "";
+    }
 		
 	public Page<OrderInfo> convertPrimerProductList(
 			Page<PrimerProduct> primerProductPage, Pageable pageable)

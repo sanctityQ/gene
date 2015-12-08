@@ -30,6 +30,9 @@ public class OrderInfo {
     private String mw;//分子量
     private BigDecimal tbn;//碱基数
     private String comTbn;//复合碱基
+    private String deliveryRemark;//发货备注
+    
+
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -226,4 +229,11 @@ public class OrderInfo {
 	public void setComTbn(String comTbn) {
 		this.comTbn = comTbn;
 	}
+	public String getDeliveryRemark() {
+		return deliveryRemark;
+	}
+	public void setDeliveryRemark(String deliveryRemark) {
+		this.deliveryRemark = deliveryRemark;
+	}
+	
 }

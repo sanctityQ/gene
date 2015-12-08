@@ -88,6 +88,20 @@ public class DeliveryController {
     }
 
     /**
+     * 批量保存发货信息
+     * */
+    @Post("batchDelivery")
+	public Reply batchDelivery(@Param("orderInfos") List<OrderInfo> orderInfos, Invocation inv) {
+    	
+        ShiroUser shiroUser = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        User user = shiroUser.getUser();
+        
+    	deliveryService.batchDelivery(orderInfos ,user);
+    	
+    	return Replys.with("{\"success\":true,\"mesg\":\"success\"}").as(Json.class);
+    }
+    
+    /**
      * 进入发货召回查询页面
      * 
      * */

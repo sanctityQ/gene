@@ -220,6 +220,7 @@ public class OrderService {
 		orderInfo.setProductNoMinToMax(order.getProductNoMinToMax());
 		orderInfo.setTbnTotal(order.getTbnTotal());
 		orderInfo.setContactsName(order.getContactsName());
+		orderInfo.setDeliveryRemark(order.getDeliveryRemark());
 		
 		return orderInfo;
 	}

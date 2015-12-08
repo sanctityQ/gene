@@ -53,7 +53,10 @@ if(autoSeachFlag==null || "null".equals(autoSeachFlag)){
                     <option value="2" <c:if test="${customerFlag_con=='2'}">selected</c:if> >直接客户</option>
                 </select>
 			</td>
-			<td><button type="button" class="btn" onclick="getOrderInfo();">查询</button></td>
+			<td>
+				<button type="button" class="btn" onclick="getOrderInfo();">查询</button>
+				<button type="button" disabled id="btachBtn" class="btn btn-primary" onclick="batchDelivery()">确认发货</button>
+			</td>
 			<td align="right">
 			</td>
 		</tr>
@@ -67,12 +70,13 @@ if(autoSeachFlag==null || "null".equals(autoSeachFlag)){
 			<th data-options="field:'orderNo',width:80,sortable:true">订单号</th>
 			<th data-options="field:'outOrderNO',width:80,sortable:true">外部订单号</th>
 			<th data-options="field:'customerName',width:80,sortable:true">客户姓名</th>
-			<th data-options="field:'productNoMinToMax',width:80,sortable:true">生产编号</th>
-			<th data-options="field:'tbnTotal',width:80,sortable:true">碱基总数</th>
+			<th data-options="field:'productNoMinToMax',width:110,sortable:true">生产编号</th>
+			<th data-options="field:'tbnTotal',width:40,sortable:true">碱基总数</th>
 			<th data-options="field:'status',width:80,sortable:true">状态</th>
 			<th data-options="field:'createTime',width:80,sortable:true">导入时间</th>
 			<th data-options="field:'modifyTime',width:80,sortable:true">修改时间</th>
-			<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>
+			<th data-options="field:'deliveryRemark',width:100">发货备注</th>
+			<%--<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>--%>
 		</tr>
 	</thead>
 </table>

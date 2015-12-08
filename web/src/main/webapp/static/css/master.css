@@ -259,6 +259,8 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);}
 .hole{width: 48px;height: 24px;background: url("../images/hole.gif") no-repeat;word-wrap:break-word;font-size: 10px;line-height: 12px;padding:13px 1px;
     color: #000;text-shadow: 0 -1px 0 #f3f3f3;cursor: pointer;}
 .tag{margin-top: 8px;color: #555;}
+.select_Column{width: 40%;background: #eee;height: 18px;color: #ccc;border: #ccc 1px dashed;text-align: center;margin: 0 auto;border-radius: 7px 7px 0 0;cursor: pointer;}
+.select_Column:hover{border-style: solid;color: #444;}
 .identifying{position: absolute;font-size: 8px;color: #fff;background: #444;color: #fff;padding:0 4px;left: 50%;top: 74px;margin-left: -15px;font-family:Verdana}
 .board_padding td{padding-bottom: 20px;}
 .succeed .hole{background-position: 0 -50px ;color: #fff;text-shadow: 0 -1px 0 #438743;}
