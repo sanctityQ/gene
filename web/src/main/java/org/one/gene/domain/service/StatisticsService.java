@@ -1514,6 +1514,7 @@ public class StatisticsService {
 					orderInfo.setTbn(primerProduct.getTbn());
 					orderInfo.setMw(primerProduct.getMw()+"");
 					orderInfo.setComTbn(CharMatcher.anyOf("MRWSYKVHDBN").retainFrom(primerProduct.getGeneOrder().toUpperCase()));
+					orderInfo.setDeliveryRemark(primerProduct.getRemark());
 					orderInfos.add(orderInfo);
 				}
 			}
@@ -1562,6 +1563,7 @@ public class StatisticsService {
 				orderInfo.setTbn(primerProduct.getTbn());
 				orderInfo.setMw(primerProduct.getMw()+"");
 				orderInfo.setComTbn(CharMatcher.anyOf("MRWSYKVHDBN").retainFrom(primerProduct.getGeneOrder().toUpperCase()));
+				orderInfo.setDeliveryRemark(primerProduct.getRemark());
 				orderInfos.add(orderInfo);
 			}
 		}
@@ -1620,6 +1622,19 @@ public class StatisticsService {
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
 			cell.setCellValue(oi.getComTbn());//
+			cell = row.createCell(8);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell = row.createCell(9);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell = row.createCell(10);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell = row.createCell(11);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell.setCellValue(oi.getDeliveryRemark());//
 			
 			startRow = startRow +1;
     		index++;
