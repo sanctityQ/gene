@@ -21,7 +21,9 @@ function batchDelivery(){
 	var customerCode_con = $("#customerCode").val();
 	var customerName_con = $("#seachCustom").val();
 	var customerFlag_con = $("#customerFlag").val();
-	
+    var createStartTime_con = $('#createStartTime').datebox('getValue');
+    var createEndTime_con   = $('#createEndTime').datebox('getValue');
+    
     $.ajax({
     	url : "/gene/delivery/batchDelivery",
     	type : "post",
@@ -36,6 +38,8 @@ function batchDelivery(){
                             '&customerCode_con='+customerCode_con+
                             '&customerName_con='+customerName_con+
                             '&customerFlag_con='+customerFlag_con+
+                            '&createStartTime_con='+createStartTime_con+
+                            '&createEndTime_con='+createEndTime_con+
                             '&autoSeachFlag=1');
 			    });
 			}
@@ -58,7 +62,11 @@ var orderInfoIni=function(){
 
 	var orderNo = $("#orderNo").val();
 	var customerCode = $("#customerCode").val();
-	
+    var createStartTime = $('#createStartTime_con').val();
+    var createEndTime   = $('#createEndTime_con').val();
+    
+    alert(createStartTime);
+    alert(createEndTime);
 	$.ajax({
 		type : "post",
 		url : "/gene/order/queryDeliveryDeal",
@@ -67,7 +75,9 @@ var orderInfoIni=function(){
 		{
 			orderNo:orderNo,
 	        customerCode:customerCode,
-	        customerFlagStr: $("#customerFlag").val()
+	        customerFlagStr: $("#customerFlag").val(),
+	        createStartTime:createStartTime,
+	        createEndTime:createEndTime
         },
 		success : function(data) {
 			if(data != null){
@@ -169,7 +179,9 @@ var getOrderInfo=function(){
     var gridOpts = $('#orderList').datagrid('getPager').data("pagination").options;
 	var orderNoVal = $("#orderNo").val();
 	var customerCode = $("#customerCode").val();
-	
+    var createStartTime = $('#createStartTime').datebox('getValue');
+    var createEndTime   = $('#createEndTime').datebox('getValue');
+    
 	$.ajax({
 		type : "post",
 		url : "/gene/order/queryDeliveryDeal",
@@ -179,6 +191,8 @@ var getOrderInfo=function(){
 			orderNo:orderNoVal,
 	        customerCode:customerCode,
 	        customerFlagStr: $("#customerFlag").val(),
+	        createStartTime:createStartTime,
+	        createEndTime:createEndTime,
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
         },
@@ -199,7 +213,7 @@ var getOrderInfo=function(){
 					onClickCell:function(rowIndex, field, value){
 						if(field == "deliveryRemark"){
 							var dig = $('#inputCause');
-							console.log(reSultdata)
+//							console.log(reSultdata)
 							$('.inp_text',dig).val(value);
 							dig.dialog({
 								title: '添加备注',

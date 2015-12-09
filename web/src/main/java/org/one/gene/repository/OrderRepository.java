@@ -37,11 +37,15 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 			+ "#if(:customerCode != '') { and o.`customer_code` = :customerCode }"
 			+ "#if(:comCode != '') { and o.`com_code` = :comCode }"
 			+ "#if(:customerFlagStr != '') { and o.`customer_code` IN ( select `code` from `customer` where `customer_flag`= :customerFlagStr ) }"
+			+ "#if(:createStartTime != '') { and o.`create_time` >= STR_TO_DATE( :createStartTime , '%m/%d/%Y %H:%i:%S') } "
+			+ "#if(:createEndTime != '') { and o.`create_time`   <= STR_TO_DATE( :createEndTime   , '%m/%d/%Y %H:%i:%S') } "
 			+ " order by o.`create_time` desc ")
 	Page<Order> queryDeliveryDeal(@Param("orderNo") String orderNo,
 			@Param("customerCode") String customerCode,
 			@Param("comCode") String comCode, 
-			@Param("customerFlagStr") String customerFlagStr, 
+			@Param("customerFlagStr") String customerFlagStr,
+			@Param("createStartTime") String createStartTime,
+			@Param("createEndTime") String createEndTime,
 			Pageable pageable);
 	
 	@SQL("select * from `order` where `order_no` in (select distinct `order_no` from `primer_product` where `board_no`= :boardNo )")
