@@ -380,16 +380,9 @@ public class OrderService {
   	}
 
 	@Transactional
-	public void saveOrderAndPrimerProduct(Order order,
-			Collection<PrimerProduct> values, String orderStatus)
+	public void saveOrder(Order order,
+			List<PrimerProduct> pps_insert, String orderStatus)
 			throws Exception {
-		ArrayList<Order>  orders = new ArrayList<Order>();
-		orders.add(order);
-		if ("0".equals(orderStatus)) {
-			this.save(orders, 0);
-		} else {
-			this.save(orders, 3);
-		}
 		
         //所有分子量
         List<ProductMolecular> productMoleculars = (List<ProductMolecular>) productMolecularRepository.findAll();
@@ -401,7 +394,7 @@ public class OrderService {
         }
         
 		//新增数据时comcode赋值
-		for (PrimerProduct primerProduct : values) {
+		for (PrimerProduct primerProduct : pps_insert) {
 			if("".equals(primerProduct.getComCode())||primerProduct.getComCode()==null){
 				primerProduct.setComCode(order.getComCode());
 			}
@@ -411,7 +404,17 @@ public class OrderService {
 			  primerProduct.setBackTimes(0);
 			  primerProduct.setModifyTime(new Date());//最新修改时间
 			  primerProduct.setProductMolecularMap(productMolecularMap);//map放入分子量
+			  order.getPrimerProducts().add(primerProduct);
 		}
-		this.primerProductRepository.save(values);
+		
+		ArrayList<Order>  orders = new ArrayList<Order>();
+		orders.add(order);
+		if ("0".equals(orderStatus)) {
+			this.save(orders, 0);
+		} else {
+			this.save(orders, 3);
+		}
+		
+		//this.primerProductRepository.save(values);
 	}
 }

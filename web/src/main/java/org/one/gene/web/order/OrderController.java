@@ -392,10 +392,19 @@ public class OrderController {
         return Replys.with(orderInfo).as(Json.class);
     }
     
-    
+    /**
+     * @param pps_insert  页面新增数据
+     * @param pps_update  页面修改数据
+     * @param orderNo     订单号
+     * @param orderStatus 
+     * @param inv
+     * @return
+     * @throws Exception
+     */
     @Post("save")
 	public Reply save(
-			@Param("primerProducts") List<PrimerProduct> primerProducts,
+			@Param("pps_insert") List<PrimerProduct> pps_insert,
+            @Param("pps_update") List<PrimerProduct> pps_update,
 			@Param("orderNo") String orderNo,
 			@Param("orderStatus") String orderStatus, Invocation inv)
 			throws Exception {
@@ -404,44 +413,51 @@ public class OrderController {
     		orderStatus = "";
     	}
     	Order order = orderRepository.findByOrderNo(orderNo);
-        Map<Long, PrimerProduct> newPrimerProductMap = Maps.newHashMap();
-        for (PrimerProduct primerProduct : primerProducts) {
+        
+    	//校验页面生产编号是否重复
+        for (PrimerProduct primerProduct : pps_insert) {
+        	int count = primerProductRepository.countByProductNo(primerProduct.getProductNo());
+        	if(count>0){
+        		throw new Exception("您提交的复制后的生产编号存在重复，请修改后重新提交！");
+        	}
+        }
+        for (PrimerProduct primerProduct : pps_update) {
         	int count = primerProductRepository.countByProductNo(primerProduct.getProductNo());
         	if(count>0&&primerProduct.getId()==null){
         		throw new Exception("您提交的生产编号存在重复，请修改后重新提交！");
         	}
-            newPrimerProductMap.put(primerProduct.getId(),primerProduct);
         }
+        
+        //页面修改的数据
         for (PrimerProduct primerProduct : order.getPrimerProducts()) {
-            PrimerProduct newPrimerProduct = newPrimerProductMap.get(primerProduct.getId());
-            if (newPrimerProduct != null) {
-                primerProduct.setNmolTB(newPrimerProduct.getNmolTB());
-                primerProduct.setNmolTotal(newPrimerProduct.getNmolTotal());
-                primerProduct.setProductNo(newPrimerProduct.getProductNo());
-                primerProduct.setPrimeName(newPrimerProduct.getPrimeName());
-                primerProduct.setGeneOrder(newPrimerProduct.getGeneOrder());
-                primerProduct.setTbn(newPrimerProduct.getTbn());
-                primerProduct.setPurifyType(newPrimerProduct.getPurifyType());
-                primerProduct.setModiFiveType(newPrimerProduct.getModiFiveType());
-                primerProduct.setModiThreeType(newPrimerProduct.getModiThreeType());
-                primerProduct.setModiMidType(newPrimerProduct.getModiMidType());
-                primerProduct.setModiSpeType(newPrimerProduct.getModiSpeType());
-                primerProduct.setModiPrice(newPrimerProduct.getModiPrice());
-                primerProduct.setBaseVal(newPrimerProduct.getBaseVal());
-                primerProduct.setPurifyVal(newPrimerProduct.getPurifyVal());
-                primerProduct.setTotalVal(newPrimerProduct.getTotalVal());
-                newPrimerProductMap.remove(primerProduct.getId());
-            }
+        	for(PrimerProduct pp_update:pps_update){
+        		
+        		if((primerProduct.getId()+"").equals(pp_update.getId()+"")){
+                    primerProduct.setNmolTB(pp_update.getNmolTB());
+                    primerProduct.setNmolTotal(pp_update.getNmolTotal());
+                    primerProduct.setProductNo(pp_update.getProductNo());
+                    primerProduct.setPrimeName(pp_update.getPrimeName());
+                    primerProduct.setGeneOrder(pp_update.getGeneOrder());
+                    primerProduct.setTbn(pp_update.getTbn());
+                    primerProduct.setPurifyType(pp_update.getPurifyType());
+                    primerProduct.setModiFiveType(pp_update.getModiFiveType());
+                    primerProduct.setModiThreeType(pp_update.getModiThreeType());
+                    primerProduct.setModiMidType(pp_update.getModiMidType());
+                    primerProduct.setModiSpeType(pp_update.getModiSpeType());
+                    primerProduct.setModiPrice(pp_update.getModiPrice());
+                    primerProduct.setBaseVal(pp_update.getBaseVal());
+                    primerProduct.setPurifyVal(pp_update.getPurifyVal());
+                    primerProduct.setTotalVal(pp_update.getTotalVal());
+        		}
+        	}
         }
+        
         //页面新增数据
-        for (PrimerProduct newPrimerProduct : newPrimerProductMap.values()) {
+        for (PrimerProduct newPrimerProduct : pps_insert) {
             newPrimerProduct.setOrder(order);
-            //order.getPrimerProducts().add(newPrimerProduct);
         }
 
-        //order.setPrimerProducts(primerProducts);
-       // orderService.save(order);
-        orderService.saveOrderAndPrimerProduct(order,newPrimerProductMap.values(), orderStatus);
+        orderService.saveOrder(order,pps_insert, orderStatus);
         
         int count = primerProductRepository.getCountByOrderNo(orderNo);
         

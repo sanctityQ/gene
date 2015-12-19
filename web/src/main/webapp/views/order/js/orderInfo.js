@@ -323,44 +323,74 @@ function getChanesSave(nextOrderNo,orderNoString){
     var orderUpType = $("#orderUpType").val();
     var showMess = "";
 	bigToSmall.datagrid('endEdit',editIndex);
-    var primerProducts = bigToSmall.datagrid('getData').rows;
+    var pps_insert = bigToSmall.datagrid('getChanges','inserted');//新增的数据
+    var pps_update = bigToSmall.datagrid('getChanges','updated');//修改的数据
+    
+    //var pps = bigToSmall.datagrid('getChanges');//变化的数据
+    
+    //alert("inserted="+pps_insert.length);
+    //console.log(pps_insert);
+    //alert("updated="+pps_update.length);
+    //console.log(pps_update);
+    
     var productNos = new Array();
-    for(var i=0;i<primerProducts.length;i++){
-    	productNos.push(primerProducts[i].productNo);
+    for(var i=0;i<pps_insert.length;i++){
+    	productNos.push(pps_insert[i].productNo);
     	
         if(orderUpType == 'od'){
-        	if(primerProducts[i].odTotal==''){
-        		showMess = showMess + "生产编号为"+primerProducts[i].productNo+"的OD总量不能为空\r\n";
+        	if(pps_insert[i].odTotal==''){
+        		showMess = showMess + "生产编号为"+pps_insert[i].productNo+"的OD总量不能为空\r\n";
         	}
-        	if(primerProducts[i].odTB==''){
-        		showMess = showMess + "生产编号为"+primerProducts[i].productNo+"的OD/tube不能为空\r\n";
+        	if(pps_insert[i].odTB==''){
+        		showMess = showMess + "生产编号为"+pps_insert[i].productNo+"的OD/tube不能为空\r\n";
         	}
         }else{
-        	if(primerProducts[i].nmolTotal==''){
-        		showMess = showMess + "生产编号为"+primerProducts[i].productNo+"的nmol总量不能为空\r\n";
+        	if(pps_insert[i].nmolTotal==''){
+        		showMess = showMess + "生产编号为"+pps_insert[i].productNo+"的nmol总量不能为空\r\n";
         	}
-        	if(primerProducts[i].nmolTB==''){
-        		showMess = showMess + "生产编号为"+primerProducts[i].productNo+"的nmol/tube不能为空\r\n";
+        	if(pps_insert[i].nmolTB==''){
+        		showMess = showMess + "生产编号为"+pps_insert[i].productNo+"的nmol/tube不能为空\r\n";
         	}
         }
     }
+    for(var i=0;i<pps_update.length;i++){
+    	productNos.push(pps_update[i].productNo);
+    	
+        if(orderUpType == 'od'){
+        	if(pps_update[i].odTotal==''){
+        		showMess = showMess + "生产编号为"+pps_update[i].productNo+"的OD总量不能为空\r\n";
+        	}
+        	if(pps_update[i].odTB==''){
+        		showMess = showMess + "生产编号为"+pps_update[i].productNo+"的OD/tube不能为空\r\n";
+        	}
+        }else{
+        	if(pps_update[i].nmolTotal==''){
+        		showMess = showMess + "生产编号为"+pps_update[i].productNo+"的nmol总量不能为空\r\n";
+        	}
+        	if(pps_update[i].nmolTB==''){
+        		showMess = showMess + "生产编号为"+pps_update[i].productNo+"的nmol/tube不能为空\r\n";
+        	}
+        }
+    }
+    
     if(isRepeat(productNos)){
     	alert("您提交的生产编号存在重复，请修改后重新提交！");
     }
-   
+    
     //校验页面必录
     if(showMess!=""){
     	alert(showMess);
     	return false;
     }
-    
+
     progress();
     $.ajax({
 		type : "post",
         url: ctx + "/order/save",
 		dataType : "html",
         data: {
-            "primerProducts": primerProducts,
+            "pps_insert": pps_insert,
+            "pps_update": pps_update,
             "orderNo": orderNo,
             "orderStatus": $("#orderStatus").val()
         },
@@ -444,10 +474,10 @@ function copyRow(e){
     for(var i=0;i<row.primerProductValues[ind].length;i++){
     	row.primerProductValues[i].id="";
     }
-    bigToSmall.datagrid('beginEdit',ind);
-    setTimeout(function(){
+    bigToSmall.datagrid('endEdit',ind);
+    /*setTimeout(function(){
         tr.next().trigger('click');
-    },100);
+    },100);*/
 }
 
 /**
