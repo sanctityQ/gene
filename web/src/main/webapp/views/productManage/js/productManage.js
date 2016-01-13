@@ -161,6 +161,19 @@ var getModiPriceInfo=function(){
 			if(data != null){
 				var total = data.totalElements;
         		var reSultdata = data.content;
+        		for(var i=0;i<reSultdata.length;i++){
+        			if(reSultdata[i].productCategories=='modiThreeType'){
+          			  reSultdata[i].productCategories = '3端修饰';
+          			}else if(reSultdata[i].productCategories=='modiFiveType'){
+          			  reSultdata[i].productCategories = '5端修饰';
+          			}else if(reSultdata[i].productCategories=='modiSpeType'){
+          			  reSultdata[i].productCategories = '特殊单体';	
+          			}else if(reSultdata[i].productCategories=='modiMidType'){
+          			  reSultdata[i].productCategories = '中间修饰';	
+          			}else if(reSultdata[i].productCategories=='groupType'){
+          			  reSultdata[i].productCategories = '5 and 3端修饰';	
+          			}
+        		}
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#modiPriceList').datagrid("loadData",jsonsource);
 			}

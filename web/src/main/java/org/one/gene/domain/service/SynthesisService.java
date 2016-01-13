@@ -593,7 +593,7 @@ public class SynthesisService {
 			
 			//序列，如果是删除的，展现错误类型信息
 			if(bh.getStatus() == 0){
-				tableContext += primerProduct.getGeneOrderMidi();
+				tableContext += primerProduct.getGeneOrderMidi().replaceAll("\\(\\*\\)", "\\*");
 			}else if(bh.getStatus() == 1){
 				tableContext += bh.getPrimerProductOperation().getTypeDesc();
 			}
@@ -706,7 +706,7 @@ public class SynthesisService {
 				if (pthc.getStatus() == 0) {//正常数据
 					
 					// 分装
-					cell = row.getCell(pthc.getColumn()+2);
+					cell = row.getCell(pthc.getColumn()+3);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					if (pp.getOrder().getOrderUpType() == OrderType.nmol) {
 						cell.setCellValue(pp.getNmolTB()+""+pp.getOrder().getOrderUpType()+"*"+pp.getTb().toBigInteger());
@@ -716,7 +716,7 @@ public class SynthesisService {
 					
 					// 体积:导入测试数据后显示体积,如果在测试之前：显示级别顺序：1：修饰，2：HPLC，3：PAGE)
 					if (pp.getMeasureVolume() != null) {
-						cell = row.getCell(pthc.getColumn() + 3);
+						cell = row.getCell(pthc.getColumn() + 4);
 						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 						cell.setCellValue(pp.getMeasureVolume() + "");
 					} else if (!"".equals(pp.getModiFiveType())|| !"".equals(pp.getModiThreeType())
@@ -741,22 +741,26 @@ public class SynthesisService {
 							modiStr = "(" + modiStr + ")";
 						}
 						
-						cell = row.getCell(pthc.getColumn() + 3);
+						cell = row.getCell(pthc.getColumn() + 4);
 						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 						cell.setCellValue(modiStr);
 					} else if ("HPLC".equals(pp.getPurifyType())) {
-						cell = row.getCell(pthc.getColumn() + 3);
+						cell = row.getCell(pthc.getColumn() + 4);
 						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 						cell.setCellValue("HPLC");
 					} else if ("PAGE".equals(pp.getPurifyType())) {
-						cell = row.getCell(pthc.getColumn() + 3);
+						cell = row.getCell(pthc.getColumn() + 4);
 						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 						cell.setCellValue("PAGE");
+					} else if ("page".equals(pp.getPurifyType())) {
+						cell = row.getCell(pthc.getColumn() + 4);
+						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+						cell.setCellValue("page");
 					}
 					
 					ppLast = pp;
 				}else{
-					cell = row.getCell(pthc.getColumn()+2);//显示失败原因
+					cell = row.getCell(pthc.getColumn() + 3);//显示失败原因
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue(pthc.getReason());
 				}
@@ -814,34 +818,42 @@ public class SynthesisService {
 					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
 				}else if (ppo.getType().equals(PrimerOperationType.purifySuccess)) {
 					//纯化
-					cell = row.getCell(9);
-					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-					cell.setCellValue("操作员："+ppo.getUserName());
-					cell = row.getCell(10);
-					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
-				}else if (ppo.getType().equals(PrimerOperationType.measureSuccess)) {
-					//测值
 					cell = row.getCell(11);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("操作员："+ppo.getUserName());
 					cell = row.getCell(12);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
-				}else if (ppo.getType().equals(PrimerOperationType.packSuccess)) {
-					//分装
+				}else if (ppo.getType().equals(PrimerOperationType.measureSuccess)) {
+					//测值
 					cell = row.getCell(13);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("操作员："+ppo.getUserName());
 					cell = row.getCell(14);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
-				}else if (ppo.getType().equals(PrimerOperationType.deliverySuccess)) {
-					//发货
+				}else if (ppo.getType().equals(PrimerOperationType.packSuccess)) {
+					//分装
+					cell = row.getCell(15);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("操作员："+ppo.getUserName());
+					cell = row.getCell(16);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
+				}else if (ppo.getType().equals(PrimerOperationType.bakeSuccess)) {
+					//干燥
 					cell = row.getCell(17);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("操作员："+ppo.getUserName());
 					cell = row.getCell(18);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
+				}else if (ppo.getType().equals(PrimerOperationType.deliverySuccess)) {
+					//发货
+					cell = row.getCell(21);
+					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+					cell.setCellValue("操作员："+ppo.getUserName());
+					cell = row.getCell(22);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					cell.setCellValue("时间："+df.format(ppo.getCreateTime()));
 				}

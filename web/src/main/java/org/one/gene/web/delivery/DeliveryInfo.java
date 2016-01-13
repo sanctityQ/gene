@@ -20,6 +20,7 @@ public class DeliveryInfo {
 	private String extendStr7;
 	private String extendStr8;
 	private String extendStr9;
+	private String extendStr10;
 	
 	
 	public int getRowNo() {
@@ -124,5 +125,11 @@ public class DeliveryInfo {
 	}
 	public void setExtendStr9(String extendStr9) {
 		this.extendStr9 = extendStr9;
+	}
+	public String getExtendStr10() {
+		return extendStr10;
+	}
+	public void setExtendStr10(String extendStr10) {
+		this.extendStr10 = extendStr10;
 	}
 }

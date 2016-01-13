@@ -44,6 +44,7 @@ var ctx = '${ctx}';
 	<thead>
 		<tr>
 		    <th data-options="field:'id',hidden:true,width:80,sortable:true">id</th>
+			<th data-options="field:'productCategories',width:80,sortable:true">修饰类别</th>
 			<th data-options="field:'modiType',width:80,sortable:true">修饰类型</th>
 			<th data-options="field:'modiPrice',width:80,sortable:true">修饰价格</th>
 			<th data-options="field:'_operate',align:'center',formatter:formatOperModi">操作</th>

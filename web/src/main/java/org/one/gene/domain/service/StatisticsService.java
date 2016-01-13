@@ -670,6 +670,7 @@ public class StatisticsService {
 			orderDate = order.getCreateTime().toString();
 			contactsName = order.getContactsName();
 			handlerName  = order.getHandlerName();
+			String outOrderNo = order.getOutOrderNo();
 			
 			if(orderDate.length()>10){
 				orderDate = orderDate.substring(0, 10);
@@ -765,7 +766,7 @@ public class StatisticsService {
 				cell = row.createCell(3);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
-				cell.setCellValue(orderNo);//订单号
+				cell.setCellValue(outOrderNo);//订单号（外部）
 				cell = row.createCell(4);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);

@@ -488,7 +488,13 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
         public String desc() {
             return "TM";
         }
-
+		/**
+		  碱基数大于等于20：
+		= 81.5+(0.41*GC）- (600/碱基数)	- 16.6
+		
+		碱基数小于20：
+		= 4 * (#C + #G) +(2 * (#A + #T) )
+		 */
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
             BigDecimal bc = baseCount.value(primerProduct);

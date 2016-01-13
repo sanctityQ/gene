@@ -29,6 +29,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.one.gene.domain.entity.Board;
+import org.one.gene.domain.entity.BoardHole;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerLabelConfig;
@@ -104,11 +106,10 @@ public class PrintService {
 		List<PrimerProduct> primerProductBoardNOs =  new ArrayList<PrimerProduct>();
 		if (!"".equals(boardNo)) {
 			if ("1".equals(noType)) {
-				primerProductBoardNOs = primerProductRepository.findByBoardNo(boardNo);
-				if (primerProductBoardNOs != null && primerProductBoardNOs.size()>0) {
-					primerProducts.addAll(primerProductBoardNOs);
+				Board board = boardRepository.findByBoardNo(boardNo);
+				for(BoardHole bh:board.getBoardHoles()){
+					primerProducts.add(bh.getPrimerProduct());
 				}
-				
 			}else if("2".equals(noType)){
 				PrimerProduct primerProduct = primerProductRepository.findByProductNoOrOutProductNo(boardNo, boardNo);
 				Order order = orderRepository.findByOrderNo(primerProduct.getOrder().getOrderNo());

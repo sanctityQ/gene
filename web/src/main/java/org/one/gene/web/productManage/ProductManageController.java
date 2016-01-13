@@ -160,7 +160,12 @@ public class ProductManageController {
     	modifiedPriceRepository.delete(modifiedPrice);
     	return Replys.with("sucess").as(Text.class);  
     }
-    
+    /**
+     * 保存修饰价格信息
+     * @param modifiedPrice 修饰价格对象
+     * @param inv
+     * @return
+     */
     @Post("saveModiPrice")
     public String saveModiPrice(@Param("modifiedPrice") ModifiedPrice modifiedPrice ,Invocation inv){
     	

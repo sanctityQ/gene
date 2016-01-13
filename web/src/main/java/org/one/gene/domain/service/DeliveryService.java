@@ -980,6 +980,7 @@ public class DeliveryService {
 				int nmolTotal      = 0;//nmole总量
 				int    nmolTB      = 0;// nmole/Tube
 				int tb = 0 ;//管数
+				int orderPrimerNum = 0 ;//订单下条数（未包括复制的）
 				OrderType orderUpType = order.getOrderUpType();
 				String remark = "";
 				
@@ -1004,6 +1005,11 @@ public class DeliveryService {
 					if(!"".equals(primerProduct.getRemark())){
 						remark = remark + "\r\n" +primerProduct.getProductNo()+","+primerProduct.getRemark()+";";
 					}
+					
+					//复制的不计算为条数
+					if(!"".equals(primerProduct.getFromProductNo())){
+						orderPrimerNum += 1;
+					}
 				}
 				remark = remark.replaceFirst("\r\n", "");
 				
@@ -1023,6 +1029,7 @@ public class DeliveryService {
 				}
 				deliveryInfo.setExtendStr8("");//出货日期
 				deliveryInfo.setExtendStr9(remark);//备注
+				deliveryInfo.setExtendStr10(orderPrimerNum+"");//订单下的条数
 				
 				deliveryInfos.add(deliveryInfo);
 			}
@@ -1070,18 +1077,22 @@ public class DeliveryService {
 			cell.setCellValue(dis.getExtendStr5());//碱基数
 		    
 			cell = row.createCell(5);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(dis.getExtendStr10());//条数
+			
+			cell = row.createCell(6);
 		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellValue(dis.getExtendStr6());//OD/Tube
 			
-			cell = row.createCell(6);
+			cell = row.createCell(7);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellValue(dis.getExtendStr7());//OD总量
 			
-			cell = row.createCell(7);
+			cell = row.createCell(8);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellValue("");//出货日期
 			
-			cell = row.createCell(8);
+			cell = row.createCell(9);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(headstyle);
 			cell.setCellValue(dis.getExtendStr9());//备注
