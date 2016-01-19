@@ -520,7 +520,7 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
         /*(313.2 * #A + 289.2 * #C + 329.2 * #G+ 304.2 * #T + 
         #N * 309 + #B * 307.5 + #D * 315.5+ 
         #H * 302.2 + #K * 316.7 + #M * 301.2 + #R * 321.2 + 
-        #S * 309.2 + #V * 310.5 + #W * 308.7 + #Y * 296.7 - 61) + 每种修饰的分子量*/
+        #S * 309.2 + #V * 310.5 + #W * 308.7 + #Y * 296.7  + #I * 314.2  + #U * 290.17 - 61) + 每种修饰的分子量*/
 
         @Override
         BigDecimal value(PrimerProduct primerProduct) {
@@ -592,6 +592,8 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 					.add(new BigDecimal("310.5").multiply(vv.value(primerProduct)))
 					.add(new BigDecimal("308.7").multiply(wv.value(primerProduct)))
 					.add(new BigDecimal("296.7").multiply(yv.value(primerProduct)))
+					.add(new BigDecimal("314.2").multiply(iv.value(primerProduct)))
+					.add(new BigDecimal("290.17").multiply(uv.value(primerProduct)))
 					.subtract(new BigDecimal(61)).add(modiFiveVal).add(modiThreeVal).add(modiMidVal).add(modiSpeVal)
 					.setScale(1, RoundingMode.HALF_UP);
         }
