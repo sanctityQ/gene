@@ -31,10 +31,11 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
             <td><input type="checkbox" id="modiFlag" name="modiFlag" checked /> <label>有/无修饰过滤</label></td>
             <td align="left">纯化方式:</td>
             <td>
-                <select id="purifytype" name="purifytype" class="my_select" style="width: 80px;">
-                    <option value="">所有</option>
+                <select id="purifytype" class="combobox-checkbox">
+                    <option value=""></option>
                     <option value="OPC">OPC</option>
                     <option value="PAGE">PAGE</option>
+                    <option value="page">page</option>
                     <option value="HPLC">HPLC</option>
                 </select>
             </td>
@@ -68,6 +69,13 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 <script src="${ctx}/static/js/productionData.js" ></script>
 <script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script type="text/javascript">
+
+$('#purifytype').combobox({
+	width:160,
+    multiple:true,
+    panelHeight:100
+});  
+
 $(function(){
     var dg = $('#productionData');
     var opts = dg.datagrid('options');
@@ -86,7 +94,8 @@ $(function(){
             getProducts();
         }
     });
-})
+});
+
 </script>
 </body>
 </html>

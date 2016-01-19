@@ -51,6 +51,9 @@ var getProducts=function(){
 	if($("#seachCustom").val() != ''){
 		customerCode = $("#customerCode").val();
 	}
+	
+	var purifytype = $('#purifytype').combobox('getText');
+	
 	$.ajax({
 		type : "post",
 		url : "/gene/synthesis/makeBoardQuery",
@@ -60,7 +63,7 @@ var getProducts=function(){
 			tbn1: $("#tbn1").val(),
 			tbn2: $("#tbn2").val(),
 			modiFlag: strModifyFlag,
-			purifytype: $("#purifytype").val(),
+			purifytype: purifytype,
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
         },

@@ -87,10 +87,23 @@ public class SynthesisService {
 //    @Transactional(readOnly = false)
     //安排合成查询
 	public Page<PrimerProduct> makeBoardQuery(String customerCode,
-			String modiFlag, String tbn1, String tbn2, String purifytype, String comCode,
-			Pageable pageable) {
+			String modiFlag, String tbn1, String tbn2, String purifytype,
+			String comCode, Pageable pageable) {
 
-		Page<PrimerProduct> primerProductPage = primerProductRepository.selectPrimerProduct(customerCode, modiFlag, tbn1, tbn2, purifytype, comCode, pageable);
+		String[] purifytypes = purifytype.split(",");
+		String ptFlag = "";
+		
+		if (purifytype == null || "".equals(purifytype) || purifytype.length()==1) {
+			ptFlag = "0";
+		} else {
+			purifytype = purifytype.substring(1, purifytype.length());
+			purifytypes = purifytype.split(",");
+			ptFlag = "1";
+		}
+		
+		Page<PrimerProduct> primerProductPage = primerProductRepository
+				.selectPrimerProduct(customerCode, modiFlag, tbn1, tbn2,
+						purifytypes, ptFlag, comCode, pageable);
 		
 		// 查询primer_product_value
 		for (PrimerProduct primerProduct : primerProductPage.getContent()) {
@@ -709,9 +722,9 @@ public class SynthesisService {
 					cell = row.getCell(pthc.getColumn()+3);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 					if (pp.getOrder().getOrderUpType() == OrderType.nmol) {
-						cell.setCellValue(pp.getNmolTB()+""+pp.getOrder().getOrderUpType()+"*"+pp.getTb().toBigInteger());
+						cell.setCellValue(pp.getNmolTB()+"N*"+pp.getTb().toBigInteger());
 					}else{
-						cell.setCellValue(pp.getOdTB()+""+pp.getOrder().getOrderUpType()+"*"+pp.getTb().toBigInteger());
+						cell.setCellValue(pp.getOdTB()+"D*"+pp.getTb().toBigInteger());
 					}
 					
 					// 体积:导入测试数据后显示体积,如果在测试之前：显示级别顺序：1：修饰，2：HPLC，3：PAGE)

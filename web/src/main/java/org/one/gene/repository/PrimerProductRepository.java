@@ -23,7 +23,7 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			+ " where o.`order_no` =  pp.`order_no` and pp.`id` = ppv.`primer_product_id` and ppv.`type` = 'baseCount' "
 			+ " and o.`status` = '1' and pp.`operation_type` = 'makeBoard' and (pp.`board_no` is null or pp.`board_no`='') "
 			+ "#if(:customerCode != '') { and o.`customer_code` = :customerCode } "
-			+ "#if(:purifytype != '') { and pp.`purify_type` = :purifytype }"
+			+ "#if(:ptFlag == '1') { and pp.`purify_type` IN (?5) }"
 			+ "#if(:comCode != '') { and pp.`com_code` = :comCode }"
 			+ "#if(:tbn1 != '') { and ppv.`value` >= :tbn1 }"
 			+ "#if(:tbn2 != '') { and ppv.`value` <= :tbn2 }"
@@ -32,9 +32,11 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			+ " order by pp.`product_no` ")
 	Page<PrimerProduct> selectPrimerProduct(
 			@Param("customerCode") String customerCode,
-			@Param("modiFlag") String modiFlag, @Param("tbn1") String tbn1,
+			@Param("modiFlag") String modiFlag, 
+			@Param("tbn1") String tbn1,
 			@Param("tbn2") String tbn2,
-			@Param("purifytype") String purifytype,
+			@Param("purifytype") String[] purifytype,
+			@Param("ptFlag") String ptFlag,
 			@Param("comCode") String comCode,Pageable pageable);
     
 	@SQL("select pp.* from `primer_product` pp where pp.`operation_type` = :operationType "
