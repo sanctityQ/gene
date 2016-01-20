@@ -1086,11 +1086,11 @@ public class DeliveryService {
 			
 			cell = row.createCell(7);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue(dis.getExtendStr7());//OD总量
+			cell.setCellValue("");//出货日期
 			
 			cell = row.createCell(8);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue("");//出货日期
+			cell.setCellValue("");//发货人
 			
 			cell = row.createCell(9);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
