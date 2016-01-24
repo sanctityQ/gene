@@ -96,7 +96,9 @@ public class SynthesisService {
 		if (purifytype == null || "".equals(purifytype) || purifytype.length()==1) {
 			ptFlag = "0";
 		} else {
-			purifytype = purifytype.substring(1, purifytype.length());
+			if (purifytype.startsWith(",")) {
+				purifytype = purifytype.substring(1, purifytype.length());
+			}
 			purifytypes = purifytype.split(",");
 			ptFlag = "1";
 		}
@@ -633,7 +635,7 @@ public class SynthesisService {
 		String excelFilePath = templatePath+"packTable.xls";
 		String configFilePath = templatePath+"packTableHoleConfig.txt";
 		
-		SimpleDateFormat df = new SimpleDateFormat("HH:mm");//设置日期格式
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");//设置日期格式
         String currentTime = df.format(new Date());
         Board board = boardRepository.findByBoardNo(boardNo);
         String boardType = "";
