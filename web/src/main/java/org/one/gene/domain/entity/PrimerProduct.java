@@ -563,8 +563,8 @@ public class PrimerProduct implements java.io.Serializable {
             this.setPrimerProductValues(Lists.newArrayList(primerProductValueMap.values()));
 
         } else {
-
-            if(this.getOperationType()== PrimerStatusType.orderInit){
+            //0 订单初始化  ，3 审核后订单修改：才允许调整具体的primerProductValue表里的值
+            if(this.getOrder().getStatus()==0 || this.getOrder().getStatus()==3){
                 //初始化数据
                 for (PrimerValueType type : PrimerValueType.values()) {
                     primerProductValueMap.put(type,type.create(this));

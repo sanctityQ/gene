@@ -18,6 +18,8 @@ import org.one.gene.domain.entity.CustomerPrice;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
+import org.one.gene.domain.entity.PrimerProductValue;
+import org.one.gene.domain.entity.PrimerValueType;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.entity.ProductMolecular;
 import org.one.gene.domain.service.OrderService;
@@ -433,11 +435,29 @@ public class OrderController {
         	for(PrimerProduct pp_update:pps_update){
         		
         		if((primerProduct.getId()+"").equals(pp_update.getId()+"")){
+        			
+        			for(PrimerProductValue primerProductValue:primerProduct.getPrimerProductValues()){
+						PrimerValueType type = primerProductValue.getType();
+						if (type.equals(PrimerValueType.odTB)) {// OD/Tube
+							primerProductValue.setValue(pp_update.getOdTB());
+						}else if(type.equals(PrimerValueType.odTotal)){//od总量
+							primerProductValue.setValue(pp_update.getOdTotal());
+						}else if(type.equals(PrimerValueType.nmolTB)){//nmole/Tube
+							primerProductValue.setValue(pp_update.getNmolTB());
+						}else if(type.equals(PrimerValueType.nmolTotal)){//nmole总量
+							primerProductValue.setValue(pp_update.getNmolTotal());
+						}else if(type.equals(PrimerValueType.baseCount)){//碱基数
+							primerProductValue.setValue(pp_update.getTbn());
+						}
+        			}
+        			primerProduct.setOdTB(pp_update.getOdTB());
+        			primerProduct.setOdTotal(pp_update.getOdTotal());
                     primerProduct.setNmolTB(pp_update.getNmolTB());
                     primerProduct.setNmolTotal(pp_update.getNmolTotal());
                     primerProduct.setProductNo(pp_update.getProductNo());
                     primerProduct.setPrimeName(pp_update.getPrimeName());
                     primerProduct.setGeneOrder(pp_update.getGeneOrder());
+                    primerProduct.setGeneOrderMidi(pp_update.getGeneOrderMidi());
                     primerProduct.setTbn(pp_update.getTbn());
                     primerProduct.setPurifyType(pp_update.getPurifyType());
                     primerProduct.setModiFiveType(pp_update.getModiFiveType());
