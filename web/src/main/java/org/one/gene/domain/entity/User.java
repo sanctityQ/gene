@@ -6,7 +6,12 @@ import javax.persistence.*;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User
@@ -51,6 +56,8 @@ public class User extends IdEntity implements java.io.Serializable {
 
   private Customer customer;
 
+  private String menuId;
+  
   private String salt;
 
   private String plainPassword;
@@ -59,7 +66,10 @@ public class User extends IdEntity implements java.io.Serializable {
 
   private Date modifyTime;
 
+  private List<Menu> menus = Lists.newArrayList();//菜单列表
 
+  private Map<String, Menu> menuMap = Maps.newHashMap();//菜单id的map
+  
   public User() {
   }
 
@@ -151,6 +161,15 @@ public class User extends IdEntity implements java.io.Serializable {
     return ToStringBuilder.reflectionToString(this);
   }
 
+  @Column(name = "`menu_id`")
+  public String getMenuId() {
+    return menuId;
+  }
+
+  public void setMenuId(String menuId) {
+    this.menuId = menuId;
+  }
+
   @Column(name = "`salt`")
   public String getSalt() {
     return salt;
@@ -159,7 +178,7 @@ public class User extends IdEntity implements java.io.Serializable {
   public void setSalt(String salt) {
     this.salt = salt;
   }
-
+  
   @Transient
   public String getPlainPassword() {
     return plainPassword;
@@ -199,6 +218,27 @@ public class User extends IdEntity implements java.io.Serializable {
     this.modifyTime = new Date();
   }
 
+  @Transient
+  public List<Menu> getMenus() {
+      return this.menus;
+  }
+
+  public void setMenus(List<Menu> menus) {
+      this.menus = menus;
+  }
+ 
+  
+	@Transient
+	public Map<String, Menu> getMenuMap() {
+		return menuMap;
+	}
+
+
+	public void setMenuMap(Map<String, Menu> menuMap) {
+		this.menuMap = menuMap;
+	}
+	
+	
+	
+	
 }
-
-

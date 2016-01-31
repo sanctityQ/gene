@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
+import org.one.gene.domain.entity.Menu;
 import org.one.gene.domain.entity.User;
 import org.springframework.stereotype.Repository;
 
@@ -31,6 +32,9 @@ public interface UserRepository
   
   @SQL("select * from `user` where `customer_id` = :customerId ")
   List<User> getUserByCustomerId(@Param("customerId") String customerId);
+  
+  @SQL("select * from `menu` where `valid` = '1' order by `order_no` ")
+  List<Menu> getAllMenu();
   
 }
 

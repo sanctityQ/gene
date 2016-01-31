@@ -20,12 +20,14 @@ import org.apache.shiro.cache.Cache;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
+import org.one.gene.domain.entity.Menu;
 import org.one.gene.domain.entity.User;
 import org.one.gene.utils.Encodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 
@@ -35,7 +37,6 @@ public class ShiroDbRealm extends AuthorizingRealm {
 
   protected AccountService accountService;
 
-
   /**
    * 认证回调函数,登录时调用.
    */
@@ -44,10 +45,14 @@ public class ShiroDbRealm extends AuthorizingRealm {
       throws AuthenticationException {
     UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
     User user = accountService.findUserByLoginName(token.getUsername());
+    
     if (user != null) {
         if(!user.isValidate()){
             throw new LockedAccountException(); 
-          }
+        }
+  	 
+      this.setMenuID(user);
+  		
       byte[] salt = Encodes.decodeHex(user.getSalt());
       return new SimpleAuthenticationInfo(
           new ShiroUser(user),
@@ -70,7 +75,23 @@ public class ShiroDbRealm extends AuthorizingRealm {
     info.addRole("admin");
     return info;
   }
-
+  
+  //放入菜单id
+  public void setMenuID(User user) {
+	  List<Menu> menus = accountService.getAllMenu();
+	  String menuid = user.getMenuId();
+	  if(menuid !=null){
+		  String[] menuids = menuid.split(",");
+		  for (Menu menu : menus) {
+			  for (int i = 0; i < menuids.length; i++) {
+				  if (menuids[i].equals(menu.getId() + "")) {
+					  user.getMenuMap().put(menu.getFirstId(), menu);
+					  user.getMenuMap().put(menu.getSecondId(), menu);
+				  }
+			  }
+		  }
+	  }
+  }
 
   public void setAccountService(AccountService accountService) {
     this.accountService = accountService;

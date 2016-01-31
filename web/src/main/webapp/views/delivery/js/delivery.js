@@ -65,8 +65,6 @@ var orderInfoIni=function(){
     var createStartTime = $('#createStartTime_con').val();
     var createEndTime   = $('#createEndTime_con').val();
     
-    alert(createStartTime);
-    alert(createEndTime);
 	$.ajax({
 		type : "post",
 		url : "/gene/order/queryDeliveryDeal",
@@ -165,10 +163,6 @@ function setDisabel(){
  * 获取订单信息
  */
 var getOrderInfo=function(){
-	if($("#customerFlagOld").val()!='0'){
-		alert("只有梓熙生物公司的用户才可以使用此功能。");
-		return false;
-	}
 	
     var win = $.messager.progress({
         title:'系统消息',

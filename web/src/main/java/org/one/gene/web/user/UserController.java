@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Company;
 import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.Menu;
 import org.one.gene.domain.entity.User;
 import org.one.gene.domain.service.account.AccountService;
 import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
@@ -15,6 +16,7 @@ import org.one.gene.instrument.persistence.DynamicSpecifications;
 import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.CompanyRepository;
 import org.one.gene.repository.CustomerRepository;
+import org.one.gene.repository.MenuRepository;
 import org.one.gene.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +63,9 @@ public class UserController {
   @Autowired
   private CustomerRepository customerRepository;
   
+  @Autowired
+  private MenuRepository menuRepository;
+  
   @Get("")
   public String index() {
     return "f:/user/manageQuery";
@@ -68,12 +73,33 @@ public class UserController {
 
   @Get("preAdd")
   public String prepareAddUser(Invocation inv) {
+	  User user = new User();
+	  List<Menu> menus = menuRepository.getAllMenu();
+	  user.setMenus(menus);
+	  inv.addModel("user", user);
     return "user";
   }
 
   @Get("view/{id}")
   public String view(@Param("id") Long id, @Param("op")String operation,Invocation inv) {
     User user = userRepository.findOne(id);
+    
+        //增加菜单的数据
+		List<Menu> menus = menuRepository.getAllMenu();
+		if (user != null) {
+			String menuid = user.getMenuId();
+			if(menuid !=null){
+				String[] menuids = menuid.split(",");
+				for (Menu menu : menus) {
+					for (int i = 0; i < menuids.length; i++) {
+						if (menuids[i].equals(menu.getId() + "")) {
+							menu.setSelectFlag("1");
+						}
+					}
+				}
+			}
+			user.setMenus(menus);
+		}
     
     inv.addModel("user", user);
     if(StringUtils.isNotBlank(operation)){

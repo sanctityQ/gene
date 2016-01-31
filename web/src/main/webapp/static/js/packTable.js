@@ -1,10 +1,5 @@
 function exportPackTable(){
 
-	if($("#customerFlag").val()!='0'){
-		alert("只有梓熙生物公司的用户才可以使用此功能。");
-		return false;
-	}
-	
 	var boardNo = $.trim($('#boardNo').val());
 	
 	if(boardNo == ""){

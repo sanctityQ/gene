@@ -3,6 +3,7 @@ package org.one.gene.domain.service.account;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.Menu;
 import org.one.gene.domain.entity.User;
 import org.one.gene.repository.CustomerRepository;
 import org.one.gene.repository.UserRepository;
@@ -37,6 +38,10 @@ public class AccountService {
     return userRepository.findByCode(username);
   }
 
+	public List<Menu> getAllMenu() {
+		return (List<Menu>) userRepository.getAllMenu();
+	}
+	
   public void registerUser(User user) {
     // 设定安全的密码，生成随机的salt并经过1024次 sha-1 hash
     if (StringUtils.isNotBlank(user.getPlainPassword())) {

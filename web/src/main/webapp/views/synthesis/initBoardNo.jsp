@@ -15,11 +15,8 @@
 <div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
  </div> 
 <script type="text/javascript">
-if($("#customerFlag").val()=='0'){
-   initBoardNo();
-}else{
-	alert("只有梓熙生物公司的用户才可以使用此功能。");
-}
+
+initBoardNo();
 
 //初始化板号 查询方法
 function initBoardNo(){

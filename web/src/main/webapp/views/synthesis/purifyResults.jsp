@@ -37,10 +37,6 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 <script src="${ctx}/static/js/vagueSeachBoard.js"></script>
 <script type="text/javascript">
 function goToResultsBoard(){
-	if($("#customerFlag").val()!='0'){
-		alert("只有梓熙生物公司的用户才可以使用此功能。");
-		return false;
-	}
 	
 	var boardNo = $.trim($('#boardNo').val());
 	

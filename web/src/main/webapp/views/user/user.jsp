@@ -97,6 +97,34 @@ String operateUserComName = user.getUser().getCompany().getComName();
                 </tr>
             </table>
         </div>
+        
+        <input type="hidden" id="userMenuId" name="user.menuId" value="${user.menuId}">
+        
+        <div class="content_box info margin_btoom">
+            <h2>菜单权限</h2>
+         <table width="100%" align="center" class="order_info" style="BORDER-COLLAPSE: collapse" borderColor=#000000 border="0">
+             <tr>
+                 <td align="center" width="8%">选中</td>
+                 <td align="center" width="15%">一级菜单</td>
+                 <td align="center" width="20%">二级菜单</td>
+                 <td align="center" width="20%">备注</td>
+             </tr>
+             <tbody id="tbodyMenu">
+	           <c:forEach var="um" items="${user.menus}" varStatus="status">
+		           <tr name="checkFlagTr" >
+		             <input type="hidden" name="user.menus[${status.index}].id" value="${um.id}">
+		             <input type="hidden" name="user.menus[${status.index}].selectFlag" value="${um.selectFlag}">
+		             <input type="hidden" name="selectFlag" value="${um.selectFlag}">
+		             
+		             <td><input type="checkbox" name="checkFlag" onclick="addMenu();" style="width: 90%"></td>
+	                 <td><input class="inp_text" type="text" readonly name="user.menus[${status.index}].firstName" value="${um.firstName}" style="width: 90%"></td>
+	                 <td><input class="inp_text" type="text" readonly name="user.menus[${status.index}].secondName" value="${um.secondName}" style="width: 90%"></td>
+	                 <td><input class="inp_text" type="text" readonly name="user.menus[${status.index}].remark" value="${um.remark}"  style="width: 90%"></td>
+				  </tr>
+	           </c:forEach>
+             </tbody>
+         </table>
+        </div>  
         <div class="tools_bar">
             <button type="button" class="btn" onclick="goToPage('${ctx}/user/manageQuery');">取 消</button>
             <button type="button" id="addUserBtn" class="btn btn-primary">保 存</button>
@@ -107,6 +135,53 @@ String operateUserComName = user.getUser().getCompany().getComName();
 <script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script src="${ctx}/static/js/vagueSeachCompany.js" ></script>
 <script>
+//初始化菜单权限
+$('input[name = "selectFlag"]').each(function (index, element) {
+	
+	if(element.value == '1'){
+		element.parentNode.style.backgroundColor = 'grey';
+		$('input[name = "checkFlag"]').each(function (ind, element) {
+		    if(index == ind){
+		    	element.checked = true;
+		    }
+		});
+	}
+});
+//变更菜单权限
+var addMenu=function(){
+	var userMenuId = "";
+    $('input[name = "checkFlag"]').each(function (index, element) {
+    	
+    	var flag = false;
+    	if(element.checked){
+    		flag = true;
+    	}
+    	
+    	$('input[name = "user.menus['+index+'].selectFlag"]').each(function (ind, element) {
+    		if(flag){
+       		  element.value = '1';
+       		  element.parentNode.style.backgroundColor = 'grey';
+    		}else{
+    		  element.value = '0';
+    		  element.parentNode.style.backgroundColor = '';
+    		}
+    	});
+    	
+    	$('input[name = "user.menus['+index+'].id"]').each(function (ind, element) {
+    		if(flag){
+    			userMenuId = userMenuId + ","+element.value;
+    		}
+    	});
+    	
+    });
+    if(userMenuId.length>0){
+    	userMenuId = userMenuId.substr(1);
+    }
+    $('#userMenuId').val(userMenuId);
+    
+};
+
+
     <c:if test="${not empty user}">
     $('input[name = "user.userFlag"]').each(function (index, element) {
 	        <c:if test="${user.userFlag == '0'}">

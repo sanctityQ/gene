@@ -58,6 +58,8 @@ CREATE TABLE `user` (
   `user_flag` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '用户标志,0-系统管理员，1-管理层，2-使用者',
   `validate` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否有效,0-不是，1-是',
   `customer_id`      INT(11) COMMENT '客户信息数据ID',
+  `salt`        VARCHAR(63) NOT NULL DEFAULT '' COMMENT '加密salt',
+  `menu_id`     VARCHAR(1000) COMMENT '菜单id',
   `create_time` DATETIME NOT NULL COMMENT '创建时间',
   `modify_time` DATETIME NOT NULL COMMENT '最后修改时间',
   PRIMARY KEY (`id`),
@@ -243,3 +245,17 @@ CREATE TABLE `modified_price` (
   `validate`     VARCHAR(7) COMMENT '有效标志',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='修饰价格表';
+
+CREATE TABLE `menu` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `first_id`   VARCHAR(31) NOT NULL COMMENT '一级菜单id',
+  `first_name` VARCHAR(31) NOT NULL COMMENT '一级菜单名称',
+  `second_id`  VARCHAR(31) NOT NULL COMMENT '二级菜单id',
+  `second_name` VARCHAR(31) NOT NULL COMMENT '二级菜单名称',
+  `url`        VARCHAR(100) COMMENT '二级菜单url',
+  `order_no`   INT(11) NOT NULL COMMENT '位置序号',
+  `remark`     VARCHAR(100) COMMENT '备注',
+  `valid`   VARCHAR(7) NOT NULL COMMENT '有效标志',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_menu_levelid` (`first_id`,`second_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='菜单基础表';
