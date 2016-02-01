@@ -90,7 +90,7 @@ if(createEndTime_con==null || "null".equals(createEndTime_con)){
 			<th data-options="field:'createTime',width:80,sortable:true">导入时间</th>
 			<th data-options="field:'modifyTime',width:80,sortable:true">修改时间</th>
 			<th data-options="field:'deliveryRemark',width:100">发货备注</th>
-			<%--<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>--%>
+			<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>
 		</tr>
 	</thead>
 </table>
