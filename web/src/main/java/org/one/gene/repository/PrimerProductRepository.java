@@ -27,9 +27,10 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			+ "#if(:comCode != '') { and pp.`com_code` = :comCode }"
 			+ "#if(:tbn1 != '') { and ppv.`value` >= :tbn1 }"
 			+ "#if(:tbn2 != '') { and ppv.`value` <= :tbn2 }"
-			+ "#if(:modiFlag == '0') { and ( pp.`modi_five_type` ='' and pp.`modi_three_type` ='' and pp.`modi_mid_type` ='' and pp.`modi_spe_type` ='') }"
-			+ "#if(:modiFlag == '1') { and ( pp.`modi_five_type` !='' or pp.`modi_three_type` !='' or pp.`modi_mid_type` !='' or pp.`modi_spe_type` !='') }"
-			+ " order by pp.`product_no` ")
+			+ "#if(:modiFlag == '0') { and ( pp.`modi_five_type` ='' and pp.`modi_three_type` ='' and pp.`modi_mid_type` ='' and pp.`modi_spe_type` ='')  order by pp.`product_no` }"
+			+ "#if(:modiFlag == '1') { and ( pp.`modi_five_type` !='' or pp.`modi_three_type` !='' or pp.`modi_mid_type` !='' or pp.`modi_spe_type` !='') " +
+			"  order by pp.`modi_five_type`, pp.`modi_three_type`, pp.`modi_mid_type`, pp.`modi_spe_type`, pp.`product_no` }"
+			+ " ")
 	Page<PrimerProduct> selectPrimerProduct(
 			@Param("customerCode") String customerCode,
 			@Param("modiFlag") String modiFlag, 

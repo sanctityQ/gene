@@ -1094,6 +1094,10 @@ public class DeliveryService {
 			
 			cell = row.createCell(9);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue("");//收货员
+			
+			cell = row.createCell(10);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(headstyle);
 			cell.setCellValue(dis.getExtendStr9());//备注
 			

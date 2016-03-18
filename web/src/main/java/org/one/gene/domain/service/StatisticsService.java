@@ -1586,7 +1586,12 @@ public class StatisticsService {
     	style_center.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框  
     	style_center.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框  
     	
-    	int startRow = 2;//从第2行开始
+    	row = sheet.getRow(1);
+    	cell = row.getCell(2);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(boardNo);
+		
+    	int startRow = 3;//从第3行开始
     	int index=1;
     	for (OrderInfo oi : orderInfos) {
 			row = sheet.createRow(startRow);
@@ -1594,35 +1599,34 @@ public class StatisticsService {
 			cell = row.createCell(0);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
-			cell.setCellValue(oi.getBoardNo());//
+			cell.setCellValue(index);//序号
 			cell = row.createCell(1);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
-			cell.setCellValue(index);//
+			cell.setCellValue(oi.getMidi());//修饰类型
 			cell = row.createCell(2);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
-			cell.setCellValue(oi.getMidi());//
+			cell.setCellValue(oi.getProductNo());//生产编号
 			cell = row.createCell(3);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
-			cell.setCellValue(oi.getProductNo());//
+			cell.setCellValue(oi.getMakingNo());//OD
 			cell = row.createCell(4);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
-			cell.setCellValue(oi.getMakingNo());//
+			cell.setCellValue(oi.getTbn()+"");//碱基数
 			cell = row.createCell(5);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
-			cell.setCellValue(oi.getTbn()+"");//
+			cell.setCellValue(oi.getMw());//MW
 			cell = row.createCell(6);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
-			cell.setCellValue(oi.getMw());//
+			cell.setCellValue(oi.getComTbn());//复合碱基
 			cell = row.createCell(7);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
-			cell.setCellValue(oi.getComTbn());//
 			cell = row.createCell(8);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
@@ -1633,6 +1637,9 @@ public class StatisticsService {
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
 			cell = row.createCell(11);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);
+			cell = row.createCell(12);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(style_center);
 			cell.setCellValue(oi.getDeliveryRemark());//

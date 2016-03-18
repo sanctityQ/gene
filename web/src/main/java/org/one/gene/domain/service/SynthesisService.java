@@ -631,6 +631,9 @@ public class SynthesisService {
      * */
 	public void exportPackTable(String boardNo, Invocation inv) throws IOException {
 		
+    	ShiroUser shrioUser = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+    	User user = shrioUser.getUser();
+    	
 		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+"";
 		String excelFilePath = templatePath+"packTable.xls";
 		String configFilePath = templatePath+"packTableHoleConfig.txt";
@@ -808,7 +811,7 @@ public class SynthesisService {
 		row = sheet.getRow(17);
 		cell = row.getCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue("操作员：");
+		cell.setCellValue("操作员："+user.getName());
 		cell = row.getCell(1);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue("时间："+currentTime);
