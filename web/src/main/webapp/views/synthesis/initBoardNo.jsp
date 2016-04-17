@@ -92,8 +92,14 @@ function formatOper(val,row,index){
 	var btnFlag = $("#btnFlag").val();
 	
 	if(typeof(operationType) != 'undefined'){
-		var url = "'/gene/views/synthesis/"+operationType+"ResultsBoard.jsp?boardNo="+row.boardNo+"'";
-	    return '<a href="javascript:;"  onclick="goToPage('+url+')"><i class="icon-pencil"></i>录入结果</a>';
+		if( operationType == "measure"){
+			var url = "'"+row.boardNo+"'";
+		    return '<a href="javascript:;"  onclick="submitToMeasure('+url+')"><i class="icon-pencil"></i>录入结果</a>';
+		}else{
+			var url = "'/gene/views/synthesis/"+operationType+"ResultsBoard.jsp?boardNo="+row.boardNo+"'";
+		    return '<a href="javascript:;"  onclick="goToPage('+url+')"><i class="icon-pencil"></i>录入结果</a>';		
+		}
+
 	}
 	if(typeof(btnFlag) != 'undefined' && btnFlag =="MachineTable"){
 		var url = "'/gene/synthesis/exMachineTable/"+row.boardNo+"/'";
@@ -118,6 +124,13 @@ function executeUrl(url){
 	document.form.action = url;
 	document.form.submit();
 	document.form.action = oldUrl;
+}
+
+//提交板号到页面
+//执行提交页面方法
+function submitToMeasure(boardNo){
+	form.boardNo.value = boardNo;
+	goToResultsBoard();
 }
 
 </script>

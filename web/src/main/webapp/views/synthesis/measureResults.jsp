@@ -40,6 +40,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 		<div class="import_box" style="padding-bottom: 50px;">
 			<button class="btn-primary submit" type="button" onclick="goToResultsBoard()">测值结果</button>
 		</div>
+    <%@ include file="/views/synthesis/initBoardNo.jsp"%> <!--  未处理板号初始化页面 -->
 	</div>
 </div>
 </form>
