@@ -463,7 +463,27 @@ public class PrintService {
 			printLabel.setPrimeName(primerProduct.getPrimeName());// 引物名称
 			printLabel.setOrderNo(primerProduct.getOrder().getOrderNo());// 订单号
 			printLabel.setOutOrderNo(outOrderNo);//外部订单号
-			printLabel.setGeneOrder(primerProduct.getGeneOrderMidi());// 引物序列(原始)
+			
+			//处理 引物序列(原始) ，如果长度30个字符回车一次
+			String geneOrderMidi = primerProduct.getGeneOrderMidi();
+			String newGeneOrderMidi = "";
+			int perNum = 30;
+			int num = new BigDecimal(geneOrderMidi.length()).divide(new BigDecimal(perNum), 0, BigDecimal.ROUND_UP).intValue();
+			if (num == 1) {
+				newGeneOrderMidi = geneOrderMidi;
+			} else {
+				for (int a = 0; a < num; a++) {
+					if (geneOrderMidi.length() > perNum) {
+						newGeneOrderMidi += geneOrderMidi.substring(0, perNum) + "\r\n";
+						geneOrderMidi = geneOrderMidi.substring(perNum);
+					} else {
+						newGeneOrderMidi += geneOrderMidi;
+						geneOrderMidi = "";
+					}
+				}
+			}
+			printLabel.setGeneOrder(newGeneOrderMidi);//
+			
 			// 修饰
 			String midi = "";
 			if (!"".equals(primerProduct.getModiFiveType())) {

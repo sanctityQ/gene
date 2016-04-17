@@ -1612,7 +1612,8 @@ public class SynthesisService {
         		
 				int odTB  = 0;//OD/Tube
 				int tb    = 0;//管数
-				int tbn   = 0;//碱基数t
+				int tbn   = 0;//碱基数
+				double mw = 0.0;
 				for (PrimerProductValue ppv : pp.getPrimerProductValues()) {
 					PrimerValueType type = ppv.getType();
 					if (type.equals(PrimerValueType.odTB)) {// OD/Tube
@@ -1621,6 +1622,8 @@ public class SynthesisService {
 						tb = ppv.getValue().intValue();
 					}else if(type.equals(PrimerValueType.baseCount)){
 						tbn = ppv.getValue().intValue();
+		      		}else if(type.equals(PrimerValueType.MW)){
+		      			mw = ppv.getValue().doubleValue();
 		      		}
 				}
         		
@@ -1649,7 +1652,9 @@ public class SynthesisService {
 				cell = row.createCell(7);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellValue(modiStr);//
-        		
+				cell = row.createCell(8);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue(mw);//
 				rowIndex ++;
         	}
         }
