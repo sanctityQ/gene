@@ -1197,7 +1197,7 @@ public class SynthesisService {
 					}
 					if (operationType.equals(PrimerStatusType.measure) && measureMap.get(holeNo) != null) {
 						BigDecimal measure = (BigDecimal)measureMap.get(holeNo);
-						productNo = new BigDecimal(1200).multiply(primerProduct.getOdTB()).divide(measure.multiply(new BigDecimal(20)),0, BigDecimal.ROUND_UP)+"";
+						productNo = new BigDecimal(1.2).multiply(primerProduct.getOdTB()).divide(measure.divide(new BigDecimal(30)),0, BigDecimal.ROUND_UP)+"";
 					}
 				}
 				
