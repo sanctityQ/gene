@@ -95,10 +95,10 @@ CREATE TABLE `order` (
 
 CREATE TABLE `primer_product` (
   `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
-  `product_no`          CHAR(12) NOT NULL COMMENT '生产编号',
+  `product_no`          CHAR(16) NOT NULL COMMENT '生产编号',
   `order_no`            CHAR(12)  NOT NULL COMMENT '订单号',
   `out_product_no`      VARCHAR(63) COMMENT '外部生产编号',
-  `from_product_no`   CHAR(12) COMMENT '来源编号ID',
+  `from_product_no`   CHAR(16) COMMENT '来源编号ID',
   `prime_name`          VARCHAR(255) NOT NULL COMMENT '引物名称',
   `gene_order`          VARCHAR(255) NOT NULL COMMENT '引物序列',
   `purify_type`      VARCHAR(7) NOT NULL COMMENT '纯化方式',

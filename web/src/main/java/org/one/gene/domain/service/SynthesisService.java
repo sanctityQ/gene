@@ -1197,7 +1197,10 @@ public class SynthesisService {
 					}
 					if (operationType.equals(PrimerStatusType.measure) && measureMap.get(holeNo) != null) {
 						BigDecimal measure = (BigDecimal)measureMap.get(holeNo);
-						productNo = new BigDecimal(1.2).multiply(primerProduct.getOdTB()).divide(new BigDecimal(measure.doubleValue()/30),0, BigDecimal.ROUND_UP)+"";
+						//原来：1200*ODTB/(导入值*20)
+						productNo = new BigDecimal(1200).multiply(primerProduct.getOdTB()).divide(measure.multiply(new BigDecimal(20)),0, BigDecimal.ROUND_UP)+"";
+						//改为：1.2*ODTB/(导入值/30)
+//						productNo = new BigDecimal(1.2).multiply(primerProduct.getOdTB()).divide(new BigDecimal(measure.doubleValue()/30),0, BigDecimal.ROUND_UP)+"";
 					}
 				}
 				
@@ -1610,14 +1613,14 @@ public class SynthesisService {
     				modiStr += ")";
     			}
         		
-				int odTB  = 0;//OD/Tube
+        		double odTB  = 0.0;//OD/Tube
 				int tb    = 0;//管数
 				int tbn   = 0;//碱基数
 				double mw = 0.0;
 				for (PrimerProductValue ppv : pp.getPrimerProductValues()) {
 					PrimerValueType type = ppv.getType();
 					if (type.equals(PrimerValueType.odTB)) {// OD/Tube
-						odTB = ppv.getValue().intValue();
+						odTB = ppv.getValue().doubleValue();
 					}else if(type.equals(PrimerValueType.tb)){//管数
 						tb = ppv.getValue().intValue();
 					}else if(type.equals(PrimerValueType.baseCount)){
