@@ -1613,7 +1613,7 @@ public class SynthesisService {
     				modiStr += ")";
     			}
         		
-        		double odTB  = 0.0;//OD/Tube
+        		double odTB  = 0.0;//OD/Tube 
 				int tb    = 0;//管数
 				int tbn   = 0;//碱基数
 				double mw = 0.0;
