@@ -25,6 +25,7 @@ public class PrintLabel {
 	private BigDecimal pmole;//加水量
     private String remark;//备注/日期  ？？
     private String midi;//修饰
+    private String siteNo;//位置号
     
     public String getProductNo() {
 		return productNo;
@@ -152,6 +153,14 @@ public class PrintLabel {
 	public void setOdμmol(BigDecimal odμmol) {
 		this.odμmol = odμmol;
 	}
+	public String getSiteNo() {
+		return siteNo;
+	}
+	public void setSiteNo(String siteNo) {
+		this.siteNo = siteNo;
+	}
+	
+	
 }
 
 

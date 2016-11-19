@@ -82,6 +82,7 @@ var ctx = '${ctx}';
                                     <li value="GC">GC(%)</li>
                                     <li value="remark">备注/日期</li>
                                     <li value="μgOD">μg/OD</li>
+                                    <li value="siteNo">位置号</li>
                                 </ul>
                             </td>
                         </tr>

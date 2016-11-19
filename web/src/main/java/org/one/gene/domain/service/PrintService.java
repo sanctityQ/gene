@@ -207,6 +207,17 @@ public class PrintService {
 	        String createTime = df.format(primerProduct.getOrder().getCreateTime());
 			printLabel.setRemark(createTime);// 日期：20151010
 			
+			//查询孔号
+			List<BoardHole> boardHoles = boardHoleRepository.findByPrimerProduct(primerProduct);
+			if (boardHoles != null && boardHoles.size() > 0) {
+				for(BoardHole boardHole :boardHoles){
+					if(boardHole.getBoard().getBoardNo().equals(primerProduct.getBoardNo())){//是同一个板
+						printLabel.setSiteNo(boardHole.getHoleNo());//位置号
+						break;
+					}
+				}
+			}
+			
 			//修饰
 			String midi = "";
 			if (!"".equals(primerProduct.getModiFiveType())) {
@@ -376,6 +387,8 @@ public class PrintService {
 					value = printLabelExcel.getMidi();
 				}else if("μgOD".equals(type)){
 					value = printLabelExcel.getUgOD()+"";
+				}else if("siteNo".equals(type)){
+					value = printLabelExcel.getSiteNo();
 				}
 				
 				if (!"null".equals(value)) {
