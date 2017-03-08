@@ -318,7 +318,15 @@ function isRepeat(arr){
     return false;
 }
 
+//修改订单信息，保存方法
 function getChanesSave(nextOrderNo,orderNoString){
+	
+    var customerid = $("#customerid").val();
+    var customerid_old = $("#customerid_old").val();
+    if(customerid==''){
+    	alert("请选择客户信息。");
+    	return false;
+    }
 	
     var orderUpType = $("#orderUpType").val();
     var showMess = "";
@@ -392,7 +400,9 @@ function getChanesSave(nextOrderNo,orderNoString){
             "pps_insert": pps_insert,
             "pps_update": pps_update,
             "orderNo": orderNo,
-            "orderStatus": $("#orderStatus").val()
+            "orderStatus": $("#orderStatus").val(),
+            "customerid": customerid,
+            "customerid_old": customerid_old
         },
 		success : function(data) {
 			$.messager.progress('close');

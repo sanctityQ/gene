@@ -378,7 +378,8 @@ public class OrderService {
       	}
   		
   	}
-
+  	
+    //保存订单信息方法
 	@Transactional
 	public void saveOrder(Order order,
 			List<PrimerProduct> pps_insert, String orderStatus)

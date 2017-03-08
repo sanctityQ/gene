@@ -37,37 +37,42 @@ var ctx = '${ctx}';
 			</tr>
 			<tr>
 				<td align="right">客户编号:</td>
-				<td><input id="code" name="customer.code" class="readonly_inp" type="text"  style="width: 80%" value="${customer.code}" disabled/></td>
+				<td><input id="customerCode" name="customer.code" class="readonly_inp" type="text"  style="width: 80%" value="${customer.code}" disabled/></td>
 				<td align="right">客户名称:</td>
-				<td><input id="name" name="customer.name" class="readonly_inp" type="text" style="width: 80%" value="${customer.name}" disabled/></td>
+				<td>
+			    <input type="hidden" id="customerid_old" name="customerid_old" value="${customer.id}"/>
+			    <input type="hidden" id="customerid" name="customerid" value="${customer.id}"/>
+			    <input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="user.customer.name" value="${customer.name}" style="width: 240px" itle="请输入客户公司代码或名称。"  />
+			    <ul id="seachCustomList"></ul>
+                </td>
 			</tr>
 			<tr>
 				<td align="right">负责人姓名:</td>
-				<td><input id="leaderName" name="customer.leaderName" class="readonly_inp" type="text"  style="width: 80%" value="${customer.leaderName}" disabled/></td>
+				<td><input id="customer_leaderName" name="customer.leaderName" class="readonly_inp" type="text"  style="width: 80%" value="${customer.leaderName}" disabled/></td>
 				<td align="right">业务员:</td>
-				<td><input id="handlerName" class="readonly_inp" type="text" style="width: 80%" value="${customer.handlerName}" disabled/></td>
+				<td><input id="customer_handlerName" class="readonly_inp" type="text" style="width: 80%" value="${customer.handlerName}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">发票抬头:</td>
-				<td><input id="invoiceTitle" name="customer.invoiceTitle" class="readonly_inp" type="text"  style="width: 80%" value="${customer.invoiceTitle}" disabled/></td>
+				<td><input id="customer_invoiceTitle" name="customer.invoiceTitle" class="readonly_inp" type="text"  style="width: 80%" value="${customer.invoiceTitle}" disabled/></td>
 				<td align="right">结账方式:</td>
-				<td><input id="payWays" name="customer.payWays" class="readonly_inp" type="text"  style="width: 80%" value="${customer.payWays}" disabled/></td>
+				<td><input id="customer_payWays" name="customer.payWays" class="readonly_inp" type="text"  style="width: 80%" value="${customer.payWays}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">客户地址:</td>
-				<td><input id="address" name="customer.address" class="readonly_inp" type="text"  style="width: 50%" value="${customer.address}" disabled/></td>
+				<td><input id="customer_address" name="customer.address" class="readonly_inp" type="text"  style="width: 50%" value="${customer.address}" disabled/></td>
 				<td align="right">传真:</td>
-				<td><input id="fax" name="customer.fax" class="readonly_inp" type="text"  style="width: 50%" value="${customer.fax}" disabled/></td>
+				<td><input id="customer_fax" name="customer.fax" class="readonly_inp" type="text"  style="width: 50%" value="${customer.fax}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">联系电话:</td>
-				<td><input id="phoneNo" name="customer.phoneNo" class="readonly_inp" type="text" style="width: 80%" value="${customer.phoneNo}" disabled/></td>
+				<td><input id="customer_phoneNo" name="customer.phoneNo" class="readonly_inp" type="text" style="width: 80%" value="${customer.phoneNo}" disabled/></td>
 				<td align="right">Email:</td>
-				<td><input id="email" name="customer.email" class="readonly_inp" type="text" style="width: 80%" value="${customer.email}" disabled/></td>
+				<td><input id="customer_email" name="customer.email" class="readonly_inp" type="text" style="width: 80%" value="${customer.email}" disabled/></td>
 			</tr>
 			<tr>
 				<td align="right">网址:</td>
-				<td><input id="webSite" class="readonly_inp" type="text" style="width: 50%" value="${customer.webSite}" disabled/></td>
+				<td><input id="customer_webSite" class="readonly_inp" type="text" style="width: 50%" value="${customer.webSite}" disabled/></td>
 			</tr>
 			<tr>
 				<td colspan="4" height="10"></td>
@@ -142,6 +147,7 @@ var ctx = '${ctx}';
 		
 	</div>
 </div>
+<script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script src="${ctx}/views/order/js/orderInfo.js" ></script>
 <script type="text/javascript">
 

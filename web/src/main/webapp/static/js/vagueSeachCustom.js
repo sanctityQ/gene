@@ -67,7 +67,17 @@ function seachCustomChange(){
                             var code = data[i].code;
                             var name = data[i].name;
                             var custFlag = data[i].customerFlag;
-                            li += '<li id="'+id+'" custFlag="'+custFlag+'" code="'+code+'">'+name+'</li>';
+                            var leaderName   = data[i].leaderName;
+                            var handlerName  = data[i].handlerName;
+                            var invoiceTitle = data[i].invoiceTitle;
+                            var payWays      = data[i].payWays;
+                            var address      = data[i].address;
+                            var fax          = data[i].fax;
+                            var phoneNo      = data[i].phoneNo;
+                            var email        = data[i].email;
+                            var webSite      = data[i].webSite;
+                            
+                            li += '<li id="'+id+'" custFlag="'+custFlag+'" code="'+code+'" leaderName="'+leaderName+'" handlerName="'+handlerName+'" invoiceTitle="'+invoiceTitle+'" payWays="'+payWays+'" address="'+address+'" fax="'+fax+'" phoneNo="'+phoneNo+'" email="'+email+'" webSite="'+webSite+'" >'+name+'</li>';
                         };
                         list.append(li);
                     }
@@ -84,14 +94,49 @@ function seachCustomSelect(){
     var customerFlag = $("#customerFlag");
     var customerCode = $("#customerCode");
     var list = $("#seachCustomList");
+    
+    var customer_leaderName = $("#customer_leaderName");
+    var customer_handlerName = $("#customer_handlerName");
+    var customer_invoiceTitle = $("#customer_invoiceTitle");
+    var customer_payWays = $("#customer_payWays");
+    var customer_address = $("#customer_address");
+    var customer_fax = $("#customer_fax");
+    var customer_phoneNo = $("#customer_phoneNo");
+    var customer_email = $("#customer_email");
+    var customer_webSite = $("#customer_webSite");
+    
     var val = $(this).text();
     var id = $(this).attr("id");
     var code = $(this).attr("code");
     var custFlag = $(this).attr("custFlag");
+    var leaderName = $(this).attr("leaderName");
+    var handlerName = $(this).attr("handlerName");
+    var invoiceTitle = $(this).attr("invoiceTitle");
+    var payWays = $(this).attr("payWays");
+    var address = $(this).attr("address");
+    var fax = $(this).attr("fax");
+    var phoneNo = $(this).attr("phoneNo");
+    var email = $(this).attr("email");
+    var webSite = $(this).attr("webSite");
+    
     seach.val(val).attr("tagId",code);
     customerid.val(id)
     customerFlag.val(custFlag);
     customerCode.val(code);
+    
+    //修改客户信息页面赋值
+    if(typeof($("#customer_leaderName").val()) != 'undefind'){
+    	customer_leaderName.val(leaderName);
+    	customer_handlerName.val(handlerName);
+    	customer_invoiceTitle.val(invoiceTitle);
+    	customer_payWays.val(payWays);
+    	customer_address.val(address);
+    	customer_fax.val(fax);
+    	customer_phoneNo.val(phoneNo);
+    	customer_email.val(email);
+    	customer_webSite.val(webSite);
+    }
+    
     list.hide(100);
 
     //如果需要赋总公司值

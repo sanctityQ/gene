@@ -114,6 +114,7 @@ public class OrderController {
         return "orderExamine";
     }
     
+    //上传文件方法
     @Post("upload")
 	public String upload(@Param("customerid") String customerid,
 			@Param("contactsname") String contactsname,
@@ -408,14 +409,18 @@ public class OrderController {
 			@Param("pps_insert") List<PrimerProduct> pps_insert,
             @Param("pps_update") List<PrimerProduct> pps_update,
 			@Param("orderNo") String orderNo,
-			@Param("orderStatus") String orderStatus, Invocation inv)
+			@Param("orderStatus") String orderStatus, 
+			@Param("customerid") Long customerid,
+			@Param("customerid_old") Long customerid_old,
+			Invocation inv)
 			throws Exception {
     	
     	if(orderStatus==null){
-    		orderStatus = "";
+   		orderStatus = "";
     	}
+    	
     	Order order = orderRepository.findByOrderNo(orderNo);
-        
+    	
     	//校验页面生产编号是否重复
         for (PrimerProduct primerProduct : pps_insert) {
         	int count = primerProductRepository.countByProductNo(primerProduct.getProductNo());
@@ -430,6 +435,15 @@ public class OrderController {
         	}
         }
         
+    	//如果修改过客户，查询出最新的客户信息，赋值order
+		if (customerid != customerid_old) {
+			Customer customer = customerRepository.findOne(customerid);
+			if (customer != null) {
+				order.setCustomerCode(customer.getCode());
+				order.setCustomerName(customer.getName());
+			}
+		}
+		
         //页面修改的数据
         for (PrimerProduct primerProduct : order.getPrimerProducts()) {
         	for(PrimerProduct pp_update:pps_update){
