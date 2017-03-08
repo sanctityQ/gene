@@ -119,6 +119,7 @@ public class CustomerController {
 	public Reply query(@Param("customerName") String customerName,
 			@Param("customerFlag") String customerFlag,
 			@Param("companyList") String companyList,
+			@Param("handlerName") String handlerName,
 			@Param("pageNo")Integer pageNo,
             @Param("pageSize")Integer pageSize,Invocation inv){
 		
@@ -137,6 +138,7 @@ public class CustomerController {
         Map<String,Object> searchParams = Maps.newHashMap();
         searchParams.put(SearchFilter.Operator.EQ+"_name",customerName);
         searchParams.put(SearchFilter.Operator.EQ+"_customerFlag",customerFlag);
+        searchParams.put(SearchFilter.Operator.EQ+"_handlerName",handlerName);
         if(!"1".equals(user.getUser().getCompany().getComLevel())){//分公司
         	searchParams.put(SearchFilter.Operator.EQ+"_company.comCode",comCode);
         }
@@ -207,4 +209,46 @@ public class CustomerController {
     	return Replys.with("sucess").as(Text.class);  
     }
     
+    
+    /**
+     * 导出客户清单
+     * @throws IOException 
+     * */
+    @Post("exportCustomer")
+	public void exportCustomer(@Param("customerName") String customerName,
+			@Param("customerFlag") String customerFlag,
+			@Param("companyList") String companyList,
+			@Param("handlerName") String handlerName, Invocation inv)
+			throws IOException {
+    	
+		if (customerName != null && !customerName.equals("")) {
+			customerName = new String(customerName.getBytes("iso8859-1"), "UTF-8");
+		}
+		if (handlerName != null && !handlerName.equals("")) {
+			handlerName = new String(handlerName.getBytes("iso8859-1"), "UTF-8");
+		}
+        
+        ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
+        String comCode = user.getUser().getCompany().getComCode();
+        
+        Map<String,Object> searchParams = Maps.newHashMap();
+        
+        searchParams.put(SearchFilter.Operator.EQ+"_name",customerName);
+        searchParams.put(SearchFilter.Operator.EQ+"_customerFlag",customerFlag);
+        searchParams.put(SearchFilter.Operator.EQ+"_handlerName",handlerName);
+        if(!"1".equals(user.getUser().getCompany().getComLevel())){//分公司
+        	searchParams.put(SearchFilter.Operator.EQ+"_company.comCode",comCode);
+        }
+		if (companyList != null) {//总公司
+			searchParams.put(SearchFilter.Operator.EQ+"_company.comCode",companyList);
+		}
+		
+	    Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
+	    Specification<Customer> spec = DynamicSpecifications.bySearchFilter(filters.values(), Customer.class);
+	        
+	    List<Customer> customers = customerRepository.findAll(spec);
+    	customerService.exportCustomer( customers ,inv);
+
+    }
+	
 }

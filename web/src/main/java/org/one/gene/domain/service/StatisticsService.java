@@ -766,7 +766,7 @@ public class StatisticsService {
 				cell = row.createCell(3);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
-				cell.setCellValue(outOrderNo);//订单号（外部）
+				cell.setCellValue(orderNo);//订单号
 				cell = row.createCell(4);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);

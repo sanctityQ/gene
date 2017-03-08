@@ -22,17 +22,16 @@ String comCode = user.getUser().getCompany().getComCode();
 %>
 </head>
 <body>
+  <form name="form" action="${ctx}/customer/exportCustomer" method="post">
 <div class="tools">
 	<table width="100%">
 		<tr>
-			<td align="right">公司名称:</td>
-			<td>
+			<td align="right">公司名称: 
 			<input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width:60%" />
 			<input class="inp_text" id="customerCode" type="hidden" name="customerCode" />
 			<ul id="seachCustomList"></ul>
 			</td>
-			<td align="right">公司性质:</td>
-			<td>
+			<td align="right">公司性质:
                 <select id="customerFlag" class="my_select" style="width: 100px;" >
                     <option value="">请选择</option>
                     <option value="1">代理公司</option>
@@ -45,8 +44,7 @@ String comCode = user.getUser().getCompany().getComCode();
 			</td>
               <% //总公司才能选择分公司
                if(comCode.startsWith("0")){%>
-			<td align="right">归属机构:</td>
-			<td>
+			<td align="right">归属机构:
                 <select id="companyList" class="my_select" style="width: 100px;">
 				<c:forEach items="${companys}" var="company"  varStatus="status">
 				  <option value="${company.comCode}">${company.comName}</option>
@@ -54,10 +52,13 @@ String comCode = user.getUser().getCompany().getComCode();
                 </select>
 			</td>
               <% }%>
+			<td align="right">业务员姓名:
+			<input class="inp_text" type="text" id="handlerName" name="handlerName" value="" style="width:60%" />
+			</td>
 			<td align="left"><button type="button" class="btn" onclick="getCustomerList()">查询</button></td>
 			<td align="left">
 				<button type="button" class="btn btn-primary" onclick="goToPage('${ctx}/customer/addClient')">添加客户</button>
-				<!-- <button type="button" class="btn btn-primary submit" onclick="deleteRows('orderList')">批量删除</button> -->
+				<button type="button" class="btn btn-primary submit" onclick="exportCustomer()">导出客户</button>
 			</td>
 		</tr>
 	</table>
@@ -78,6 +79,7 @@ String comCode = user.getUser().getCompany().getComCode();
 		</tr>
 	</thead>
 </table>
+</form>
 <script src="${ctx}/views/customer/js/clientManage.js" ></script>
 <script src="${ctx}/static/js/vagueSeachCustom.js" ></script>
 <script type="text/javascript">

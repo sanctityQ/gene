@@ -53,6 +53,7 @@ var getCustomerList=function(){
 	var customerName = $("#seachCustom").val();
 	var customerFlag = $("#customerFlag").val();
 	var companyList  = $("#companyList").val();
+	var handlerName  = $("#handlerName").val();
 	$.ajax({
 		type : "post",
 		url : ctx+"/customer/query",
@@ -62,6 +63,7 @@ var getCustomerList=function(){
 			customerName:customerName,
 			customerFlag:customerFlag,
 			companyList:companyList,
+			handlerName:handlerName,
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
         },
@@ -119,4 +121,16 @@ var getCustomerini=function(){
 			alert("无法获取信息");
 		}
 	});
+}
+
+function exportCustomer(){
+	
+	var customerName = $("#seachCustom").val();
+	var customerFlag = $("#customerFlag").val();
+	var companyList  = $("#companyList").val();
+	var handlerName  = $("#handlerName").val();
+	
+    document.form.action = "/gene/customer/exportCustomer?customerName="+customerName+"&customerFlag="+customerFlag+"&companyList="+companyList+"&handlerName="+handlerName;
+	document.form.submit();
+	
 }
