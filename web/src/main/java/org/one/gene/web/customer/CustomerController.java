@@ -239,7 +239,7 @@ public class CustomerController {
         if(!"1".equals(user.getUser().getCompany().getComLevel())){//分公司
         	searchParams.put(SearchFilter.Operator.EQ+"_company.comCode",comCode);
         }
-		if (companyList != null) {//总公司
+		if (companyList != null && !companyList.equals("undefined")) {//总公司
 			searchParams.put(SearchFilter.Operator.EQ+"_company.comCode",companyList);
 		}
 		
