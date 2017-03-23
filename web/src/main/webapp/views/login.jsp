@@ -67,7 +67,7 @@
 				</ul>
 			</div>
 			<div class="copyright">
-				Copyright &copy; 2016 BeiJingZixiBioTechCO.,Ltd
+				Copyright &copy; 2017 BeiJingZixiBioTechCO.,Ltd
 			</div>
 		</div>
 		<%--<div class="control-group">--%>

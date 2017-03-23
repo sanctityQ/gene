@@ -1,6 +1,7 @@
 package org.one.gene.web.customer;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,10 @@ public class CustomerController {
         return "clientManage";
     }
 	@Get("customerView")
-    public String customerView(@Param("customerCode") String customerCode,Invocation inv){
+    public String customerView(@Param("customerCode") String customerCode,Invocation inv) throws IOException{
+		if (customerCode != null && !customerCode.equals("")) {
+			customerCode = new String(customerCode.getBytes("iso8859-1"), "UTF-8");
+		}
 		Customer customer = customerRepository.findByCode(customerCode);
 		if ("0".equals(customer.getCustomerFlag())) {
 			customer.setCustomerFlag("梓熙");
@@ -86,6 +90,9 @@ public class CustomerController {
 		ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
 		Customer customer = new Customer();
 		customer.setCreateTime(new Date());
+		customer.setCustomerFlag("2");//新增客户时，默认为 直接客户
+		customer.setPrefix("AX");//新增客户时，默认为 AX
+		
 		String haveZiXi = "";//是否有梓熙
 		List<Customer> customers = customerRepository.seachHaveZiXi();
 		if (customers != null && customers.size() > 0) {
