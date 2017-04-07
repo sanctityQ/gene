@@ -945,6 +945,8 @@ public class DeliveryService {
 		String orderNo = "";//订单号
 		String outOrderNo = "";//外部订单号
 		String productNoMinToMax = "";//序列范围
+		String handlerName = "";//业务员
+		
 		DeliveryInfo deliveryInfo = new DeliveryInfo();
 		List<DeliveryInfo> deliveryInfos = new ArrayList<DeliveryInfo>();
 		
@@ -959,6 +961,7 @@ public class DeliveryService {
 				orderDate = order.getCreateTime().toString();
 				productNoMinToMax = order.getProductNoMinToMax();
 				outOrderNo        = order.getOutOrderNo();
+				handlerName       = order.getHandlerName();
 				
 				if(orderDate.length()>10){
 					orderDate = orderDate.substring(0, 10);
@@ -1030,6 +1033,7 @@ public class DeliveryService {
 				deliveryInfo.setExtendStr8("");//出货日期
 				deliveryInfo.setExtendStr9(remark);//备注
 				deliveryInfo.setExtendStr10(orderPrimerNum+"");//订单下的条数
+				deliveryInfo.setExtendStr11(handlerName);//业务员
 				
 				deliveryInfos.add(deliveryInfo);
 			}
@@ -1085,18 +1089,22 @@ public class DeliveryService {
 			cell.setCellValue(dis.getExtendStr6());//OD/Tube
 			
 			cell = row.createCell(7);
-			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue("");//出货日期
+		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(dis.getExtendStr11());//业务员
 			
 			cell = row.createCell(8);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue("");//发货人
+			cell.setCellValue("");//出货日期
 			
 			cell = row.createCell(9);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue("");//收货员
+			cell.setCellValue("");//发货人
 			
 			cell = row.createCell(10);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue("");//收货员
+			
+			cell = row.createCell(11);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			cell.setCellStyle(headstyle);
 			cell.setCellValue(dis.getExtendStr9());//备注

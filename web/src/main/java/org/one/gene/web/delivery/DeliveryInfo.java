@@ -21,8 +21,9 @@ public class DeliveryInfo {
 	private String extendStr8;
 	private String extendStr9;
 	private String extendStr10;
+	private String extendStr11;
 	
-	
+
 	public int getRowNo() {
 		return rowNo;
 	}
@@ -132,4 +133,11 @@ public class DeliveryInfo {
 	public void setExtendStr10(String extendStr10) {
 		this.extendStr10 = extendStr10;
 	}
+	public String getExtendStr11() {
+		return extendStr11;
+	}
+	public void setExtendStr11(String extendStr11) {
+		this.extendStr11 = extendStr11;
+	}
+	
 }
