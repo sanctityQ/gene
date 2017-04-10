@@ -759,67 +759,88 @@ public class StatisticsService {
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
 				cell.setCellValue(companyName);//公司名称
+				
 				cell = row.createCell(2);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
 				cell.setCellValue(contactsName);//客户姓名
+				
 				cell = row.createCell(3);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
-				cell.setCellValue(orderNo);//订单号
+				cell.setCellValue(outOrderNo);//外部订单号
+				
 				cell = row.createCell(4);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
-				cell.setCellValue(handlerName);//业务员
+				cell.setCellValue(orderNo);//订单号
+				
 				cell = row.createCell(5);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
-				cell.setCellValue(pp.getProductNo());//生产编号
+				cell.setCellValue(handlerName);//业务员
+				
 				cell = row.createCell(6);
-			    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			    cell.setCellStyle(style_center);
-				cell.setCellValue(pp.getPrimeName());//引物名称
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(pp.getProductNo());//生产编号
+				
 				cell = row.createCell(7);
 			    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			    cell.setCellStyle(style_center);
-				cell.setCellValue(pp.getGeneOrderMidi());//序列
+				cell.setCellValue(pp.getPrimeName());//引物名称
+				
 				cell = row.createCell(8);
+			    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			    cell.setCellStyle(style_center);
+				cell.setCellValue(pp.getGeneOrderMidi());//序列
+				
+				cell = row.createCell(9);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
 				cell.setCellValue(tbn);//碱基
-				cell = row.createCell(9);
+				
+				cell = row.createCell(10);
 			    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			    cell.setCellStyle(style_center);
 				cell.setCellValue(odTotal);//OD总量
-				cell = row.createCell(10);
-				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				cell.setCellStyle(style_center);
-				cell.setCellValue(nmolTotal);//nmol总量
+				
 				cell = row.createCell(11);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
-				cell.setCellValue(purifyType);//纯化方式
+				cell.setCellValue(nmolTotal);//nmol总量
+				
 				cell = row.createCell(12);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
-				cell.setCellValue(modiStr);//修饰
+				cell.setCellValue(purifyType);//纯化方式
+				
 				cell = row.createCell(13);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
-				cell.setCellValue(baseVal);//碱基单价
+				cell.setCellValue(modiStr);//修饰
+				
 				cell = row.createCell(14);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
-				cell.setCellValue(purifyVal);//纯化单价
+				cell.setCellValue(baseVal);//碱基单价
+				
 				cell = row.createCell(15);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
-				cell.setCellValue(modiPrice);//修饰单价
+				cell.setCellValue(purifyVal);//纯化单价
+				
 				cell = row.createCell(16);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
-				cell.setCellValue(totalVal);//总价
+				cell.setCellValue(modiPrice);//修饰单价
+				
 				cell = row.createCell(17);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(totalVal);//总价
+				
+				cell = row.createCell(18);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellStyle(style_center);
 				
@@ -1681,5 +1702,342 @@ public class StatisticsService {
 		}
 
 }
+	
+    /**
+     * 导出工作量统计
+     * @throws IOException 
+     * */
+	public void exportGZLTongJi( StatisticsInfo statisticsInfo, Invocation inv) throws IOException {
+		
+	    Calendar   calendar   =   new   GregorianCalendar();
+		  
+        Map<String,Object> searchParams = Maps.newHashMap();
+        if (!"".equals(statisticsInfo.getCreateStartTime())) {
+        	
+        	Date date = new Date(statisticsInfo.getCreateStartTime()+" 08:00:00");
+        	
+        	searchParams.put(SearchFilter.Operator.GT+"__createTime",date);
+        	
+        	calendar.setTime(date); 
+        	calendar.add(calendar.DATE,1);//把日期往后增加一天.整数往后推,负数往前移动 
+        	date=calendar.getTime();   //这个时间就是日期往后推一天的结果
+        	
+        	searchParams.put(SearchFilter.Operator.LT+"__createTime",date);
+        }
+
+		if (!"".equals(statisticsInfo.getUserCode())) {
+			searchParams.put(SearchFilter.Operator.EQ+"_userCode",statisticsInfo.getUserCode());
+		}
+		
+        
+        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
+        Specification<PrimerProductOperation> spec = DynamicSpecifications.bySearchFilter(filters.values(), PrimerProductOperation.class);
+        
+        List<PrimerProductOperation> ppos = primerProductOperationRepository.findAll(spec);
+		
+		
+		String orderNo = "";//订单号
+		Map<String, DeliveryInfo> deliveryInfoMap = new HashMap<String, DeliveryInfo>();//整理好的订单信息
+		Map<String, String> customerContactsMap = new HashMap<String, String>();//客户数量，重复的算1，空的累加
+		int customerContacts = 0;//计算姓名为空的客户
+		DecimalFormat df = new DecimalFormat("0.00");
+		
+		
+	    //累计客户数量
+		customerContacts = customerContactsMap.size();
+		int allOrderCount = 0;
+		int tiaoshuCount_pt = 0;//普通引物 条数之和
+		int tiaoshuCount_xs = 0;//修饰引物 条数之和
+		int tiaoshuCount_ch = 0;//纯化引物 条数之和
+		double hechengliangSum = 0;//合成量之和
+		int shuliangCount = 0;//数量之和
+		double danjiaSum_pt = 0;//普通引物 单价总和
+		double danjiaSum_xs = 0;//修饰引物 单价总和
+		double danjiaSum_ch = 0;//纯化引物 单价总和
+		
+		//形成Excel
+		String templetName = "cktjTemplate.xls";
+		String strFileName = System.currentTimeMillis()+".xls";
+		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+"statistics"+File.separator;
+		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(templatePath+templetName));
+        HSSFSheet sheet = workbook.getSheetAt(0);
+		HSSFRow row = null;
+		HSSFCell cell = null;
+		
+    	HSSFCellStyle style_center = workbook.createCellStyle();
+    	style_center.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+    	style_center.setBorderBottom(HSSFCellStyle.BORDER_THIN); // 下边框  
+    	style_center.setBorderLeft(HSSFCellStyle.BORDER_THIN);// 左边框  
+    	style_center.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框  
+    	style_center.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框  
+		
+    	Map<String, DeliveryInfo> resultMap = sortMapByKeyDI(deliveryInfoMap);    //按Key进行排序 
+    	
+		int startRow = 2;//从第2行开始
+		double totalMoney = 0.0;//合计
+		if (resultMap!=null){
+			
+			for (String key : resultMap.keySet()) {
+				DeliveryInfo dis = (DeliveryInfo)resultMap.get(key);
+				
+				row = sheet.createRow(startRow);
+				
+				cell = row.createCell(0);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getExtendStr1());//订货日期
+				
+				cell = row.createCell(1);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getExtendStr2());//公司名称
+				
+				cell = row.createCell(2);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getExtendStr3());//客户姓名
+				
+				cell = row.createCell(3);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getExtendStr4());//订单号
+				
+				cell = row.createCell(4);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getExtendStr5());//业务员
+				
+				cell = row.createCell(5);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getDeliveryName());//存货名称
+				
+				cell = row.createCell(6);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getCountNum());//条数
+				
+				cell = row.createCell(7);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getOdTotal()+"OD");//合成量
+				
+				hechengliangSum += dis.getOdTotal();//合成量之和
+				
+				cell = row.createCell(8);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getMeasurement());//计量单位
+				
+				cell = row.createCell(9);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getCount());//数量
+				
+				shuliangCount += dis.getCount();//数量之和
+				
+				cell = row.createCell(10);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getPrice());//单价
+				
+				if ("0".equals(dis.getExtendStr9())) {// 普通引物
+					tiaoshuCount_pt += dis.getCountNum();// 条数之和
+					danjiaSum_pt += dis.getPrice();// 单价总和
+				} else if ("1".equals(dis.getExtendStr9())) {// 修饰引物
+					tiaoshuCount_xs += dis.getCountNum();// 条数之和
+					danjiaSum_xs += dis.getPrice();// 单价总和
+				} else if ("2".equals(dis.getExtendStr9())) {// 纯化引物
+					tiaoshuCount_ch += dis.getCountNum();// 条数之和
+					danjiaSum_ch += dis.getPrice();// 单价总和
+				}
+				
+				cell = row.createCell(11);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				cell.setCellValue(dis.getMoney());//金额
+				
+				cell = row.createCell(12);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellStyle(style_center);
+				
+				startRow = startRow +1;
+				
+				if(!"".equals(dis.getMoney())){
+					totalMoney += Double.parseDouble(dis.getMoney());
+				}
+			}
+		}
+		
+		double avgePrice_pt = 0;//单价底下平均数为：所有单价总和除以条数总数（不包括修饰的和HPLC）
+		if (tiaoshuCount_pt != 0) {
+			avgePrice_pt = danjiaSum_pt / tiaoshuCount_pt;
+		}
+		double avgePrice_xs = 0;//单价底下平均数为：所有单价总和除以条数总数（修饰的)
+		if (tiaoshuCount_xs != 0) {
+			 avgePrice_xs = danjiaSum_xs/tiaoshuCount_xs;
+		}
+		double avgePrice_ch = 0;//单价底下平均数为：所有单价总和除以条数总数（HPLC）
+		if (tiaoshuCount_ch != 0) {
+			avgePrice_ch = danjiaSum_ch/tiaoshuCount_ch;
+		}
+		
+		row = sheet.createRow(startRow);
+		cell = row.createCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("起始日期");
+		
+		cell = row.createCell(1);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue(statisticsInfo.getCreateStartTime());
+
+		for (int a=2;a<13;a++){
+			cell = row.createCell(a);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);	
+		}
+	
+		row = sheet.createRow(startRow+1);
+		cell = row.createCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("到");
+		
+		for (int a=1;a<13;a++){
+			cell = row.createCell(a);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellStyle(style_center);	
+		}
+		
+		row = sheet.createRow(startRow+2);
+		cell = row.createCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("终止日期");
+		cell = row.createCell(1);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue(statisticsInfo.getCreateEndTime());
+		cell = row.createCell(2);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue(customerContacts);//客戶姓名总数
+		cell = row.createCell(3);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue(allOrderCount);//订单总数
+		cell = row.createCell(4);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell = row.createCell(5);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell = row.createCell(6);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue(tiaoshuCount_pt);//条数总数
+		cell = row.createCell(7);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue(hechengliangSum);//合成量总数
+		cell = row.createCell(8);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell = row.createCell(9);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue(shuliangCount);//数量总数
+		cell = row.createCell(10);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue(df.format(avgePrice_pt));//单价平均值
+		cell = row.createCell(11);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue(totalMoney);//金额之和
+		cell = row.createCell(12);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		
+		row = sheet.createRow(startRow+3);
+		cell = row.createCell(0);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("总计");
+		cell = row.createCell(1);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell = row.createCell(2);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("总数");
+		cell = row.createCell(3);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("总数");
+		cell = row.createCell(4);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell = row.createCell(5);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell = row.createCell(6);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("总数");
+		cell = row.createCell(7);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("总数");
+		cell = row.createCell(8);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell = row.createCell(9);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("总数");
+		cell = row.createCell(10);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("平均值");
+		cell = row.createCell(11);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("总数");
+		cell = row.createCell(12);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		
+		row = sheet.createRow(startRow+4);
+		cell = row.createCell(9);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("HPLC均价");
+		cell = row.createCell(10);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue(df.format(avgePrice_ch));//单价平均值：HPLC均价
+		
+		row = sheet.createRow(startRow+5);
+		cell = row.createCell(9);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue("修饰均价");
+		cell = row.createCell(10);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellStyle(style_center);
+		cell.setCellValue(df.format(avgePrice_xs));//单价平均值：修饰均价
+		
+        //输出文件到客户端
+        HttpServletResponse response = inv.getResponse();
+        response.setContentType("application/x-msdownload");
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + strFileName + "\"");
+        OutputStream out=response.getOutputStream();
+        workbook.write(out);
+        out.flush();
+        out.close();
+    }
 	
 }

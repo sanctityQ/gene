@@ -3,6 +3,7 @@ package org.one.gene.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.sinosoft.one.data.jade.annotation.SQL;
 
 @Repository
-public interface PrimerProductOperationRepository extends PagingAndSortingRepository<PrimerProductOperation, Long> {
+public interface PrimerProductOperationRepository extends PagingAndSortingRepository<PrimerProductOperation, Long> , JpaSpecificationExecutor<PrimerProductOperation>  {
 	
     @SQL("select count(1) from `primer_product_operation` where `primer_product_id` = :ppID and `type`= :potType ")
     public int getCountWithType(@Param("ppID") Long ppID, @Param("potType") String potType);

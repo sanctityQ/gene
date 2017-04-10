@@ -127,9 +127,12 @@
         <% if (menuMap.get("deliveryList")!=null){%>
 			<li url="${ctx}/delivery/deliveryList" id="deliveryList"><i class="icon-file-text-alt"></i>发货清单</li>
 		<% }%>
+        <% if (menuMap.get("gzlTongJi")!=null){%>
+		    <li url="${ctx}/statistics/gzlTongJi" id="gzlTongJi"><i class="icon-th-large"></i>工作量统计</li>
+		<% }%>
         <% if (menuMap.get("chuKuTongJi")!=null){%>
 		    <li url="${ctx}/statistics/chuKuTongJi" id="chuKuTongJi"><i class="icon-th-large"></i>出库统计</li>
-		<% }%>
+		<% }%>		
         <% if (menuMap.get("duiZhangDan")!=null){%>
 		    <li url="${ctx}/statistics/duiZhangDan" id="duiZhangDan"><i class="icon-th-large"></i>对账单</li>
 		<% }%>

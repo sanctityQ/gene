@@ -190,5 +190,27 @@ public class StatisticsController {
     	statisticsService.exHplcChunHuaBiao(boardNo, inv);
     }
     
+    /**
+     * 进入工作量统计查询页面
+     * */
+    @Get("gzlTongJi")
+    public String gzlTongJi(){
+    	return "gzlTongJi";
+    }
+    
+    /**
+     * 导出工作量统计文件
+     * */
+    @Post("exportGZLTongJi")
+	public void exportGZLTongJi(@Param("statisticsInfojson") String statisticsInfojson, Invocation inv)
+			throws IOException {
+    	
+    	statisticsInfojson = new String(statisticsInfojson.getBytes("iso-8859-1"), "utf-8");;  
+    	List<StatisticsInfo> statisticsInfos = JSON.parseArray(statisticsInfojson,StatisticsInfo.class);
+    	
+    	StatisticsInfo statisticsInfo = statisticsInfos.get(0);
+		
+		statisticsService.exportGZLTongJi(statisticsInfo, inv);
+    }
     
 }
