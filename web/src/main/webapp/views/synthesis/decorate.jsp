@@ -33,7 +33,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
         </tr>
 	</table>
     <div class="btn_group">
-        <button id="decorate" class="btn btn-success easyui-menubutton" data-options="menu:'#dropdownMenu'" disabled="disabled">处理结果</button>
+        <button id="decorate" class="btn btn-success easyui-menubutton" data-options="menu:'#dropdownMenu'" disabled="disabled">处理结果</button>
         <div id="dropdownMenu" style="width:150px;">
             <div onclick="setResult(true);"><i class="icon-ok"></i>成功</div>
             <div class="menu-sep"></div>

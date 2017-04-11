@@ -20,9 +20,11 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 <div class="tools">
 	<table width="100%">
 		<tr>
-            <td align="right">选择日期:</td>
+            <td align="right">选择日期区间:</td>
             <td>
-                <input type="text" class="easyui-datebox" id="createStartTime" required="required" style="width: 120px;"/>
+                <input type="text" class="easyui-datebox" id="createStartTime" required="required" style="width: 120px;">
+                -
+                <input type="text" class="easyui-datebox" id="createEndTime" required="required" style="width: 120px;">
             </td>
 			<td align="right">工号:</td>
 			<td><input id=userCode class="inp_text" type="text" value="" style="width: 200px" onchange="showButtonDiv()"/></td>
@@ -49,14 +51,23 @@ $('#createStartTime').datebox({
     	$('#buttonDiv').show();
     }
 });
+$('#createEndTime').datebox({
+    onSelect: function (date) {
+    	$('#buttonDiv').show();
+    }
+});
+
 var showButtonDiv = function(){
 	$('#buttonDiv').show();
 }
 var exportGZLTJ = function(){
 	
     var createStartTime = $('#createStartTime').datebox('getValue');
+    var createEndTime = $('#createEndTime').datebox('getValue');
     
-    if(createStartTime==""){
+    //var dateSpan = $('#dateSpan input[name="dateFlag"]:checked ').val();//取得日期跨度的值
+
+    if(createStartTime=="" || createEndTime=="" ){
     	alert("请选择需要统计的日期。");
     	return false;
     }
@@ -74,6 +85,7 @@ var exportGZLTJ = function(){
     
     var statisticsInfo = {
 		     "createStartTime":createStartTime,
+		     "createEndTime":createEndTime,
 		     "userCode":userCode
 		     };
     statisticsInfos.push(statisticsInfo);
