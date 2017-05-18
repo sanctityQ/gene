@@ -883,7 +883,7 @@ public class PrintService {
 	public void exportEnvelope( String orderNo, Invocation inv) throws IOException {
 		
 		Order order = orderRepository.findByOrderNo(orderNo);
-		String customerCode = order.getCustomerCode();//客户代码
+		String handlerName = order.getHandlerName();//业务员
 		String customerName = order.getCustomerName();//客户公司名称
 		String contactsName = order.getContactsName();//客户联系人
 		String strFileName = System.currentTimeMillis()+".xls";
@@ -914,7 +914,10 @@ public class PrintService {
 		cell.setCellValue(orderNo);
 		cell = row.getCell(4);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(orderBaseCount+"");
+		cell.setCellValue(orderBaseCount+"bp");
+		cell = row.getCell(5);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(handlerName);
         
 		row = sheet.getRow(1);
 		cell = row.getCell(0);
