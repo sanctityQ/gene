@@ -927,6 +927,11 @@ public class PrintService {
 		row = sheet.getRow(2);
 		cell = row.getCell(3);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue(order.getProductNoMinToMax());
+		
+		row = sheet.getRow(3);
+		cell = row.getCell(3);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(contactsName);
 		
         //输出文件到客户端
