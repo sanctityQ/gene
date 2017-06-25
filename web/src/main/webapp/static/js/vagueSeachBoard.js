@@ -43,7 +43,7 @@ function seachBoardChange(){
             if(seach.val() != ''){
                 $.ajax({
                     type: "post",
-                    url: "/gene/synthesis/vagueSeachBoard",
+                    url: "/synthesis/vagueSeachBoard",
                     dataType: "json",
             		data:{
             			boardNo: seach.val(),

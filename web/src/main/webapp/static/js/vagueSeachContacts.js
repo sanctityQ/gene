@@ -48,7 +48,7 @@ function seachContactsChange(){
             if(seach.val() != ''){
                 $.ajax({
                     type: "post",
-                    url: "/gene/customerContacts/vagueSeachContacts",
+                    url: "/customerContacts/vagueSeachContacts",
                     dataType: "json",
             		data:{
             			contactsName: seach.val(),

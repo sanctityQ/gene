@@ -84,7 +84,12 @@ public class OrderController {
 		inv.addModel("customerFlag", customerFlag);// 用户归属公司标识，0-梓熙，1-代理公司，2-直接客户
         return "orderImport";
     }
-    
+
+	@Get("api/v1/getOrderEnum")
+    public Reply getOrderEnum() {
+		return Replys.with("{\"method\": [\"OPC\", \"PAGE\", \"HPLC\"],\"decor\": [\"Cy3\"]}").as(Json.class);
+	}
+
     @Get("orderList")
     @Post("orderList")
     public String orderList(Invocation inv){
@@ -494,7 +499,7 @@ public class OrderController {
         orderService.saveOrder(order,pps_insert, orderStatus);
         
         int count = primerProductRepository.getCountByOrderNo(orderNo);
-        
+
         return Replys.with("{\"success\":true,\"mess\":\""+count+"条引物数据已保存！\"}").as(Json.class);
     }
     
