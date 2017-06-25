@@ -23,7 +23,7 @@ function initBoardNo(){
 
   $.ajax({
       type:'post',
-      url : "/gene/synthesis/initBoardNo",
+      url : "/synthesis/initBoardNo",
       dataType:'json',
 		data:{
 			operationType: $("#operationType").val()
@@ -47,7 +47,7 @@ function dealBoardNo(){
   
 	$.ajax({
       type:'post',
-      url : "/gene/synthesis/initBoardNo",
+      url : "/synthesis/initBoardNo",
       dataType:'json',
 		data:{
 			operationType: $("#operationType").val(),

@@ -51,7 +51,7 @@ function seachCustomChange(){
             if(seach.val() != ''){
                 $.ajax({
                     type: "post",
-                    url: "/gene/customer/vagueSeachCustomer",
+                    url: "/customer/vagueSeachCustomer",
                     dataType: "json",
             		data:{
             			customercode: seach.val()

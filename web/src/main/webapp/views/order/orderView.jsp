@@ -110,7 +110,7 @@ orderDetail(${orderNo});
 
 function viewProduectInfo(val,row,index){
 	var row = $('#bigToSmall').datagrid('getData').rows[index];
-		var url = "'/gene/order/primerProductInfo/"+row.productNo+"/'";
+		var url = "'/order/primerProductInfo/"+row.productNo+"/'";
 	    return '<a href="javascript:;"onclick="executeUrl('+url+')"><i></i>'+row.productNo+'</a>';
 };
 

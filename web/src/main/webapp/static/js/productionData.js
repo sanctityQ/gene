@@ -51,7 +51,7 @@ var getProducts=function(){
 	
 	$.ajax({
 		type : "post",
-		url : "/gene/synthesis/makeBoardQuery",
+		url : "/synthesis/makeBoardQuery",
 		dataType : "json",
 		data:{
 			customerCode: customerCode,
