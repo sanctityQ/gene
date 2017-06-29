@@ -11,3 +11,6 @@
 # Others
 target/
 logs/
+
+# gulp build
+web/src/main/webapp/node_modules/

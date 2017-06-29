@@ -21,11 +21,7 @@
 <title>订单导入</title>
 </head>
 <body>
-	<div id="ctrl">
-		<input type="text" id="j-count" type="text">
-		<button id="j-btn">添加</button>
-	</div>
-	<div id="example"></div>
+
 	<script src="${ctx}/views/order/js/excel2tb.js" ></script>
 </body>
 </html>
