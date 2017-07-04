@@ -54,6 +54,8 @@ var getCustomerList=function(){
 	var customerFlag = $("#customerFlag").val();
 	var companyList  = $("#companyList").val();
 	var handlerName  = $("#handlerName").val();
+	var contactName  = $("#contactName").val();
+	
 	$.ajax({
 		type : "post",
 		url : ctx+"/customer/query",
@@ -64,6 +66,7 @@ var getCustomerList=function(){
 			customerFlag:customerFlag,
 			companyList:companyList,
 			handlerName:handlerName,
+			contactName:contactName,
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
         },

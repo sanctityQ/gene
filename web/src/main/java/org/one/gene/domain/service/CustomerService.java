@@ -21,10 +21,13 @@ import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductValue;
 import org.one.gene.domain.entity.PrimerValueType;
+import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.repository.CustomerContactsRepository;
 import org.one.gene.repository.CustomerPriceRepository;
 import org.one.gene.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -204,5 +207,17 @@ public class CustomerService {
         out.close();
     }
 	
+	
+    //查询客户信息
+	public Page<Customer> queryCustomers(String customerName,
+			String customerFlag, String handlerName, String contactName,
+			String comCode, Pageable pageable) {
+
+		Page<Customer> customerPage = customerRepository.queryCustomers(
+				customerName, customerFlag, handlerName, contactName, comCode,
+				pageable);
+
+		return customerPage;
+	}
 	
 }

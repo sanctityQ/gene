@@ -21,6 +21,7 @@ public interface PrimerProductOperationRepository extends PagingAndSortingReposi
     @SQL("select * from `primer_product_operation` where `primer_product_id` = :ppID  ORDER BY create_time ")
     List<PrimerProductOperation> getInfoByPrimerProductID(@Param("ppID") Long ppID);
     
-    
+    @SQL("select count(1) from `primer_product_operation` where `primer_product_id` = :ppID and `back_times`>0 ")
+    public int getCountWithPPID(@Param("ppID") Long ppID);
 }
 

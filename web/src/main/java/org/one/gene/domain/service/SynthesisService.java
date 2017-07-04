@@ -618,6 +618,10 @@ public class SynthesisService {
 			
 			//序列，如果是删除的，展现错误类型信息
 			if(bh.getStatus() == 0){
+				//3端修饰的引物序列，并在序列前自动加一个N
+				if (!"".equals(primerProduct.getModiThreeType())) {
+					tableContext += "N";
+				}
 				tableContext += primerProduct.getGeneOrderMidi().replaceAll("\\(\\*\\)", "\\*");
 			}else if(bh.getStatus() == 1){
 				tableContext += bh.getPrimerProductOperation().getTypeDesc();
@@ -744,9 +748,18 @@ public class SynthesisService {
 					
 					// 体积:导入测试数据后显示体积,如果在测试之前：显示级别顺序：1：修饰，2：HPLC，3：PAGE)
 					if (pp.getMeasureVolume() != null) {
+						
+						//重合引物把体积数改为“重合”二字
+						int ppoCount = primerProductOperationRepository.getCountWithPPID(pp.getId());
+						
 						cell = row.getCell(pthc.getColumn() + 4);
 						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-						cell.setCellValue(pp.getMeasureVolume() + "");
+						
+						if(ppoCount == 0){
+							cell.setCellValue(pp.getMeasureVolume() + "");
+						}else{
+							cell.setCellValue("重合");
+						}
 					} else if (!"".equals(pp.getModiFiveType())|| !"".equals(pp.getModiThreeType())
 							|| !"".equals(pp.getModiMidType()) || !"".equals(pp.getModiSpeType())) {
 						String modiStr = "";
@@ -1632,7 +1645,6 @@ public class SynthesisService {
         		if(productNo==null || "".equals(productNo)){
         			productNo = pp.getProductNo();
         		}
-        		String geneOrder = pp.getGeneOrder();//序列
         		String purifyType = pp.getPurifyType();//纯化方式
         		
         		String modiStr    = "";//修饰
@@ -1641,6 +1653,14 @@ public class SynthesisService {
         		String modiMidType  = pp.getModiMidType();
         		String modiSpeType  = pp.getModiSpeType();
     			
+        		String geneOrder = "";//序列
+				//3端修饰的引物序列，并在序列前自动加一个N
+				if (!"".equals(modiThreeType)) {
+					geneOrder += "N";
+				}
+				geneOrder += pp.getGeneOrderMidi().replaceAll("\\(\\*\\)", "\\*");
+				
+        		
         		if (!"".equals(modiFiveType) || !"".equals(modiThreeType) || !"".equals(modiMidType) || !"".equals(modiSpeType)) {
     				modiStr = "(";
     				if (!"".equals(modiFiveType)) {

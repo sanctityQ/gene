@@ -24,6 +24,7 @@ import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
 import org.one.gene.domain.entity.Customer;
+import org.one.gene.domain.entity.CustomerContacts;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PackTableHoleConfig;
 import org.one.gene.domain.entity.PrimerLabelConfigSub;
@@ -603,9 +604,16 @@ public class DeliveryService {
 			webSite         = customer.getWebSite();
 			deliveryAddress = customer.getAddress();
 			address         = customer.getAddress();
-			phoneNo         = customer.getPhoneNo();
 			email           = customer.getEmail();
 			customerFlag    = customer.getCustomerFlag();
+			
+			
+			for (CustomerContacts customerContacts : customer.getCustomerContactss()) {
+				if (customerContacts.getName().equals(customerContacts)) {
+					phoneNo = customerContacts.getPhoneNo();
+				}
+			}
+			
 		}
 		//直接客户 展现梓熙生物的信息
 		if ("2".equals(customerFlag)) {
@@ -615,7 +623,6 @@ public class DeliveryService {
 				Customer customerTemp = (Customer)customers.get(0);
 				companyName = customerTemp.getName();
 				address     = customerTemp.getAddress();
-				phoneNo     = customerTemp.getPhoneNo();
 				email       = customerTemp.getEmail();
 			}
 		}
@@ -764,7 +771,7 @@ public class DeliveryService {
 		row = sheet.getRow(2);
 		cell = row.getCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue("客户联系人："+contactsName);
+		cell.setCellValue("客户联系人："+contactsName+"  联系电话："+phoneNo);
 		cell = row.getCell(4);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue("订货日期："+orderDate+"   发货日期："+deliveryDate);
@@ -781,9 +788,9 @@ public class DeliveryService {
 		cell = row.getCell(0);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue("送货地址："+deliveryAddress);
-		cell = row.getCell(4);
+		cell = row.getCell(7);
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue("地区："+area+"   总条数："+geneCount+"条");
+		cell.setCellValue("总条数："+geneCount+"条");
 		
     	HSSFCellStyle style_center = workbook.createCellStyle();
     	style_center.setAlignment(HSSFCellStyle.ALIGN_CENTER);

@@ -127,8 +127,10 @@ public class CustomerController {
 			@Param("customerFlag") String customerFlag,
 			@Param("companyList") String companyList,
 			@Param("handlerName") String handlerName,
+			@Param("contactName") String contactName,
 			@Param("pageNo")Integer pageNo,
-            @Param("pageSize")Integer pageSize,Invocation inv){
+            @Param("pageSize")Integer pageSize,
+            Invocation inv){
 		
 		if(pageNo == null || pageNo ==0){
             pageNo = 1;
@@ -137,25 +139,36 @@ public class CustomerController {
         if(pageSize == null){
             pageSize = 10;
         }
-
+        
+        if(customerName == null){
+        	customerName = "";
+        }
+        if(customerFlag == null){
+        	customerFlag = "";
+        }
+        if(handlerName == null){
+        	handlerName = "";
+        }
+        if(contactName == null){
+        	contactName = "";
+        }
+        
         ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
         String comCode = user.getUser().getCompany().getComCode();
         
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
-        Map<String,Object> searchParams = Maps.newHashMap();
-        searchParams.put(SearchFilter.Operator.EQ+"_name",customerName);
-        searchParams.put(SearchFilter.Operator.EQ+"_customerFlag",customerFlag);
-        searchParams.put(SearchFilter.Operator.EQ+"_handlerName",handlerName);
+
         if(!"1".equals(user.getUser().getCompany().getComLevel())){//分公司
-        	searchParams.put(SearchFilter.Operator.EQ+"_company.comCode",comCode);
         }
-		if (companyList != null) {//总公司
-			searchParams.put(SearchFilter.Operator.EQ+"_company.comCode",companyList);
-		}
-        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
-        Specification<Customer> spec = DynamicSpecifications.bySearchFilter(filters.values(), Customer.class);
         
-        Page<Customer> customerPage = customerRepository.findAll(spec, pageable);
+		if (companyList != null) {//总公司
+			comCode = companyList;
+		}
+        
+		Page<Customer> customerPage = customerService.queryCustomers(
+				customerName, customerFlag, handlerName, contactName, comCode,
+				pageable);
+        
         
         for(Customer customer:customerPage.getContent()){
         	List<User> users = userRepository.getUserByCustomerId(customer.getId()+"");
@@ -165,8 +178,6 @@ public class CustomerController {
 				customer.setHaveUserFlag("1");//未挂用户，可以删除
 			}
         }
-    	inv.addModel("page", customerPage);
-    	inv.addModel("pageSize", pageSize);
 
     	return Replys.with(customerPage).as(Json.class);
 	}

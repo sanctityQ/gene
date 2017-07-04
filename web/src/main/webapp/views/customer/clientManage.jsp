@@ -26,12 +26,15 @@ String comCode = user.getUser().getCompany().getComCode();
 <div class="tools">
 	<table width="100%">
 		<tr>
-			<td align="right">公司名称: 
-			<input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width:60%" />
+			<td align="left">公司名称: 
+			<input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width:70%" />
 			<input class="inp_text" id="customerCode" type="hidden" name="customerCode" />
 			<ul id="seachCustomList"></ul>
 			</td>
-			<td align="right">公司性质:
+			<td align="left">联系人:
+			<input class="inp_text" type="text" id="contactName" name="contactName" value="" style="width:40%" />
+			</td>
+			<td align="left">公司性质:
                 <select id="customerFlag" class="my_select" style="width: 100px;" >
                     <option value="">请选择</option>
                     <option value="1">代理公司</option>
@@ -44,7 +47,7 @@ String comCode = user.getUser().getCompany().getComCode();
 			</td>
               <% //总公司才能选择分公司
                if(comCode.startsWith("0")){%>
-			<td align="right">归属机构:
+			<td align="left">归属机构:
                 <select id="companyList" class="my_select" style="width: 100px;">
 				<c:forEach items="${companys}" var="company"  varStatus="status">
 				  <option value="${company.comCode}">${company.comName}</option>
@@ -52,16 +55,18 @@ String comCode = user.getUser().getCompany().getComCode();
                 </select>
 			</td>
               <% }%>
-			<td align="right">业务员姓名:
-			<input class="inp_text" type="text" id="handlerName" name="handlerName" value="" style="width:60%" />
+			<td align="left">业务员:
+			<input class="inp_text" type="text" id="handlerName" name="handlerName" value="" style="width:30%" />
 			</td>
 			<td align="left"><button type="button" class="btn" onclick="getCustomerList()">查询</button></td>
-			<td align="left">
-				<button type="button" class="btn btn-primary" onclick="goToPage('${ctx}/customer/addClient')">添加客户</button>
-				<button type="button" class="btn btn-primary submit" onclick="exportCustomer()">导出客户</button>
-			</td>
+		</tr>
+		<tr>
 		</tr>
 	</table>
+    <div class="btn_group">
+		<button type="button" class="btn btn-primary" onclick="goToPage('${ctx}/customer/addClient')">添加客户</button>
+		<button type="button" class="btn btn-primary submit" onclick="exportCustomer()">导出客户</button>
+    </div>
 </div>
 <table id="customerList" class="easyui-datagrid" data-options="striped:true,method: 'get',pagination:true,fitColumns:true,sortOrder:'desc',remoteSort:false">
 	<thead>

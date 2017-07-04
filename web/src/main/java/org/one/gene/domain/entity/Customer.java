@@ -189,7 +189,7 @@ public class Customer extends IdEntity implements java.io.Serializable {
         this.address = address;
     }
 
-    @Column(name = "`phone_no`", length = 15)
+    @Column(name = "`phone_no`", length = 20)
     public String getPhoneNo() {
         return this.phoneNo;
     }

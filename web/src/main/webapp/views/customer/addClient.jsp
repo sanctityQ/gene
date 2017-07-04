@@ -142,7 +142,7 @@ String comCode = user.getUser().getCompany().getComCode();
     </div>
     <div class="content_box info margin_btoom">
          <h2>价格信息<td>&nbsp;</td><td><button id="addPriceBN" type="button" class="btn btn-primary" onclick="addPrice('0.0','0.0','0.0','0.0','0.0','0.0','0.0');">增加</button></td>
-         <a href="javascript:;" class="right btn-primary submit" onclick="iniPrice()" type="button">初始化数据</a>
+         <a href="javascript:;" class="right btn-primary submit" onclick="iniPrice()" type="button">初始化价格数据</a>
          </h2>
          <table id="tablePrice" width="100%" align="center" class="order_info" style="BORDER-COLLAPSE: collapse" borderColor=#000000 border="0">
              <tr>

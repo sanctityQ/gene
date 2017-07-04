@@ -4,6 +4,8 @@ package org.one.gene.repository;
 import java.util.List;
 
 import org.one.gene.domain.entity.Customer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -31,6 +33,22 @@ public interface CustomerRepository extends PagingAndSortingRepository<Customer,
 	
 	@SQL("select * from `customer` where `customer_Flag` ='0'")
 	List<Customer> seachHaveZiXi();
+	
+	@SQL("select * from `customer` c "
+			+ " where c.`com_code` = :comCode "
+			+ "#if(:customerName != '') { and c.`name` = :customerName } "
+			+ "#if(:customerFlag != '') { and c.`customer_flag` = :customerFlag } "
+			+ "#if(:handlerName != '') { and c.`handler_name` = :handlerName } "
+			+ "#if(:contactName != '') { and exists ( select * from `customer_contacts` d where c.`id`= d.`customer_id` and d.`name` = :contactName  ) } " 
+			+ " ")
+	Page<Customer> queryCustomers(
+			@Param("customerName") String customerName,
+			@Param("customerFlag") String customerFlag, 
+			@Param("handlerName") String handlerName,
+			@Param("contactName") String contactName,
+			@Param("comCode") String comCode,
+			Pageable pageable);
+	
 	
 }
 
