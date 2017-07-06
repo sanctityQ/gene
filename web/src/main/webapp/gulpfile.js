@@ -17,7 +17,7 @@ gulp.task('less', () => {
   return gulp.src(lessSrc)
     .pipe(plumber())
     .pipe(less())
-    .pipe(minifyCSS())
+    // .pipe(minifyCSS())
     .pipe(rename(stack => {
       stack.extname = '.css';
     }))

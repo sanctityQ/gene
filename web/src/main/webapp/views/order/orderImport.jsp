@@ -89,13 +89,13 @@
 		<div class="order-plate-wrapper">
 			<div class="plate-control-wrapper">
 				<div class="control-header control-btn">
-					<div class="switch">
+					<div class="switch" id="J-switchMethod" data-method="tube">
 						<span class="glyphicon glyphicon-refresh"></span>
-						<span class="plate-tube">切换至按管提交</span>
+						<span class="plate-tube">切换至按板提交</span>
 					</div>
 					<i class="icon-question-sign icon-help"></i>
 				</div>
-				<div class="contorl-plate-form">
+				<div class="contorl-plate-form" id="J-plateForm">
 					<div class="form-group clearfix">
 						<label for="" class="control-label fl">板号:</label>
 						<div class="control-input fl">
@@ -134,9 +134,9 @@
 				</div>
 			</div>
 			<div class="view-wrapper">
-				<div class="image-preview">
+				<div class="image-preview" id="J-imagePreview">
 					<div class="image">
-						<img src="https://climsprod.genewiz.com.cn/Content/img/Tube-CN.png" alt="">
+						<img src="${ctx}/static/images/Tube-CN.png" alt="">
 						<div class="link">
 							<a href="#" target="_blank">纯化方式使用指南</a>
 						</div>
@@ -148,7 +148,7 @@
 						<p class="notice-item">3.如需特殊修饰请在备注栏中注明</p>
 					</div>
 				</div>
-				<div class="plate-preview">
+				<div class="plate-preview" id="J-platePreview">
 					<div class="title">预览第1板，共1板</div>
 					<div class="tb-header highlight">
 						<span class="icon-arrow-down icon-direction"></span>
