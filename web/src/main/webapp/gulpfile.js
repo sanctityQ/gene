@@ -24,7 +24,7 @@ gulp.task('less', () => {
     .pipe(gulp.dest('dist/css/'))
 });
 
-gulp.task('copy', ['clean'], () => {
+gulp.task('copy', () => {
   return gulp.src(['static/**/*.*', '!static/css/less/**/*.*'])
     .pipe(gulp.dest('dist/'))
 });
