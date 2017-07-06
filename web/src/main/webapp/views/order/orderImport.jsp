@@ -59,7 +59,7 @@
 					</label>
 					<div class="control-input fl">
 						<div class="input-group">
-							<input type="text" id="J-rowAmount" class="input-invalid amount" maxlength="5" size="5">
+							<input type="text" id="J-rowAmount" class="amount" maxlength="5" size="5">
 							<span class="input-group-btn">
 								<button id="J-createRow" class="btn-action" type="button">应用</button>
 							</span>
@@ -70,7 +70,7 @@
 			<div class="order-item-right">
 				<div class="unit-wrapper form-group clearfix">
 					<label for="" class="control-label fl">
-						订单名称:
+						<i class="icon-question-sign icon-help"></i>订单名称:
 					</label>
 					<div class="control-input fl">
 						<input type="text" class="order-name text" name="orderName">
@@ -78,7 +78,7 @@
 				</div>
 				<div class="unit-wrapper form-group clearfix">
 					<label for="" class="control-label fl">
-						备注:
+						<i class="icon-question-sign icon-help"></i>备注:
 					</label>
 					<div class="control-input fl">
 						<textarea class="order-desc" cols="20" name="orderDesc" rows="3"></textarea>
@@ -273,13 +273,22 @@
 		</div>
 	</script>
 
-	<script src="${ctx}/static/js/jquery.min.js" ></script>
-	<script src="${ctx}/static/js/jquery.easyui.min.js" ></script>
-	<script src="${ctx}/static/js/perfect-scrollbar.min.js" ></script>
-	<script src="${ctx}/static/js/handlebars-v2.0.0.js" ></script>
-	<script src="${ctx}/static/js/index.js" ></script>
-	<script src="${ctx}/static/js/handsontable/index.js" ></script>
-	<script src="${ctx}/views/order/js/orderConfig.js" ></script>
-	<script src="${ctx}/views/order/js/excel2tb.js" ></script>
+	<script src="${ctx}/static/js/lib/sea.js" ></script>
+	<script src="${ctx}/views/order/js/orderImport/orderConfig.js" ></script>
+	<script>
+      seajs.config({
+        base: "${ctx}/static/js/lib/",
+        alias: {
+          jquery: 'jquery.min.js',
+		  json: 'json2.js',
+		  easyui: 'jquery.easyui.min.js',
+          handlebars: 'handlebars-v2.0.0.js',
+		  handsontable: 'handsontable/index.js'
+        }
+      })
+
+      // 加载入口模块
+      seajs.use("${ctx}/views/order/js/orderImport/index.js")
+	</script>
 </body>
 </html>
