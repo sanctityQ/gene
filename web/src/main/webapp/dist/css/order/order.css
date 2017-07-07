@@ -73,6 +73,7 @@ textarea:focus {
   margin: 0 auto;
   padding-top: 13px;
   font-size: 12px;
+  min-height: 205px;
 }
 .step-section .form-horizontal .control-label {
   margin-top: 0;
@@ -260,11 +261,20 @@ textarea:focus {
   width: 16px;
   height: 16px;
 }
+.step-section .plate-preview .tb-header .icon-arrow-right {
+  display: none;
+}
 .step-section .plate-preview .highlight .tb-header-item {
   background-color: lightblue;
 }
 .step-section .plate-preview .highlight .tb-row .cell:first-child {
   background-color: lightblue;
+}
+.step-section .plate-preview .highlight .icon-arrow-down {
+  display: none;
+}
+.step-section .plate-preview .highlight .icon-arrow-right {
+  display: table-cell;
 }
 .step-section .plate-preview .tb-header-item {
   display: table-cell;

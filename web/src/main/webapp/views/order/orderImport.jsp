@@ -107,23 +107,21 @@
 					<div class="form-group clearfix">
 						<label for="" class="control-label fl">
 							<i class="icon-question-sign icon-help"></i>
-							板名
-							<span class="field-required">*</span>
-							:
+							板名<span class="field-required">*</span>:
 						</label>
 						<div class="control-input fl">
 							<div class="input-group">
 								<input type="text" class="input-invalid amount" maxlength="5" size="5">
 								<span class="input-group-btn">
-								<button class="btn-action" type="button">应用</button>
-							</span>
+									<button class="btn-action" type="button">应用</button>
+								</span>
 							</div>
 						</div>
 					</div>
 					<div class="control-btn">
-						<div class="switch">
+						<div class="switch" id="J-switchDirection" data-direction="2">
 							<span class="glyphicon glyphicon-refresh"></span>
-							<span class="plate-tube">切换至横向提交</span>
+							<span class="plate-tube">切换至&nbsp;&nbsp;<span class="placeholder-text">横向提交</span></span>
 						</div>
 					</div>
 					<div class="control-btn">
@@ -150,7 +148,8 @@
 				</div>
 				<div class="plate-preview" id="J-platePreview">
 					<div class="title">预览第1板，共1板</div>
-					<div class="tb-header highlight">
+					<div class="tb-header">
+						<span class="icon-arrow-right icon-direction"></span>
 						<span class="icon-arrow-down icon-direction"></span>
 						<%
 							int[] intArray = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
@@ -160,7 +159,7 @@
 							<span class="tb-header-item">${item}</span>
 						</c:forEach>
 					</div>
-					<div class="tb-body">
+					<div class="tb-body highlight">
 						<%
 							String[] array = { "A", "B", "C", "D", "E", "F","G","H"};
 							request.setAttribute("array", array);
