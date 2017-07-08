@@ -2,6 +2,10 @@
 define(function(require, exports, module) {
 
   var platectrler = {
+    proxy: {
+      $switchType: $('#J-switchType'),
+      $switchDirection: $('#J-switchDirection')
+    },
     init: function() {
       this.$switchType = $('#J-switchType');
       this.$switchDirection = $('#J-switchDirection');
@@ -13,14 +17,25 @@ define(function(require, exports, module) {
     },
     bindEvent: function() {
       var self = this;
+
       //切换提交方式
-      this.$switchType.on('click', function() {
+      this.$switchType.bind('switch:type', function() {
         var type = $(this).data('type');
         type === sngr.containerType.TUBE ? self.plateHandler(this, self) : self.tubeHandler(this, self);
       });
 
+      //切换提交方式
+      this.$switchType.bind('click', function() {
+        self.$switchType.trigger('switch:type');
+      });
+
       //切换tube提交方向
-      this.$switchDirection.on('click', function() {
+      this.$switchDirection.bind('click', function() {
+        self.$switchDirection.trigger('switch:direction');
+      });
+
+      //切换tube提交方向
+      this.$switchDirection.on('switch:direction', function() {
         var direction = $(this).data('direction');
         //1横向、2纵向
         direction === sngr.plateDirection.HORIZONTAL ? self.verticalDirectionHandler(this, self) : self.horizontalDirectionHandler(this, self);

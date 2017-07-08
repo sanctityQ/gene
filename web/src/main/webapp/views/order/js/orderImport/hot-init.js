@@ -46,9 +46,12 @@ define(function(require, exports, module) {
         allowEmpty: true,
         colHeaders: buildHeader,
         autoColumnSize: true,
+        hiddenColumns: {},
+        fillHandle: "vertical",
+        height: 300,
         currentRowClassName: "hot-current-row",
         comments: true,
-        colWidths: ["5%", "5%", "5%", "5%", "20%", "5%", "5%", "5%", "5%", "10%", "10%", "15%"],
+        colWidths: [1, 1, 40, 90, 338, 60, 60, 70, 80, 140, 140, 190, 1],
         columns: [{
           data: "CustPlateID",
           readOnly: true
