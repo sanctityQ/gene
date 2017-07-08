@@ -111,7 +111,7 @@
 						</label>
 						<div class="control-input fl">
 							<div class="input-group">
-								<input type="text" class="input-invalid amount" maxlength="5" size="5">
+								<input type="text" class="amount" maxlength="5" size="5">
 								<span class="input-group-btn">
 									<button class="btn-action" type="button">应用</button>
 								</span>
@@ -125,7 +125,7 @@
 						</div>
 					</div>
 					<div class="control-btn">
-						<div class="switch">
+						<div class="switch" id="J-markEmpty" data-marking="false">
 							<span class="plate-tube">标记空孔</span>
 						</div>
 					</div>

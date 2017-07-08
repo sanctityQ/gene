@@ -8,6 +8,7 @@ define(function(require, exports, module) {
       this.$form = $('#J-plateForm');
       this.$platePreview = $('#J-platePreview');
       this.$imagePreview = $('#J-imagePreview');
+      this.$markEmpty = $('#J-markEmpty');
       this.bindEvent();
     },
     bindEvent: function() {
@@ -17,12 +18,46 @@ define(function(require, exports, module) {
         var method = $(this).data('method');
         method === 'tube' ? self.plateHandler(this, self) : self.tubeHandler(this, self);
       });
+
       //切换tube提交方向
       this.$switchDirection.on('click', function() {
         var direction = $(this).data('direction');
         //1横向、2纵向
         direction === 1 ? self.verticalDirectionHandler(this, self) : self.horizontalDirectionHandler(this, self);
       });
+
+      //开启或关闭标记空管
+      this.$markEmpty.on('click', function() {
+        var isMarking = $(this).data('marking');
+        isMarking ? self.markedEmptyHandler(this, self) : self.markingEmptyHandler(this, self);
+      });
+
+      //标记空管
+      this.$platePreview.on('click', '.tb-body>.tb-row .circle', function() {
+        var status = $(this).data('cell-status');
+        var isMarking = self.$markEmpty.data('marking');
+
+        //非开启状态不做处理
+        if (!isMarking) return;
+
+        if (status === 'empty') {
+          $(this).removeClass('empty-circle').removeData('cell-status');
+        } else {
+          $(this).addClass('empty-circle').data('cell-status', 'empty');
+        }
+      }).on('toggleEditable', '.tb-body>.tb-row .circle', function() {
+        $(this).toggleClass('editable-circle');
+      })
+    },
+    //标记空管
+    markingEmptyHandler: function(ele, ctx) {
+      ctx.$markEmpty.data('marking', true).find('>span').text(MB_UI_APPLY_EMPTY_WELLS);
+      ctx.$platePreview.find('.tb-body>.tb-row .circle').toggleClass('editable-circle');
+    },
+    //确认标记
+    markedEmptyHandler: function(ele, ctx) {
+      ctx.$markEmpty.data('marking', false).find('>span').text(OLIORDER_MarkEmptyWells);
+      ctx.$platePreview.find('.tb-body>.tb-row .circle').toggleClass('editable-circle');
     },
     //横向提交
     horizontalDirectionHandler: function(ele, ctx) {

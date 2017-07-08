@@ -333,6 +333,7 @@ textarea:focus {
   -webkit-border-radius: 14px;
   -moz-border-radius: 14px;
   border-radius: 14px;
+  border: 1px solid #000;
 }
 .step-section .plate-preview .transparent-circle {
   background-color: rgba(204, 0, 102, 0);
