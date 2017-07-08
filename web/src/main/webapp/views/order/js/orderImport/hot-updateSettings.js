@@ -3,7 +3,8 @@ define(function(require, exports, module) {
   module.exports = function(hot) {
     hot.updateSettings({
       // colWidths: [50, 50, 60, 100, 420, 60, 60, 60, 140, 120, 1],
-      colWidths: [1, 1, 40, 90, 338, 60, 60, 70, 80, 140, 140, 190, 1],
+      // colWidths: [1, 1, 40, 90, 338, 60, 60, 70, 80, 140, 140, 190, 1],
+      colWidths: [40, 40, 40, 90, 270, 50, 60, 70, 80, 140, 140, 190, 1],
       fixedColumnsLeft: 3,
       fillHandle: "vertical",
       height: 300,

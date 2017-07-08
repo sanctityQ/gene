@@ -3,7 +3,7 @@ define(function(require, exports, module) {
 
   var platectrler = {
     init: function() {
-      this.$switchMethod = $('#J-switchMethod');
+      this.$switchType = $('#J-switchType');
       this.$switchDirection = $('#J-switchDirection');
       this.$form = $('#J-plateForm');
       this.$platePreview = $('#J-platePreview');
@@ -14,16 +14,16 @@ define(function(require, exports, module) {
     bindEvent: function() {
       var self = this;
       //切换提交方式
-      this.$switchMethod.on('click', function() {
-        var method = $(this).data('method');
-        method === 'tube' ? self.plateHandler(this, self) : self.tubeHandler(this, self);
+      this.$switchType.on('click', function() {
+        var type = $(this).data('type');
+        type === sngr.containerType.TUBE ? self.plateHandler(this, self) : self.tubeHandler(this, self);
       });
 
       //切换tube提交方向
       this.$switchDirection.on('click', function() {
         var direction = $(this).data('direction');
         //1横向、2纵向
-        direction === 1 ? self.verticalDirectionHandler(this, self) : self.horizontalDirectionHandler(this, self);
+        direction === sngr.plateDirection.HORIZONTAL ? self.verticalDirectionHandler(this, self) : self.horizontalDirectionHandler(this, self);
       });
 
       //开启或关闭标记空管
@@ -48,6 +48,12 @@ define(function(require, exports, module) {
       }).on('toggleEditable', '.tb-body>.tb-row .circle', function() {
         $(this).toggleClass('editable-circle');
       })
+    },
+    getDirection: function() {
+      return this.$switchDirection.data('direction');
+    },
+    isPlateMode: function() {
+      return this.$switchType.data('type') !== sngr.containerType.TUBE;
     },
     //标记空管
     markingEmptyHandler: function(ele, ctx) {
@@ -75,7 +81,7 @@ define(function(require, exports, module) {
     },
     //按管提交方式
     tubeHandler: function(ele, ctx) {
-      $(ele).data('method', 'tube');
+      $(ele).data('type', sngr.containerType.TUBE);
       $(ele).find('>span:last').text(ToPlate);
       ctx.$platePreview.hide();
       ctx.$imagePreview.show();
@@ -83,7 +89,7 @@ define(function(require, exports, module) {
     },
     //按板提交方式
     plateHandler: function(ele, ctx) {
-      $(ele).data('method', 'plate');
+      $(ele).data('type', sngr.containerType.PLATE);
       $(ele).find('>span:last').text(ToTube);
       ctx.$imagePreview.hide();
       ctx.$platePreview.show();

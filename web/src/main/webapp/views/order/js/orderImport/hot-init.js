@@ -29,8 +29,8 @@ define(function(require, exports, module) {
     //加载表格数据
     loadData: function() {
       return this.dataList;
-      // return Handsontable.helper.createSpreadsheetData(6, 14);
     },
+    //初始化数据
     initData: function() {
       this.dataList.push(primer);
     },
@@ -96,6 +96,9 @@ define(function(require, exports, module) {
           renderer: renderer.emptyRowRenderer
         }],
         afterRender: function() {
+          setTimeout(function() {
+            that.hot.dataList = that.dataList;
+          }, 0);
           addTip();
         },
         afterSelectionEnd: function(r, c, r2, c2) {

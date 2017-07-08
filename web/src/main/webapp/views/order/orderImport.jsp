@@ -89,7 +89,7 @@
 		<div class="order-plate-wrapper">
 			<div class="plate-control-wrapper">
 				<div class="control-header control-btn">
-					<div class="switch" id="J-switchMethod" data-method="tube">
+					<div class="switch" id="J-switchType" data-type="2">
 						<span class="glyphicon glyphicon-refresh"></span>
 						<span class="plate-tube">切换至按板提交</span>
 					</div>
@@ -282,7 +282,8 @@
 		  json: 'json2.js',
 		  easyui: 'jquery.easyui.min.js',
           handlebars: 'handlebars-v2.0.0.js',
-		  handsontable: 'handsontable/index.js'
+		  handsontable: 'handsontable/index.js',
+		  underscore: 'underscore.min.js'
         }
       })
 

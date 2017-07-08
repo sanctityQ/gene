@@ -16,6 +16,13 @@ var resources = {
   UI_Customer_Validator_Length: '长度必须介于{0}和{1}之间。'
 };
 
+var sngr = {
+  plateRows: ["", "A", "B", "C", "D", "E", "F", "G", "H"],
+  plateDirection: { HORIZONTAL: 1, VERTICAL: 2 },
+  SampleStatus: { EMPTY: 1, FILLED: 2, VALID: 3, INVALID: 4, MARKEDEMPTY: 5 },
+  containerType: { PLATE: 1, TUBE: 2, DISH: 3 }
+};
+
 //for Edit from internal
 var ServiceID = '401';
 var ServiceIDForPrWorking = '113';
