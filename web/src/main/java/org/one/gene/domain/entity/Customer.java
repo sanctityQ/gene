@@ -103,6 +103,10 @@ public class Customer extends IdEntity implements java.io.Serializable {
     private List<CustomerContacts> customerContactss = Lists.newArrayList();//联系人列表
     private List<CustomerPrice> customerPrices = Lists.newArrayList();//价格列表
     
+
+    private String level;//客户级别，默认为空。普通客户。1 重要客户
+    
+
 	public Customer() {
     }
 
@@ -282,6 +286,17 @@ public class Customer extends IdEntity implements java.io.Serializable {
         this.fax = fax;
     }
 
+    @Column(name="level", length=2)
+	public String getLevel() {
+		return level;
+	}
+
+
+	public void setLevel(String level) {
+		this.level = level;
+	}
+	
+	
     @Transient
 	public String getHaveUserFlag() {
 		return haveUserFlag;

@@ -345,6 +345,10 @@ function getChanesSave(nextOrderNo,orderNoString){
     for(var i=0;i<pps_insert.length;i++){
     	productNos.push(pps_insert[i].productNo);
     	
+    	if((pps_insert[i].liquid==''&&pps_insert[i].density!='') || (pps_insert[i].liquid!=''&&pps_insert[i].density=='') ){
+    		showMess = showMess + "生产编号为"+pps_insert[i].productNo+"的[TE/水溶与浓度]数据必须同时为空或同时不为空\r\n";
+    	}
+    	
         if(orderUpType == 'od'){
         	if(pps_insert[i].odTotal==''){
         		showMess = showMess + "生产编号为"+pps_insert[i].productNo+"的OD总量不能为空\r\n";
@@ -364,6 +368,9 @@ function getChanesSave(nextOrderNo,orderNoString){
     for(var i=0;i<pps_update.length;i++){
     	productNos.push(pps_update[i].productNo);
     	
+    	if((pps_update[i].liquid==''&&pps_update[i].density!='') || (pps_update[i].liquid!=''&&pps_update[i].density=='') ){
+    		showMess = showMess + "生产编号为"+pps_update[i].productNo+"的[TE/水溶与浓度]数据必须同时为空或同时不为空\r\n";
+    	}
         if(orderUpType == 'od'){
         	if(pps_update[i].odTotal==''){
         		showMess = showMess + "生产编号为"+pps_update[i].productNo+"的OD总量不能为空\r\n";

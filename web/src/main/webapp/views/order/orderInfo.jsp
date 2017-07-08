@@ -94,6 +94,30 @@ var ctx = '${ctx}';
 				<th data-options="field:'geneOrderMidi',width:220,sortable:true,styler:cellStyler1,editor:'text'">序列</th>
 				<th data-options="field:'geneOrder',width:80,hidden:true,sortable:true,editor:'text'">序列</th>
 				<th data-options="field:'tbn',width:40,sortable:true,editor:'numberbox'">碱基数</th>
+				<th data-options="field:'liquid',width:60,sortable:true,editor:{
+							type:'combobox',
+							options:{
+							    panelHeight:100,
+								 valueField: 'label',
+                            textField: 'value',
+							    data: [
+							        {label: '',value: '空'},
+							        {label: 'TE',value: 'TE'},
+							        {label: '水溶',value: '水溶'}
+							    ]
+							}}">TE/水溶</th>
+				<th data-options="field:'density',width:60,sortable:true,editor:{
+							type:'combobox',
+							options:{
+							    panelHeight:100,
+								 valueField: 'label',
+                            textField: 'value',
+							    data: [
+							        {label: '',value: '空'},
+							        {label: '10',value: '10'},
+							        {label: '100',value: '100'}
+							    ]
+							}}">浓度</th>			
 				<c:if test="${order.orderUpType=='nmol'}">
 				<th data-options="field:'nmolTotal',width:40,sortable:true,min:0,precision:2,editor:{type:'numberbox',options:{precision:2}}">nmol总量</th>
 				<th data-options="field:'nmolTB',width:40,sortable:true,editor:{type:'numberbox',options:{precision:2}}">nmol/tube</th>

@@ -21,12 +21,14 @@ import org.one.gene.repository.PrimerProductOperationRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.repository.PrimerProductValueRepository;
 import org.one.gene.repository.UserRepository;
+import org.one.gene.web.statistics.StatisticsInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sinosoft.one.mvc.web.Invocation;
 import com.sinosoft.one.mvc.web.annotation.Param;
@@ -103,6 +105,7 @@ public class SynthesisController {
 					    		 @Param("tbn2") String tbn2,
 					    		 @Param("modiFlag") String modiFlag,
 					    		 @Param("purifytype") String purifytype,
+					    		 @Param("productNoPrefix") String productNoPrefix,
 					    		 @Param("pageNo") Integer pageNo,
 			                     @Param("pageSize") Integer pageSize,
 					    		 Invocation inv){
@@ -114,6 +117,14 @@ public class SynthesisController {
         if(pageSize == null){
             pageSize = 96;
         }
+		if (productNoPrefix == null) {
+			productNoPrefix = "";
+		}
+		
+		if (!StringUtils.isBlank(productNoPrefix)) {
+			productNoPrefix = productNoPrefix.toUpperCase() + "%";
+        }
+		
         ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
         String comCode = user.getUser().getCompany().getComCode();
         if("1".equals(user.getUser().getCompany().getComLevel())){
@@ -122,7 +133,7 @@ public class SynthesisController {
         
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         
-        Page<PrimerProduct> primerProductPage = synthesisService.makeBoardQuery(customerCode, modiFlag, tbn1, tbn2, purifytype, comCode, pageable);
+        Page<PrimerProduct> primerProductPage = synthesisService.makeBoardQuery(customerCode, modiFlag, tbn1, tbn2, purifytype, comCode, productNoPrefix, pageable);
     	
     	return Replys.with(primerProductPage).as(Json.class);
     }
@@ -621,4 +632,18 @@ public class SynthesisController {
     	synthesisService.exportHeChengZhuPaiBan(boardNo, inv);
     }
     
+    /**
+     * 导出补水体积文件
+     * */
+    @Post("downVolume")
+	public void downVolume(@Param("statisticsInfojson") String statisticsInfojson, Invocation inv)
+			throws IOException {
+    	
+    	statisticsInfojson = new String(statisticsInfojson.getBytes("iso-8859-1"), "utf-8");;  
+    	List<StatisticsInfo> statisticsInfos = JSON.parseArray(statisticsInfojson,StatisticsInfo.class);
+    	
+    	StatisticsInfo statisticsInfo = statisticsInfos.get(0);
+		
+    	synthesisService.downVolume(statisticsInfo, inv);
+    }
 }

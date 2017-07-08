@@ -194,6 +194,12 @@ public class PrintService {
 					
 			printLabel = new PrintLabel();
 			
+			boolean isM = false;//是否是混合型的
+			if (primerProduct.getLiquid() != null
+					&& !"".equals(primerProduct.getLiquid())
+					&& !"null".equals(primerProduct.getLiquid())) {
+				isM = true;
+			}
 			//生产编号
 			if(!"".equals(primerProduct.getProductNo())){
 				printLabel.setProductNo(primerProduct.getProductNo());
@@ -206,6 +212,8 @@ public class PrintService {
 			SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");//设置日期格式
 	        String createTime = df.format(primerProduct.getOrder().getCreateTime());
 			printLabel.setRemark(createTime);// 日期：20151010
+			printLabel.setMeasureVolume(primerProduct.getMeasureVolume()+"");//分装体积
+			printLabel.setDensity(primerProduct.getDensity()+"");//浓度
 			
 			//查询孔号
 			List<BoardHole> boardHoles = boardHoleRepository.findByPrimerProduct(primerProduct);
@@ -273,8 +281,39 @@ public class PrintService {
 			}
 			
 			for(int i=0;i<baseCount;i++){
-				printLabels.add(printLabel);
+				//如果是混合型的：生产编号：含有  M的  为混合型。需要打印两次标签：干粉+液体
+				if(i==0){
+					printLabels.add(printLabel);
+				}else{
+					if(isM){
+						PrintLabel printLabelNew = new PrintLabel();
+						printLabelNew.setProductNo(printLabel.getProductNo());
+						printLabelNew.setPrimeName(printLabel.getPrimeName());//引物名称
+						printLabelNew.setOrderNo(printLabel.getOrderNo());//订单号,有外部的显示外部的，没有显示内部的
+						printLabelNew.setRemark(printLabel.getRemark());// 日期：20151010
+						printLabelNew.setMeasureVolume(printLabel.getMeasureVolume());//分装体积
+						printLabelNew.setSiteNo(printLabel.getSiteNo());//位置号
+						printLabelNew.setMidi(printLabel.getMidi());
+						printLabelNew.setMw(printLabel.getMw());
+						printLabelNew.setTube(printLabel.getTube());
+						printLabelNew.setOdTotal(printLabel.getOdTotal());
+						printLabelNew.setOdTB(printLabel.getOdTB());
+						printLabelNew.setNmolTotal(printLabel.getNmolTotal());
+						printLabelNew.setNmolTB(printLabel.getNmolTB());
+						printLabelNew.setTbn(printLabel.getTbn());
+						printLabelNew.setTm(printLabel.getTm());
+						printLabelNew.setGc(printLabel.getGc());
+						printLabelNew.setUgOD(printLabel.getUgOD());
+						printLabelNew.setPmole(printLabel.getPmole());
+						printLabelNew.setDensity("");
+						
+						printLabels.add(printLabelNew);
+					}else{
+						printLabels.add(printLabel);
+					}
+				}
 			}
+			
 		}
 			
 		//形成Excel
@@ -368,7 +407,12 @@ public class PrintService {
 				}else if("nmolTotal".equals(type)){
 					value = printLabelExcel.getNmolTotal()+"";
 				}else if("nmolTB".equals(type)){
-					value = printLabelExcel.getNmolTB()+"";
+					//如果是液体，则显示分装体积
+					if(!"".equals(printLabelExcel.getDensity()) && !"null".equals(printLabelExcel.getDensity())){
+						value = printLabelExcel.getDensity();
+					}else{
+						value = printLabelExcel.getNmolTB()+"";	
+					}
 				}else if("tbn".equals(type)){
 					value = printLabelExcel.getTbn()+"";
 				}else if("MW".equals(type)){
@@ -380,7 +424,12 @@ public class PrintService {
 				}else if("ugTB".equals(type)){
 					value = printLabelExcel.getUgTB()+"";
 				}else if("100pmoleμl".equals(type)){
-					value = printLabelExcel.getPmole()+"";
+					//如果是液体，则显示分装体积
+					if(!"".equals(printLabelExcel.getDensity()) && !"null".equals(printLabelExcel.getDensity())){
+						value = printLabelExcel.getMeasureVolume();	
+					}else{
+						value = printLabelExcel.getPmole()+"";	
+					}
 				}else if("remark".equals(type)){
 					value = printLabelExcel.getRemark();
 				}else if("midi".equals(type)){
@@ -451,20 +500,29 @@ public class PrintService {
 		String strFileName = order.getProductNoMinToMax()+".xls";
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
         String currentTime = df.format(new Date());
+        String importTime = df.format(order.getCreateTime());
 		
 		BigDecimal odTotal = new BigDecimal(0);//一个生产编号的OD总量
 		BigDecimal tb = new BigDecimal(0);//一个生产编号的管数
 		BigDecimal odTube = new BigDecimal(0);//一个生产编号的od/tube
 		BigDecimal ugOD = new BigDecimal(0);//ug/OD
 		String purifyType = "";
+		String measureVolume = "";//测值体积
+		String density = "";//浓度(P)
+		
 		PrintLabel printLabel = new PrintLabel();
 		
 		List<PrintLabel> printLabels = new ArrayList<PrintLabel>();
 		for (PrimerProduct primerProduct : order.getPrimerProducts()) {
-			
-			purifyType = primerProduct.getPurifyType();
-			
 			printLabel = new PrintLabel();
+			
+			purifyType    = primerProduct.getPurifyType();
+			measureVolume = primerProduct.getMeasureVolume()+"";
+			density       = primerProduct.getDensity()+"";
+			printLabel.setDensity(density);
+			if(!"".equals(density) && !"null".equals(density)){
+				printLabel.setMeasureVolume(measureVolume);
+			}
 
 			// 生产编号
 			if (!"".equals(primerProduct.getProductNo())) {
@@ -669,9 +727,12 @@ public class PrintService {
 				cell.setCellValue("Purification："+purifyType);
 				
 				row = sheet.getRow(3);
+				cell = row.getCell(0);//得到单元格
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				cell.setCellValue("Customer："+customerName);
 				cell = row.getCell(3);//得到单元格
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				cell.setCellValue("Date：          "+currentTime);
+				cell.setCellValue("Date：          "+importTime);
 			}
 			
 			//先copy第一个sheet创建所有的sheet
@@ -770,7 +831,7 @@ public class PrintService {
         				}
         			}
         		}else if(zixi){
-        			for (int k=0;k<12;k++){
+        			for (int k=0;k<14;k++){
         				cell = row.getCell(k);//产生单元格
         				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
         				//往单元格中写入信息
@@ -796,8 +857,12 @@ public class PrintService {
         				}else if(k==9){
         					value = printLabelExcel.getOdTB()+"";
         				}else if(k==10){
-        					value = printLabelExcel.getPmole()+"";
+        					value = printLabelExcel.getDensity()+"";
         				}else if(k==11){
+        					value = printLabelExcel.getMeasureVolume()+"";
+        				}else if(k==12){
+        					value = printLabelExcel.getPmole()+"";
+        				}else if(k==13){
         					value = printLabelExcel.getMidi()+"";
         				}
 

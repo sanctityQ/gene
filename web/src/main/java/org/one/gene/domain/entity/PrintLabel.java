@@ -26,6 +26,8 @@ public class PrintLabel {
     private String remark;//备注/日期  ？？
     private String midi;//修饰
     private String siteNo;//位置号
+    private String measureVolume;//测值体积
+	private String density;//浓度(P)
     
     public String getProductNo() {
 		return productNo;
@@ -159,7 +161,18 @@ public class PrintLabel {
 	public void setSiteNo(String siteNo) {
 		this.siteNo = siteNo;
 	}
-	
+    public String getMeasureVolume() {
+		return measureVolume;
+	}
+	public void setMeasureVolume(String measureVolume) {
+		this.measureVolume = measureVolume;
+	}
+	public String getDensity() {
+		return density;
+	}
+	public void setDensity(String density) {
+		this.density = density;
+	}
 	
 }
 

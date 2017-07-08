@@ -94,7 +94,7 @@ function formatOper(val,row,index){
 	if(typeof(operationType) != 'undefined'){
 		if( operationType == "measure"){
 			var url = "'"+row.boardNo+"'";
-		    return '<a href="javascript:;"  onclick="submitToMeasure('+url+')"><i class="icon-pencil"></i>录入结果</a>';
+		    return '<a href="javascript:;"  onclick="submitToMeasure('+url+')"><i class="icon-pencil"></i>上传测值结果</a>&nbsp; <span class="gray">|</span> &nbsp;<a href="javascript:;" onclick="downToMeasure('+url+')"><i class="icon-book"></i>下载补水体积</a>';
 		}else{
 			var url = "'/gene/views/synthesis/"+operationType+"ResultsBoard.jsp?boardNo="+row.boardNo+"'";
 		    return '<a href="javascript:;"  onclick="goToPage('+url+')"><i class="icon-pencil"></i>录入结果</a>';		
@@ -131,6 +131,12 @@ function executeUrl(url){
 function submitToMeasure(boardNo){
 	form.boardNo.value = boardNo;
 	goToResultsBoard();
+}
+//提交板号到页面
+//执行提交页面方法
+function downToMeasure(boardNo){
+	form.boardNo.value = boardNo;
+	downVolume();
 }
 
 </script>

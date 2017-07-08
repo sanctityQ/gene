@@ -20,6 +20,7 @@ public class StatisticsInfo {
 	private String tb = "";
 	private String primerType = "";
 	private String deliveryDate = "";
+	private String boardNo = "";
 	private int count1 = 0;
 	private int count2 = 0;
 	private int count3 = 0;
@@ -47,6 +48,12 @@ public class StatisticsInfo {
 	}
 	public void setOrderTime(String orderTime) {
 		this.orderTime = orderTime;
+	}
+	public String getBoardNo() {
+		return boardNo;
+	}
+	public void setBoardNo(String boardNo) {
+		this.boardNo = boardNo;
 	}
 	public int getCount1() {
 		return count1;

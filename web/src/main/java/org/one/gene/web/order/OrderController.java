@@ -176,6 +176,7 @@ public class OrderController {
         	System.out.println(path);
         	file.transferTo(new File(path));
 	        
+        	//判断不能为空
 	        if(!"".equals(path)){
 		        errors = orderService.getExcelPaseErrors(path,1,1);
 	        }
@@ -464,6 +465,8 @@ public class OrderController {
 							primerProductValue.setValue(pp_update.getTbn());
 						}
         			}
+        			primerProduct.setLiquid(pp_update.getLiquid());
+        			primerProduct.setDensity(pp_update.getDensity());
         			primerProduct.setOdTB(pp_update.getOdTB());
         			primerProduct.setOdTotal(pp_update.getOdTotal());
                     primerProduct.setNmolTB(pp_update.getNmolTB());

@@ -656,6 +656,35 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
         	    .add(new BigDecimal("12.3").multiply(wv.value(primerProduct)))
         	    .add(new BigDecimal("8.35").multiply(yv.value(primerProduct)));
         }
+    },
+    
+    nmoleOD {
+    	@Override
+        public String desc() {
+            return "nmole/OD";
+        }
+
+        @Override
+        BigDecimal value(PrimerProduct primerProduct) {
+        	
+//        	BigDecimal aa = av.value(primerProduct).multiply(new BigDecimal("15400"));
+//        	BigDecimal bb = cv.value(primerProduct).multiply(new BigDecimal("7300"));
+//        	BigDecimal cc = gv.value(primerProduct).multiply(new BigDecimal("11700"));
+//        	BigDecimal dd = tv.value(primerProduct).multiply(new BigDecimal("8800"));
+//        	BigDecimal ee = 
+//					(av.value(primerProduct).multiply(new BigDecimal("15400")))
+//					.add(cv.value(primerProduct).multiply(new BigDecimal("7300")))
+//					.add(gv.value(primerProduct).multiply(new BigDecimal("11700")))
+//					.add(tv.value(primerProduct).multiply(new BigDecimal("8800")))
+//					;
+        	
+			return new BigDecimal("1000000").divide(
+					(av.value(primerProduct).multiply(new BigDecimal("15400")))
+					.add(cv.value(primerProduct).multiply(new BigDecimal("7300")))
+					.add(gv.value(primerProduct).multiply(new BigDecimal("11700")))
+					.add(tv.value(primerProduct).multiply(new BigDecimal("8800"))),2, BigDecimal.ROUND_HALF_UP
+					);
+        }
     };
 
     abstract BigDecimal value(PrimerProduct primerProduct);

@@ -7,6 +7,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="${ctx}/static/js/json2.js"></script>
 <script src="${ctx}/static/js/ajaxfileupload.js" ></script>
 <%
 ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
@@ -14,12 +15,12 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 %>
 </head>
 <body>
-<form id="form" modelAttribute="user" action="${ctx}/synthesis/uploadMeasure" method="post" enctype="multipart/form-data" class="form-horizontal">
+<form id="form" name="form" modelAttribute="user" action="${ctx}/synthesis/uploadMeasure" method="post" enctype="multipart/form-data" class="form-horizontal">
 <div class="page_padding">
 	<div class="content_box">
 	    <input type="hidden" id="operationType" name="operationType" value="measure"/>
 	    <input type="hidden" id="customerFlag" name="customerFlag" value="<%=customerFlag %>"/>
-		<h2>测值结果</h2>
+		<h2>测值结果</h2>
 		<div class="import_box">
 			<i class="icon-group"></i>请输入需要导入的板号。
 			<br />
@@ -38,7 +39,8 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 			</div>
 		</div>
 		<div class="import_box" style="padding-bottom: 50px;">
-			<button class="btn-primary submit" type="button" onclick="goToResultsBoard()">测值结果</button>
+			<button class="btn-primary submit" type="button" onclick="goToResultsBoard()">上传测值结果</button>&nbsp;
+			<button class="btn-primary submit" type="button" onclick="downVolume()">下载补水体积</button>
 		</div>
     <%@ include file="/views/synthesis/initBoardNo.jsp"%> <!--  未处理板号初始化页面 -->
 	</div>
@@ -69,6 +71,27 @@ function goToResultsBoard(){
 		}		
 	}
 	$('#form').submit();
+}
+
+var downVolume = function(){
+	
+	var boardNo = $.trim($('#boardNo').val());
+
+	if(boardNo == ""){
+		alert("请输入板号。");
+		return false;
+	}
+    
+	
+    var statisticsInfos = new Array();
+    
+    var statisticsInfo = {
+		     "boardNo":boardNo
+		     };
+    statisticsInfos.push(statisticsInfo);
+    
+   document.form.action = "/gene/synthesis/downVolume?statisticsInfojson="+JSON.stringify(statisticsInfos); 
+   document.form.submit();
 }
 </script>
 </body>

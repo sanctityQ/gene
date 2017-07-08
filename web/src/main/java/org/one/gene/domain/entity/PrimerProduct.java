@@ -25,101 +25,32 @@ import com.google.common.collect.Maps;
 @Table(name = "`primer_product`", uniqueConstraints = @UniqueConstraint(name = "`uk_product_no`", columnNames = "`product_no`"))
 public class PrimerProduct implements java.io.Serializable {
 
-    /**
-     * 唯一标识id.
-     */
-    private Long id;
-    /**
-     * 生产编号.
-     */
-    private String productNo;
 
-    private Order order;
-    /**
-     * 外部生产编号.
-     */
-    private String outProductNo;
-    /**
-     * 来源编号ID.
-     */
-    private String fromProductNo;
-    /**
-     * 引物名称.
-     */
-    private String primeName;
-    /**
-     * 引物序列.
-     */
-    private String geneOrder;
-    /**
-     * 纯化方式.
-     */
-    private String purifyType;
-    /**
-     * 5修饰类型.
-     */
-    private String modiFiveType;
-    /**
-     * 3修饰.
-     */
-    private String modiThreeType;
-    /**
-     * 中间修饰.
-     */
-    private String modiMidType;
-    /**
-     * 特殊单体.
-     */
-    private String modiSpeType;
-    /**
-     * 修饰价格.
-     */
-    private BigDecimal modiPrice;
-
-    /**
-     * 碱基单价.
-     */
-    private BigDecimal baseVal;
-    /**
-     * 纯化价格.
-     */
-    private BigDecimal purifyVal;
-    /**
-     * 总价格:修饰单价+碱基单价*碱基数+纯化价格.
-     */
-    private BigDecimal totalVal;
-    /**
-     * 描述.
-     */
-    private String remark;
-    /**
-     * 状态.
-     */
-    private PrimerStatusType operationType;
-    /**
-     * 板号.
-     */
-    private String boardNo;
-    /**
-     * 归属机构代码.
-     */
-    private String comCode;
-    /**
-     * 循环重回次数.
-     */
-    private Integer backTimes;
-    /**
-     * 检测.
-     */
-    private String reviewFileName;
-    /**
-     * 带修饰引物序列.
-     */
-    private String geneOrderMidi;
+    private Long id;//唯一标识id.
+    private String productNo;//生产编号
+    private Order order;//订单号
+    private String outProductNo;//外部生产编号
+    private String fromProductNo;//来源编号ID
+    private String primeName;//引物名称
+    private String geneOrder;//引物序列
+    private String purifyType;//纯化方式
+    private String modiFiveType;//5修饰类型
+    private String modiThreeType;//3修饰
+    private String modiMidType;//中间修饰
+    private String modiSpeType;//特殊单体
+    private BigDecimal modiPrice;//修饰价格
+    private BigDecimal baseVal;// 碱基单价
+    private BigDecimal purifyVal;//纯化价格
+    private BigDecimal totalVal;//总价格:修饰单价+碱基单价*碱基数+纯化价格
+    private String remark;//描述
+    private PrimerStatusType operationType;//状态
+    private String boardNo;//板号
+    private String comCode;//归属机构代码
+    private Integer backTimes;//循环重回次数
+    private String reviewFileName;// 检测
+    private String geneOrderMidi;//带修饰引物序列
     
-
     private List<PrimerProductValue> primerProductValues = Lists.newArrayList();
-
     private List<PrimerProductOperation> primerProductOperations = Lists.newArrayList();
 
     private Date modifyTime;//操作时间
@@ -136,8 +67,11 @@ public class PrimerProduct implements java.io.Serializable {
 	private String midi;//修饰
 	private String selectFlag;//是否被选择，用于页面选择时使用，不存库
 	private Map<String, BigDecimal> productMolecularMap = Maps.newHashMap();//修饰分子量
+    private String liquid;//TE/水溶
+	private Integer density;//浓度(P)
+	private Integer volume;//  补水体积
 	
-	
+
 	public PrimerProduct() {
     }
 
@@ -517,6 +451,36 @@ public class PrimerProduct implements java.io.Serializable {
     this.measureVolume = measureVolume;
     }
     
+    @Column(name="`liquid`")
+	public String getLiquid() {
+		return liquid;
+	}
+
+
+	public void setLiquid(String liquid) {
+		this.liquid = liquid;
+	}
+
+	@Column(name="`density`")
+	public Integer getDensity() {
+		return density;
+	}
+
+
+	public void setDensity(Integer density) {
+		this.density = density;
+	}
+	
+	@Column(name="`volume`")
+	public Integer getVolume() {
+		return volume;
+	}
+
+
+	public void setVolume(Integer volume) {
+		this.volume = volume;
+	}
+	
     @PostLoad
     public void init(){
         for (PrimerProductValue primerProductValue : this.getPrimerProductValues()) {
@@ -584,6 +548,12 @@ public class PrimerProduct implements java.io.Serializable {
     }
 
     private Map<PrimerValueType,PrimerProductValue> primerProductValueMap = Maps.newEnumMap(PrimerValueType.class);
+
+
+	public void setDensity(BigDecimal bigDecimal) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
 

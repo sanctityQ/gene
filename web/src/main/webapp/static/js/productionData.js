@@ -59,6 +59,7 @@ var getProducts=function(){
 			tbn2: $("#tbn2").val(),
 			modiFlag: strModifyFlag,
 			purifytype: purifytype,
+			productNoPrefix: $("#productNoPrefix").val(),
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
         },

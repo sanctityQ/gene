@@ -58,6 +58,12 @@ String comCode = user.getUser().getCompany().getComCode();
                 <td><input class="inp_text" type="text" autocomplete="off" id="seachUserName" name="customer.handlerName" value="${customer.handlerName}" style="width: 150px" />
 			    <input type="hidden" id="vagueUserCode" name="customer.handlerCode" value="${customer.handlerCode}"/>
 			    <ul id="seachUserList"></ul>
+			    
+                <td align="right">是否重要客户:</td>
+                <td>
+                    <label><input type="radio" name="customer.level" value="1"/> 是</label>&nbsp;&nbsp;
+                    <label><input type="radio" name="customer.level" value="0"/> 否</label>
+                </td>
 			</tr>
 			<tr>
 				 <td align="right">结算方式:</td>
@@ -193,6 +199,20 @@ $(document).ready(function(){
     if(customerFlag!=""){
    	 $("#customerFlag").val(customerFlag);
     }
+    
+    $('input[name = "customer.level"]').each(function (index, element) {
+        <c:if test="${customer.level == '1'}">
+        if (element.value == 1) {
+            element.checked = "checked";
+        }
+        </c:if>
+        <c:if test="${customer.level != '1'}">
+        if(element.value == 0){
+            element.checked = "checked";
+        }
+        </c:if>
+    });
+    
 })
 </script>                                      
 </body>

@@ -65,21 +65,33 @@ public class OrderExcelPase {
 			if("".equals(date[i][3])){
 				message.append("第"+(i+2)+"行第4列[序列]数据不能为空! \n");
 			}
-			if (date[i].length < 8 || "".equals(date[i][8])) {
-				message.append("第"+(i+2)+"行第9列[纯化方式]数据不能为空! \n");
+			
+			if(("".equals(date[i][4])&&!"".equals(date[i][5])) || (!"".equals(date[i][4])&&"".equals(date[i][5]))){
+				message.append("第"+(i+2)+"行第5列与第6列[TE/水溶与浓度]数据必须同时为空或同时不为空! \n");
 			}
-			if("".equals(date[i][4])&&"".equals(date[i][6])){
-				message.append("第"+(i+2)+"行第5列与第7列[OD与nmol]数据不能同时为空! \n");
+			if(!"".equals(date[i][4]) && !"TE".equals(date[i][4]) && !"水溶".equals(date[i][4])){
+				message.append("第"+(i+2)+"行第5列[TE/水溶]数据必须为‘TE’或‘水溶’! \n");
 			}
-			if(!"".equals(date[i][4])&&!"".equals(date[i][6])){
-				message.append("第"+(i+2)+"行第5列与第7列[OD与nmol]数据不能同时存在! \n");
+			if(!"".equals(date[i][5]) && !"10.00".equals(date[i][5]) && !"100.00".equals(date[i][5])){
+				message.append("第"+(i+2)+"行第5列[浓度]数据必须为‘10’或‘100’! \n");
 			}
-			if(!"".equals(date[i][4])&&"".equals(date[i][5])){
-				message.append("第"+(i+2)+"行第5列[nmol总量]不为空值时，第6列[nmol/tube]数据不能为空! \n");
+			if("".equals(date[i][6])&&"".equals(date[i][8])){
+				message.append("第"+(i+2)+"行第7列与第9列[OD与nmol]数据不能同时为空! \n");
+			}
+			if(!"".equals(date[i][6])&&!"".equals(date[i][8])){
+				message.append("第"+(i+2)+"行第7列与第9列[OD与nmol]数据不能同时存在! \n");
 			}
 			if(!"".equals(date[i][6])&&"".equals(date[i][7])){
-				message.append("第"+(i+2)+"行第7列[OD总量]不为空值时，第8列[OD/tube]数据不能为空! \n");
+				message.append("第"+(i+2)+"行第7列[nmol总量]不为空值时，第8列[nmol/tube]数据不能为空! \n");
 			}
+			if(!"".equals(date[i][8])&&"".equals(date[i][9])){
+				message.append("第"+(i+2)+"行第9列[OD总量]不为空值时，第10列[OD/tube]数据不能为空! \n");
+			}
+			if (date[i].length < 10 || "".equals(date[i][10])) {
+				message.append("第"+(i+2)+"行第11列[纯化方式]数据不能为空! \n");
+			}
+			
+			
 			if(!"".equals(message.toString())){
 			  Errors.add(message.toString());
 			}
@@ -163,31 +175,42 @@ public class OrderExcelPase {
 					  primerProduct.setGeneOrderMidi(orderCaculate.getGeneOrderToUpper(v));
 					  primerProduct.setGeneOrder(orderCaculate.getYWSeqValue(geneOrder));
 					break;
-				  case 5:	
+					
+				  case 5://TE/水溶
+					  if(!"".equals(v)){
+					    primerProduct.setLiquid(v);
+					  }
+					break;
+				  case 6://浓度(pmole)
+					  if(!"".equals(v)){
+					    primerProduct.setDensity(new Integer(v));
+					  }
+					break;
+				  case 7:	
 					  if(!"".equals(v)){
 					    primerProduct.setNmolTotal(new BigDecimal(v));
 					  }
 					break;
-				  case 6:	
+				  case 8:	
 					  if(!"".equals(v)){
 					    primerProduct.setNmolTB(new BigDecimal(v));
 					  }
 					break;
-				  case 7:	
+				  case 9:	
 					  if(!"".equals(v)){
 					    primerProduct.setOdTotal(new BigDecimal(v));
 					    orderUpType = Order.OrderType.od;
 					  }
 					break;
-				  case 8:	
+				  case 10:	
 					  if(!"".equals(v)){
 					    primerProduct.setOdTB(new BigDecimal(v));
 					  }
 					break;
-				  case 9:	
+				  case 11:	
 					  primerProduct.setPurifyType(v);
 					break;
-				  case 10:
+				  case 12:
 					  if(!"".equals(v)){
 						  if(modiFiveMap.get(v)== null){
 							  throw new Exception("您提交的5修饰类型 " + v + " 没有修饰分子量配置信息。");
@@ -195,7 +218,7 @@ public class OrderExcelPase {
 					  }
 					  primerProduct.setModiFiveType(v);
 					break;
-				  case 11:
+				  case 13:
 					  if(!"".equals(v)){
 						  if(modiThreeMap.get(v)== null){
 							  throw new Exception("您提交的3修饰类型 " + v + " 没有修饰分子量配置信息。");
@@ -203,15 +226,15 @@ public class OrderExcelPase {
 					  }
 					  primerProduct.setModiThreeType(v);
 					break;
-				  case 12:	
+				  case 14:	
 					  String modiMid = orderCaculate.getCountStr(orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),modiMidMap));
 					  primerProduct.setModiMidType(modiMid);
 					break;
-				  case 13:	
+				  case 15:	
 					  String modiSpe = orderCaculate.getCountStr(orderCaculate.getModiType(primerProduct.getGeneOrderMidi(),modiSpeMap));
 					  primerProduct.setModiSpeType(modiSpe);
 					break;
-				  case 14:	
+				  case 16:	
 					  primerProduct.setRemark(v);
 					  //最后根据条件获取价格
 					  priceTool.getPrice(primerProduct, customerPrices);

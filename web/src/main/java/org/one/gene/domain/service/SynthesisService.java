@@ -12,7 +12,9 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,9 +25,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
@@ -40,21 +44,26 @@ import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.entity.PrimerType.PrimerOperationType;
 import org.one.gene.domain.entity.PrimerValueType;
 import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
+import org.one.gene.instrument.persistence.DynamicSpecifications;
+import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.BoardHoleRepository;
 import org.one.gene.repository.BoardRepository;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductOperationRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.one.gene.repository.PrimerProductValueRepository;
+import org.one.gene.web.statistics.StatisticsInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.common.collect.Maps;
 import com.sinosoft.one.mvc.web.Invocation;
 
 //Spring Bean的标识.
@@ -88,7 +97,7 @@ public class SynthesisService {
     //安排合成查询
 	public Page<PrimerProduct> makeBoardQuery(String customerCode,
 			String modiFlag, String tbn1, String tbn2, String purifytype,
-			String comCode, Pageable pageable) {
+			String comCode, String productNoPrefix, Pageable pageable) {
 
 		String[] purifytypes = purifytype.split(",");
 		String ptFlag = "";
@@ -105,7 +114,7 @@ public class SynthesisService {
 		
 		Page<PrimerProduct> primerProductPage = primerProductRepository
 				.selectPrimerProduct(customerCode, modiFlag, tbn1, tbn2,
-						purifytypes, ptFlag, comCode, pageable);
+						purifytypes, ptFlag, comCode, productNoPrefix, pageable);
 		
 		// 查询primer_product_value
 		for (PrimerProduct primerProduct : primerProductPage.getContent()) {
@@ -726,11 +735,11 @@ public class SynthesisService {
 					// 分装
 					cell = row.getCell(pthc.getColumn()+3);
 					cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-					if (pp.getOrder().getOrderUpType() == OrderType.nmol) {
-						cell.setCellValue(pp.getNmolTB()+"N*"+pp.getTb().toBigInteger());
-					}else{
-						cell.setCellValue(pp.getOdTB()+"D*"+pp.getTb().toBigInteger());
-					}
+//					if (pp.getOrder().getOrderUpType() == OrderType.nmol) {
+//						cell.setCellValue(pp.getNmolTB()+"N*"+pp.getTb().toBigInteger());
+//					}else{
+//					}
+					cell.setCellValue(pp.getOdTB()+"D*"+pp.getTb().toBigInteger());
 					
 					// 体积:导入测试数据后显示体积,如果在测试之前：显示级别顺序：1：修饰，2：HPLC，3：PAGE)
 					if (pp.getMeasureVolume() != null) {
@@ -1119,6 +1128,7 @@ public class SynthesisService {
 		
 		
     //组织板页面信息
+    @Transactional(readOnly = false)
 	public String boardEdit(String boardNo, PrimerStatusType operationType, MultipartFile file, Invocation inv) throws IOException {
 		
 		
@@ -1197,10 +1207,36 @@ public class SynthesisService {
 					}
 					if (operationType.equals(PrimerStatusType.measure) && measureMap.get(holeNo) != null) {
 						BigDecimal measure = (BigDecimal)measureMap.get(holeNo);
-						//原来：1200*ODTB/(导入值*20)
-						productNo = new BigDecimal(1200).multiply(primerProduct.getOdTB()).divide(measure.multiply(new BigDecimal(20)),0, BigDecimal.ROUND_UP)+"";
-						//改为：1.2*ODTB/(导入值/30)
-//						productNo = new BigDecimal(1.2).multiply(primerProduct.getOdTB()).divide(new BigDecimal(measure.doubleValue()/30),0, BigDecimal.ROUND_UP)+"";
+						if (primerProduct.getLiquid() == null || "".equals(primerProduct.getLiquid())) {
+							//原来：1200*ODTB/(导入值*20)
+   //						productNo = new BigDecimal(1200).multiply(primerProduct.getOdTB()).divide(measure.multiply(new BigDecimal(20)),0, BigDecimal.ROUND_UP)+"";
+							//改为：1.2*ODTB/(导入值/30)
+							productNo = new BigDecimal(1.2).multiply(primerProduct.getOdTB()).divide(new BigDecimal(measure.doubleValue()/30),0, BigDecimal.ROUND_UP)+"";
+						}else{
+							//“浓度”
+							//10：nmole/OD*100*OD数
+							//100：nmole/OD* 10*OD数
+							int    nmoleOD      = 0;//nmoleOD
+							for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
+								PrimerValueType type = primerProductValue.getType();
+								if (type.equals(PrimerValueType.nmoleOD)) {// nmoleOD
+									nmoleOD = primerProductValue.getValue().intValue();
+								}
+							}
+							if(primerProduct.getDensity()!=null && primerProduct.getDensity() == 10){
+								productNo = primerProduct.getOdTB().multiply(new BigDecimal(nmoleOD)).divide(new BigDecimal(0.01),0, BigDecimal.ROUND_UP)+"";
+							}else{
+								productNo = primerProduct.getOdTB().multiply(new BigDecimal(nmoleOD)).divide(new BigDecimal(0.1),0, BigDecimal.ROUND_UP)+"";
+							}
+							//计算出补水体积，直接存到数据库中
+							//液体的公式是：=nmole/OD数据*95*（测量值/15）*1000/浓度数据-100
+							int volume = (int) (nmoleOD*95*(measure.doubleValue()/15)*1000/primerProduct.getDensity()-100);
+							
+							primerProduct.setVolume(volume);
+							//保存primer_product表数据
+							primerProductRepository.save(primerProduct);
+						}
+
 					}
 				}
 				
@@ -1674,5 +1710,83 @@ public class SynthesisService {
         out.flush();
         out.close();
     }
+    /**
+     * 导出补水体积附件
+     * @throws IOException 
+     * */
+	public void downVolume( StatisticsInfo statisticsInfo, Invocation inv) throws IOException {
+		
+//		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String boardNo = statisticsInfo.getBoardNo();
+        
+		Board board = boardRepository.findByBoardNo(boardNo);
+//        List<PrimerProduct> pps = primerProductRepository.findByBoardNo(boardNo);
+        List<BoardHole> bhs = boardHoleRepository.findByBoard(board);
+        
+        Map<String, Integer> volumeMap = new HashMap<String, Integer>();
+        for (BoardHole bh : bhs) {
+			if(bh.getPrimerProduct().getVolume()!=null){
+				volumeMap.put(bh.getHoleNo(), bh.getPrimerProduct().getVolume());
+			}
+        }
+        
+
+		//形成Excel
+		String templetName = "bstjTemplate.xls";
+		String strFileName = System.currentTimeMillis()+".xls";
+		String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator;
+		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(templatePath+templetName));
+        HSSFSheet sheet = workbook.getSheetAt(0);
+		HSSFRow row = null;
+		HSSFCell cell = null;
+		
+//    	HSSFCellStyle style_center = workbook.createCellStyle();
+//    	style_center.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+//    	style_center.setBorderBottom(HSSFCellStyle.BORDER_THIN); // 下边框 
+//    	style_center.setBorderLeft(HSSFCellStyle.BORDER_THIN);// 左边框  
+//    	style_center.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框  
+//    	style_center.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框  
+		
+		int startRow = 2;//从第2行开始
+		
+		ArrayList holeList = new ArrayList();
+		holeList.add("A");
+		holeList.add("B");
+		holeList.add("C");
+		holeList.add("D");
+		holeList.add("E");
+		holeList.add("F");
+		holeList.add("G");
+		holeList.add("H");
+		
+		String holeNo = "";
+		String volume = "";
+		for (int i = 0; i < holeList.size(); i++) {
+			String hole = (String)holeList.get(i);
+			row = sheet.getRow(i+1);
+			
+			for (int j=1;j<13;j++){
+				holeNo = hole+j;
+				volume = "";
+				if (volumeMap.get(holeNo) != null) {
+					volume = volumeMap.get(holeNo).toString();
+				}
+				cell = row.getCell(j);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+//				cell.setCellStyle(style_center);
+				cell.setCellValue(volume);//补水体积
+			}
+		}
+		
+		
+        //输出文件到客户端
+        HttpServletResponse response = inv.getResponse();
+        response.setContentType("application/x-msdownload");
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + strFileName + "\"");
+        OutputStream out=response.getOutputStream();
+        workbook.write(out);
+        out.flush();
+        out.close();
+    }	
 	
 }
