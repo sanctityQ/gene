@@ -123,7 +123,8 @@ public class OrderExcelPase {
 	 * @throws Exception 
 	 */
 	public ArrayList<Order> ReadExcel(String path, int sheetIndex, String rows,
-			String prefix, List<CustomerPrice> customerPrices,
+			String prefix, String newCusFlag, Customer customer,
+			List<CustomerPrice> customerPrices,
 			Map<String, String> modiFiveMap, Map<String, String> modiThreeMap,
 			Map<String, String> modiMidMap, Map<String, String> modiSpeMap)
 			throws Exception {
@@ -143,6 +144,7 @@ public class OrderExcelPase {
 			int index = 1;
 			PrimerProduct primerProduct = new PrimerProduct();
 			String outOrderNo = "";
+			String productNoTemp = "";
 			for(String v : data) {
 				//给客户对象赋值
 				switch(index){
@@ -160,12 +162,7 @@ public class OrderExcelPase {
 					}
 					break;
 				  case 2:
-					  //如果Excel导入中有生产编号存储为外部生产编号，如果没有系统自动生成
-					  if("".equals(v)){
-						  primerProduct.setProductNo(atomicLongUtil.getProductSerialNo(prefix));
-					  }else{
-						  primerProduct.setProductNo(v);
-					  }
+					  productNoTemp = v;
 				  	break;
 				  case 3:
 					  primerProduct.setPrimeName(v);
@@ -243,9 +240,18 @@ public class OrderExcelPase {
 				  default:
 					break;
 				}
+				
+				
 				index ++;
 			}
 			
+			  //如果Excel导入中有生产编号存储为外部生产编号，如果没有系统自动生成
+			  if("".equals(productNoTemp)){
+				  primerProduct.setProductNo(atomicLongUtil.getProductSerialNo(prefix,newCusFlag,customer,primerProduct));
+			  }else{
+				  primerProduct.setProductNo(productNoTemp);
+			  }
+			  
 			if (!haveFirst) {
 				order.setOrderUpType(orderUpType);
 				order.getPrimerProducts().add(primerProduct);

@@ -2,10 +2,12 @@ package org.one.gene.web.order;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.repository.OrderRepository;
@@ -82,8 +84,47 @@ public class AtomicLongUtil {
 	  * 获取生产编号
 	  * @return
 	  */
-	 public String getProductSerialNo(String prefix){
+	public String getProductSerialNo(String prefix, String newCusFlag,
+			Customer customer, PrimerProduct primerProduct) {
 		 
+		 
+		// 直接客户使用梓熙的配置
+		//编码组合原则：梓熙编号+特殊客户+修饰+纯化方式+分装方式
+		if ("0".equals(customer.getCustomerFlag())
+				|| "2".equals(customer.getCustomerFlag())) {
+
+			//重要客户
+			if ("1".equals(customer.getLevel())) {
+				prefix = prefix +"I";
+			}
+			//新客户
+			if ("1".equals(newCusFlag)) {
+				prefix = prefix +"N";
+			}
+			//有修饰的
+			boolean haveB = false;
+			if (!"".equals(primerProduct.getModiFiveType())
+					|| !"".equals(primerProduct.getModiThreeType())
+					|| !"".equals(primerProduct.getModiMidType())) {
+				prefix = prefix +"B";
+				haveB = true;
+			}
+			if(!haveB){
+				//HPLC
+				if ("HPLC".equals(primerProduct.getPurifyType())) {
+					prefix = prefix +"H";
+				}else if ("PAGE".equals(primerProduct.getPurifyType())) {
+						prefix = prefix +"P";
+				}	
+			}
+			//有液体的
+			if (primerProduct.getDensity() != null
+					&& !"".equals(primerProduct.getDensity())
+					&& !"null".equals(primerProduct.getDensity())) {
+				prefix = prefix + "Y";
+			}
+		}
+			
 		//获取数据库当前最后一条的单号
 		 PrimerProduct product = primerProductRepository.getLastProduct();
 		 String productNo = "";

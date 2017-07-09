@@ -207,16 +207,23 @@ public class OrderController {
         		return "orderImport";
         	}
         	
-        	String prefix = customer.getPrefix().toUpperCase();//生产编号开头
-        	//直接客户使用梓熙的配置
-			if ("2".equals(customer.getCustomerFlag())) {
-				List<Customer> customers = customerRepository.seachHaveZiXi();
-				if (customers != null && customers.size() > 0) {
-					Customer customerTemp = (Customer)customers.get(0);
-					prefix = customerTemp.getPrefix().toUpperCase();
-				}
-			}
+        	//查询客户名下是否已经有订单
+        	List<Order> cus_orders =  orderRepository.findByCustomerCode(customer.getCode());
+        	String newCusFlag = "0";
+        	if(cus_orders.size()==0){
+        		newCusFlag = "1";//新客户
+        	}
         	
+         	String prefix = customer.getPrefix().toUpperCase();//生产编号开头
+         	//直接客户使用梓熙的配置
+    			if ("2".equals(customer.getCustomerFlag())) {
+    				List<Customer> customers = customerRepository.seachHaveZiXi();
+    				if (customers != null && customers.size() > 0) {
+    					Customer customerTemp = (Customer)customers.get(0);
+    					prefix = customerTemp.getPrefix().toUpperCase();
+    				}
+    			}
+    			
 			//组织修饰基础数据
         	Map<String,String> modiFiveMap = new HashMap<String,String>();
         	Map<String,String> modiThreeMap = new HashMap<String,String>();
@@ -253,7 +260,7 @@ public class OrderController {
 			try {
 				// 获取外部订单号
 				ArrayList<Order> orders = orderService.ReadExcel(path, 0, "2-",
-						prefix, customerPrices, modiFiveMap, modiThreeMap,	modiMidMap, modiSpeMap);
+						prefix,newCusFlag, customer, customerPrices, modiFiveMap, modiThreeMap,	modiMidMap, modiSpeMap);
 				orderService.convertOrder(customer, filename, orders, contactsname);
 				
 				// 保存订单信息

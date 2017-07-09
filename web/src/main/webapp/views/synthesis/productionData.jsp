@@ -27,7 +27,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 			</td>
 			<td align="right">分装方式:</td>
 			<td>
-                <select id="liquidFlag" class="my_select" style="width: 100px;" >
+                <select id="liquidFlag" class="my_select" style="width: 150px;" >
                     <option value="1">干粉</option>
                     <option value="2">液体</option>
                 </select>
@@ -40,9 +40,9 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 		</tr>
 		<tr>
 			<td align="right">生产编号开头:</td>
-            <td><input class="inp_text" type="text" autocomplete="off" id="productNoPrefix" name="productNoPrefix" style="width: 20px" />
+            <td><input class="inp_text" type="text" autocomplete="off" id="productNoPrefix" name="productNoPrefix" style="width: 120px" />
             <td align="right">纯化方式:</td>
-            <td> <select id="purifytype" class="combobox-checkbox">
+            <td> <select id="purifytype" class="combobox-checkbox"  style="width: 100px;" >
                     <option value=""></option>
                     <option value="OPC">OPC</option>
                     <option value="PAGE">PAGE</option>
