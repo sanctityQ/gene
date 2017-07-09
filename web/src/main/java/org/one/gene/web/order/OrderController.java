@@ -609,7 +609,6 @@ public class OrderController {
     		if (primerProduct != null && primerProduct.getOrder().getCustomerCode().equals(user.getUser().getCustomer().getCode())) {
     			List<PrimerProductOperation> ppos= primerProductOperationRepository.getInfoByPrimerProductID(primerProduct.getId());
     			primerProduct.setPrimerProductOperations(ppos);
-    			orderService.addNewValue(primerProduct);
     			primerProduct.setOperationTypeDesc(primerProduct.getOperationType().desc());
     			inv.addModel("primerProduct", primerProduct);
     			return "primerProductInfo";
@@ -621,7 +620,6 @@ public class OrderController {
     		if (primerProduct != null) {
     			List<PrimerProductOperation> ppos= primerProductOperationRepository.getInfoByPrimerProductID(primerProduct.getId());
     			primerProduct.setPrimerProductOperations(ppos);
-    			orderService.addNewValue(primerProduct);
     			primerProduct.setOperationTypeDesc(primerProduct.getOperationType().desc());
     			if("1".equals(user.getUser().getCompany().getComLevel())){//梓熙 总公司，可以查
     				inv.addModel("primerProduct", primerProduct);

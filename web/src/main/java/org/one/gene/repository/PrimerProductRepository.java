@@ -19,14 +19,18 @@ import java.util.List;
 public interface PrimerProductRepository extends PagingAndSortingRepository<PrimerProduct, Long>  , JpaSpecificationExecutor<PrimerProduct> {
 
 	@SQL("select pp.* "
-			+ " from `order` o , `primer_product` pp, `primer_product_value` ppv "
-			+ " where o.`order_no` =  pp.`order_no` and pp.`id` = ppv.`primer_product_id` and ppv.`type` = 'baseCount' "
+			+ " from `order` o , `primer_product` pp "
+			+ " where o.`order_no` =  pp.`order_no` "
 			+ " and o.`status` = '1' and pp.`operation_type` = 'makeBoard' and (pp.`board_no` is null or pp.`board_no`='') "
 			+ "#if(:customerCode != '') { and o.`customer_code` = :customerCode } "
 			+ "#if(:ptFlag == '1') { and pp.`purify_type` IN (?5) }"
 			+ "#if(:comCode != '') { and pp.`com_code` = :comCode }"
-			+ "#if(:tbn1 != '') { and ppv.`value` >= :tbn1 }"
-			+ "#if(:tbn2 != '') { and ppv.`value` <= :tbn2 }"
+			+ "#if(:tbn1 != '') { and pp.`tbn` >= :tbn1 }"
+			+ "#if(:tbn2 != '') { and pp.`tbn` <= :tbn2 }"
+			+ "#if(:odTotal1 != '') { and pp.`od_total` >= :odTotal1 }"
+			+ "#if(:odTotal2 != '') { and pp.`od_total` <= :odTotal2 }"
+			+ "#if(:liquidFlag == '1') { and pp.`liquid` ='' }"
+			+ "#if(:liquidFlag == '2') { and pp.`liquid` !='' }"			
 			+ "#if(:modiFlag == '0') { and ( pp.`modi_five_type` ='' and pp.`modi_three_type` ='' and pp.`modi_mid_type` ='' and pp.`modi_spe_type` ='')  order by pp.`product_no` }"
 			+ "#if(:modiFlag == '1') { and ( pp.`modi_five_type` !='' or pp.`modi_three_type` !='' or pp.`modi_mid_type` !='' or pp.`modi_spe_type` !='') " 
 			+ "#if(:productNoPrefix != '') { and pp.`product_no` like :productNoPrefix }" 
@@ -41,6 +45,9 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			@Param("ptFlag") String ptFlag,
 			@Param("comCode") String comCode,
 			@Param("productNoPrefix") String productNoPrefix,
+			@Param("odTotal1") String odTotal1,
+			@Param("odTotal2") String odTotal2,
+			@Param("liquidFlag") String liquidFlag,
 			Pageable pageable);
     
 	@SQL("select pp.* from `primer_product` pp where pp.`operation_type` = :operationType "

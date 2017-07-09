@@ -86,6 +86,12 @@ ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
 				<td><input id="totalVal" name="totalVal" class="readonly_inp" type="text" style="width: 80%" value="${primerProduct.totalVal}" disabled/></td>
 			</tr>
 			<tr>
+				<td align="right">分装浓度:</td>
+				<td><input id="density" name="density" class="readonly_inp" type="text" style="width: 80%" value="${primerProduct.density}" disabled/></td>
+				<td align="right">TE/水溶:</td>
+				<td><input id="liquid" name="liquid" class="readonly_inp" type="text" style="width: 80%" value="${primerProduct.liquid}" disabled/></td>
+			</tr>			
+			<tr>
 				<td align="right">描述:</td>
 				<td><input id="remark" name="remark" class="readonly_inp" type="text" style="width: 80%" value="${primerProduct.remark}" disabled/></td>
 				<td align="right">状态:</td>

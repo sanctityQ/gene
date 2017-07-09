@@ -46,7 +46,7 @@ var getProducts=function(){
 	if($("#seachCustom").val() != ''){
 		customerCode = $("#customerCode").val();
 	}
-	
+
 	var purifytype = $('#purifytype').combobox('getText');
 	
 	$.ajax({
@@ -60,6 +60,9 @@ var getProducts=function(){
 			modiFlag: strModifyFlag,
 			purifytype: purifytype,
 			productNoPrefix: $("#productNoPrefix").val(),
+			odTotal1: $("#odTotal1").val(),
+			odTotal2: $("#odTotal2").val(),
+			liquidFlag: $("#liquidFlag").val(),
 			pageNo: gridOpts.pageNumber,
 			pageSize: gridOpts.pageSize
         },
@@ -67,6 +70,9 @@ var getProducts=function(){
 			if(data != null){
         		var total = data.totalElements;
         		var reSultdata = data.content;
+        		
+        		//console.log(data);
+        		
         		var jsonsource = {total: total, rows: reSultdata};
         		$('#productionData').datagrid("loadData",jsonsource);
 			}

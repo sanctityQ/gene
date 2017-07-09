@@ -106,6 +106,9 @@ public class SynthesisController {
 					    		 @Param("modiFlag") String modiFlag,
 					    		 @Param("purifytype") String purifytype,
 					    		 @Param("productNoPrefix") String productNoPrefix,
+					    		 @Param("odTotal1") String odTotal1,
+					    		 @Param("odTotal2") String odTotal2,
+					    		 @Param("liquidFlag") String liquidFlag,
 					    		 @Param("pageNo") Integer pageNo,
 			                     @Param("pageSize") Integer pageSize,
 					    		 Invocation inv){
@@ -133,7 +136,9 @@ public class SynthesisController {
         
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
         
-        Page<PrimerProduct> primerProductPage = synthesisService.makeBoardQuery(customerCode, modiFlag, tbn1, tbn2, purifytype, comCode, productNoPrefix, pageable);
+		Page<PrimerProduct> primerProductPage = synthesisService
+				.makeBoardQuery(customerCode, modiFlag, tbn1, tbn2, purifytype,
+						comCode, productNoPrefix, odTotal1, odTotal2, liquidFlag, pageable);
     	
     	return Replys.with(primerProductPage).as(Json.class);
     }

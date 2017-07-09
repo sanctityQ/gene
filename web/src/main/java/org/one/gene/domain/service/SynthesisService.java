@@ -97,7 +97,8 @@ public class SynthesisService {
     //安排合成查询
 	public Page<PrimerProduct> makeBoardQuery(String customerCode,
 			String modiFlag, String tbn1, String tbn2, String purifytype,
-			String comCode, String productNoPrefix, Pageable pageable) {
+			String comCode, String productNoPrefix, String odTotal1,
+			String odTotal2, String liquidFlag, Pageable pageable) {
 
 		String[] purifytypes = purifytype.split(",");
 		String ptFlag = "";
@@ -114,7 +115,7 @@ public class SynthesisService {
 		
 		Page<PrimerProduct> primerProductPage = primerProductRepository
 				.selectPrimerProduct(customerCode, modiFlag, tbn1, tbn2,
-						purifytypes, ptFlag, comCode, productNoPrefix, pageable);
+						purifytypes, ptFlag, comCode, productNoPrefix, odTotal1, odTotal2, liquidFlag, pageable);
 		
 		// 查询primer_product_value
 		for (PrimerProduct primerProduct : primerProductPage.getContent()) {

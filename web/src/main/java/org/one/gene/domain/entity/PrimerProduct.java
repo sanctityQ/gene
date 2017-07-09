@@ -329,11 +329,11 @@ public class PrimerProduct implements java.io.Serializable {
 		this.operationTypeDesc = operationTypeDesc;
 	}
 
-	@Transient
+    @Column(name = "`od_total`", precision = 10)
 	public BigDecimal getOdTotal() {
-        if(this.odTotal == null){
-            this.odTotal = this.getPrimerRealValue(PrimerValueType.odTotal);
-        }
+//        if(this.odTotal == null){
+//            this.odTotal = this.getPrimerRealValue(PrimerValueType.odTotal);
+//        }
 		return odTotal;
 	}
 
@@ -342,11 +342,11 @@ public class PrimerProduct implements java.io.Serializable {
 		this.odTotal = odTotal;
 	}
 
-	@Transient
+    @Column(name = "`od_tb`", precision = 10)
 	public BigDecimal getOdTB() {
-        if(this.odTB == null){
-            this.odTB = this.getPrimerRealValue(PrimerValueType.odTB);
-        }
+//        if(this.odTB == null){
+//            this.odTB = this.getPrimerRealValue(PrimerValueType.odTB);
+//        }
 		return odTB;
 	}
 
@@ -355,11 +355,11 @@ public class PrimerProduct implements java.io.Serializable {
 		this.odTB = odTB;
 	}
 
-	@Transient
+    @Column(name = "`nmole_total`", precision = 10)
 	public BigDecimal getNmolTotal() {
-        if(this.nmolTotal == null){
-            this.nmolTotal = this.getPrimerRealValue(PrimerValueType.nmolTotal);
-        }
+//        if(this.nmolTotal == null){
+//            this.nmolTotal = this.getPrimerRealValue(PrimerValueType.nmolTotal);
+//        }
 		return nmolTotal;
 	}
 
@@ -368,11 +368,11 @@ public class PrimerProduct implements java.io.Serializable {
 		this.nmolTotal = nmolTotal;
 	}
 
-	@Transient
+    @Column(name = "`nmole_tb`", precision = 10)
 	public BigDecimal getNmolTB() {
-        if (this.nmolTB == null) {
-            this.nmolTB = this.getPrimerRealValue(PrimerValueType.nmolTB);
-        }
+//        if (this.nmolTB == null) {
+//            this.nmolTB = this.getPrimerRealValue(PrimerValueType.nmolTB);
+//        }
         return nmolTB;
 	}
 
@@ -381,7 +381,7 @@ public class PrimerProduct implements java.io.Serializable {
 		this.nmolTB = nmolTB;
 	}
 
-	@Transient
+    @Column(name = "`tbn`", precision = 10)
 	public BigDecimal getTbn() {
 		return tbn;
 	}

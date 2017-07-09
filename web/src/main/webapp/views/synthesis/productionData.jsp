@@ -20,19 +20,29 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
             <input type="hidden" id="customerFlagOld" name="customerFlagOld" value="<%=customerFlag %>"/>
 	<table width="100%">
 		<tr>
-			<td align="right">客户公司名称:
-                <input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 120px" />
+			<td align="right">客户公司名称:</td>
+            <td> <input class="inp_text" type="text" autocomplete="off" id="seachCustom" name="customerName" value="" style="width: 120px" />
 			    <input class="inp_text" type="hidden" id="customerCode" name="customerCode" value=""/>
 			    <ul id="seachCustomList"></ul>
 			</td>
-			<td align="right">生产编号开头:
-                 <input class="inp_text" type="text" autocomplete="off" id="productNoPrefix" name="productNoPrefix" style="width: 20px" />
-			<td align="right">碱基数范围:
-                 <input class="easyui-numberbox"  id="tbn1" name="tbn1" value="" style="width: 40px;" data-options="width:40" />
-			                - <input class="easyui-numberbox inp_text"  id="tbn2" name="tbn2" value="" style="width:40px;" /></td>
-            <td><input type="checkbox" id="modiFlag" name="modiFlag" checked /> <label>有/无修饰过滤</label></td>
-            <td align="left">纯化方式:
-             <select id="purifytype" class="combobox-checkbox">
+			<td align="right">分装方式:</td>
+			<td>
+                <select id="liquidFlag" class="my_select" style="width: 100px;" >
+                    <option value="1">干粉</option>
+                    <option value="2">液体</option>
+                </select>
+               </td>
+			<td align="right">碱基数范围:</td>
+            <td> <input class="easyui-numberbox"  id="tbn1" name="tbn1" value="" style="width: 30px;" data-options="width:30" />
+			                - <input class="easyui-numberbox inp_text"  id="tbn2" name="tbn2" value="" style="width:30px;" /></td>
+            <td><input type="checkbox" id="modiFlag" name="modiFlag" checked /> <label>有/无修饰</label></td>
+            <td><button type="button" class="btn" onclick="getProducts();">查询</button></td>            
+		</tr>
+		<tr>
+			<td align="right">生产编号开头:</td>
+            <td><input class="inp_text" type="text" autocomplete="off" id="productNoPrefix" name="productNoPrefix" style="width: 20px" />
+            <td align="right">纯化方式:</td>
+            <td> <select id="purifytype" class="combobox-checkbox">
                     <option value=""></option>
                     <option value="OPC">OPC</option>
                     <option value="PAGE">PAGE</option>
@@ -40,7 +50,10 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
                     <option value="HPLC">HPLC</option>
                 </select>
             </td>
-            <td><button type="button" class="btn" onclick="getProducts();">查询</button></td>
+			<td align="right">OD总量范围:</td>
+            <td> <input class="easyui-numberbox"  id="odTotal1" name="odTotal1" value="" style="width: 30px;" data-options="width:30" />
+			                - <input class="easyui-numberbox inp_text"  id="odTotal2" name="odTotal2" value="" style="width:30px;" /></td>
+
 		</tr>
 	</table>
     <div class="btn_group">
