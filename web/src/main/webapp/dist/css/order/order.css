@@ -335,6 +335,26 @@ textarea:focus {
   border-radius: 14px;
   border: 1px solid #000;
 }
+.step-section .plate-preview .normal-circle {
+  background-color: lightgray;
+  /*border: 2px solid #000;*/
+  background: #cedce7;
+  /* Old browsers */
+  background: -moz-linear-gradient(-45deg, #cedce7 0%, #596a72 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, #cedce7), color-stop(100%, #596a72));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(-45deg, #cedce7 0%, #596a72 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(-45deg, #cedce7 0%, #596a72 100%);
+  /* Opera 11.10+ */
+  background: -ms-linear-gradient(-45deg, #cedce7 0%, #596a72 100%);
+  /* IE10+ */
+  background: linear-gradient(135deg, #cedce7 0%, #596a72 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#cedce7', endColorstr='#596a72', GradientType=1);
+  /* IE6-9 fallback on horizontal gradient */
+}
 .step-section .plate-preview .transparent-circle {
   background-color: rgba(204, 0, 102, 0);
   border: 1px solid #000;
@@ -387,26 +407,6 @@ textarea:focus {
   background: radial-gradient(ellipse at center, #febbbb 0%, #fe9090 19%, #ff5c5c 100%);
   /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#febbbb', endColorstr='#ff5c5c', GradientType=1);
-  /* IE6-9 fallback on horizontal gradient */
-}
-.step-section .plate-preview .normal-circle {
-  background-color: lightgray;
-  /*border: 2px solid #000;*/
-  background: #cedce7;
-  /* Old browsers */
-  background: -moz-linear-gradient(-45deg, #cedce7 0%, #596a72 100%);
-  /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, #cedce7), color-stop(100%, #596a72));
-  /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(-45deg, #cedce7 0%, #596a72 100%);
-  /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(-45deg, #cedce7 0%, #596a72 100%);
-  /* Opera 11.10+ */
-  background: -ms-linear-gradient(-45deg, #cedce7 0%, #596a72 100%);
-  /* IE10+ */
-  background: linear-gradient(135deg, #cedce7 0%, #596a72 100%);
-  /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#cedce7', endColorstr='#596a72', GradientType=1);
   /* IE6-9 fallback on horizontal gradient */
 }
 .step-section .plate-preview .tb-legend {

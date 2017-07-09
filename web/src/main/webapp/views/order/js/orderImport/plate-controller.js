@@ -5,7 +5,8 @@ define(function(require, exports, module) {
     proxy: {
       $switchType: $('#J-switchType'),
       $switchDirection: $('#J-switchDirection'),
-      $platePreview: $('#J-platePreview')
+      $platePreview: $('#J-platePreview'),
+      $plateChoice: $('#J-plateChoice')
     },
     init: function() {
       this.$switchType = $('#J-switchType');
@@ -14,10 +15,96 @@ define(function(require, exports, module) {
       this.$platePreview = $('#J-platePreview');
       this.$imagePreview = $('#J-imagePreview');
       this.$markEmpty = $('#J-markEmpty');
+      this.$plateChoice = $('#J-plateChoice');
+      this.$plateInfo = $('#J-plateInfo');
       this.bindEvent();
+    },
+    createPlateCell: function(range, plateInfo) {
+      var self = this;
+
+      this.range = range || this.range;
+      this.plateInfo = plateInfo || this.plateInfo || { plates: 1, plateId: 1 };
+
+      var plateCellHtml = Handlebars.compile($('#plate-cell-template').html())(_.extend({}, this.plateInfo, sngr, {
+        plateRows: sngr.plateRows.slice(1),
+        isHorizontal: self.getDirection() === sngr.plateDirection.HORIZONTAL
+      }));
+
+      this.$platePreview.html(plateCellHtml);
+      this.$platePreview.find('.tb-body>.tb-row .circle').each(function() {
+        var tag = $(this).data('tag');
+
+        if (self.range.indexOf(tag) > -1) {
+          $(this).addClass('normal-circle');
+        }
+      });
+    },
+    getRange: function(amount) {
+      var direction = this.getDirection();
+      var range = [];
+
+      this.amount = amount || this.amount;
+
+      if (direction === sngr.plateDirection.HORIZONTAL) {
+        var fillRows = ~~(this.amount / 12);
+        var rest = this.amount % 12;
+
+        for (var i = 1; i <= fillRows; i++) {
+          range.push(sngr.plateCols.map(function(val, index) {
+            return sngr.plateRows[i] + ':' + val;
+          }));
+        }
+
+        range.push(sngr.plateCols.slice(0, rest).map(function(val, index) {
+          return sngr.plateRows[fillRows + 1] + ':' + val;
+        }));
+      }
+
+      if (direction === sngr.plateDirection.VERTICAL) {
+        var fillCols = ~~(this.amount / 8);
+        var rest = this.amount % 8;
+
+        for (var i = 1; i <= fillCols; i++) {
+          range.push(sngr.plateRows.slice(1).map(function(val, index) {
+            return val + ':' + i;
+          }));
+        }
+
+        range.push(sngr.plateRows.slice(0, rest).map(function(val, index) {
+          return val + ':' + (fillCols + 1);
+        }));
+      }
+
+      return _.flatten(range);
+    },
+    //切换板号
+    onPlateChoiceChange: function(event) {
+      var plateId = $(event.currentTarget).val() || 1;
+      this.$plateInfo.text(UI_OligoPlatePreview.replace(/\{0\}/g, plateId).replace(/\{1\}/g, this.plates));
+    },
+    //创建板号选择
+    setupPlateChoice: function(amount) {
+      var $plateChoice = this.$plateChoice.empty();
+      this.plates = Math.ceil(amount / 96) || 1;
+
+      for (var i = 1; i <= this.plates; i++) {
+        var option = $('<option>').val(i).text(i);
+        $plateChoice.append(option);
+      }
+
+      this.$plateInfo.text(UI_OligoPlatePreview.replace(/\{0\}/g, 1).replace(/\{1\}/g, this.plates));
+
+      var range = this.getRange(amount);
+      this.createPlateCell(range, {
+        plates: this.plates,
+        plateId: 1
+      });
     },
     bindEvent: function() {
       var self = this;
+
+      //切换板
+      this.$plateChoice.on('change', this.onPlateChoiceChange.bind(this));
 
       //切换提交方式
       this.$switchType.bind('switch:type', function() {
@@ -35,6 +122,7 @@ define(function(require, exports, module) {
       this.$switchDirection.bind('click', function() {
         self.$switchDirection.trigger('switch:direction');
         self.$switchDirection.trigger('changed:direction');
+        self.createPlateCell(self.getRange());
       });
 
       //切换tube提交方向

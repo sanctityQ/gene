@@ -99,7 +99,7 @@
 					<div class="form-group clearfix">
 						<label for="" class="control-label fl">板号:</label>
 						<div class="control-input fl">
-							<select name="" id="" class="form-control">
+							<select name="" id="J-plateChoice" class="form-control">
 								<option value="1">1</option>
 							</select>
 						</div>
@@ -147,7 +147,7 @@
 					</div>
 				</div>
 				<div class="plate-preview" id="J-platePreview">
-					<div class="title">预览第1板，共1板</div>
+					<div class="title" id="J-plateInfo">预览第1板，共1板</div>
 					<div class="tb-header">
 						<span class="icon-arrow-right icon-direction"></span>
 						<span class="icon-arrow-down icon-direction"></span>
@@ -269,6 +269,53 @@
 					<span id="{{colid}}Clear" data-prop="{{prop}}" data-action="clear" class=" glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
 				</div>
 			{{/if}}
+		</div>
+	</script>
+
+	<script id="plate-cell-template" type="text/x-handlebars-template">
+		<div class="title" id="J-plateInfo">预览第{{plateId}}板，共{{plates}}板</div>
+		{{#if isHorizontal}}
+			<div class="tb-header highlight">
+		{{else}}
+			<div class="tb-header">
+		{{/if}}
+			<span class="icon-arrow-right icon-direction"></span>
+			<span class="icon-arrow-down icon-direction"></span>
+			{{#each plateCols}}
+				<span class="tb-header-item">{{this}}</span>
+			{{/each}}
+		</div>
+		{{#if isHorizontal}}
+			<div class="tb-body">
+		{{else}}
+			<div class="tb-body highlight">
+		{{/if}}
+			{{#each plateRows}}
+				<div class="tb-row">
+					<div class="cell">
+						<span class="tb-row-indicator">{{this}}</span>
+					</div>
+					{{#each ../plateCols}}
+						<div class="cell" data-tag="{{../this}}:{{this}}">
+							<span class="circle transparent-circle" data-tag="{{../this}}:{{this}}"></span>
+						</div>
+					{{/each}}
+				</div>
+			{{/each}}
+		</div>
+		<div class="tb-legend">
+			<div class="item">
+				<span class="circle normal-circle"></span>
+				<span>已填充</span>
+			</div>
+			<div class="item">
+				<span class="circle valid-circle"></span>
+				<span>有效</span>
+			</div>
+			<div class="item">
+				<span class="circle invalid-circle"></span>
+				<span>无效</span>
+			</div>
 		</div>
 	</script>
 

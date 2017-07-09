@@ -18,6 +18,7 @@ var resources = {
 
 var sngr = {
   plateRows: ["", "A", "B", "C", "D", "E", "F", "G", "H"],
+  plateCols: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
   plateDirection: { HORIZONTAL: 1, VERTICAL: 2 },
   SampleStatus: { EMPTY: 1, FILLED: 2, VALID: 3, INVALID: 4, MARKEDEMPTY: 5 },
   containerType: { PLATE: 1, TUBE: 2, DISH: 3 }
