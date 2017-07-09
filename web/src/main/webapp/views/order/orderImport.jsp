@@ -171,7 +171,7 @@
 								</div>
 								<c:forEach items="${intArray}" var="item" varStatus="status">
 									<div class="cell" data-tag="${indicator}:${status.index + 1}">
-										<span class="circle transparent-circle"></span>
+										<span class="circle transparent-circle" data-tag="${indicator}:${status.index + 1}"></span>
 									</div>
 								</c:forEach>
 							</div>

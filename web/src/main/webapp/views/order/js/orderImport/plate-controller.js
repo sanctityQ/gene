@@ -4,7 +4,8 @@ define(function(require, exports, module) {
   var platectrler = {
     proxy: {
       $switchType: $('#J-switchType'),
-      $switchDirection: $('#J-switchDirection')
+      $switchDirection: $('#J-switchDirection'),
+      $platePreview: $('#J-platePreview')
     },
     init: function() {
       this.$switchType = $('#J-switchType');
@@ -27,11 +28,13 @@ define(function(require, exports, module) {
       //切换提交方式
       this.$switchType.bind('click', function() {
         self.$switchType.trigger('switch:type');
+        self.$switchType.trigger('changed:type');
       });
 
       //切换tube提交方向
       this.$switchDirection.bind('click', function() {
         self.$switchDirection.trigger('switch:direction');
+        self.$switchDirection.trigger('changed:direction');
       });
 
       //切换tube提交方向
@@ -52,8 +55,10 @@ define(function(require, exports, module) {
         var status = $(this).data('cell-status');
         var isMarking = self.$markEmpty.data('marking');
 
-        //非开启状态不做处理
-        if (!isMarking) return;
+        //未开启标记空管状态下，点击circle则高亮选择表格中的对应cell
+        if (!isMarking) {
+          return self.$platePreview.trigger('click:circle', { tag: $(this).data('tag'), index: $(this).parent().index() });
+        }
 
         if (status === 'empty') {
           $(this).removeClass('empty-circle').removeData('cell-status');
@@ -64,9 +69,11 @@ define(function(require, exports, module) {
         $(this).toggleClass('editable-circle');
       })
     },
+    //返回按板提交模式的方向横向、纵向
     getDirection: function() {
       return this.$switchDirection.data('direction');
     },
+    //是否按板提交模式
     isPlateMode: function() {
       return this.$switchType.data('type') !== sngr.containerType.TUBE;
     },

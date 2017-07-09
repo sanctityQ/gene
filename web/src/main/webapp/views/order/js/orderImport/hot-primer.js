@@ -27,7 +27,7 @@ define(function(require, exports, module) {
     SequenceBak: '',
     SequenceID: null,
     TM: null,
-    Tubes: null,
+    Tubes: 1,
     mec: null,
     mol_wt: null,
     Status: 2
