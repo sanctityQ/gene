@@ -20,6 +20,15 @@ define(function(require, exports, module) {
       this.commentsPlugin = hot.getPlugin('comments');
       this.bindEvent();
     },
+    dataList: [],
+    getSamplesByPlateId: function() {
+
+    },
+    initDataList: function(total) {
+      for (var i = 0; i < total; i++) {
+        this.dataList.push(_.clone(primer));
+      }
+    },
     //显示或隐藏列
     showOrhidenColumn: function() {
       //按板提交，显示柱号、板号两列
@@ -57,35 +66,48 @@ define(function(require, exports, module) {
     },
     //1.创建空行表格后，填充默认数据
     //2.更改方向后
-    fillData: function() {
+    fillData: function(amount, plateId) {
       var isPlateMode = plateCtrler.isPlateMode();
       var direction = plateCtrler.getDirection();
       var rowsPrefix = sngr.plateRows;
 
+      plateId = plateId || 1;
+      this.amount = amount || this.amount || 0;
+
       //横向
       if (direction == sngr.plateDirection.HORIZONTAL) {
-        var result = hot.getSourceData().map(function(item, index) {
+        var start = (plateId - 1) * 96;
+        var end = start + this.amount;
+
+        _.each(this.dataList.slice(start, end), function(item, index) {
           var row = rowsPrefix[Math.ceil((index + 1) / 12)];
           var col = (index + 1) % 12;
+
           return _.extend({}, primer, item, {
             PrimerIndex: index + 1,
-            Well: row + ':' + (col || 12)
+            Well: row + ':' + (col || 12),
+            CustPlateID: plateId
           });
         });
-        this.loadData(result);
+        this.loadData(this.dataList.slice(start, end));
       }
 
       //纵向
       if (direction === sngr.plateDirection.VERTICAL) {
-        var result = hot.getSourceData().map(function(item, index) {
-          var row = rowsPrefix[(index + 1) % 8 || 8]
-          var col = Math.ceil((index + 1) / 8)
-          return _.extend({}, primer, item, {
+        var start = (plateId - 1) * 96;
+        var end = start + this.amount;
+
+        _.each(this.dataList.slice(start, end), function(item, index) {
+          var row = rowsPrefix[(index + 1) % 8 || 8];
+          var col = Math.ceil((index + 1) / 8);
+
+          _.extend(item, {
             PrimerIndex: index + 1,
-            Well: row + ':' + col
+            Well: row + ':' + col,
+            CustPlateID: plateId
           });
         });
-        this.loadData(result);
+        this.loadData(this.dataList.slice(start, end));
       }
     },
     loadData: function(result) {
@@ -97,13 +119,25 @@ define(function(require, exports, module) {
     },
     bindEvent: function() {
       plateCtrler.proxy.$switchType.bind('changed:type', this.showOrhidenColumn);
-      plateCtrler.proxy.$switchDirection.bind('changed:direction', this.fillData.bind(this));
+      plateCtrler.proxy.$switchDirection.bind('changed:direction', function() {
+        this.fillData();
+      }.bind(this));
       plateCtrler.proxy.$platePreview.bind('click:circle', this.selectCell);
+      plateCtrler.proxy.$plateChoice.bind('change:choice', this.onChangePlateChoice.bind(this));
       addTip();
     },
-    insert: function(count) {
-      hot.alter('insert_row', hot.countRows(), count);
-      this.fillData(count);
+    onChangePlateChoice: function(event, data) {
+      var range = data.range;
+      var plateId = data.plateId;
+
+      //填充表格中对应板的数据
+      this.fillData(range.length, +plateId);
+    },
+    //初始化引物数量
+    insert: function(total) {
+      this.initDataList(total);
+      //单个表格最多只显示96条数据
+      this.fillData(Math.min(total, 96), 1);
     }
   }
 

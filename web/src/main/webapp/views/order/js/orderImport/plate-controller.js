@@ -39,9 +39,14 @@ define(function(require, exports, module) {
         }
       });
     },
-    getRange: function(amount) {
+    //返回标注为有效孔的范围
+    getRange: function(amount, isRevert) {
       var direction = this.getDirection();
       var range = [];
+
+      if (isRevert) {
+        this.revert = this.amount;
+      }
 
       this.amount = amount || this.amount;
 
@@ -70,10 +75,12 @@ define(function(require, exports, module) {
           }));
         }
 
-        range.push(sngr.plateRows.slice(0, rest).map(function(val, index) {
+        range.push(sngr.plateRows.slice(1, rest + 1).map(function(val, index) {
           return val + ':' + (fillCols + 1);
         }));
       }
+
+      this.amount = this.revert || this.amount;
 
       return _.flatten(range);
     },
@@ -81,6 +88,19 @@ define(function(require, exports, module) {
     onPlateChoiceChange: function(event) {
       var plateId = $(event.currentTarget).val() || 1;
       this.$plateInfo.text(UI_OligoPlatePreview.replace(/\{0\}/g, plateId).replace(/\{1\}/g, this.plates));
+
+      var amount = (this.amount - (plateId - 1) * 96) / 96 >= 1 ? 96 : (this.amount - (plateId - 1) * 96);
+      var range = this.getRange(amount, true);
+      this.createPlateCell(range, { plateId: plateId, plates: Math.ceil(this.amount / 96) });
+
+      //非第一板时，禁用切换功能
+      this.$switchType.toggleClass(function() {return 'disabled'}, +plateId !== 1);
+      this.$switchDirection.toggleClass(function() {return 'disabled'}, +plateId !== 1);
+
+      return {
+        range: range,
+        plateId: plateId
+      }
     },
     //创建板号选择
     setupPlateChoice: function(amount) {
@@ -104,7 +124,10 @@ define(function(require, exports, module) {
       var self = this;
 
       //切换板
-      this.$plateChoice.on('change', this.onPlateChoiceChange.bind(this));
+      this.$plateChoice.bind('change', function(event) {
+        var info = self.onPlateChoiceChange(event);
+        self.$plateChoice.trigger('change:choice', info);
+      });
 
       //切换提交方式
       this.$switchType.bind('switch:type', function() {
