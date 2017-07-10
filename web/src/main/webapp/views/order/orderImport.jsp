@@ -242,6 +242,20 @@
 		<div class="table-wrapper" id="tableWrapper"></div>
 	</div>
 
+	<%--<div class="footer navbar-fixed-bottom" id="gwzGAStickyFooter">--%>
+		<%--<div class="gwz-ga-footer row">--%>
+			<%--<div class="col-lg-7 col-md-7 gwz-ga-footer-glass-wrapper"></div>--%>
+			<%--<div class="col-lg-5  col-md-5 gwz-ga-footer-controls-wrapper">--%>
+				<%--<div class="btn-group" role="group">--%>
+					<%--<button class="btn  btn-large btn-danger" type="button" onclick="cancelOrder()">取消</button>--%>
+					<%--<button id="btnSave" class="btn btn-large btn-primary gwz-enable-switch" type="button">保存草稿</button>--%>
+					<%--<button id="btnSubmitCheck" class="btn btn-large gwz-btn-default-action gwz-enable-switch" type="button"> 保存&amp;下一步</button>--%>
+					<%--<button id="btnSubmit" class="btn btn-large gwz-btn-default-action gwz-enable-switch" type="button" style="display: none;">保存&amp;下一步</button>--%>
+				<%--</div>--%>
+			<%--</div>--%>
+		<%--</div>--%>
+	<%--</div>--%>
+
 	<script id="hot-headercol-template" type="text/x-handlebars-template">
 		<div class="col-header">
 			{{#if isTooltip}}

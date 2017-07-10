@@ -133,8 +133,8 @@ define(function(require, exports, module) {
         afterCreateRow: function(n, t) {
           // handsonTableAfterCreateRow(n, t)
         },
-        beforeChange: function(n, t) {
-          // that.handsonTableBeforeChange(n, t)
+        beforeChange: function(changes, source) {
+          $(that.hot).trigger('hot:beforeChange', [changes, source]);
         },
         beforeChangeRender: function(n, t) {
           // that.handsonTableBeforeChangeRender(n, t)

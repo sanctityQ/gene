@@ -134,6 +134,9 @@ define(function(require, exports, module) {
 
       //表头中快速填充、清除列快捷方式
       this.$tableWrapper.on('mouseup', '.hot-col-action>.glyphicon', this.actionDispatch.bind(this));
+
+      ///------
+      $(hot).bind('hot:beforeChange', this.handsonTableBeforeChange.bind(this));
     },
     //表头中所有列的快速填充、清除处理
     actionDispatch: function(event) {
@@ -145,6 +148,10 @@ define(function(require, exports, module) {
 
       //填充
       if (action === 'fill') {
+        //填充序列时，同时填充碱基数
+        if (prop === 'Sequence') {
+          merge.Basenumber = firstRowData.Basenumber;
+        }
         merge[prop] = firstRowData[prop];
         _.each(this.dataList, function(item, index) {
           _.extend(item, merge);
@@ -225,6 +232,17 @@ define(function(require, exports, module) {
       this.initDataList(total);
       //单个表格最多只显示96条数据
       this.fillData(Math.min(total, 96), 1);
+    },
+    //changes => // [[row, prop, oldVal, newVal], ...]
+    handsonTableBeforeChange: function(evnet, changes, source) {
+      var plateId = this.plateId || 1;
+      for (var i = changes.length - 1, baseNumber; i >= 0; i--) {
+        if (changes[i][1] === 'Sequence' && source !== 'paster') {
+          changes[i][3] = changes[i][3].replace(/\ +/g, '').replace(/[\r\n]/g, '').toUpperCase();
+          baseNumber = changes[i][3].replace(/\*/g, '').length;
+          this.dataList[(plateId - 1) * 96 + changes[i][0]].Basenumber = baseNumber;
+        }
+      }
     }
   }
 
