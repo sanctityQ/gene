@@ -200,8 +200,8 @@
 	<div class="sample-section">
 		<div class="row clearfix">
 			<div class="btn-section">
-				<span class="btn btn-sm btn-primary">按照第一行填写</span>
-				<span class="btn btn-sm btn-danger">清除引物信息</span>
+				<span class="btn btn-sm btn-primary" id="J-fillAll">按照第一行填写</span>
+				<span class="btn btn-sm btn-danger" id="J-clearAll">清除引物信息</span>
 			</div>
 			<div class="legend">
 				<div class="item">

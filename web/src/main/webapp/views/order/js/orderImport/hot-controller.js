@@ -18,12 +18,14 @@ define(function(require, exports, module) {
     init: function() {
       updateSettings(hot);
       this.commentsPlugin = hot.getPlugin('comments');
+
+      this.$fillAll = $('#J-fillAll');
+      this.$clearAll = $('#J-clearAll');
+
       this.bindEvent();
     },
     dataList: [],
-    getSamplesByPlateId: function() {
-
-    },
+    //初始化数据
     initDataList: function(total) {
       for (var i = 0; i < total; i++) {
         this.dataList.push(_.clone(primer));
@@ -71,7 +73,7 @@ define(function(require, exports, module) {
       var direction = plateCtrler.getDirection();
       var rowsPrefix = sngr.plateRows;
 
-      plateId = plateId || 1;
+      plateId = plateId || this.plateId || 1;
       this.amount = amount || this.amount || 0;
 
       //横向
@@ -83,7 +85,7 @@ define(function(require, exports, module) {
           var row = rowsPrefix[Math.ceil((index + 1) / 12)];
           var col = (index + 1) % 12;
 
-          return _.extend({}, primer, item, {
+          _.extend(item, {
             PrimerIndex: index + 1,
             Well: row + ':' + (col || 12),
             CustPlateID: plateId
@@ -125,11 +127,45 @@ define(function(require, exports, module) {
       plateCtrler.proxy.$platePreview.bind('click:circle', this.selectCell);
       plateCtrler.proxy.$plateChoice.bind('change:choice', this.onChangePlateChoice.bind(this));
       addTip();
+
+      this.$fillAll.on('click', this.fillAll.bind(this));
+      this.$clearAll.on('click', this.clearAll.bind(this));
+    },
+    //按照第一行填充表格
+    fillAll: function() {
+      var firstRowData = hot.getSourceDataAtRow(0);
+
+      _.each(this.dataList, function(item, index) {
+        //板号、柱号、编号、primer名称不被复制
+        _.extend(item, firstRowData, {
+          CustPlateID: item.CustPlateID,
+          Well: item.Well,
+          PrimerIndex: item.PrimerIndex,
+          PrimerName: item.PrimerName
+        });
+      });
+
+      this.fillData();
+    },
+    //清除引物信息
+    clearAll: function() {
+      _.each(this.dataList, function(item, index) {
+        //只保留板号、柱号、编号
+        _.extend(item, primer, {
+          CustPlateID: item.CustPlateID,
+          Well: item.Well,
+          PrimerIndex: item.PrimerIndex,
+          Tubes: null
+        });
+      });
+
+      this.fillData();
     },
     onChangePlateChoice: function(event, data) {
       var range = data.range;
       var plateId = data.plateId;
 
+      this.plateId = plateId;
       //填充表格中对应板的数据
       this.fillData(range.length, +plateId);
     },
