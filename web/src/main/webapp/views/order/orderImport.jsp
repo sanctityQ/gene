@@ -227,7 +227,7 @@
 				</div>
 				<div class="item">
 					<span class="text">
-						<span class="glyphicon glyphicon-asterisk"></span>
+						<span class="glyphicon glyphicon-asterisk field-required"></span>
 						必填项
 					</span>
 				</div>
@@ -245,7 +245,7 @@
 	<script id="hot-headercol-template" type="text/x-handlebars-template">
 		<div class="col-header">
 			{{#if isTooltip}}
-				<a href="#" title="{{tooltipText}}" class="easyui-tooltip">{{colName}}</a>
+				<a href="javascript:;" title="{{tooltipText}}" class="easyui-tooltip">{{colName}}</a>
 			{{ else }}
 				<span class="col-name">
 					{{colName}}

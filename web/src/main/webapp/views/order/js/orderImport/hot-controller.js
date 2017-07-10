@@ -21,6 +21,7 @@ define(function(require, exports, module) {
 
       this.$fillAll = $('#J-fillAll');
       this.$clearAll = $('#J-clearAll');
+      this.$tableWrapper = $('#tableWrapper');
 
       this.bindEvent();
     },
@@ -130,6 +131,56 @@ define(function(require, exports, module) {
 
       this.$fillAll.on('click', this.fillAll.bind(this));
       this.$clearAll.on('click', this.clearAll.bind(this));
+
+      //表头中快速填充、清除列快捷方式
+      this.$tableWrapper.on('mouseup', '.hot-col-action>.glyphicon', this.actionDispatch.bind(this));
+    },
+    //表头中所有列的快速填充、清除处理
+    actionDispatch: function(event) {
+      var $target = $(event.currentTarget);
+      var action = $target.data('action');
+      var prop = $target.data('prop');
+      var firstRowData = hot.getSourceDataAtRow(0);
+      var merge = {};
+
+      //填充
+      if (action === 'fill') {
+        merge[prop] = firstRowData[prop];
+        _.each(this.dataList, function(item, index) {
+          _.extend(item, merge);
+        });
+      }
+
+      //填充Primer名称
+      if (action === 'fillseq') {
+        var reg = /(\d+)(?!.*\d)/;
+        var value = firstRowData[prop];
+        var matchResult = value.match(reg);
+
+        _.each(this.dataList, function(item, index) {
+          if (matchResult) {
+            merge[prop] = value.replace(reg, parseInt(matchResult[1], 10) + index);
+          } else {
+            if (value.lastIndexOf('_') > 0) {
+              merge[prop] = value + (index + 1);
+            } else {
+              merge[prop] = value + '_' + (index + 1);
+            }
+          }
+          _.extend(item, merge);
+        });
+      }
+
+      //清除
+      if (action === 'clear') {
+        merge[prop] = null;
+        _.each(this.dataList, function(item, index) {
+          _.extend(item, merge);
+        });
+      }
+
+      // hot.render();
+      this.fillData();
     },
     //按照第一行填充表格
     fillAll: function() {

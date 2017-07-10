@@ -70,10 +70,11 @@ define(function(require, exports, module) {
           readOnly: true
         }, {
           data: "Quantity",
-          validator: function (value, callback) {
-            callback(!isNaN(value));
-            that.setCommentAtCell(2,2);
-          }
+          // validator: function (value, callback) {
+          //   callback(!isNaN(value));
+          //   that.setCommentAtCell(2,2);
+          //   return value;
+          // }
         }, {
           data: "Tubes"
         }, {
@@ -99,9 +100,9 @@ define(function(require, exports, module) {
           renderer: renderer.emptyRowRenderer
         }],
         afterRender: function() {
-          setTimeout(function() {
-            that.hot.dataList = that.dataList;
-          }, 0);
+          // setTimeout(function() {
+          //   that.hot.dataList = that.dataList;
+          // }, 0);
           addTip();
         },
         afterSelectionEnd: function(r, c, r2, c2) {
