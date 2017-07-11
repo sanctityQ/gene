@@ -37,12 +37,14 @@ define(function(require, exports, module) {
       //按板提交，显示柱号、板号两列
       if (plateCtrler.isPlateMode()) {
         hot.updateSettings({
-          colWidths: [40, 40, 40, 90, 270, 50, 60, 70, 80, 140, 140, 190, 1]
+          // colWidths: [40, 40, 40, 90, 270, 50, 60, 70, 80, 140, 140, 190, 1]
+          colWidths: [40, 40, 40, 90, 209, 50, 60, 70, 80, 140, 140, 190, 1]
         });
       } else {
         //按管提交，隐藏柱号、板号两列
         hot.updateSettings({
-          colWidths: [1, 1, 40, 90, 338, 60, 60, 70, 80, 140, 140, 190, 1]
+          // colWidths: [1, 1, 40, 90, 338, 60, 60, 70, 80, 140, 140, 190, 1]
+          colWidths: [1, 1, 40, 90, 277, 60, 60, 70, 80, 140, 140, 190, 1]
         });
       }
     },

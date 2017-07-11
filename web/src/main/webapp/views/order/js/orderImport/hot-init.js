@@ -51,7 +51,9 @@ define(function(require, exports, module) {
         height: 300,
         currentRowClassName: "hot-current-row",
         comments: true,
-        colWidths: [1, 1, 40, 90, 338, 60, 60, 70, 80, 140, 140, 190, 1],
+        stretchH: 'all',
+        // colWidths: [1, 1, 40, 90, 338, 60, 60, 70, 80, 140, 140, 190, 1],
+        colWidths: [1, 1, 40, 90, 277, 60, 60, 70, 80, 140, 140, 190, 1],
         columns: [{
           data: "CustPlateID",
           readOnly: true

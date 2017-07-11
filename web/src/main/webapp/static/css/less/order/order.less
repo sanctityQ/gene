@@ -26,7 +26,7 @@
   border: 0
 }
 @-ms-viewport {
-  width: auto !important;
+  width: auto ;
 }
 ::-moz-selection {
   color: #fff;
@@ -36,7 +36,8 @@
   color: #fff;
   background: #e45000
 }
-input, textarea {
+input, textarea, button {
+  outline: 0;
   &:focus {
     border-color: #66afe9;
     outline: 0;
@@ -434,6 +435,8 @@ input, textarea {
   }
 }
 .sample-section {
+  width: @width;
+  margin: 0 auto;
   .btn-section {
     float: left;
     width: 25%;
@@ -540,7 +543,7 @@ input, textarea {
 }
 //fix tip显示多个箭头
 .tooltip.tooltip-bottom {
-  display: none !important;
+  display: none ;
 }
 //表头中必填项的标识
 .glyphicon {
@@ -556,4 +559,92 @@ input, textarea {
   border: 1px solid #999;
   box-shadow: 1px 1px 2px #bbb;
   font-family: 'Arial';
+}
+.footer {
+  background-color: transparent;
+  &.navbar-fixed-bottom {
+    bottom: 0;
+    margin-bottom: 0;
+    border-width: 1px 0 0;
+    position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+  }
+  .ga-footer {
+    height: 70px;
+    background-color: transparent;
+    border-bottom: 20px solid rgba(236,241,244,1);
+  }
+  .ga-footer-glass-wrapper {
+    float: left;
+    width: 58%;
+    height: 65px;
+    background-color: rgba(236,241,244,1);
+    opacity: .7;
+  }
+  .ga-footer-controls-wrapper {
+    float: left;
+    width: 42%;
+    height: 70px;
+    background-color: rgba(236,241,244,1);
+    opacity: 1;
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .btn-group {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    vertical-align: middle;
+    margin-top: 10px;
+    .btn {
+      margin-right: 20px;
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+  .btn {
+    box-shadow: none;
+    border-radius: 0;
+    line-height: 1.2;
+    font-size: 12px;
+    background-image: none;
+    padding: 6px 12px;
+    text-shadow: none;
+    &:hover {
+      color: #333;
+      text-decoration: none;
+    }
+  }
+  .btn-danger {
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d43f3a;
+    &:hover {
+      color: #fff;
+      background-color: #d2322d;
+      border-color: #ac2925;
+    }
+  }
+  .btn-primary {
+    color: #fff;
+    background-color: #428bca;
+    border-color: #357ebd;
+    &:hover {
+      color: #fff;
+      background-color: #3276b1;
+      border-color: #285e8e;
+    }
+  }
+  .btn-default-action {
+    font-size: 20px;
+    margin-top: -5px;
+    color: #fff;
+    border-color: #61a60e;
+    background-color: #61a60e;
+  }
 }

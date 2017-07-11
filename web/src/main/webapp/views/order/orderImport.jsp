@@ -5,15 +5,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<link href="${ctx}/static/css/easyui.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/icon.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/perfect-scrollbar.min.css" type="text/css" rel="stylesheet" />
-<link href="${ctx}/static/css/master.css" type="text/css" rel="stylesheet" />
 <link href="${ctx}/static/css/handsontable.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="${ctx}/static/css/font-awesome.min.css" />
 <link rel="stylesheet" type="text/css" href="${ctx}/static/css/bootstrap.min.css" />
-<link rel="stylesheet" href="${ctx}/static/css/font-awesome-ie7.min.css">
 <link rel="stylesheet" href="${ctx}/dist/css/order/order.css">
 <title>订单导入</title>
 </head>
@@ -242,19 +235,18 @@
 		<div class="table-wrapper" id="tableWrapper"></div>
 	</div>
 
-	<%--<div class="footer navbar-fixed-bottom" id="gwzGAStickyFooter">--%>
-		<%--<div class="gwz-ga-footer row">--%>
-			<%--<div class="col-lg-7 col-md-7 gwz-ga-footer-glass-wrapper"></div>--%>
-			<%--<div class="col-lg-5  col-md-5 gwz-ga-footer-controls-wrapper">--%>
-				<%--<div class="btn-group" role="group">--%>
-					<%--<button class="btn  btn-large btn-danger" type="button" onclick="cancelOrder()">取消</button>--%>
-					<%--<button id="btnSave" class="btn btn-large btn-primary gwz-enable-switch" type="button">保存草稿</button>--%>
-					<%--<button id="btnSubmitCheck" class="btn btn-large gwz-btn-default-action gwz-enable-switch" type="button"> 保存&amp;下一步</button>--%>
-					<%--<button id="btnSubmit" class="btn btn-large gwz-btn-default-action gwz-enable-switch" type="button" style="display: none;">保存&amp;下一步</button>--%>
-				<%--</div>--%>
-			<%--</div>--%>
-		<%--</div>--%>
-	<%--</div>--%>
+	<div class="footer navbar-fixed-bottom">
+		<div class="ga-footer row">
+			<div class="col-lg-7 col-md-7 ga-footer-glass-wrapper"></div>
+			<div class="col-lg-5  col-md-5 ga-footer-controls-wrapper">
+				<div class="btn-group" role="group">
+					<button class="btn  btn-large btn-danger" type="button">取消</button>
+					<button id="btnSave" class="btn btn-large btn-primary enable-switch" type="button">保存草稿</button>
+					<button id="btnSubmitCheck" class="btn btn-large btn-default-action enable-switch" type="button"> 保存&amp;下一步</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<script id="hot-headercol-template" type="text/x-handlebars-template">
 		<div class="col-header">
@@ -346,7 +338,7 @@
 		  handsontable: 'handsontable/index.js',
 		  underscore: 'underscore.min.js'
         }
-      })
+      });
 
       // 加载入口模块
       seajs.use("${ctx}/views/order/js/orderImport/index.js")
