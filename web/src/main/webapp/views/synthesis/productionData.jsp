@@ -28,7 +28,8 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 			<td align="right">分装方式:</td>
 			<td>
                 <select id="liquidFlag" class="my_select" style="width: 150px;" >
-                    <option value="1">干粉</option>
+                    <option value="0">全部</option>
+                    <option value="1">干粉</option>                    
                     <option value="2">液体</option>
                 </select>
                </td>
