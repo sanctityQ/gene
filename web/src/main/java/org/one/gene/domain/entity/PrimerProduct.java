@@ -331,9 +331,9 @@ public class PrimerProduct implements java.io.Serializable {
 
     @Column(name = "`od_total`", precision = 10)
 	public BigDecimal getOdTotal() {
-//        if(this.odTotal == null){
-//            this.odTotal = this.getPrimerRealValue(PrimerValueType.odTotal);
-//        }
+        if(this.odTotal == null){
+            this.odTotal = this.getPrimerRealValue(PrimerValueType.odTotal);
+        }
 		return odTotal;
 	}
 
@@ -344,9 +344,9 @@ public class PrimerProduct implements java.io.Serializable {
 
     @Column(name = "`od_tb`", precision = 10)
 	public BigDecimal getOdTB() {
-//        if(this.odTB == null){
-//            this.odTB = this.getPrimerRealValue(PrimerValueType.odTB);
-//        }
+        if(this.odTB == null){
+            this.odTB = this.getPrimerRealValue(PrimerValueType.odTB);
+        }
 		return odTB;
 	}
 
@@ -357,9 +357,9 @@ public class PrimerProduct implements java.io.Serializable {
 
     @Column(name = "`nmole_total`", precision = 10)
 	public BigDecimal getNmolTotal() {
-//        if(this.nmolTotal == null){
-//            this.nmolTotal = this.getPrimerRealValue(PrimerValueType.nmolTotal);
-//        }
+        if(this.nmolTotal == null){
+            this.nmolTotal = this.getPrimerRealValue(PrimerValueType.nmolTotal);
+        }
 		return nmolTotal;
 	}
 
@@ -370,9 +370,9 @@ public class PrimerProduct implements java.io.Serializable {
 
     @Column(name = "`nmole_tb`", precision = 10)
 	public BigDecimal getNmolTB() {
-//        if (this.nmolTB == null) {
-//            this.nmolTB = this.getPrimerRealValue(PrimerValueType.nmolTB);
-//        }
+        if (this.nmolTB == null) {
+            this.nmolTB = this.getPrimerRealValue(PrimerValueType.nmolTB);
+        }
         return nmolTB;
 	}
 
