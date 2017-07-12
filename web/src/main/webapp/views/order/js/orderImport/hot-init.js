@@ -42,7 +42,7 @@ define(function(require, exports, module) {
       var that = this;
       this.hot = new Handsontable(this.container, {
         data: this.loadData(),
-        rowHeaders: true,
+        rowHeaders: false,
         allowEmpty: true,
         colHeaders: buildHeader,
         autoColumnSize: true,
@@ -53,7 +53,7 @@ define(function(require, exports, module) {
         comments: true,
         stretchH: 'all',
         // colWidths: [1, 1, 40, 90, 338, 60, 60, 70, 80, 140, 140, 190, 1],
-        colWidths: [1, 1, 40, 90, 277, 60, 60, 70, 80, 140, 140, 190, 1],
+        colWidths: [1, 1, 40, 90, 310, 60, 60, 70, 80, 140, 140, 190, 1],
         columns: [{
           data: "CustPlateID",
           readOnly: true
