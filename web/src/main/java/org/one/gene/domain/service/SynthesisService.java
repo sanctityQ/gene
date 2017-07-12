@@ -1214,9 +1214,7 @@ public class SynthesisService {
 							//改为：1.2*ODTB/(导入值/30)
 							productNo = new BigDecimal(1.2).multiply(primerProduct.getOdTB()).divide(new BigDecimal(measure.doubleValue()/30),0, BigDecimal.ROUND_UP)+"";
 						}else{
-							//“浓度”
-							//10：nmole/OD*100*OD数
-							//100：nmole/OD* 10*OD数
+
 							int    nmoleOD      = 0;//nmoleOD
 							for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
 								PrimerValueType type = primerProductValue.getType();
@@ -1224,11 +1222,17 @@ public class SynthesisService {
 									nmoleOD = primerProductValue.getValue().intValue();
 								}
 							}
-							if(primerProduct.getDensity()!=null && primerProduct.getDensity() == 10){
-								productNo = primerProduct.getOdTB().multiply(new BigDecimal(nmoleOD)).divide(new BigDecimal(0.01),0, BigDecimal.ROUND_UP)+"";
-							}else{
-								productNo = primerProduct.getOdTB().multiply(new BigDecimal(nmoleOD)).divide(new BigDecimal(0.1),0, BigDecimal.ROUND_UP)+"";
-							}
+							
+							productNo = primerProduct.getMeasureVolume()+"";//液体引物，直接取导入订单的计算值：nmol/tube*1000/浓度
+							
+							//“浓度”
+							//10：nmole/OD*100*OD数
+							//100：nmole/OD* 10*OD数
+//							if(primerProduct.getDensity()!=null && primerProduct.getDensity() == 10){
+//								productNo = primerProduct.getOdTB().multiply(new BigDecimal(nmoleOD)).divide(new BigDecimal(0.01),0, BigDecimal.ROUND_UP)+"";
+//							}else{
+//								productNo = primerProduct.getOdTB().multiply(new BigDecimal(nmoleOD)).divide(new BigDecimal(0.1),0, BigDecimal.ROUND_UP)+"";
+//							}
 							//计算出补水体积，直接存到数据库中
 							//液体的公式是：=nmole/OD数据*95*（测量值/15）*1000/浓度数据-100
 							int volume = (int) (nmoleOD*95*(measure.doubleValue()/15)*1000/primerProduct.getDensity()-100);
@@ -1721,7 +1725,6 @@ public class SynthesisService {
 		String boardNo = statisticsInfo.getBoardNo();
         
 		Board board = boardRepository.findByBoardNo(boardNo);
-//        List<PrimerProduct> pps = primerProductRepository.findByBoardNo(boardNo);
         List<BoardHole> bhs = boardHoleRepository.findByBoard(board);
         
         Map<String, Integer> volumeMap = new HashMap<String, Integer>();
@@ -1740,14 +1743,7 @@ public class SynthesisService {
         HSSFSheet sheet = workbook.getSheetAt(0);
 		HSSFRow row = null;
 		HSSFCell cell = null;
-		
-//    	HSSFCellStyle style_center = workbook.createCellStyle();
-//    	style_center.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-//    	style_center.setBorderBottom(HSSFCellStyle.BORDER_THIN); // 下边框 
-//    	style_center.setBorderLeft(HSSFCellStyle.BORDER_THIN);// 左边框  
-//    	style_center.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框  
-//    	style_center.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框  
-		
+			
 		int startRow = 2;//从第2行开始
 		
 		ArrayList holeList = new ArrayList();
@@ -1774,7 +1770,6 @@ public class SynthesisService {
 				}
 				cell = row.getCell(j);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-//				cell.setCellStyle(style_center);
 				cell.setCellValue(volume);//补水体积
 			}
 		}

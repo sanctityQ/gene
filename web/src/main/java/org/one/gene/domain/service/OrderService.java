@@ -157,6 +157,11 @@ public class OrderService {
 				
 				primerProduct.init();
 				
+				  //分装体积：
+				  //干粉： 1.2*ODTB/(导入值/30) == 上传测试附件时
+				  if (primerProduct.getLiquid() !=null && !"".equals(primerProduct.getLiquid())) {
+					  primerProduct.setMeasureVolume(measureVolume.intValue());
+				  }
 				
 				if (primerProduct.getPrimerProductOperations().isEmpty()) {
 					primerProduct.getPrimerProductOperations().add(createPrimerProductOperation(primerProduct));
