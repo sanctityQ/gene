@@ -22,6 +22,7 @@ define(function(require, exports, module) {
       this.$fillAll = $('#J-fillAll');
       this.$clearAll = $('#J-clearAll');
       this.$tableWrapper = $('#tableWrapper');
+      this.$btnDraft = $('#btnSave');
 
       this.bindEvent();
     },
@@ -44,7 +45,7 @@ define(function(require, exports, module) {
         //按管提交，隐藏柱号、板号两列
         hot.updateSettings({
           // colWidths: [1, 1, 40, 90, 338, 60, 60, 70, 80, 140, 140, 190, 1]
-          colWidths: [1, 1, 40, 90, 277, 60, 60, 70, 80, 140, 140, 190, 1]
+          colWidths: [1, 1, 40, 90, 310, 60, 60, 70, 80, 140, 140, 190, 1]
         });
       }
     },
@@ -137,8 +138,11 @@ define(function(require, exports, module) {
       //表头中快速填充、清除列快捷方式
       this.$tableWrapper.on('mouseup', '.hot-col-action>.glyphicon', this.actionDispatch.bind(this));
 
-      ///------
+      //表格更新前置操作
       $(hot).bind('hot:beforeChange', this.handsonTableBeforeChange.bind(this));
+
+      //保存草稿
+      this.$btnDraft.on('click', validator.validationForDraft);
     },
     //表头中所有列的快速填充、清除处理
     actionDispatch: function(event) {
