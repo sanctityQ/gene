@@ -1210,9 +1210,12 @@ public class SynthesisService {
 						BigDecimal measure = (BigDecimal)measureMap.get(holeNo);
 						if (primerProduct.getLiquid() == null || "".equals(primerProduct.getLiquid())) {
 							//原来：1200*ODTB/(导入值*20)
-   //						productNo = new BigDecimal(1200).multiply(primerProduct.getOdTB()).divide(measure.multiply(new BigDecimal(20)),0, BigDecimal.ROUND_UP)+"";
+//  						productNo = new BigDecimal(1200).multiply(primerProduct.getOdTB()).divide(measure.multiply(new BigDecimal(20)),0, BigDecimal.ROUND_UP)+"";
 							//改为：1.2*ODTB/(导入值/30)
-							productNo = new BigDecimal(1.2).multiply(primerProduct.getOdTB()).divide(new BigDecimal(measure.doubleValue()/30),0, BigDecimal.ROUND_UP)+"";
+//							productNo = new BigDecimal(1.2).multiply(primerProduct.getOdTB()).divide(new BigDecimal(measure.doubleValue()/30),0, BigDecimal.ROUND_UP)+"";
+							//改为：OD/tube*22.5/测量值
+							productNo = new BigDecimal(22.5).multiply(primerProduct.getOdTB()).divide(new BigDecimal(measure.doubleValue()),0, BigDecimal.ROUND_UP)+"";
+							
 						}else{
 
 							int    nmoleOD      = 0;//nmoleOD
@@ -1233,6 +1236,7 @@ public class SynthesisService {
 //							}else{
 //								productNo = primerProduct.getOdTB().multiply(new BigDecimal(nmoleOD)).divide(new BigDecimal(0.1),0, BigDecimal.ROUND_UP)+"";
 //							}
+							
 							//计算出补水体积，直接存到数据库中
 							//液体的公式是：=nmole/OD数据*95*（测量值/15）*1000/浓度数据-100
 							int volume = (int) (nmoleOD*95*(measure.doubleValue()/15)*1000/primerProduct.getDensity()-100);

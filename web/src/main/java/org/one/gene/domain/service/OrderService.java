@@ -158,8 +158,10 @@ public class OrderService {
 				primerProduct.init();
 				
 				  //分装体积：
-				  //干粉： 1.2*ODTB/(导入值/30) == 上传测试附件时
+				  //干粉：OD/tube*22.5/测量值  == 上传测试附件时
+				  //液体：nmol/tube*1000/浓度                  == 上传订单时
 				  if (primerProduct.getLiquid() !=null && !"".equals(primerProduct.getLiquid())) {
+					  BigDecimal measureVolume = primerProduct.getNmolTB().multiply(new BigDecimal(1000)).divide(new BigDecimal(primerProduct.getDensity()),0, BigDecimal.ROUND_UP);   
 					  primerProduct.setMeasureVolume(measureVolume.intValue());
 				  }
 				

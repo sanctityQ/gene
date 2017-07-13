@@ -41,7 +41,7 @@ var boardNo = ${boardNo};
 </div>
 <div class="tools_bar tabbing">
     <button class="btn" onclick="window.history.back();" type="">取 消</button>
-    <button class="btn btn-primary" onclick="saveBoard('measure');" type="">保 存</button>
+    <button class="btn btn-primary" onclick="saveBoard('measure');" type="">保 存</button>
 </div>
 <div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
 <script src="${ctx}/static/js/commonResultsBoard.js"></script>
