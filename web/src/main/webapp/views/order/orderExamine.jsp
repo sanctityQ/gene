@@ -36,8 +36,8 @@
 			<th data-options="field:'customerName',width:80,sortable:true">客户公司名称</th>
 			<th data-options="field:'contactsName',width:50,sortable:true">客户联系人</th>
 			<th data-options="field:'productNoMinToMax',width:80,sortable:true">生产编号</th>
-			<th data-options="field:'tbnTotal',width:80,sortable:true">碱基总数</th>
-			<th data-options="field:'status',width:80,sortable:true">状态</th>
+			<th data-options="field:'tbnTotal',width:40,sortable:true">碱基总数</th>
+			<th data-options="field:'status',width:70,sortable:true">状态</th>
 			<th data-options="field:'createTime',width:80,sortable:true">导入时间</th>
 			<th data-options="field:'modifyTime',width:80,sortable:true">修改时间</th>
 			<th data-options="field:'_operate',width:80,align:'center',formatter:formatOper">操作</th>

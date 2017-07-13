@@ -73,15 +73,18 @@ var ctx = '${ctx}';
 		<table id="bigToSmall" class="easyui-datagrid" data-options="fitColumns:true,singleSelect: true,striped:true,method: 'get'">
 		<thead>
 			<tr>
-				<th data-options="field:'productNo',width:80,sortable:true,editor:'text'">生产编号</th>
+				<th data-options="field:'productNo',width:90,sortable:true,editor:'text'">生产编号</th>
 				<th data-options="field:'primeName',width:80,sortable:true,editor:'text'">引物名称</th>
-				<th data-options="field:'geneOrder',width:80,sortable:true,editor:'text'">序列</th>
-				<th data-options="field:'tbn',width:80,sortable:true,editor:'text'">碱基数</th>
-				<th data-options="field:'purifyType',width:80,sortable:true,editor:'text'">纯化方式</th>
-				<th data-options="field:'modiPrice',width:80,sortable:true,editor:'text'">修饰价格</th>
-				<th data-options="field:'baseVal',width:80,sortable:true,editor:'text'">碱基单价</th>
-				<th data-options="field:'purifyVal',width:80,sortable:true,editor:'text'">纯化价格</th>
-				<th data-options="field:'totalVal',width:80,sortable:true,editor:'text'">总价格</th>
+				<th data-options="field:'geneOrder',width:100,sortable:true,editor:'text'">序列</th>
+				<th data-options="field:'tbn',width:40,sortable:true,editor:'text'">碱基数</th>
+				<th data-options="field:'purifyType',width:50,sortable:true,editor:'text'">纯化方式</th>
+				<th data-options="field:'midi',width:120,sortable:true,editor:'text'">修饰类型</th>
+				<th data-options="field:'modiPrice',width:50,sortable:true,editor:'text'">修饰价格</th>
+				<th data-options="field:'odTotal',width:40,sortable:true,editor:'text'">OD总量</th>
+				<th data-options="field:'odTB',width:40,sortable:true,editor:'text'">OD/管</th>
+				<th data-options="field:'baseVal',width:50,sortable:true,editor:'text'">碱基单价</th>
+				<th data-options="field:'purifyVal',width:50,sortable:true,editor:'text'">纯化价格</th>
+				<th data-options="field:'totalVal',width:50,sortable:true,editor:'text'">总价格</th>
 				<th data-options="field:'fromProductNo',width:80,hidden:true,sortable:true,editor:'text'">来源生产编号</th>
 			</tr>
 		</thead>
