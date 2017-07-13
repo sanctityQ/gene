@@ -9,7 +9,6 @@ import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
 import org.one.gene.domain.entity.PrimerProduct;
-import org.one.gene.domain.entity.PrimerValueType;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.entity.User;
 import org.one.gene.domain.service.SynthesisService;

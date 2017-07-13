@@ -3,7 +3,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="msg" uri="http://mvc.one.sinosoft.com/validation/msg" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
-<c:set var="boardNo" value="${param.boardNo}"/>
+<% 
+String boardNoStr = new String(request.getParameter("boardNo").getBytes("ISO-8859-1"),"UTF-8");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,8 +23,8 @@ var boardNo = ${boardNo};
 	<table width="100%">
 		<tr>
 			<td align="right" width="100">合成板名称:</td>
-			<td>${boardNo}</td>
-			<input type="hidden" id="boardNo" name="boardNo" value="${boardNo}"/>
+			<td><%=boardNoStr%></td>
+			<input type="hidden" id="boardNo" name="boardNo" value="<%=boardNoStr%>"/>
 		</tr>
         <tr>
             <td colspan="4" height="10"></td>
@@ -41,8 +43,8 @@ var boardNo = ${boardNo};
     </div>
 </div>
 <div class="tools_bar tabbing">
-    <button class="btn" onclick="window.history.back();" type="">取 消</button>
-    <button class="btn btn-primary" onclick="saveBoard('pack');" type="">保 存</button>
+    <button class="btn" onclick="window.history.back();" type="">取 消</button>
+    <button class="btn btn-primary" onclick="saveBoard('pack');" type="">保 存</button>
 </div>
 <div id="inputCause" class="easyui-dialog" data-options="closed:true"><textarea class="inp_text" style="width: 376px;height: 102px;"></textarea></div>
 <script src="${ctx}/static/js/commonResultsBoard.js"></script>

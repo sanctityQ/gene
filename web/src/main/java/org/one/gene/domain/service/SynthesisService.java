@@ -12,9 +12,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,11 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.shiro.SecurityUtils;
 import org.one.gene.domain.entity.Board;
 import org.one.gene.domain.entity.BoardHole;
@@ -38,14 +34,11 @@ import org.one.gene.domain.entity.PackTableHoleConfig;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.PrimerProductOperation;
 import org.one.gene.domain.entity.PrimerProductValue;
-import org.one.gene.domain.entity.PrimerType;
 import org.one.gene.domain.entity.User;
 import org.one.gene.domain.entity.PrimerType.PrimerStatusType;
 import org.one.gene.domain.entity.PrimerType.PrimerOperationType;
 import org.one.gene.domain.entity.PrimerValueType;
 import org.one.gene.domain.service.account.ShiroDbRealm.ShiroUser;
-import org.one.gene.instrument.persistence.DynamicSpecifications;
-import org.one.gene.instrument.persistence.SearchFilter;
 import org.one.gene.repository.BoardHoleRepository;
 import org.one.gene.repository.BoardRepository;
 import org.one.gene.repository.OrderRepository;
@@ -58,12 +51,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.common.collect.Maps;
 import com.sinosoft.one.mvc.web.Invocation;
 
 //Spring Bean的标识.
@@ -1222,7 +1213,7 @@ public class SynthesisService {
 				
 				if(boardHoleMap.get(holeNo) != null){
 					primerProduct = (PrimerProduct)boardHoleMap.get(holeNo);
-					productNo = primerProduct.getProductNo();
+					measureVolume = primerProduct.getProductNo();
 					
 					//纯化，不包括OPC 才显示
 					if (!"OPC".equals(primerProduct.getPurifyType())
@@ -1256,6 +1247,10 @@ public class SynthesisService {
 							
 							//计算出补水体积，直接存到数据库中。保留整数，四舍五入
 							//液体的 补水体积公式是：=nmole/OD数据*95*（测量值/15）*1000/浓度数据-100
+							//浓度数据是10 时，按照15计算
+							if(primerProduct.getDensity()==10){
+								primerProduct.setDensity(15);
+							}
 							int volume =  new BigDecimal(nmoleOD*95*(measure.doubleValue()/15)*1000/primerProduct.getDensity()-100).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();  ;
 							
 							primerProduct.setVolume(volume);
