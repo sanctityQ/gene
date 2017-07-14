@@ -26,24 +26,29 @@ define(function(require, exports, module) {
 
   //引物名称与序列唯一性检测
   var getUniqueForCheck = function(dataList) {
+    //重置
+    toCheckUniqueForPrimerName = {};
+    toCheckUniqueForSequence = {};
+
     $.each(dataList, function(index) {
       var item = dataList[index];
       if (!dataList[index].isEmptyRow) {
         var primerName = item.PrimerName || '';
         var sequence = item.Sequence ? '' : item.Sequence.toUpperCase();
 
-        if (primerName.length === 0) {
-          toCheckUniqueForPrimerName[primerName] = true;
+        var checkPrimerNameval = toCheckUniqueForPrimerName[primerName];
+        var checkSequenceval = toCheckUniqueForSequence[sequence];
+
+        if (primerName.length === 0 || !checkPrimerNameval) {
+          toCheckUniqueForPrimerName[primerName] = index + 1;
         } else {
-          var value = toCheckUniqueForPrimerName[primerName];
-          toCheckUniqueForPrimerName[primerName] = !value ? index + 1 : [value,  index + 1].join();
+          toCheckUniqueForPrimerName[primerName] = [checkPrimerNameval,  index + 1].join();
         }
 
-        if (sequence.length === 0) {
-          toCheckUniqueForSequence[sequence] = true;
+        if (sequence.length === 0 || !checkSequenceval) {
+          toCheckUniqueForSequence[sequence] = index + 1;;
         } else {
-          var value = toCheckUniqueForSequence[sequence];
-          toCheckUniqueForSequence[sequence] = !value ? index + 1 : [value,  index + 1].join();
+          toCheckUniqueForSequence[sequence] = [checkSequenceval,  index + 1].join();
         }
       }
     });
@@ -135,6 +140,7 @@ define(function(require, exports, module) {
   //**序列***//
   var seqValidator = function(sequence, index, cell, updater) {
     var maxSequenceLen = 250;
+    var minSequenceLen = 5;
     var col = 4;
 
     //不为空
@@ -148,6 +154,17 @@ define(function(require, exports, module) {
       });
     }
 
+    //校验序列的最小长度
+    if (sequence.length < minSequenceLen) {
+      comment = DataPageInfo.HandsonTableValidation.UI_OLIGOOrder_SeqMinLen;
+      updater.push({
+        row: index,
+        col: col,
+        renderer: renderer.yellowRenderer,
+        comment: { value: comment.replace('{0}', minSequenceLen) }
+      });
+    }
+
     //验证不超过最大长度
     if (sequence.length > maxSequenceLen) {
       comment = DataPageInfo.HandsonTableValidation.UI_OLIGOOrder_Validation_SequenceLength;
@@ -156,6 +173,18 @@ define(function(require, exports, module) {
         col: col,
         renderer: renderer.yellowRenderer,
         comment: { value: comment.replace('{0}', maxSequenceLen) }
+      });
+    }
+
+    //非法字符校验
+    var invalidResult = sequence.replace(/[ATGCMRWSYKVHDBN]/ig, '');
+    if (invalidResult.length) {
+      comment = DataPageInfo.HandsonTableValidation.UI_OLIGOOrder_Validation_InvalidCharacter;
+      updater.push({
+        row: index,
+        col: col,
+        renderer: renderer.yellowRenderer,
+        comment: { value: comment.replace('{0}', invalidResult) }
       });
     }
   };
@@ -193,7 +222,7 @@ define(function(require, exports, module) {
         var col = 0;
 
         primerNameValidator(primerName, index, cell, updater);
-        primerCombineSeqValidator(primerName, sequence, index, updater, cells);
+        // primerCombineSeqValidator(primerName, sequence, index, updater, cells);
         seqValidator(sequence, index, cell, updater);
       }
     });
