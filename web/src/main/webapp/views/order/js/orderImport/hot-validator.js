@@ -190,10 +190,118 @@ define(function(require, exports, module) {
   };
 
   //**需求量***//
+  var quantityValidator = function(quantity, index, cell, updater) {
+    var maxForODTube = 999999999;
+    var col = 6;
+    var synthesisScaleUS = ['25', '50'];
+    var synthesisScale = ['25', '50', '100'];
+
+    //长度限制
+    if (+quantity > maxForODTube) {
+      comment = DataPageInfo.HandsonTableValidation.UI_OLI_ODTubeLimit;
+      updater.push({
+        row: index,
+        col: col,
+        renderer: renderer.yellowRenderer,
+        comment: { value: comment.replace('{0}', maxForODTube) }
+      });
+    }
+
+    //需求量必须为正整数
+    if (!quantity || !(+quantity > 0)) {
+      comment = DataPageInfo.HandsonTableValidation.UI_OLIGOOrder_Validation_SynthesisScale;
+      updater.push({
+        row: index,
+        col: col,
+        renderer: renderer.yellowRenderer,
+        comment: { value: comment }
+      });
+    }
+
+    //todo: 具体规则不明确
+    // if ($.inArray(quantity, synthesisScaleUS) === -1) {
+    //   comment = DataPageInfo.HandsonTableValidation.UI_OLIGOOrder_Scale_In;
+    //   updater.push({
+    //     row: index,
+    //     col: col,
+    //     renderer: renderer.yellowRenderer,
+    //     comment: { value: comment }
+    //   });
+    // }
+  };
 
   //**分管总数***//
+  var tubeValidator = function(tubes, quantity, index, cell, updater) {
+    var maxForODTube = 999999999;
+    var col = 7;
+    var isNmole = +$('input:radio[name="IsNmole"]:checked').val() === 1;
+
+    //长度限制
+    if (+tubes > maxForODTube) {
+      comment = DataPageInfo.HandsonTableValidation.UI_OLI_ODTubeLimit;
+      updater.push({
+        row: index,
+        col: col,
+        renderer: renderer.yellowRenderer,
+        comment: { value: comment.replace('{0}', maxForODTube) }
+      });
+    }
+
+    //分管总数必须为正整数
+    if (!tubes || !(+tubes > 0)) {
+      comment = DataPageInfo.HandsonTableValidation.UI_OLIGOOrder_Validation_TubeQty;
+      updater.push({
+        row: index,
+        col: col,
+        renderer: renderer.yellowRenderer,
+        comment: { value: comment }
+      });
+    }
+
+    //2nmol及以下的需求量，无法分装
+    if (isNmole) {
+      if ((!quantity || +quantity <= 2) && tubes > 1) {
+        comment = DataPageInfo.HandsonTableValidation.UI_OLIGOOrder_NomolTube;
+        updater.push({
+          row: index,
+          col: col,
+          renderer: renderer.yellowRenderer,
+          comment: { value: comment }
+        });
+      }
+    }
+  };
 
   //**纯化方式***//
+  var purityTypeValidator = function(purityType, baseNumber, index, cell, updater) {
+    var purigyTypeT = ["DSL", "HPLC", "tPAGE", "hPAGE"];
+    var purigyTypeH = ["DSL", "HPLC", "hPAGE"];
+    var purigyTypeUS = ["Desalted"];
+    var col = 8;
+
+    //纯化类型方式校验
+    if (baseNumber <= 60) {
+      if (!!purityType && $.inArray(purityType, purigyTypeT) === -1) {
+        comment = DataPageInfo.HandsonTableValidation.UI_OLIGOOrder_Purification_In;
+        updater.push({
+          row: index,
+          col: col,
+          renderer: renderer.yellowRenderer,
+          comment: { value: comment }
+        });
+      }
+    } else {
+      if (!!purityType && $.inArray(purityType, purigyTypeH) === -1) {
+        comment = DataPageInfo.HandsonTableValidation.UI_OLIGOOrder_Purification_In;
+        updater.push({
+          row: index,
+          col: col,
+          renderer: renderer.yellowRenderer,
+          comment: { value: comment }
+        });
+      }
+    }
+  };
 
   //**5'修饰***//
 
@@ -224,6 +332,9 @@ define(function(require, exports, module) {
         primerNameValidator(primerName, index, cell, updater);
         // primerCombineSeqValidator(primerName, sequence, index, updater, cells);
         seqValidator(sequence, index, cell, updater);
+        quantityValidator(quantity, index, cell, updater);
+        tubeValidator(tubes, quantity, index, cell, updater);
+        purityTypeValidator(purityType, baseNumber, index, cell, updater);
       }
     });
 
