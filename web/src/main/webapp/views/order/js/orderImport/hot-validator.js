@@ -304,11 +304,55 @@ define(function(require, exports, module) {
   };
 
   //**5'修饰***//
+  var fiveModyingValidator = function (mFive, index, cell, updater) {
+    var fiveModying = ["", "5'-AminolinkerC6", "5'-Phosphate", "5'-Thiol-C6 S-S", "5'-Biotin", "5'-Digoxigenin", "5'-FAM",
+      "5'-HEX", "5'-TET", "5'-JOE", "5'-ROX", "5'-TAMRA", "5'-CY-3", "5'-CY-5", "5'-Aminolinker C12", "5'-Biotin TEG"];
+    var col = 9;
+
+    if ($.inArray(mFive, fiveModying) === -1) {
+      comment = DataPageInfo.HandsonTableValidation.OLIORDER_InvalidMP;
+      updater.push({
+        row: index,
+        col: col,
+        renderer: renderer.yellowRenderer,
+        comment: { value: comment }
+      });
+    }
+  };
 
   //**3'修饰***//
+  var threeModyingValidator = function (mThree, index, cell, updater) {
+    var threeModying = ["", "3'-AminolinkerC7", "3'-Phosphate", "3'-Thiol-C3 S-S", "3'-Biotin", "3'-Digoxigenin", "3'-BHQ1", "3'-BHQ2", "3'-CY-3", "3'-CY-5",
+      "3'-Dabcyl", "3'-JOE", "3'-ROX", "3'-FAM", "3'-TAMRA", "3'-Biotin TEG", "3'-Eclipse", "3'-MGB", "3'-Cholesteryl"];
+    var col = 10;
+
+    if ($.inArray(mThree, threeModying) === -1) {
+      comment = DataPageInfo.HandsonTableValidation.OLIORDER_InvalidMP;
+      updater.push({
+        row: index,
+        col: col,
+        renderer: renderer.yellowRenderer,
+        comment: { value: comment }
+      });
+    }
+  };
 
   //**中间修饰***//
+  var otherModyingValidator = function (mOther, index, cell, updater) {
+    var otherModying = ["", "dU", "dI", "Phosphorothioate", "dT-Aminolinker", "dU+dI", "dU+Phosphorothioate", "dU+dT-Aminolinker",
+      "dI+Phosphorothioate", "dI+dT-Aminolinker", "Phosphorothioate+dT-Aminolinker"];
+    var col = 11;
 
+    if ($.inArray(mOther, otherModying) === -1) {
+      comment = DataPageInfo.HandsonTableValidation.OLIORDER_InvalidMP;
+      updater.push({
+        row: index,
+        col: col,
+        renderer: renderer.yellowRenderer,
+        comment: { value: comment }
+      });
+    }
+  };
 
   exports.validationForDraft = function() {
     var cells = hot.getSourceData();
@@ -327,7 +371,9 @@ define(function(require, exports, module) {
         var quantity = cell.Quantity;
         var tubes = cell.Tubes;
         var purityType = cell.PurityType || '';
-        var col = 0;
+        var mFive = cell.MFive || '';
+        var mThree = cell.MThree || '';
+        var mOther = cell.MOther || '';
 
         primerNameValidator(primerName, index, cell, updater);
         // primerCombineSeqValidator(primerName, sequence, index, updater, cells);
@@ -335,6 +381,9 @@ define(function(require, exports, module) {
         quantityValidator(quantity, index, cell, updater);
         tubeValidator(tubes, quantity, index, cell, updater);
         purityTypeValidator(purityType, baseNumber, index, cell, updater);
+        fiveModyingValidator(mFive, index, cell, updater);
+        threeModyingValidator(mThree, index, cell, updater);
+        otherModyingValidator(mOther, index, cell, updater);
       }
     });
 

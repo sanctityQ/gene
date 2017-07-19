@@ -97,7 +97,7 @@ define(function(require, exports, module) {
         data.colid = "olgMThree";
         data.prop = "MThree";
         data.fillcopy = true;
-        data.colName = UI_OLI_ORDER_5MODIFICATION;
+        data.colName = UI_OLI_ORDER_3MODIFICATION;
         data.placeholder = "3'-Phosphate";
         break;
       case 11:
