@@ -29,7 +29,7 @@ public interface PrimerProductRepository extends PagingAndSortingRepository<Prim
 			+ "#if(:tbn2 != '') { and pp.`tbn` <= :tbn2 }"
 			+ "#if(:odTotal1 != '') { and pp.`od_total` >= :odTotal1 }"
 			+ "#if(:odTotal2 != '') { and pp.`od_total` <= :odTotal2 }"
-			+ "#if(:liquidFlag == '1') { and pp.`liquid` is null }"
+			+ "#if(:liquidFlag == '1') { and ( pp.`liquid` is null or pp.`liquid`='' ) }"
 			+ "#if(:liquidFlag == '2') { and pp.`liquid` !='' }"			
 			+ "#if(:modiFlag == '0') { and ( pp.`modi_five_type` ='' and pp.`modi_three_type` ='' and pp.`modi_mid_type` ='' and pp.`modi_spe_type` ='')  order by pp.`product_no` }"
 			+ "#if(:modiFlag == '1') { and ( pp.`modi_five_type` !='' or pp.`modi_three_type` !='' or pp.`modi_mid_type` !='' or pp.`modi_spe_type` !='') " 
