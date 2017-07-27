@@ -393,6 +393,14 @@ public class PrimerProduct implements java.io.Serializable {
 	
 	@Transient
     public BigDecimal getTb() {
+		if(this.getPrimerProductValues()!=null){
+			for (PrimerProductValue primerProductValue : this.getPrimerProductValues()) {
+				PrimerValueType type = primerProductValue.getType();
+				if(type.equals(PrimerValueType.tb)){//管数
+					tb = primerProductValue.getValue();
+				}
+			}
+		}
 		return tb;
 	}
 
