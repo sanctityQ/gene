@@ -684,7 +684,9 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 //        	BigDecimal bb = cv.value(primerProduct).multiply(new BigDecimal("7300"));
 //        	BigDecimal cc = gv.value(primerProduct).multiply(new BigDecimal("11700"));
 //        	BigDecimal dd = tv.value(primerProduct).multiply(new BigDecimal("8800"));
-//        	BigDecimal ee = 
+//        	BigDecimal ee = tv.value(primerProduct).multiply(new BigDecimal("10800"));
+        	
+//        	BigDecimal hh = 
 //					(av.value(primerProduct).multiply(new BigDecimal("15400")))
 //					.add(cv.value(primerProduct).multiply(new BigDecimal("7300")))
 //					.add(gv.value(primerProduct).multiply(new BigDecimal("11700")))
@@ -692,10 +694,11 @@ public enum PrimerValueType implements CalculatePrimerValue, PrimerType.TypeDesc
 //					;
         	
 			return new BigDecimal("1000000").divide(
-					(av.value(primerProduct).multiply(new BigDecimal("15400")))
-					.add(cv.value(primerProduct).multiply(new BigDecimal("7300")))
+					(    av.value(primerProduct).multiply(new BigDecimal("15400")))
+					.add(cv.value(primerProduct).multiply( new BigDecimal("7300")))
 					.add(gv.value(primerProduct).multiply(new BigDecimal("11700")))
-					.add(tv.value(primerProduct).multiply(new BigDecimal("8800"))),2, BigDecimal.ROUND_HALF_UP
+					.add(tv.value(primerProduct).multiply( new BigDecimal("8800")))
+					.add(nv.value(primerProduct).multiply(new BigDecimal("10800"))),2, BigDecimal.ROUND_HALF_UP
 					);
         }
     };
