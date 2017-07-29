@@ -27,6 +27,8 @@
 					<div class="control-input fl">
 						<select name="" id="" class="form-control" disabled="disabled">
 							<option value="Dry">干粉</option>
+							<option value="Wet">液体</option>
+							<option value="Mix">Mix</option>
 						</select>
 					</div>
 				</div>
@@ -35,14 +37,14 @@
 						<i class="icon-question-sign icon-help"></i>需求量单位<span class="field-required">*</span>:
 					</label>
 					<div class="control-input fl">
-						<label class="radio-inline">
-							<input type="radio" checked="checked" name="IsNmole" value="0">
-							OD
-						</label>
-						<lable class="radio-inline">
-							<input type="radio" checked="checked" name="IsNmole" value="1">
-							nmole
-						</lable>
+						<div class="radio-group">
+							<input type="radio" checked="checked" id="OD" name="IsNmole" value="0">
+							<label class="radio-inline" for="OD">OD</label>
+						</div>
+						<div class="radio-group">
+							<input type="radio" checked="checked" id="nmole" name="IsNmole" value="1">
+							<label class="radio-inline" for="nmole">nmole</label>
+						</div>
 					</div>
 				</div>
 				<div class="unit-wrapper form-group clearfix">

@@ -126,10 +126,15 @@ input, textarea, button {
     font-size: 14px;
     font-weight: bold;
   }
-  .radio-inline {
+  .radio-group {
     float: left;
-    display: inline-block;
     width: 50%;
+    &:last-child {
+      text-align: right;
+    }
+  }
+  .radio-inline {
+    padding-left: 5px;
     line-height: 26px;
   }
   .radio-inline+.radio-inline, .checkbox-inline+.checkbox-inline {
