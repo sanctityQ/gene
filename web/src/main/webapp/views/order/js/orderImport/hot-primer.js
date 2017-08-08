@@ -17,7 +17,7 @@ define(function(require, exports, module) {
     PlateName: '',
     OrderID: '',
     PrimerID: '',
-    PrimerIndex: 1,
+    PrimerIndex: null,
     Well: '',
     PrimerName: null,
     PrimerStatus: 0,

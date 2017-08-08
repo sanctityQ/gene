@@ -175,6 +175,7 @@ define(function(require, exports, module) {
           $(this).removeClass('empty-circle').removeData('cell-status');
         } else {
           $(this).addClass('empty-circle').data('cell-status', 'empty');
+          self.$platePreview.trigger('mark:empty', { tag: $(this).data('tag'), index: $(this).parent().index() });
         }
       }).on('toggleEditable', '.tb-body>.tb-row .circle', function() {
         $(this).toggleClass('editable-circle');

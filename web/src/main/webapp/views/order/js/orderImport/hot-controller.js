@@ -70,12 +70,28 @@ define(function(require, exports, module) {
         hot.selectCell(preAllLen + col - 1, 0);
       }
     },
+    //设置单元格只读
+    setReadOnly: function() {
+      hot.updateSettings({
+        cells: function(row, col, prop) {
+          var cellProperties = {};
+          var item = hot.getSourceData()[row];
+
+          if (item.Status === 5) {
+            cellProperties.readOnly = true;
+          }
+
+          return cellProperties;
+        }
+      })
+    },
     //1.创建空行表格后，填充默认数据
     //2.更改方向后
     fillData: function(amount, plateId) {
       var isPlateMode = plateCtrler.isPlateMode();
       var direction = plateCtrler.getDirection();
       var rowsPrefix = sngr.plateRows;
+      var count = 0;
 
       plateId = plateId || this.plateId || 1;
       this.amount = amount || this.amount || 0;
@@ -90,7 +106,7 @@ define(function(require, exports, module) {
           var col = (index + 1) % 12;
 
           _.extend(item, {
-            PrimerIndex: index + 1,
+            PrimerIndex: item.Status === 5 ? '' : ++count,
             Well: row + ':' + (col || 12),
             CustPlateID: plateId
           });
@@ -108,7 +124,7 @@ define(function(require, exports, module) {
           var col = Math.ceil((index + 1) / 8);
 
           _.extend(item, {
-            PrimerIndex: index + 1,
+            PrimerIndex: item.Status === 5 ? '' : ++count,
             Well: row + ':' + col,
             CustPlateID: plateId
           });
@@ -123,12 +139,29 @@ define(function(require, exports, module) {
     setCommentAtCell: function(row, col, comment) {
       this.commentsPlugin.setCommentAtCell(row, col, comment);
     },
+    //标记空管，更新表格数据，显示空管行
+    markEmpty: function(event, data) {
+      var index = data.index;
+      var emptyWell = Object.assign({}, primer);
+
+      emptyWell.Status = sngr.SampleStatus.MARKEDEMPTY;
+      emptyWell.PrimerIndex = '';
+      emptyWell.PrimerName = 'EMPTY';
+      emptyWell.IsMarkedEmpty = true;
+
+      this.dataList.splice(index, 0, emptyWell);
+
+      this.fillData(this.dataList.length, null);
+
+      this.setReadOnly();
+    },
     bindEvent: function() {
       plateCtrler.proxy.$switchType.bind('changed:type', this.showOrhidenColumn);
       plateCtrler.proxy.$switchDirection.bind('changed:direction', function() {
         this.fillData();
       }.bind(this));
       plateCtrler.proxy.$platePreview.bind('click:circle', this.selectCell);
+      plateCtrler.proxy.$platePreview.bind('mark:empty', this.markEmpty.bind(this));
       plateCtrler.proxy.$plateChoice.bind('change:choice', this.onChangePlateChoice.bind(this));
       addTip();
 
