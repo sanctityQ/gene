@@ -1218,11 +1218,11 @@ public class SynthesisService {
 							
 						}else{
 
-							int    nmoleOD      = 0;//nmoleOD
+							double    nmoleOD      = 0.0;//nmoleOD
 							for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
 								PrimerValueType type = primerProductValue.getType();
 								if (type.equals(PrimerValueType.nmoleOD)) {// nmoleOD
-									nmoleOD = primerProductValue.getValue().intValue();
+									nmoleOD = primerProductValue.getValue().doubleValue();
 								}
 							}
 							
@@ -1238,8 +1238,9 @@ public class SynthesisService {
 //							}
 							
 							//计算出补水体积，直接存到数据库中
-							//液体的公式是：=nmole/OD数据*95*（测量值/15）*1000/浓度数据-100
-							int volume = (int) (nmoleOD*95*(measure.doubleValue()/15)*1000/primerProduct.getDensity()-100);
+							//液体的 补水体积公式是：=nmole/OD数据*95*（测量值/15）*1000/浓度数据-100
+							//保留整数，四舍五入
+							int volume =  new BigDecimal(nmoleOD*95*(measure.doubleValue()/15)*1000/primerProduct.getDensity()-100).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();  ;
 							
 							primerProduct.setVolume(volume);
 							//保存primer_product表数据

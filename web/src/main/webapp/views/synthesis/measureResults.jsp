@@ -20,7 +20,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 	<div class="content_box">
 	    <input type="hidden" id="operationType" name="operationType" value="measure"/>
 	    <input type="hidden" id="customerFlag" name="customerFlag" value="<%=customerFlag %>"/>
-		<h2>测值结果</h2>
+		<h2>测值结果</h2>
 		<div class="import_box">
 			<i class="icon-group"></i>请输入需要导入的板号。
 			<br />
