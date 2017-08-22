@@ -23,6 +23,9 @@ function makeBoard(url){
     for(var i = 0; i < rows.length; i++){
         var data = rows[i];
         ary.push(data.productNo);
+        if(i==95){
+        	break;
+        }
     }
     goToPage("/gene/views/synthesis/makeBoard.jsp?ary="+ary);
 }
