@@ -618,11 +618,11 @@ public class SynthesisService {
 			
 			//序列，如果是删除的，展现错误类型信息
 			if(bh.getStatus() == 0){
+				tableContext += primerProduct.getGeneOrderMidi().replaceAll("\\(\\*\\)", "\\*");
 				//3端修饰的引物序列，并在序列前自动加一个N
 				if (!"".equals(primerProduct.getModiThreeType())) {
 					tableContext += "N";
 				}
-				tableContext += primerProduct.getGeneOrderMidi().replaceAll("\\(\\*\\)", "\\*");
 			}else if(bh.getStatus() == 1){
 				tableContext += bh.getPrimerProductOperation().getTypeDesc();
 			}
@@ -1355,7 +1355,8 @@ public class SynthesisService {
 						board.setOperationType(boardHole.getPrimerProduct().getOperationType());// 板的状态赋值
 					}
 					
-				} else if ("1".equals(failFlag) || "2".equals(failFlag) || "3".equals(failFlag)) { // fail
+				} //1 失败，  2 重新合成 ，3 重新分装
+				else if ("1".equals(failFlag) || "2".equals(failFlag) || "3".equals(failFlag)) { // fail
 					
 					if ("3".equals(failFlag)) {
 						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.pack);//回到分装
@@ -1653,13 +1654,11 @@ public class SynthesisService {
         		String modiMidType  = pp.getModiMidType();
         		String modiSpeType  = pp.getModiSpeType();
     			
-        		String geneOrder = "";//序列
+        		String geneOrder = pp.getGeneOrderMidi().replaceAll("\\(\\*\\)", "\\*");//序列
 				//3端修饰的引物序列，并在序列前自动加一个N
 				if (!"".equals(modiThreeType)) {
 					geneOrder += "N";
 				}
-				geneOrder += pp.getGeneOrderMidi().replaceAll("\\(\\*\\)", "\\*");
-				
         		
         		if (!"".equals(modiFiveType) || !"".equals(modiThreeType) || !"".equals(modiMidType) || !"".equals(modiSpeType)) {
     				modiStr = "(";
