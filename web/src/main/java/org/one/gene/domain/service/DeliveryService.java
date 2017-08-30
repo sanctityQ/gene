@@ -609,7 +609,7 @@ public class DeliveryService {
 			
 			
 			for (CustomerContacts customerContacts : customer.getCustomerContactss()) {
-				if (customerContacts.getName().equals(customerContacts)) {
+				if (customerContacts.getName().equals(contactsName)) {
 					phoneNo = customerContacts.getPhoneNo();
 				}
 			}
