@@ -17,17 +17,29 @@ function gridUnCheck(rowIndex,rowData){
         makeBoard.attr('disabled','disabled');
     };
 }
-function exportFile(flag){
+function exportReports(){
     var rows = $('#productionData').datagrid('getSelections');
+    
+    if(rows.length>20){
+    	alert("选择的订单个数不能大于20个。");
+    	return;
+    }
     var orderNo = '';
     var ary = [];
     for(var i = 0; i < rows.length; i++){
         var data = rows[i];
-        orderNo = data.orderNo;
+        orderNo += data.orderNo;
+        if(i!=rows.length-1){
+        	orderNo += ",";
+        }
     }
-    document.form.action = "/gene/print/exportFile/"+orderNo+"/"+flag+"/";
+    //生成报告单 按钮置灰
+    $('#makeBoard').attr('disabled','disabled');
+    
+    document.form.action = "/gene/print/exportReports/"+orderNo+"/";
 	document.form.submit();
 }
+
 var getOrderInfos=function(){
     var win = $.messager.progress({
         title:'系统消息',

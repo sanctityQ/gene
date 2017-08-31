@@ -247,16 +247,26 @@ public class PrintController {
     
     
     /**
-     * 打印报告单
+     * 打印信封
      * @throws IOException 
      * */
-	@Post("exportFile/{orderNoStr}/{flag}/")
-	public void exportFile( @Param("flag") String flag,@Param("orderNoStr") String orderNo, Invocation inv) throws IOException {
+	@Post("exportEnvelope/{orderNoStr}/")
+	public void exportEnvelope(@Param("orderNoStr") String orderNo, Invocation inv) throws IOException {
     	
-		printService.exportFile(orderNo, flag, inv);
+		printService.exportEnvelope(orderNo, inv);
 
     }
 	
+    /**
+     * 打印报告单
+     * @throws IOException 
+     * */
+	@Post("exportReports/{orderNoStr}/")
+	public void exportReports(@Param("orderNoStr") String orderNo, Invocation inv) throws IOException {
+    	
+		printService.exportReports(orderNo, inv);
+
+    }
 	
 	
     

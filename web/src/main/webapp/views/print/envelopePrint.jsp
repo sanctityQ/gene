@@ -41,7 +41,7 @@
 		</tr>
 	</table>
     <div class="btn_group">
-        <button id="makeBoard" type="button" class="btn btn-primary" disabled onclick="exportFile('1')">打印信封</button>
+        <button id="makeBoard" type="button" class="btn btn-primary" disabled onclick="exportEnvelope()">打印信封</button>
     </div>
 </div>
 <table id="productionData" class="easyui-datagrid" data-options="striped:true,singleSelect: true,method: 'post',pagination:true,fitColumns:true,sortOrder:'desc',remoteSort:false">

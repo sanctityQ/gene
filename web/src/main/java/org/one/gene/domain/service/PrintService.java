@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -463,153 +465,164 @@ public class PrintService {
     }
 	
     /**
-     * 导出文件
-     * @throws IOException 
-     * */
-	public void exportFile( String orderNo,String flag, Invocation inv) throws IOException {
-		
-		if ("0".equals(flag)) {
-			exportReport(orderNo, inv);
-		} else if ("1".equals(flag)) {
-			exportEnvelope(orderNo, inv);
-		}
-	}
-	
-	
-    /**
      * 导出打印报告单文件
      * @throws IOException 
      * */
-	public void exportReport( String orderNo, Invocation inv) throws IOException {
+	public void exportReports( String orderNoStr, Invocation inv) throws IOException {
+
+		//分解订单号
+		String[] orderNos = orderNoStr.split(",");
+		int orderNum = orderNos.length;//订单个数
 		
-		Order order = orderRepository.findByOrderNo(orderNo);
-		String customerCode = order.getCustomerCode();//客户代码
-		String customerName = order.getCustomerName();//客户名称
-		String outOrderNo   = order.getOutOrderNo();//外部订单号
-		String customerPhoneNo = "";
-		String customerWebSite = "";
-		String customerEmail = "";
-		String customerFlag  ="";
-		Customer customer = customerRepository.findByCode(customerCode);
-		if(customer!=null){
-			customerPhoneNo = customer.getPhoneNo();
-			customerWebSite = customer.getWebSite();
-			customerEmail   = customer.getEmail();
-			customerFlag    = customer.getCustomerFlag();
+		String fileName = "批量支付文件" + ".zip";  
+		HttpServletResponse response = inv.getResponse();
+		OutputStream out = response.getOutputStream();
+		ZipOutputStream zipOutputStream = null;
+		
+		if( orderNum==1 ){//选择了一个订单
+			fileName = orderNos[0] + ".xls";  
+			response.setContentType("application/x-msdownload");
+			
+		}else{
+			fileName = "批量生成报告单" + ".zip";
+			response.setContentType("application/octet-stream ");
+			zipOutputStream = new ZipOutputStream(out);
 		}
-		String strFileName = order.getProductNoMinToMax()+".xls";
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
-        String currentTime = df.format(new Date());
-        String importTime = df.format(order.getCreateTime());
+        
+        response.setHeader("Connection", "close"); // 表示不能用浏览器直接打开  
+        response.setHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("GB2312"), "ISO8859-1"));  
+        response.setCharacterEncoding("UTF-8");
 		
-		BigDecimal odTotal = new BigDecimal(0);//一个生产编号的OD总量
-		BigDecimal tb = new BigDecimal(0);//一个生产编号的管数
-		BigDecimal odTube = new BigDecimal(0);//一个生产编号的od/tube
-		BigDecimal ugOD = new BigDecimal(0);//ug/OD
-		String purifyType = "";
-		String measureVolume = "";//测值体积
-		String density = "";//浓度(P)
-		
-		PrintLabel printLabel = new PrintLabel();
-		
-		List<PrintLabel> printLabels = new ArrayList<PrintLabel>();
-		for (PrimerProduct primerProduct : order.getPrimerProducts()) {
-			printLabel = new PrintLabel();
+		for (int o = 0; o < orderNos.length; o++) {
+			String orderNo = orderNos[o];
 			
-			purifyType    = primerProduct.getPurifyType();
-			measureVolume = primerProduct.getMeasureVolume()+"";
-			density       = primerProduct.getDensity()+"";
-			printLabel.setDensity(density);
-			if(!"".equals(density) && !"null".equals(density)){
-				printLabel.setMeasureVolume(measureVolume);
+			Order order = orderRepository.findByOrderNo(orderNo);
+			String customerCode = order.getCustomerCode();//客户代码
+			String customerName = order.getCustomerName();//客户名称
+			String outOrderNo   = order.getOutOrderNo();//外部订单号
+			String customerPhoneNo = "";
+			String customerWebSite = "";
+			String customerEmail = "";
+			String customerFlag  ="";
+			Customer customer = customerRepository.findByCode(customerCode);
+			if(customer!=null){
+				customerPhoneNo = customer.getPhoneNo();
+				customerWebSite = customer.getWebSite();
+				customerEmail   = customer.getEmail();
+				customerFlag    = customer.getCustomerFlag();
 			}
-
-			// 生产编号
-			if (!"".equals(primerProduct.getProductNo())) {
-				printLabel.setProductNo(primerProduct.getProductNo());
-			} else {
-				printLabel.setProductNo(primerProduct.getOutProductNo());
-			}
-
-			printLabel.setPrimeName(primerProduct.getPrimeName());// 引物名称
-			printLabel.setOrderNo(primerProduct.getOrder().getOrderNo());// 订单号
-			printLabel.setOutOrderNo(outOrderNo);//外部订单号
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+			String currentTime = df.format(new Date());
+			String importTime = df.format(order.getCreateTime());
 			
-			//处理 引物序列(原始) ，如果长度30个字符回车一次
-			String geneOrderMidi = primerProduct.getGeneOrderMidi();
-			String newGeneOrderMidi = "";
-			int perNum = 30;
-			int num = new BigDecimal(geneOrderMidi.length()).divide(new BigDecimal(perNum), 0, BigDecimal.ROUND_UP).intValue();
-			if (num == 1) {
-				newGeneOrderMidi = geneOrderMidi;
-			} else {
-				for (int a = 0; a < num; a++) {
-					if (geneOrderMidi.length() > perNum) {
-						newGeneOrderMidi += geneOrderMidi.substring(0, perNum) + "\r\n";
-						geneOrderMidi = geneOrderMidi.substring(perNum);
-					} else {
-						newGeneOrderMidi += geneOrderMidi;
-						geneOrderMidi = "";
+			BigDecimal odTotal = new BigDecimal(0);//一个生产编号的OD总量
+			BigDecimal tb = new BigDecimal(0);//一个生产编号的管数
+			BigDecimal odTube = new BigDecimal(0);//一个生产编号的od/tube
+			BigDecimal ugOD = new BigDecimal(0);//ug/OD
+			String purifyType = "";
+			String measureVolume = "";//测值体积
+			String density = "";//浓度(P)
+			
+			PrintLabel printLabel = new PrintLabel();
+			
+			List<PrintLabel> printLabels = new ArrayList<PrintLabel>();
+			for (PrimerProduct primerProduct : order.getPrimerProducts()) {
+				printLabel = new PrintLabel();
+				
+				purifyType    = primerProduct.getPurifyType();
+				measureVolume = primerProduct.getMeasureVolume()+"";
+				density       = primerProduct.getDensity()+"";
+				printLabel.setDensity(density);
+				if(!"".equals(density) && !"null".equals(density)){
+					printLabel.setMeasureVolume(measureVolume);
+				}
+				
+				// 生产编号
+				if (!"".equals(primerProduct.getProductNo())) {
+					printLabel.setProductNo(primerProduct.getProductNo());
+				} else {
+					printLabel.setProductNo(primerProduct.getOutProductNo());
+				}
+				
+				printLabel.setPrimeName(primerProduct.getPrimeName());// 引物名称
+				printLabel.setOrderNo(primerProduct.getOrder().getOrderNo());// 订单号
+				printLabel.setOutOrderNo(outOrderNo);//外部订单号
+				
+				//处理 引物序列(原始) ，如果长度30个字符回车一次
+				String geneOrderMidi = primerProduct.getGeneOrderMidi();
+				String newGeneOrderMidi = "";
+				int perNum = 30;
+				int num = new BigDecimal(geneOrderMidi.length()).divide(new BigDecimal(perNum), 0, BigDecimal.ROUND_UP).intValue();
+				if (num == 1) {
+					newGeneOrderMidi = geneOrderMidi;
+				} else {
+					for (int a = 0; a < num; a++) {
+						if (geneOrderMidi.length() > perNum) {
+							newGeneOrderMidi += geneOrderMidi.substring(0, perNum) + "\r\n";
+							geneOrderMidi = geneOrderMidi.substring(perNum);
+						} else {
+							newGeneOrderMidi += geneOrderMidi;
+							geneOrderMidi = "";
+						}
 					}
 				}
-			}
-			printLabel.setGeneOrder(newGeneOrderMidi);//
-			
-			// 修饰
-			String midi = "";
-			if (!"".equals(primerProduct.getModiFiveType())) {
-				midi += "5'"+primerProduct.getModiFiveType() + ",";
-			}
-			if (!"".equals(primerProduct.getModiMidType())) {
-				midi += primerProduct.getModiMidType() + ",";
-			}
-			if (!"".equals(primerProduct.getModiSpeType())) {
-				midi += primerProduct.getModiSpeType() + ",";
-			}
-			if (!"".equals(primerProduct.getModiThreeType())) {
-				midi += "3'"+primerProduct.getModiThreeType() + ",";
-			}
-			if (!"".equals(midi)) {
-				midi = "(" + midi.substring(0, midi.length() - 1) + ")";
-				printLabel.setMidi(midi);
-			}
-
-			for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
-				PrimerValueType type = primerProductValue.getType();
-				if (type.equals(PrimerValueType.odTotal)) {// OD总量
-					odTotal = primerProductValue.getValue();
-					printLabel.setOdTotal(primerProductValue.getValue());
-				} else if (type.equals(PrimerValueType.odTB)) {// OD/TB
-					odTube = primerProductValue.getValue();
-					printLabel.setOdTB(primerProductValue.getValue());
-				} else if (type.equals(PrimerValueType.nmolTotal)) {// NUML总量
-					printLabel.setNmolTotal(primerProductValue.getValue());
-				} else if (type.equals(PrimerValueType.nmolTB)) {// NUML/TB
-					printLabel.setNmolTB(primerProductValue.getValue());
-					printLabel.setPmole(new BigDecimal(10).multiply(primerProductValue.getValue()));// 加水量
-				} else if (type.equals(PrimerValueType.baseCount)) {// 碱基数
-					printLabel.setTbn(primerProductValue.getValue());
-				} else if (type.equals(PrimerValueType.MW)) {// MW
-					printLabel.setMw(primerProductValue.getValue());
-				} else if (type.equals(PrimerValueType.TM)) {// TM
-					printLabel.setTm(primerProductValue.getValue());
-				} else if (type.equals(PrimerValueType.mv)) {// MV
-					printLabel.setMv(primerProductValue.getValue());
-				} else if (type.equals(PrimerValueType.GC)) {// GC
-					printLabel.setGc(primerProductValue.getValue());
-				} else if (type.equals(PrimerValueType.μgOD)) {//μg/OD='nmol/tube' * 'MW' /1000
-					ugOD = primerProductValue.getValue();
-					printLabel.setUgOD(primerProductValue.getValue());
-				} else if (type.equals(PrimerValueType.ODμmol)) {
-					printLabel.setOdμmol(primerProductValue.getValue());
-				} else if(type.equals(PrimerValueType.tb)){
-					tb = primerProductValue.getValue();
+				printLabel.setGeneOrder(newGeneOrderMidi);//
+				
+				// 修饰
+				String midi = "";
+				if (!"".equals(primerProduct.getModiFiveType())) {
+					midi += "5'"+primerProduct.getModiFiveType() + ",";
 				}
+				if (!"".equals(primerProduct.getModiMidType())) {
+					midi += primerProduct.getModiMidType() + ",";
+				}
+				if (!"".equals(primerProduct.getModiSpeType())) {
+					midi += primerProduct.getModiSpeType() + ",";
+				}
+				if (!"".equals(primerProduct.getModiThreeType())) {
+					midi += "3'"+primerProduct.getModiThreeType() + ",";
+				}
+				if (!"".equals(midi)) {
+					midi = "(" + midi.substring(0, midi.length() - 1) + ")";
+					printLabel.setMidi(midi);
+				}
+				
+				for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
+					PrimerValueType type = primerProductValue.getType();
+					if (type.equals(PrimerValueType.odTotal)) {// OD总量
+						odTotal = primerProductValue.getValue();
+						printLabel.setOdTotal(primerProductValue.getValue());
+					} else if (type.equals(PrimerValueType.odTB)) {// OD/TB
+						odTube = primerProductValue.getValue();
+						printLabel.setOdTB(primerProductValue.getValue());
+					} else if (type.equals(PrimerValueType.nmolTotal)) {// NUML总量
+						printLabel.setNmolTotal(primerProductValue.getValue());
+					} else if (type.equals(PrimerValueType.nmolTB)) {// NUML/TB
+						printLabel.setNmolTB(primerProductValue.getValue());
+						printLabel.setPmole(new BigDecimal(10).multiply(primerProductValue.getValue()));// 加水量
+					} else if (type.equals(PrimerValueType.baseCount)) {// 碱基数
+						printLabel.setTbn(primerProductValue.getValue());
+					} else if (type.equals(PrimerValueType.MW)) {// MW
+						printLabel.setMw(primerProductValue.getValue());
+					} else if (type.equals(PrimerValueType.TM)) {// TM
+						printLabel.setTm(primerProductValue.getValue());
+					} else if (type.equals(PrimerValueType.mv)) {// MV
+						printLabel.setMv(primerProductValue.getValue());
+					} else if (type.equals(PrimerValueType.GC)) {// GC
+						printLabel.setGc(primerProductValue.getValue());
+					} else if (type.equals(PrimerValueType.μgOD)) {//μg/OD='nmol/tube' * 'MW' /1000
+						ugOD = primerProductValue.getValue();
+						printLabel.setUgOD(primerProductValue.getValue());
+					} else if (type.equals(PrimerValueType.ODμmol)) {
+						printLabel.setOdμmol(primerProductValue.getValue());
+					} else if(type.equals(PrimerValueType.tb)){
+						tb = primerProductValue.getValue();
+					}
+				}
+				printLabels.add(printLabel);
 			}
-			printLabels.add(printLabel);
-		  }
-		    
-		   String templetName = "";//读取模板,现在是两种模板。每个公司放一个模板
+			
+			String templetName = "";//读取模板,现在是两种模板。每个公司放一个模板
 			boolean jinweizhi = false;//金唯智
 			boolean meiji = false;//美吉
 			boolean huada = false;//华大
@@ -637,7 +650,7 @@ public class PrintService {
 			String templatePath = inv.getRequest().getSession().getServletContext().getRealPath("/")+"views"+File.separator+"downLoad"+File.separator+"template"+File.separator+"report"+File.separator;
 			
 			HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(templatePath+templetName));
-	        HSSFSheet sheet = workbook.getSheetAt(0);
+			HSSFSheet sheet = workbook.getSheetAt(0);
 			HSSFRow row = null;
 			HSSFCell cell = null;
 			int totalCount = printLabels.size();//总条数
@@ -749,196 +762,207 @@ public class PrintService {
 			int numCur  = 0;
 			int pageNum = 1;
 			boolean addLast = true;
-        	for (PrintLabel printLabelExcel:printLabels) {
-        		
-        		if(pageNum==1){
-        			sheet = workbook.getSheetAt(pageNum-1);
-        		}
-        		row = sheet.getRow(startRowNum);
-         		
-        		if(jinweizhi){
-        			for (int k=1;k<13;k++){
-        				cell = row.getCell(k);//产生单元格
-        				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-        				//往单元格中写入信息
-        				String value = "";
-        				if(k==1){
-        					value = printLabelExcel.getProductNo();
-        				}else if(k==2){
-        					value = printLabelExcel.getPrimeName();
-        				}else if(k==3){
-        					value = printLabelExcel.getGeneOrder();
-        				}else if(k==4){
-        					value = printLabelExcel.getTbn()+"";
-        				}else if(k==5){
-        					value = printLabelExcel.getTm()+"";
-        				}else if(k==6){
-        					value = printLabelExcel.getGc()+"";
-        				}else if(k==7){
-        					value = printLabelExcel.getMw()+"";
-        				}else if(k==8){
-        					value = printLabelExcel.getUgOD()+"";
-        				}else if(k==9){
-        					value = printLabelExcel.getOdμmol()+"";
-        				}else if(k==10){
-        					value = printLabelExcel.getOdTB()+"";
-        				}else if(k==11){
-        					value = printLabelExcel.getNmolTB()+"";
-        				}else if(k==12){
-        					value = printLabelExcel.getPmole()+"";
-        				}
-        				if (!"null".equals(value)) {
-        					cell.setCellValue(value);
-        				}
-        			}
-        				
-        		}else if(meiji){
-        			for (int k=0;k<13;k++){
-        				cell = row.getCell(k);//产生单元格
-        				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-        				//往单元格中写入信息
-        				String value = "";
-        				if(k==0){
-        					value = printLabelExcel.getOutOrderNo();
-        				}else if(k==1){
-        					value = printLabelExcel.getProductNo();
-        				}else if(k==2){
-        					value = printLabelExcel.getPrimeName();
-        				}else if(k==3){
-        					value = printLabelExcel.getGeneOrder();
-        				}else if(k==4){
-        					value = printLabelExcel.getTbn()+"";
-        				}else if(k==5){
-        					value = printLabelExcel.getOdTotal()+"";
-        				}else if(k==6){
-        					value = printLabelExcel.getOdTB()+"";
-        				}else if(k==7){
-        					value = printLabelExcel.getMw()+"";
-        				}else if(k==8){
-        					value = printLabelExcel.getTm()+"";
-        				}else if(k==9){
-        					value = printLabelExcel.getGc()+"";
-        				}else if(k==10){
-        					value = printLabelExcel.getNmolTB()+"";
-        				}else if(k==11){
-        					value = printLabelExcel.getPmole()+"";
-        				}else if(k==12){
-        					value = printLabelExcel.getMidi()+"";
-        				}
+			for (PrintLabel printLabelExcel:printLabels) {
+				
+				if(pageNum==1){
+					sheet = workbook.getSheetAt(pageNum-1);
+				}
+				row = sheet.getRow(startRowNum);
+				
+				if(jinweizhi){
+					for (int k=1;k<13;k++){
+						cell = row.getCell(k);//产生单元格
+						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+						//往单元格中写入信息
+						String value = "";
+						if(k==1){
+							value = printLabelExcel.getProductNo();
+						}else if(k==2){
+							value = printLabelExcel.getPrimeName();
+						}else if(k==3){
+							value = printLabelExcel.getGeneOrder();
+						}else if(k==4){
+							value = printLabelExcel.getTbn()+"";
+						}else if(k==5){
+							value = printLabelExcel.getTm()+"";
+						}else if(k==6){
+							value = printLabelExcel.getGc()+"";
+						}else if(k==7){
+							value = printLabelExcel.getMw()+"";
+						}else if(k==8){
+							value = printLabelExcel.getUgOD()+"";
+						}else if(k==9){
+							value = printLabelExcel.getOdμmol()+"";
+						}else if(k==10){
+							value = printLabelExcel.getOdTB()+"";
+						}else if(k==11){
+							value = printLabelExcel.getNmolTB()+"";
+						}else if(k==12){
+							value = printLabelExcel.getPmole()+"";
+						}
+						if (!"null".equals(value)) {
+							cell.setCellValue(value);
+						}
+					}
+					
+				}else if(meiji){
+					for (int k=0;k<13;k++){
+						cell = row.getCell(k);//产生单元格
+						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+						//往单元格中写入信息
+						String value = "";
+						if(k==0){
+							value = printLabelExcel.getOutOrderNo();
+						}else if(k==1){
+							value = printLabelExcel.getProductNo();
+						}else if(k==2){
+							value = printLabelExcel.getPrimeName();
+						}else if(k==3){
+							value = printLabelExcel.getGeneOrder();
+						}else if(k==4){
+							value = printLabelExcel.getTbn()+"";
+						}else if(k==5){
+							value = printLabelExcel.getOdTotal()+"";
+						}else if(k==6){
+							value = printLabelExcel.getOdTB()+"";
+						}else if(k==7){
+							value = printLabelExcel.getMw()+"";
+						}else if(k==8){
+							value = printLabelExcel.getTm()+"";
+						}else if(k==9){
+							value = printLabelExcel.getGc()+"";
+						}else if(k==10){
+							value = printLabelExcel.getNmolTB()+"";
+						}else if(k==11){
+							value = printLabelExcel.getPmole()+"";
+						}else if(k==12){
+							value = printLabelExcel.getMidi()+"";
+						}
+						
+						if (!"null".equals(value)) {
+							cell.setCellValue(value);
+						}
+					}
+				}else if(zixi){
+					for (int k=0;k<14;k++){
+						cell = row.getCell(k);//产生单元格
+						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+						//往单元格中写入信息
+						String value = "";
+						if(k==0){
+							value = printLabelExcel.getProductNo();
+						}else if(k==1){
+							value = printLabelExcel.getPrimeName();
+						}else if(k==2){
+							value = printLabelExcel.getGeneOrder();
+						}else if(k==3){
+							value = printLabelExcel.getTbn()+"";
+						}else if(k==4){
+							value = printLabelExcel.getNmolTotal()+"";
+						}else if(k==5){
+							value = printLabelExcel.getNmolTB()+"";
+						}else if(k==6){
+							value = printLabelExcel.getMw()+"";
+						}else if(k==7){
+							value = printLabelExcel.getTm()+"";
+						}else if(k==8){
+							value = printLabelExcel.getGc()+"";
+						}else if(k==9){
+							value = printLabelExcel.getOdTB()+"";
+						}else if(k==10){
+							value = printLabelExcel.getDensity()+"";
+						}else if(k==11){
+							value = printLabelExcel.getMeasureVolume()+"";
+						}else if(k==12){
+							value = printLabelExcel.getPmole()+"";
+						}else if(k==13){
+							value = printLabelExcel.getMidi()+"";
+						}
+						
+						if (!"null".equals(value)) {
+							cell.setCellValue(value);
+						}
+					}
+				}
+				else{
+					for (int k=0;k<12;k++){
+						cell = row.getCell(k);//产生单元格
+						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+						//往单元格中写入信息
+						String value = "";
+						if(k==0){
+							value = printLabelExcel.getProductNo();
+						}else if(k==1){
+							value = printLabelExcel.getPrimeName();
+						}else if(k==2){
+							value = printLabelExcel.getGeneOrder();
+						}else if(k==3){
+							value = printLabelExcel.getTbn()+"";
+						}else if(k==4){
+							value = printLabelExcel.getOdTotal()+"";
+						}else if(k==5){
+							value = printLabelExcel.getOdTB()+"";
+						}else if(k==6){
+							value = printLabelExcel.getMw()+"";
+						}else if(k==7){
+							value = printLabelExcel.getTm()+"";
+						}else if(k==8){
+							value = printLabelExcel.getGc()+"";
+						}else if(k==9){
+							value = printLabelExcel.getNmolTB()+"";
+						}else if(k==10){
+							value = printLabelExcel.getPmole()+"";
+						}else if(k==11){
+							value = printLabelExcel.getMidi()+"";
+						}
+						
+						if (!"null".equals(value)) {
+							cell.setCellValue(value);
+						}
+					}
+				}
+				
+				
+				if(addLast){
+					//处理最后一行
+					if(jinweizhi){
+						row = sheet.getRow(24);
+						cell = row.getCell(1);//产生单元格
+						cell.setCellValue(cell.getStringCellValue()+ pageNum+"/"+totalPage);
+					}
+					addLast = false;
+				}
+				
+				numCur += 1;
+				startRowNum+=1;
+				if (numCur == perPage && pageNum!=totalPage){
+					numCur = 0;
+					startRowNum = startRowNumOld;
+					pageNum +=1;
+					addLast = true;
+					sheet = workbook.getSheetAt(pageNum-1);
+				}
+			}
+			
+			//输出文件到客户端
+			if( orderNum==1 ){//选择了一个订单
+				workbook.write(out);
+			}else{
+				ZipEntry entry = new ZipEntry(orderNo + ".xls");
+				zipOutputStream.putNextEntry(entry);  
+				workbook.write(zipOutputStream);
+			}
+		}
 
-        				if (!"null".equals(value)) {
-        					cell.setCellValue(value);
-        				}
-        			}
-        		}else if(zixi){
-        			for (int k=0;k<14;k++){
-        				cell = row.getCell(k);//产生单元格
-        				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-        				//往单元格中写入信息
-        				String value = "";
-        				if(k==0){
-        					value = printLabelExcel.getProductNo();
-        				}else if(k==1){
-        					value = printLabelExcel.getPrimeName();
-        				}else if(k==2){
-        					value = printLabelExcel.getGeneOrder();
-        				}else if(k==3){
-        					value = printLabelExcel.getTbn()+"";
-        				}else if(k==4){
-        					value = printLabelExcel.getNmolTotal()+"";
-        				}else if(k==5){
-        					value = printLabelExcel.getNmolTB()+"";
-        				}else if(k==6){
-        					value = printLabelExcel.getMw()+"";
-        				}else if(k==7){
-        					value = printLabelExcel.getTm()+"";
-        				}else if(k==8){
-        					value = printLabelExcel.getGc()+"";
-        				}else if(k==9){
-        					value = printLabelExcel.getOdTB()+"";
-        				}else if(k==10){
-        					value = printLabelExcel.getDensity()+"";
-        				}else if(k==11){
-        					value = printLabelExcel.getMeasureVolume()+"";
-        				}else if(k==12){
-        					value = printLabelExcel.getPmole()+"";
-        				}else if(k==13){
-        					value = printLabelExcel.getMidi()+"";
-        				}
-
-        				if (!"null".equals(value)) {
-        					cell.setCellValue(value);
-        				}
-        			}
-        		}
-        		else{
-    				for (int k=0;k<12;k++){
-        				cell = row.getCell(k);//产生单元格
-        				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-        				//往单元格中写入信息
-        				String value = "";
-        				if(k==0){
-        					value = printLabelExcel.getProductNo();
-        				}else if(k==1){
-        					value = printLabelExcel.getPrimeName();
-        				}else if(k==2){
-        					value = printLabelExcel.getGeneOrder();
-        				}else if(k==3){
-        					value = printLabelExcel.getTbn()+"";
-        				}else if(k==4){
-        					value = printLabelExcel.getOdTotal()+"";
-        				}else if(k==5){
-        					value = printLabelExcel.getOdTB()+"";
-        				}else if(k==6){
-        					value = printLabelExcel.getMw()+"";
-        				}else if(k==7){
-        					value = printLabelExcel.getTm()+"";
-        				}else if(k==8){
-        					value = printLabelExcel.getGc()+"";
-        				}else if(k==9){
-        					value = printLabelExcel.getNmolTB()+"";
-        				}else if(k==10){
-        					value = printLabelExcel.getPmole()+"";
-        				}else if(k==11){
-        					value = printLabelExcel.getMidi()+"";
-        				}
-
-        				if (!"null".equals(value)) {
-        					cell.setCellValue(value);
-        				}
-        			}
-        		}
-        		
-        		
-        		if(addLast){
-        			//处理最后一行
-        			if(jinweizhi){
-        				row = sheet.getRow(24);
-        				cell = row.getCell(1);//产生单元格
-        				cell.setCellValue(cell.getStringCellValue()+ pageNum+"/"+totalPage);
-        			}
-        			addLast = false;
-        		}
-            	
-        		numCur += 1;
-        		startRowNum+=1;
-        		if (numCur == perPage && pageNum!=totalPage){
-        			numCur = 0;
-        			startRowNum = startRowNumOld;
-        			pageNum +=1;
-        			addLast = true;
-        			sheet = workbook.getSheetAt(pageNum-1);
-        		}
-        	}
-        	
-            //输出文件到客户端
-            HttpServletResponse response = inv.getResponse();
-            response.setContentType("application/x-msdownload");
-            response.setHeader("Content-Disposition", "attachment;filename=\"" + strFileName + "\"");
-            OutputStream out=response.getOutputStream();
-            workbook.write(out);
-            out.flush();
-            out.close();
+        // 关闭输出流 
+		if( orderNum==1 ){//选择了一个订单
+	           out.flush();
+	           out.close();
+		}else{
+			zipOutputStream.flush();  
+			zipOutputStream.close();
+		}
+        
     }
 
     /**

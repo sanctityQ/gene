@@ -17,7 +17,7 @@ function gridUnCheck(rowIndex,rowData){
         makeBoard.attr('disabled','disabled');
     };
 }
-function exportFile(flag){
+function exportEnvelope(){
     var rows = $('#productionData').datagrid('getSelections');
     var orderNo = '';
     var ary = [];
@@ -25,7 +25,7 @@ function exportFile(flag){
         var data = rows[i];
         orderNo = data.orderNo;
     }
-    document.form.action = "/gene/print/exportFile/"+orderNo+"/"+flag+"/";
+    document.form.action = "/gene/print/exportEnvelope/"+orderNo+"/";
 	document.form.submit();
 }
 var getOrderInfos=function(){
