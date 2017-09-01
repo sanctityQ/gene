@@ -20,8 +20,8 @@ function gridUnCheck(rowIndex,rowData){
 function exportReports(){
     var rows = $('#productionData').datagrid('getSelections');
     
-    if(rows.length>20){
-    	alert("选择的订单个数不能大于20个。");
+    if(rows.length>5){
+    	alert("选择的订单个数不能大于5个。");
     	return;
     }
     var orderNo = '';
