@@ -8,6 +8,7 @@ function setBoardHeight(){
 function holesClick(){
     var number = $(this).children('div.hole').text();
     if(number != ''){
+        $(this).removeClass('warning');
         $(this).toggleClass('selected');
     }else{
         $.messager.alert('系统消息：','该孔没有生产编号，不能进行相关操作。')
@@ -20,6 +21,7 @@ function selectAll(e){
             var box = $(this);
             var number = box.children('div.hole').text();
             if(number != ''){
+            	box.removeClass('warning')
                 box.addClass('selected');
             }
         })
@@ -29,6 +31,7 @@ function selectAll(e){
         btn.text('全选');
     }
 }
+
 function boardEdit(id,operationType){
     var board = $('#'+id);
     var tBody = '';
@@ -120,7 +123,7 @@ function saveBoardData(){
     holeList.each(function(){
         var holeBox = $(this);
         var result = holeBox.attr('class');
-        if(result != 'hole_box' && result != 'hole_box selected'){
+        if(result != 'hole_box' && result != 'hole_box selected' && result != 'hole_box warning'){
             var holeNo = holeBox.children('div.tag').text();
             var productNo = holeBox.children('div.hole').text();
             var reason = holeBox.children('div.reason').text();

@@ -50,9 +50,11 @@ $(function(){
     $('#boardSequence').on("click","li",sequenceClick);
     setBoardHeight();
     $("#holeList").on("click","div.hole_box",holesClick);
+    //加载孔信息
     boardEditMeasure(${measuredata});
 })
 
+//将孔信息逐个放入页面
 function boardEditMeasure(data){
  
 	data = $.parseJSON(data);//String to json
@@ -69,10 +71,12 @@ function boardEditMeasure(data){
         var tr = '<tr>';
         for(var j = 0; j < hole.length; j++){
             var identifying = hole[j].identifying;
+            var warning = hole[j].warning;//预警提示
+            
             if(identifying != ''){
-                tr += '<td><div class="hole_box"><div class="hole">'+hole[j].No+'</div><div class="identifying">'+hole[j].identifying+'</div><div class="tag">'+hole[j].tag+'</div></div></td>';
+                tr += '<td><div class="hole_box" warn="'+warning+'"><div class="hole">'+hole[j].No+'</div><div class="identifying">'+hole[j].identifying+'</div><div class="tag">'+hole[j].tag+'</div></div></td>';
             }else{
-                tr += '<td><div class="hole_box"><div class="hole">'+hole[j].No+'</div><div class="tag"><i class="icon-ok"></i>'+hole[j].tag+'</div></div></td>';
+                tr += '<td><div class="hole_box" warn="'+warning+'"><div class="hole">'+hole[j].No+'</div><div class="tag"><i class="icon-ok"></i>'+hole[j].tag+'</div></div></td>';
             }
         }
         tr += '</tr>';
@@ -83,6 +87,20 @@ function boardEditMeasure(data){
     }else{
     	$.messager.alert("系统提示", "所选择板号有不符合可"+typeDesc+"状态的生产数据，请确认！");
     }
+    
+    //设置警告
+    setWarning();
+}
+
+//设计警告的方法
+function setWarning(){
+	
+    $("#holeList").find('div.hole_box').each(function(){
+        var box = $(this);
+        if(box.attr("warn") == 'maxODTotal'){
+            box.addClass('warning');
+        }
+    })
 }
 </script>
 </body>

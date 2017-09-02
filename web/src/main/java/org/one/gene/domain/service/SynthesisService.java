@@ -1197,6 +1197,9 @@ public class SynthesisService {
 		String holeNo = "";
 		String productNo = "";
 		String purifyType = "";
+		String measureVolume = "";//测值体积
+		String warning = "";//预警标志
+		
 		String jsonStr = "{\r";
 		jsonStr += "\"typeFlag\":"+typeFlag+",\r";
 		jsonStr += "\"typeDesc\":\""+operationType.desc()+"\",\r";
@@ -1209,27 +1212,37 @@ public class SynthesisService {
 			
 			String hole = (String)holeList.get(i);
 			for (int j=1;j<13;j++){
+				
 				holeNo = hole+j;
+				
 				productNo = "";
 				purifyType = "";
+				measureVolume = "";
+				warning = "";
+				
 				if(boardHoleMap.get(holeNo) != null){
 					primerProduct = (PrimerProduct)boardHoleMap.get(holeNo);
 					productNo = primerProduct.getProductNo();
+					
+					//纯化，不包括OPC 才显示
 					if (!"OPC".equals(primerProduct.getPurifyType())
 							&& operationType.equals(PrimerStatusType.purify)) {
 						purifyType = primerProduct.getPurifyType();
 					}
+					
+					//测值 & 孔有数值
 					if (operationType.equals(PrimerStatusType.measure) && measureMap.get(holeNo) != null) {
+						
 						BigDecimal measure = (BigDecimal)measureMap.get(holeNo);
+						
+						//干粉
 						if (primerProduct.getLiquid() == null || "".equals(primerProduct.getLiquid())) {
-							//原来：1200*ODTB/(导入值*20)
-//  						productNo = new BigDecimal(1200).multiply(primerProduct.getOdTB()).divide(measure.multiply(new BigDecimal(20)),0, BigDecimal.ROUND_UP)+"";
-							//改为：1.2*ODTB/(导入值/30)
-//							productNo = new BigDecimal(1.2).multiply(primerProduct.getOdTB()).divide(new BigDecimal(measure.doubleValue()/30),0, BigDecimal.ROUND_UP)+"";
 							//改为：OD/tube*22.5/测量值
-							productNo = new BigDecimal(22.5).multiply(primerProduct.getOdTB()).divide(new BigDecimal(measure.doubleValue()),0, BigDecimal.ROUND_UP)+"";
+							measureVolume = new BigDecimal(22.5).multiply(primerProduct.getOdTB()).divide(new BigDecimal(measure.doubleValue()),0, BigDecimal.ROUND_UP)+"";
 							
-						}else{
+						}
+						//液体
+						else{
 
 							double    nmoleOD      = 0.0;//nmoleOD
 							for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
@@ -1239,31 +1252,30 @@ public class SynthesisService {
 								}
 							}
 							
-							productNo = primerProduct.getMeasureVolume()+"";//液体引物，直接取导入订单的计算值：nmol/tube*1000/浓度
+							measureVolume = primerProduct.getMeasureVolume()+"";//液体引物，直接取导入订单的计算值：nmol/tube*1000/浓度
 							
-							//“浓度”
-							//10：nmole/OD*100*OD数
-							//100：nmole/OD* 10*OD数
-//							if(primerProduct.getDensity()!=null && primerProduct.getDensity() == 10){
-//								productNo = primerProduct.getOdTB().multiply(new BigDecimal(nmoleOD)).divide(new BigDecimal(0.01),0, BigDecimal.ROUND_UP)+"";
-//							}else{
-//								productNo = primerProduct.getOdTB().multiply(new BigDecimal(nmoleOD)).divide(new BigDecimal(0.1),0, BigDecimal.ROUND_UP)+"";
-//							}
-							
-							//计算出补水体积，直接存到数据库中
+							//计算出补水体积，直接存到数据库中。保留整数，四舍五入
 							//液体的 补水体积公式是：=nmole/OD数据*95*（测量值/15）*1000/浓度数据-100
-							//保留整数，四舍五入
 							int volume =  new BigDecimal(nmoleOD*95*(measure.doubleValue()/15)*1000/primerProduct.getDensity()-100).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();  ;
 							
 							primerProduct.setVolume(volume);
 							//保存primer_product表数据
 							primerProductRepository.save(primerProduct);
 						}
-
+						
+						//判断测值数值是否大于(OD数值*40*2)
+						BigDecimal odTotal = primerProduct.getOdTotal();
+						odTotal = odTotal.multiply(new BigDecimal(80));
+						BigDecimal measureVolumeNum = new BigDecimal(measureVolume);
+						
+						if(measureVolumeNum.compareTo(odTotal)==1){//大于
+							warning = "maxODTotal";//颜色提醒
+						}
+						
 					}
 				}
 				
-				jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+productNo+"\",\"identifying\":\""+purifyType+"\"}";
+				jsonStr += "{\"tag\":\""+holeNo+"\",\"No\":\""+measureVolume+"\",\"identifying\":\""+purifyType+"\",\"warning\":\""+warning+"\"}";
 				
 				if (j!=12){
 					jsonStr += ",\r";

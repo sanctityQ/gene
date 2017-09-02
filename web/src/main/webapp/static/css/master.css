@@ -272,6 +272,7 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);}
 .lose .hole,.compounded .hole{background-position:-50px -50px ;color: #fff;text-shadow: 1px 1px 1px #9e2d27;}
 .regain .hole{background-position:0 -100px;color: #fff;text-shadow: 1px 1px 1px #24599a;}
 .selected .hole{background-position: -50px 0;color: #fff;text-shadow: 0 -1px 0 #000;}
+.warning .hole{background-position: 0 -100px ;color: #fff;text-shadow: 0 -1px 0 #438743;}
 .readonly_inp{border: none;background: none;color: #000;}
 .menu-text{padding-left: 2px;}
 .menu-text i{font-size: 14px;padding: 0 10px 0 3px;}
