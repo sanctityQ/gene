@@ -145,6 +145,7 @@ public class PrintService {
 			zixiName = customerTemp.getName();
 		}
 		
+		//板号下所有的引物数据
 		for (PrimerProduct primerProduct : primerProducts) {
 			String customerCode = primerProduct.getOrder().getCustomerCode();
 			String customerName = primerProduct.getOrder().getCustomerName();
@@ -458,7 +459,11 @@ public class PrintService {
 		fos = new FileOutputStream(strFilePath + strFileName);
 		// 把相应的Excel 工作簿存盘
 		workbook.write(fos);
-    
+        
+		//关闭输出流
+//		fos.flush();
+//		fos.close();
+		
 		order.setFileName(filePath + strFileName);
 		
 		return order;
@@ -480,7 +485,8 @@ public class PrintService {
 		ZipOutputStream zipOutputStream = null;
 		
 		if( orderNum==1 ){//选择了一个订单
-			fileName = orderNos[0] + ".xls";  
+			Order order = orderRepository.findByOrderNo(orderNos[0]);
+			fileName = order.getProductNoMinToMax() + ".xls";  
 			response.setContentType("application/x-msdownload");
 			
 		}else{
@@ -500,6 +506,8 @@ public class PrintService {
 			String customerCode = order.getCustomerCode();//客户代码
 			String customerName = order.getCustomerName();//客户名称
 			String outOrderNo   = order.getOutOrderNo();//外部订单号
+			String productNoMinToMax   = order.getProductNoMinToMax();//生产编号
+			
 			String customerPhoneNo = "";
 			String customerWebSite = "";
 			String customerEmail = "";
@@ -948,7 +956,7 @@ public class PrintService {
 			if( orderNum==1 ){//选择了一个订单
 				workbook.write(out);
 			}else{
-				ZipEntry entry = new ZipEntry(orderNo + ".xls");
+				ZipEntry entry = new ZipEntry(productNoMinToMax + ".xls");
 				zipOutputStream.putNextEntry(entry);  
 				workbook.write(zipOutputStream);
 			}

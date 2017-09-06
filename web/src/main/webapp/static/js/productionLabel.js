@@ -53,7 +53,8 @@ function seachLiSelect(){
     seach.val(val).attr("tagId",id);
     list.hide(100);
 }
-//查询方法
+
+//查询标签 方法
 function searchLabel(){
 	
 	var boardNo = $.trim($('#boardNoOrProductNo').val());
