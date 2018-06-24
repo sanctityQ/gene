@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.service.OrderService;
 import org.one.gene.repository.OrderRepository;
 import org.one.gene.repository.PrimerProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,8 +75,9 @@ public class AtomicLongUtil {
 		 }
 		 long sn = orderMap.get("orderSerial").get();
 		 if(sn+1 >= 10000){
-			 updateMin(orderNextNum,0);
-			 orderMap.put("orderSerial", orderNextNum);
+			int nextNum = (int) (sn - 9999);
+			updateMin(orderNextNum, nextNum);
+			orderMap.put("orderSerial", orderNextNum);
 		 }
 		 return orderNoFormat(orderMap.get("orderSerial").get());
 	 }
@@ -85,7 +87,7 @@ public class AtomicLongUtil {
 	  * @return
 	  */
 	public String getProductSerialNo(String prefix, String newCusFlag,
-			Customer customer, PrimerProduct primerProduct) {
+			Customer customer, PrimerProduct primerProduct,Long seqNo) {
 		 
 		 
 		// 直接客户使用梓熙的配置
@@ -124,32 +126,8 @@ public class AtomicLongUtil {
 				prefix = prefix + "Y";
 			}
 		}
-			
-		//获取数据库当前最后一条的单号
-		 PrimerProduct product = primerProductRepository.getLastProduct();
-		 String productNo = "";
-		 String currentMaxNo = "";
-		 if(product!=null){
-			 productNo = product.getProductNo();
-			 //截取最大流水号
-		     currentMaxNo = productNo.substring(productNo.length()-4, productNo.length());
-		 }
 		 
-		 //如果查询到最大号，将当前最大号更新到orderNextNum
-		 if(!"".equals(currentMaxNo)){
-			 updateMax(productNextNum,Integer.parseInt(currentMaxNo));
-			 productNextNum.getAndIncrement();
-			 productMap.put("productSerial", productNextNum);
-		 }else{
-			 productNextNum.getAndIncrement();
-			 productMap.put("productSerial", productNextNum);
-		 }
-		 long sn = productMap.get("productSerial").get();
-		 if(sn+1 >= 10000){
-			 updateMin(productNextNum,0);
-			 productMap.put("productSerial", productNextNum);
-		 }
-		 return productNoFormat(productMap.get("productSerial").get(),prefix);
+		 return productNoFormat(seqNo,prefix);
 	 }
 	 
 	 
@@ -205,7 +183,7 @@ public class AtomicLongUtil {
 	  * @return
 	  */
 	 public String productNoFormat(long sn,String prefix){
-		//X+(年份最后1位) + MM-DD + 四位流水号
+		//prefix+(年份最后1位) + MM-DD + 四位流水号
 		//取得序列号格式化字符串
 		int count ="XXXX".length();
 		StringBuilder sb = new StringBuilder();
@@ -216,6 +194,12 @@ public class AtomicLongUtil {
 		java.text.DecimalFormat df = new java.text.DecimalFormat(sb.toString());
 		//当前的流水号
 		String current_serial_number = df.format(sn);
+		//如果长度大于4位，取最后4位
+		int seqlength = current_serial_number.length();
+		if (seqlength > 4) {
+			current_serial_number = current_serial_number.substring( seqlength - 4, seqlength);
+		}
+		
 		if(prefix==null){prefix="";}
 		String dateString = this.getFormatDate();
 		String current_number = prefix+dateString.substring(3)+current_serial_number;

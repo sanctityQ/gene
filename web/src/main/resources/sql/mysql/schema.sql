@@ -259,3 +259,9 @@ CREATE TABLE `menu` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_menu_levelid` (`first_id`,`second_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='菜单基础表';
+
+CREATE TABLE `product_sequence` (
+  `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识id',
+  `modify_time` DATETIME NOT NULL COMMENT '最后修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='引物生产编号序列表';

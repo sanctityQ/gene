@@ -59,7 +59,7 @@ public class CacheUtils {
 
         if (molarMap.containsKey(key)) {
         	molar = (BigDecimal) molarMap.get(key);
-        	System.out.println("从map中得到="+key+",value="+molar);
+        	//System.out.println("从map中得到="+key+",value="+molar);
 
         }
 

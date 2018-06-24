@@ -16,6 +16,7 @@ import org.one.gene.domain.entity.CustomerPrice;
 import org.one.gene.domain.entity.Order;
 import org.one.gene.domain.entity.PrimerProduct;
 import org.one.gene.domain.entity.Order.OrderType;
+import org.one.gene.domain.service.OrderService;
 import org.one.gene.domain.service.PriceTool;
 import org.one.gene.repository.CustomerPriceRepository;
 import org.one.gene.repository.CustomerRepository;
@@ -245,9 +246,11 @@ public class OrderExcelPase {
 				index ++;
 			}
 			
+			long seqNo = priceTool.getSeqNo();
+			
 			  //如果Excel导入中有生产编号存储为外部生产编号，如果没有系统自动生成
 			  if("".equals(productNoTemp)){
-				  primerProduct.setProductNo(atomicLongUtil.getProductSerialNo(prefix,newCusFlag,customer,primerProduct));
+				  primerProduct.setProductNo(atomicLongUtil.getProductSerialNo(prefix,newCusFlag,customer,primerProduct,seqNo));
 			  }else{
 				  primerProduct.setProductNo(productNoTemp);
 			  }

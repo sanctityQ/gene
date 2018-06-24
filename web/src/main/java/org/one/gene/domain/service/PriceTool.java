@@ -1,14 +1,17 @@
 package org.one.gene.domain.service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.one.gene.domain.entity.Customer;
 import org.one.gene.domain.entity.CustomerPrice;
 import org.one.gene.domain.entity.ModifiedPrice;
 import org.one.gene.domain.entity.PrimerProduct;
+import org.one.gene.domain.entity.ProductSequence;
 import org.one.gene.excel.OrderCaculate;
 import org.one.gene.repository.ModifiedPriceRepository;
+import org.one.gene.repository.ProductSequenceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +25,8 @@ public class PriceTool {
 
 	@Autowired
 	private ModifiedPriceRepository modifiedPriceRepository;
-	
+	@Autowired
+    private ProductSequenceRepository productSequenceRepository;
 	
 	public void getPrice(PrimerProduct pp, List<CustomerPrice> customerPrices){
 		
@@ -138,5 +142,16 @@ public class PriceTool {
 		}
 	
 		System.out.println(modiPrice);
+	}
+	
+	//生产编号序列的方法
+	public long getSeqNo(){
+		
+		ProductSequence ps = new ProductSequence();
+		ps.setModifyTime(new Date());
+		
+		productSequenceRepository.save(ps);
+		
+		return ps.getId();
 	}
 }
