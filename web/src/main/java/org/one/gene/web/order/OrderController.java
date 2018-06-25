@@ -106,6 +106,7 @@ public class OrderController {
         return "orderList";
     }
     
+    //订单审核查询页面
     @Get("orderExamine")
     public String orderExamine(Invocation inv){
     	ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
@@ -479,6 +480,7 @@ public class OrderController {
                     primerProduct.setNmolTB(pp_update.getNmolTB());
                     primerProduct.setNmolTotal(pp_update.getNmolTotal());
                     primerProduct.setProductNo(pp_update.getProductNo());
+                    primerProduct.setOutProductNo(pp_update.getOutProductNo());
                     primerProduct.setPrimeName(pp_update.getPrimeName());
                     primerProduct.setGeneOrder(pp_update.getGeneOrder());
                     primerProduct.setGeneOrderMidi(pp_update.getGeneOrderMidi());

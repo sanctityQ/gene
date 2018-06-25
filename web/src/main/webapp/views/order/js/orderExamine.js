@@ -86,7 +86,7 @@ var getExamineInfo=function(){
 	});
 }
 
-//审核订单查询
+//审核订单，进入引物页面，查询引物信息
 var checkOrder=function(id,index){
 	var row = $('#orderList').datagrid('getData').rows[index];
 //	goToPage(ctx+'/views/order/orderInfoExamine.jsp?orderNo='+row.orderNo);

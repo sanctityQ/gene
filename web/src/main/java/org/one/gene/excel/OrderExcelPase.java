@@ -242,19 +242,18 @@ public class OrderExcelPase {
 					break;
 				}
 				
-				
 				index ++;
 			}
 			
+			//通过工具取得生产编号序号
 			long seqNo = priceTool.getSeqNo();
+			//如果Excel导入中有生产编号存储为外部生产编号，如果没有系统自动生成
+			if("".equals(productNoTemp)){
+				primerProduct.setProductNo(atomicLongUtil.getProductSerialNo(prefix, newCusFlag, customer, primerProduct, seqNo));
+			}else{
+				primerProduct.setProductNo(productNoTemp);
+			}
 			
-			  //如果Excel导入中有生产编号存储为外部生产编号，如果没有系统自动生成
-			  if("".equals(productNoTemp)){
-				  primerProduct.setProductNo(atomicLongUtil.getProductSerialNo(prefix,newCusFlag,customer,primerProduct,seqNo));
-			  }else{
-				  primerProduct.setProductNo(productNoTemp);
-			  }
-			  
 			if (!haveFirst) {
 				order.setOrderUpType(orderUpType);
 				order.getPrimerProducts().add(primerProduct);

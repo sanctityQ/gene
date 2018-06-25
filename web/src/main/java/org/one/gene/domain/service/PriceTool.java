@@ -144,7 +144,7 @@ public class PriceTool {
 		System.out.println(modiPrice);
 	}
 	
-	//生产编号序列的方法
+	//取得生产编号序列的方法
 	public long getSeqNo(){
 		
 		ProductSequence ps = new ProductSequence();
@@ -154,4 +154,6 @@ public class PriceTool {
 		
 		return ps.getId();
 	}
+	
+	
 }
