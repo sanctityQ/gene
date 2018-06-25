@@ -1660,7 +1660,10 @@ public class SynthesisService {
         		String modiThreeType= pp.getModiThreeType();
         		String modiMidType  = pp.getModiMidType();
         		String modiSpeType  = pp.getModiSpeType();
-    			
+        		
+        		//判断是否含有5个G
+        		boolean res = pp.getGeneOrderMidi().contains("GGGGG");
+        		
         		String geneOrder = pp.getGeneOrderMidi().replaceAll("\\(\\*\\)", "\\*");//序列
 				//3端修饰的引物序列，并在序列前自动加一个N
 				if (!"".equals(modiThreeType)) {
@@ -1730,6 +1733,13 @@ public class SynthesisService {
 				cell = row.createCell(8);
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				cell.setCellValue(mw);//
+				cell = row.createCell(9);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				if(res){
+					cell.setCellValue("是");
+				}else{
+					cell.setCellValue("否");
+				}
 				rowIndex ++;
         	}
         }

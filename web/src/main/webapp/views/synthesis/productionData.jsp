@@ -65,7 +65,7 @@ String customerFlag = user.getUser().getCustomer().getCustomerFlag();
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>
-			<th data-options="field:'productNo',width:85,sortable:true">生产编号</th>
+			<th data-options="field:'productNo',width:85,sortable:true,styler:cellStyler2">生产编号</th>
 			<th data-options="field:'geneOrderMidi',width:50,sortable:true,styler:cellStyler1">序列</th>
 			<th data-options="field:'odTotal',width:60,sortable:true">OD总量</th>
 			<th data-options="field:'odTB',width:60,sortable:true">OD/TB</th>

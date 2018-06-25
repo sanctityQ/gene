@@ -104,6 +104,15 @@ function cellStyler1(value,row,index){
     }
 }
 
+//序列有GGGGG的，背景置蓝色
+function cellStyler2(value,row,index){
+	var text = row.geneOrderMidi.toString();
+    var gIndex = text.indexOf('GGGGG');
+    if( gIndex > 0 ){
+      return 'background-color:#0000FF;';
+    }
+}
+
 //序列有U I 的,U I 变红
 function formatOper1(val,row,index){
     var text = val.toString();
