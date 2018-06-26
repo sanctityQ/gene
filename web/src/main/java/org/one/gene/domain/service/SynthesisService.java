@@ -1337,20 +1337,22 @@ public class SynthesisService {
 						type = PrimerOperationType.purifySuccess;
 						typeDesc = PrimerOperationType.purifySuccess.desc();
 					}else if (operationType.equals(PrimerStatusType.pack)) {
-						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.bake);
+						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.detect);//20180625 分装成功后到检测环节
 						type = PrimerOperationType.packSuccess;
 						typeDesc = PrimerOperationType.packSuccess.desc();
-					}else if (operationType.equals(PrimerStatusType.bake)) {
-						//重新分装的烘干后不走检测环节,直接到发货
-						if (boardOrder <= typeMap.get(PrimerStatusType.bake)) {
-							boardHole.getPrimerProduct().setOperationType(PrimerStatusType.detect);
-						}else{
-							boardHole.getPrimerProduct().setOperationType(PrimerStatusType.delivery);
-						}
-						
-						type = PrimerOperationType.bakeSuccess;
-						typeDesc = PrimerOperationType.bakeSuccess.desc();
-					}else if (operationType.equals(PrimerStatusType.measure)) {
+					}
+//					else if (operationType.equals(PrimerStatusType.bake)) {
+//						//重新分装的烘干后不走检测环节,直接到发货
+//						if (boardOrder <= typeMap.get(PrimerStatusType.bake)) {
+//							boardHole.getPrimerProduct().setOperationType(PrimerStatusType.detect);
+//						}else{
+//							boardHole.getPrimerProduct().setOperationType(PrimerStatusType.delivery);
+//						}
+//						
+//						type = PrimerOperationType.bakeSuccess;
+//						typeDesc = PrimerOperationType.bakeSuccess.desc();
+//					}
+					else if (operationType.equals(PrimerStatusType.measure)) {
 						boardHole.getPrimerProduct().setMeasureVolume(boardHoleTemp.getPrimerProduct().getMeasureVolume());//测值体积
 						boardHole.getPrimerProduct().setOperationType(PrimerStatusType.pack);
 						type = PrimerOperationType.measureSuccess;

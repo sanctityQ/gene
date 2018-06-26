@@ -94,23 +94,14 @@
 		</ul>
 	</div>
 <% }%>
-<% if (menuMap.get("bake")!=null){%>
-	<div id="bake" title="烘干" data-options="iconCls:'dry'" style="height:200px;">
-		<ul class="sbu_menu">
-        <% if (menuMap.get("aminolysis3")!=null){%>
-			<li url="${ctx}/synthesis/bakeResults" id="aminolysis3"><i class="icon-pencil"></i>烘干结果</li>
-		<% }%>
-		</ul>
-	</div>
-<% }%>
 <% if (menuMap.get("detect")!=null){%>
 	<div id="detect" title="检测" data-options="iconCls:'test'" style="height:200px;">
 		<ul class="sbu_menu">
-        <% if (menuMap.get("aminolysis4")!=null){%>
-			<li url="${ctx}/synthesis/detectResults" id="aminolysis4"><i class="icon-upload-alt"></i>上传检测文件</li>
-		<% }%>
         <% if (menuMap.get("detectionResult")!=null){%>
 			<li url="${ctx}/synthesis/detectResultsBoard" id="detectionResult"><i class="icon-pencil"></i>检测结果</li>
+		<% }%>		
+        <% if (menuMap.get("aminolysis4")!=null){%>
+			<li url="${ctx}/synthesis/detectResults" id="aminolysis4"><i class="icon-upload-alt"></i>上传检测文件</li>
 		<% }%>
 		</ul>
 	</div>
