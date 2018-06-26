@@ -1249,7 +1249,7 @@ public class SynthesisService {
 							//液体的 补水体积公式是：=nmole/OD数据*95*（测量值/15）*1000/浓度数据-100
 							//浓度数据是10 时，按照15计算
 							if(primerProduct.getDensity()==10){
-								primerProduct.setDensity(15);
+//								primerProduct.setDensity(15);//20180626先注释掉
 							}
 							int volume =  new BigDecimal(nmoleOD*95*(measure.doubleValue()/15)*1000/primerProduct.getDensity()-100).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();  ;
 							
