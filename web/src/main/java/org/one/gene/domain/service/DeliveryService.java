@@ -5,8 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -576,12 +578,29 @@ public class DeliveryService {
 		
 		kaidan = user.getName();
 		
+		DateFormat df1 = DateFormat.getDateInstance();//日期格式，精确到日
+		String oYearStr = "";//订单导入年份
 		for (OrderInfo orderInfo : orderInfos) {
 			orderNo = orderInfo.getOrderNo();
-			
+			oYearStr = df1.format(orderInfo.getCreateTime()).substring(0, 4);
 		}
 		
-		Order order = orderRepository.findByOrderNo(orderNo);
+		String orderYear = "";//订单年份
+		
+        Calendar cal = Calendar.getInstance();
+        int nowYear = cal.get(Calendar.YEAR);//获取年份
+        
+    	int oYear = Integer.valueOf(oYearStr);
+		
+    	if (oYear < nowYear) {
+			orderYear = "_" + oYearStr;
+    	}
+    	if (oYear <= 2016) {
+			orderYear = "_2016";
+		}
+    	
+		Order order = orderRepository.getOrderByOrderNo(orderNo, orderYear);
+		
 		String customerCode = "";
 		if( order != null ){
 			outOrderNo   = order.getOutOrderNo();
@@ -645,20 +664,12 @@ public class DeliveryService {
 		DeliveryInfo deliveryInfo = new DeliveryInfo();
 		Map<String, DeliveryInfo> deliveryInfoMap = new HashMap<String, DeliveryInfo>();//数据库中的板孔信息
 		
-		for (PrimerProduct primerProduct : order.getPrimerProducts()) {
+		List<PrimerProduct> primerProducts  = primerProductRepository.getprimersByOrderNo(orderNo, orderYear);
+		
+		for (PrimerProduct primerProduct : primerProducts) {
 			geneCount += 1;
-			odTotal = 0.0;
-			tbn = 0;
-			
-			for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
-				PrimerValueType type = primerProductValue.getType();
-				if (type.equals(PrimerValueType.baseCount)) {// 碱基数
-					tbn = primerProductValue.getValue().intValue();
-				}else if(type.equals(PrimerValueType.odTotal)){//od总量
-					odTotal = primerProductValue.getValue().doubleValue();
-				}
-			}
-			
+			odTotal = primerProduct.getOdTotal().doubleValue();//od总量
+			tbn     = primerProduct.getTbn().intValue();// 碱基数
 			baseVal      = primerProduct.getBaseVal().doubleValue();//订单碱基价格
 			modiPrice    = primerProduct.getModiPrice().doubleValue();//修饰价格
 			purifyVal    = primerProduct.getPurifyVal().doubleValue();//纯化价格

@@ -16,8 +16,8 @@ import org.springframework.data.repository.query.Param;
 @Repository
 public interface OrderRepository extends PagingAndSortingRepository<Order, Long> , JpaSpecificationExecutor<Order> {
 
-    @SQL("select * from `order` where id=1")
-    public Order test();
+	@SQL("select * from `order##(:orderYear)` o  where `order_no` = :orderNo ")
+	Order getOrderByOrderNo(@Param("orderNo") String orderNo, @Param("orderYear") String orderYear);
     
     @SQL("select * from `order` order by id desc limit 1")
     public Order getLastOrder();
@@ -66,7 +66,7 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 	List<Order>  queryYinWuJInDu(@Param("createStartTime") String createStartTime,@Param("createEndTime") String createEndTime,
 			@Param("customerFlag") String customerFlag,@Param("customerCode") String customerCode);
 	
-	@SQL("select * from `order` o  where `status` = '1' "
+	@SQL("select * from `order##(:orderYear)` o  where `status` = '1' "
 			+ "#if(:createStartTime != '') { and o.`create_time` >= STR_TO_DATE( :createStartTime , '%m/%d/%Y %H:%i:%S') } "
 			+ "#if(:createEndTime != '') { and o.`create_time`   <= STR_TO_DATE( :createEndTime   , '%m/%d/%Y %H:%i:%S') } "
 			+ "#if(:comLevel != '1') { and o.`com_code` = :comCode }"
@@ -74,10 +74,11 @@ public interface OrderRepository extends PagingAndSortingRepository<Order, Long>
 			+ "#if(:customerFlag == '0' && :customerName !='') { and o.`customer_name` = :customerName }"
 			+ "#if(:orderNo != '') { and o.`order_no` = :orderNo }"
 			+ "#if(:customerFlagStr != '') { and o.`customer_code` IN ( select `code` from `customer` where `customer_flag`= :customerFlagStr ) }"
-			+ "#if(:productNoPrefix != '') { and exists ( select 1 from `primer_product` pp where o.`order_no` = pp.`order_no` and pp.`product_no` like :productNoPrefix ) }"
+			+ "#if(:productNoPrefix != '') { and exists ( select 1 from `primer_product##(:orderYear)` pp where o.`order_no` = pp.`order_no` and pp.`product_no` like :productNoPrefix ) }"
 			+ " order by o.`create_time` desc "
 			)
 	Page<Order> queryDeliveryList(
+			@Param("orderYear") String orderYear, 
 			@Param("createStartTime") String createStartTime,
 			@Param("createEndTime") String createEndTime,
 			@Param("comLevel") String comLevel,

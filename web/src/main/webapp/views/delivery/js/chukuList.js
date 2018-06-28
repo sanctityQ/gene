@@ -75,7 +75,8 @@ var deliveryList = function(){
     for(var i = 0; i < rows.length; i++){
         var data = rows[i];
         orderNo = data.orderNo;
-        var orderInfo_arr = { "orderNo":orderNo };
+        createTime = data.createTime;
+        var orderInfo_arr = { "orderNo":orderNo, "createTime":createTime };
         orderInfos_arr.push(orderInfo_arr);
     }
     

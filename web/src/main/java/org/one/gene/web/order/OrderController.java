@@ -838,17 +838,33 @@ public class OrderController {
         String comCode      = user.getUser().getCompany().getComCode();
         String customerFlag = user.getUser().getCustomer().getCustomerFlag();
         String comLevel     = user.getUser().getCompany().getComLevel();
-        
+        String orderYear = "";//订单年份
         Pageable pageable = new PageRequest(pageNo-1,pageSize);
 
 		if (!"".equals(createStartTime)) {
+			
+			String oYearStr = createStartTime.substring(createStartTime.length()-4);
         	createStartTime = createStartTime+" 00:00:00";
+        	
+            Calendar cal = Calendar.getInstance();
+            int nowYear = cal.get(Calendar.YEAR);//获取年份
+            
+        	int oYear = Integer.valueOf(oYearStr);
+			
+        	if (oYear < nowYear) {
+				orderYear = "_" + oYearStr;
+        	}
+        	if (oYear <= 2016) {
+				orderYear = "_2016";
+			}
+        	
         }
+		
 		if (!"".equals(createEndTime)) {
 			createEndTime = createEndTime+" 23:59:59";
         }
 			
-		Page<Order> orderPage = orderRepository.queryDeliveryList(
+		Page<Order> orderPage = orderRepository.queryDeliveryList(orderYear,
 				createStartTime, createEndTime, comLevel, comCode,
 				customerFlag, user.getUser().getCustomer().getCode(),
 				customerName, orderNo, customerFlagStr, productNoPrefix,pageable);
