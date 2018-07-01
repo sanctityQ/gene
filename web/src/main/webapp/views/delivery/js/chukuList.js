@@ -60,7 +60,7 @@ var getProducts=function(){
 	
 };
 
-//导出出库单
+//出库单打印 导出附件
 var deliveryList = function(){
 	
     var table = $('#productionData');

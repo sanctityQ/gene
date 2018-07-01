@@ -191,18 +191,9 @@ public class StatisticsService {
 			
 			
 			for (PrimerProduct primerProduct : order.getPrimerProducts()) {
-				odTotal = 0.0;
-				tbn = 0;
-				
-				for (PrimerProductValue primerProductValue : primerProduct.getPrimerProductValues()) {
-					PrimerValueType type = primerProductValue.getType();
-					if (type.equals(PrimerValueType.baseCount)) {// 碱基数
-						tbn = primerProductValue.getValue().intValue();
-					}else if(type.equals(PrimerValueType.odTotal)){//od总量
-						odTotal = primerProductValue.getValue().doubleValue();
-					}
-				}
-				
+
+				odTotal       = primerProduct.getOdTotal().doubleValue();//od总量
+				tbn           = primerProduct.getTbn().intValue();//碱基数
 				baseVal      = primerProduct.getBaseVal().doubleValue();//订单碱基价格
 				modiPrice    = primerProduct.getModiPrice().doubleValue();//修饰价格
 				purifyVal    = primerProduct.getPurifyVal().doubleValue();//纯化价格
@@ -247,6 +238,8 @@ public class StatisticsService {
 				double price = 0.0;
 				boolean haveModi = false;//是否含有修饰
 				boolean haveHPLC = false;//是否含有HPLC
+				
+				//修饰费用
 				if (!"".equals(modiFiveType) || !"".equals(modiThreeType) || !"".equals(modiMidType) || !"".equals(modiSpeType)) {
 					haveModi = true;
 					
@@ -268,17 +261,6 @@ public class StatisticsService {
 					
 					modiStrKey = modiStr + "_" + df.format(modiPrice);
 					price = Double.parseDouble(df.format(modiPrice));
-				} else {
-					if (purifyVal > 0) {
-						if ("HPLC".equals(purifyType)) {
-							haveHPLC = true;
-						}
-						modiStr      = purifyType;
-						modiStrKey = purifyType + "_" + df.format(purifyVal);
-						price = Double.parseDouble(df.format(purifyVal));
-					}
-				}
-				if (!"".equals(modiStrKey)) {
 					
 					modiStrKey = orderDate+orderNo+modiStrKey;
 					
@@ -303,12 +285,45 @@ public class StatisticsService {
 						deliveryInfo.setCount(deliveryInfo.getCountNum());
 						deliveryInfo.setPrice(price);
 						deliveryInfo.setMoney(df.format(deliveryInfo.getCount() * deliveryInfo.getPrice()));
-						if (haveModi) {
-							deliveryInfo.setExtendStr9("1");//引物类型：0 普通引入 1 修饰引物 2 纯化引物
-						} 
-						if (haveHPLC) {
-							deliveryInfo.setExtendStr9("2");//引物类型：0 普通引入 1 修饰引物 2 纯化引物
-						}
+						deliveryInfo.setExtendStr9("1");//引物类型：0 普通引入 1 修饰引物 2 纯化引物
+
+						deliveryInfoMap.put(modiStrKey, deliveryInfo);
+					}
+				}
+
+				
+				//HPLC纯化费
+				if (purifyVal > 0 && "HPLC".equals(purifyType)) {
+					
+					modiStr      = purifyType;
+					modiStrKey = purifyType + "_" + df.format(purifyVal);
+					price = Double.parseDouble(df.format(purifyVal));
+					
+					modiStrKey = orderDate+orderNo+modiStrKey;
+					
+					if (deliveryInfoMap.get(modiStrKey) != null) {
+						deliveryInfo = (DeliveryInfo)deliveryInfoMap.get(modiStrKey);
+						deliveryInfo.setCountNum(deliveryInfo.getCountNum()+1);
+						deliveryInfo.setCount(deliveryInfo.getCountNum());
+						deliveryInfo.setMoney(df.format(deliveryInfo.getCount() * deliveryInfo.getPrice()));
+						
+						deliveryInfoMap.put(modiStrKey, deliveryInfo);
+					}else{
+						deliveryInfo = new DeliveryInfo();
+						deliveryInfo.setExtendStr1(orderDate);//订货日期
+						deliveryInfo.setExtendStr2(companyName);//公司名称
+						deliveryInfo.setExtendStr3(contactsName);//客户姓名
+						deliveryInfo.setExtendStr4(outOrderNo);//订单号
+						deliveryInfo.setExtendStr5(handlerName);//业务员
+						deliveryInfo.setDeliveryName(modiStr);
+						deliveryInfo.setCountNum(1);
+						deliveryInfo.setOdTotal(odTotal);
+						deliveryInfo.setMeasurement("HPLC纯化费");
+						deliveryInfo.setCount(deliveryInfo.getCountNum());
+						deliveryInfo.setPrice(price);
+						deliveryInfo.setMoney(df.format(deliveryInfo.getCount() * deliveryInfo.getPrice()));
+						deliveryInfo.setExtendStr9("2");//引物类型：0 普通引入 1 修饰引物 2 纯化引物
+
 						deliveryInfoMap.put(modiStrKey, deliveryInfo);
 					}
 				}
@@ -682,41 +697,30 @@ public class StatisticsService {
 				companyName     = customer.getName();
 			}
 			
-			double odTotal = 0.0;//每条OD总量
+			double odTotal   = 0.0;//每条OD总量
 			double nmolTotal = 0.0;//每条nmole总量
-			int    tbn = 0;//每条碱基的数量
+			int    tbn       = 0;//每条碱基的数量
 			
-			double baseVal    = 0.0;//订单碱基价格
-			double modiPrice  = 0.0;//修饰价格
-			double purifyVal  = 0.0;//纯化价格
-			double totalVal   = 0.0;//总价格
-			String purifyType = "";//纯化类型
-			String modiFiveType = "";//5修饰
+			double baseVal       = 0.0;//订单碱基价格
+			double modiPrice     = 0.0;//修饰价格
+			double purifyVal     = 0.0;//纯化价格
+			double totalVal      = 0.0;//总价格
+			String purifyType    = "";//纯化类型
+			String modiFiveType  = "";//5修饰
 			String modiThreeType = "";//3修饰
-			String modiMidType = "";//中间修饰
-			String modiSpeType = "";//特殊单体
+			String modiMidType   = "";//中间修饰
+			String modiSpeType   = "";//特殊单体
 			
 			for (PrimerProduct pp : order.getPrimerProducts()) {
-				odTotal = 0.0;
-				nmolTotal = 0.0;
-				tbn = 0;
 				
 				//生产编号不为空，只展现此生产编号的数据
 				if (!"".equals(statisticsInfo.getProductNo()) && !pp.getProductNo().equals(statisticsInfo.getProductNo())) {
 					continue;
 				}
-				
-				for (PrimerProductValue primerProductValue : pp.getPrimerProductValues()) {
-					PrimerValueType type = primerProductValue.getType();
-					if (type.equals(PrimerValueType.baseCount)) {// 碱基数
-						tbn = primerProductValue.getValue().intValue();
-					}else if(type.equals(PrimerValueType.odTotal)){//od总量
-						odTotal = primerProductValue.getValue().doubleValue();
-					}else if(type.equals(PrimerValueType.nmolTotal)){//nmol总量
-						nmolTotal = primerProductValue.getValue().doubleValue();
-					}
-				}
-				
+
+				odTotal      = pp.getOdTotal().doubleValue();//od总量
+				nmolTotal    = pp.getNmolTotal().intValue();//nmole总量
+				tbn          = pp.getTbn().intValue();//碱基数
 				baseVal      = pp.getBaseVal().doubleValue();//订单碱基价格
 				modiPrice    = pp.getModiPrice().doubleValue();//修饰价格
 				purifyVal    = pp.getPurifyVal().doubleValue();//纯化价格
@@ -726,6 +730,11 @@ public class StatisticsService {
 				modiMidType  = pp.getModiMidType();
 				modiSpeType  = pp.getModiSpeType();
 				purifyType   = pp.getPurifyType();
+				
+				//如果纯化方式不是HPLC，纯化费为0
+				if (!"HPLC".equals(purifyType)) {
+					purifyVal = 0.0;
+				}
 				
 				//修饰和纯化
 				String modiStr    = "";

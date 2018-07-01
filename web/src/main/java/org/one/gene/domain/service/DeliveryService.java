@@ -551,7 +551,7 @@ public class DeliveryService {
 	}
 
     /**
-     * 导出出库单文件
+     * 出库单打印    导出附件
      * @throws IOException 
      * */
 	public void exportChuku( List<OrderInfo> orderInfos, Invocation inv) throws IOException {
@@ -668,16 +668,17 @@ public class DeliveryService {
 		
 		for (PrimerProduct primerProduct : primerProducts) {
 			geneCount += 1;
-			odTotal = primerProduct.getOdTotal().doubleValue();//od总量
-			tbn     = primerProduct.getTbn().intValue();// 碱基数
-			baseVal      = primerProduct.getBaseVal().doubleValue();//订单碱基价格
-			modiPrice    = primerProduct.getModiPrice().doubleValue();//修饰价格
-			purifyVal    = primerProduct.getPurifyVal().doubleValue();//纯化价格
-			modiFiveType = primerProduct.getModiFiveType();
-			modiThreeType= primerProduct.getModiThreeType();
-			modiMidType  = primerProduct.getModiMidType();
-			modiSpeType  = primerProduct.getModiSpeType();
-			purifyType   = primerProduct.getPurifyType();
+			
+			odTotal       = primerProduct.getOdTotal().doubleValue();//od总量
+			tbn           = primerProduct.getTbn().intValue();//碱基数
+			baseVal       = primerProduct.getBaseVal().doubleValue();//订单碱基价格
+			modiPrice     = primerProduct.getModiPrice().doubleValue();//修饰价格
+			purifyVal     = primerProduct.getPurifyVal().doubleValue();//纯化价格
+			modiFiveType  = primerProduct.getModiFiveType();
+			modiThreeType = primerProduct.getModiThreeType();
+			modiMidType   = primerProduct.getModiMidType();
+			modiSpeType   = primerProduct.getModiSpeType();
+			purifyType    = primerProduct.getPurifyType();
 			
 			//DNA合成
 			String dnaSrt = "DNA合成_"+df.format(baseVal);
@@ -725,15 +726,6 @@ public class DeliveryService {
 				
 				modiStrKey = modiStr + "_" + df.format(modiPrice);
 				price = Double.parseDouble(df.format(modiPrice));
-			} else {
-				if (purifyVal > 0) {
-					modiStr      = purifyType;
-					modiStrKey = purifyType + "_" + df.format(purifyVal);
-					price = Double.parseDouble(df.format(purifyVal));
-				}
-			}
-			
-			if (!"".equals(modiStrKey)) {
 				
 				if (deliveryInfoMap.get(modiStrKey) != null) {
 					deliveryInfo = (DeliveryInfo)deliveryInfoMap.get(modiStrKey);
@@ -754,7 +746,38 @@ public class DeliveryService {
 					
 					deliveryInfoMap.put(modiStrKey, deliveryInfo);
 				}
+			} 
+            
+			
+			if (purifyVal > 0 && "HPLC".equals(purifyType)) {
+				modiStr      = purifyType;
+				modiStrKey = purifyType + "_" + df.format(purifyVal);
+				price = Double.parseDouble(df.format(purifyVal));
+				
+				if (deliveryInfoMap.get(modiStrKey) != null) {
+					deliveryInfo = (DeliveryInfo)deliveryInfoMap.get(modiStrKey);
+					deliveryInfo.setCountNum(deliveryInfo.getCountNum()+1);
+					deliveryInfo.setCount(deliveryInfo.getCountNum());
+					deliveryInfo.setMoney(df.format(deliveryInfo.getCount() * deliveryInfo.getPrice()));
+					
+					deliveryInfoMap.put(modiStrKey, deliveryInfo);
+				}else{
+					deliveryInfo = new DeliveryInfo();
+					deliveryInfo.setDeliveryName(modiStr);
+					deliveryInfo.setCountNum(1);
+					deliveryInfo.setOdTotal(odTotal);
+					deliveryInfo.setMeasurement("HPLC纯化费");
+					deliveryInfo.setCount(deliveryInfo.getCountNum());
+					deliveryInfo.setPrice(price);
+					deliveryInfo.setMoney(df.format(deliveryInfo.getCount() * deliveryInfo.getPrice()));
+					
+					deliveryInfoMap.put(modiStrKey, deliveryInfo);
+				}
+				
 			}
+
+			
+
 			
 		  }
 	    

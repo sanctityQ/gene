@@ -306,7 +306,7 @@ public class DeliveryController {
     
     
     /**
-     * 进入出库单查询页面
+     * 进入   出库单打印  查询页面
      * 
      * */
     @Get("chukuList")
@@ -316,7 +316,8 @@ public class DeliveryController {
 		inv.addModel("customerFlag", customerFlag);// 用户归属公司标识，0-梓熙，1-代理公司，2-直接客户
     	return "chukuList";
     }
-    //出库单导出
+    
+    //出库单打印 导出附件
     @Post("exportChuku/{orderInfos}/")
 	public void exportChuku(
 			@Param("orderInfos") String orderInfosJson,

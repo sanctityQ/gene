@@ -60,7 +60,7 @@ public class StatisticsController {
 	private ProductMolecularRepository productMolecularRepository;
 	
     /**
-     * 进入出库统计查询页面
+     * 进入   出库统计   查询页面
      * */
     @Get("chuKuTongJi")
     public String chuKuTongJi(){
@@ -68,7 +68,7 @@ public class StatisticsController {
     }
     
     /**
-     * 导出出库统计文件
+     * 导出   出库统计   文件
      * */
     @Post("exportChuKuTongJi")
 	public void exportChuKuTongJi(@Param("statisticsInfojson") String statisticsInfojson, Invocation inv)
@@ -84,7 +84,7 @@ public class StatisticsController {
     
     
     /**
-     * 进入对账单查询页面
+     * 进入  对账单   查询页面
      * */
     @Get("duiZhangDan")
     public String duiZhangDan(){
@@ -92,7 +92,7 @@ public class StatisticsController {
     }
     
     /**
-     * 导出对账单文件
+     * 导出  对账单 文件
      * */
     @Post("exportDuiZhangDan")
 	public void exportDuiZhangDan(@Param("statisticsInfojson") String statisticsInfojson, Invocation inv)
