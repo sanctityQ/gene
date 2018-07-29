@@ -99,7 +99,7 @@ function cellStyler1(value,row,index){
 	var text = value.toString();
     var iIndex = text.indexOf('I');
     var uIndex = text.indexOf('U');
-    if(iIndex>0 || uIndex>0){
+    if(iIndex > -1 || uIndex > -1){
       return 'background-color:#ffee00;';
     }
 }
@@ -108,7 +108,7 @@ function cellStyler1(value,row,index){
 function cellStyler2(value,row,index){
 	var text = row.geneOrderMidi.toString();
     var gIndex = text.indexOf('GGGGG');
-    if( gIndex > 0 ){
+    if( gIndex > -1 ){
       return 'background-color:#0000FF;';
     }
 }
